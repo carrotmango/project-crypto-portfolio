@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 3b15fbae1dad34249b0410984e080af4
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241775
+  packageName: Japanese Cyberpunk UI
+  packageVersion: 1.0.0
+  assetPath: Assets/Japanese_Cyberpunk_GUI/prefabs/Buttons/Button_settings.prefab
+  uploadId: 560991

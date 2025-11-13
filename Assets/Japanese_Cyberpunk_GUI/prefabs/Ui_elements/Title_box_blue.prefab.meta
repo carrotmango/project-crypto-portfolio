@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f257c1df79831634eab2b72a973d5c51
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241775
+  packageName: Japanese Cyberpunk UI
+  packageVersion: 1.0.0
+  assetPath: Assets/Japanese_Cyberpunk_GUI/prefabs/Ui_elements/Title_box_blue.prefab
+  uploadId: 560991

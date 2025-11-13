@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2f67b16bbf3697e4e893bdb7386a351e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241775
+  packageName: Japanese Cyberpunk UI
+  packageVersion: 1.0.0
+  assetPath: Assets/Japanese_Cyberpunk_GUI/prefabs/Buttons/Button_black_green_01.prefab
+  uploadId: 560991

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c8459e56c0d9faa42b55b894e4852722
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241775
+  packageName: Japanese Cyberpunk UI
+  packageVersion: 1.0.0
+  assetPath: Assets/Japanese_Cyberpunk_GUI/prefabs/Boxes/Box_Tooltip.prefab
+  uploadId: 560991

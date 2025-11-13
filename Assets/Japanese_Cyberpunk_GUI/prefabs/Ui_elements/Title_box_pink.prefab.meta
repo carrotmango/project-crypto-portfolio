@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: dc90a96d42fe5b545b81760a2a4caf03
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241775
+  packageName: Japanese Cyberpunk UI
+  packageVersion: 1.0.0
+  assetPath: Assets/Japanese_Cyberpunk_GUI/prefabs/Ui_elements/Title_box_pink.prefab
+  uploadId: 560991

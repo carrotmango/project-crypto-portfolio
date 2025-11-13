@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: cc958db17b528ca448148c59a98478cb
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241775
+  packageName: Japanese Cyberpunk UI
+  packageVersion: 1.0.0
+  assetPath: Assets/Japanese_Cyberpunk_GUI/prefabs/Ui_elements/Directional Light.prefab
+  uploadId: 560991

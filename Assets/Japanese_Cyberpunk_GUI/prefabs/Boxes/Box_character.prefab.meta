@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4d41cae3e8566fc4b935e5523d548cd0
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241775
+  packageName: Japanese Cyberpunk UI
+  packageVersion: 1.0.0
+  assetPath: Assets/Japanese_Cyberpunk_GUI/prefabs/Boxes/Box_character.prefab
+  uploadId: 560991

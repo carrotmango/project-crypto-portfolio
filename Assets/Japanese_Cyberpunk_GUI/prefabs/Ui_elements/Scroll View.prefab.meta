@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c8064a38e3b293443adedb92acd1998b
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241775
+  packageName: Japanese Cyberpunk UI
+  packageVersion: 1.0.0
+  assetPath: Assets/Japanese_Cyberpunk_GUI/prefabs/Ui_elements/Scroll View.prefab
+  uploadId: 560991

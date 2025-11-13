@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c13045cdde4db2e46b642e36548449fb
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241775
+  packageName: Japanese Cyberpunk UI
+  packageVersion: 1.0.0
+  assetPath: Assets/Japanese_Cyberpunk_GUI/prefabs/Boxes/Check_box.prefab
+  uploadId: 560991

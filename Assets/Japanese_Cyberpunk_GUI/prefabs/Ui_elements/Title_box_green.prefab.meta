@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2a6c46cf35c36f641b85a562ab0491e3
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241775
+  packageName: Japanese Cyberpunk UI
+  packageVersion: 1.0.0
+  assetPath: Assets/Japanese_Cyberpunk_GUI/prefabs/Ui_elements/Title_box_green.prefab
+  uploadId: 560991

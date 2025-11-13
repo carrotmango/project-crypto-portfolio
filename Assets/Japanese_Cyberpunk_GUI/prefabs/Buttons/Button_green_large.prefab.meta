@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 49fe82b24f8f0654293a12deb01a6fff
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241775
+  packageName: Japanese Cyberpunk UI
+  packageVersion: 1.0.0
+  assetPath: Assets/Japanese_Cyberpunk_GUI/prefabs/Buttons/Button_green_large.prefab
+  uploadId: 560991

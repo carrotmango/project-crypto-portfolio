@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: cbea43cb0694d4a4c9b230d63df14329
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241775
+  packageName: Japanese Cyberpunk UI
+  packageVersion: 1.0.0
+  assetPath: Assets/Japanese_Cyberpunk_GUI/prefabs/Ui_elements/Scrollbar Vertical.prefab
+  uploadId: 560991

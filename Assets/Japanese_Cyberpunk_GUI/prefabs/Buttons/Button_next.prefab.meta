@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 5441892e60b52ad4e94f3f0e0849fde1
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241775
+  packageName: Japanese Cyberpunk UI
+  packageVersion: 1.0.0
+  assetPath: Assets/Japanese_Cyberpunk_GUI/prefabs/Buttons/Button_next.prefab
+  uploadId: 560991

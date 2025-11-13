@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2296a19a979e8e447b420d27e5dcddd9
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241775
+  packageName: Japanese Cyberpunk UI
+  packageVersion: 1.0.0
+  assetPath: Assets/Japanese_Cyberpunk_GUI/prefabs/Ui_elements/Life_bar.prefab
+  uploadId: 560991

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f6436f8dd6be29c4b881d96fbe99fc48
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241775
+  packageName: Japanese Cyberpunk UI
+  packageVersion: 1.0.0
+  assetPath: Assets/Japanese_Cyberpunk_GUI/prefabs/Buttons/Button_transparent.prefab
+  uploadId: 560991
