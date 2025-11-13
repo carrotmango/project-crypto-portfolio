@@ -100,28 +100,47 @@ public class SellPanelController : MonoBehaviour {
     }
 
     public void OnConfirmClicked() {
-        if (!double.TryParse(orderAmountInput.text, out double amount)) return;
-
-        if (amount > owned + 0.00001) {
-            Debug.LogWarning("보유 수량 초과");
+        if (!double.TryParse(orderAmountInput.text, out double amount))
+        {
+            Debug.LogWarning("잘못된 수량을 입력했습니다.");
             return;
         }
 
-        double raw = price * amount;
-        if (raw < 5000) {
+        if (amount <= 0) return;
+
+        // UI상의 보유량 체크
+        if (amount > owned + 0.00001) {
+            Debug.LogWarning("보유 수량을 초과하여 매도할 수 없습니다.");
+            return;
+        }
+        
+        double rawPrice = price * amount;
+        if (rawPrice < 5000) {
             Debug.LogWarning("최소 주문 금액은 5,000원 이상이어야 합니다.");
             return;
         }
 
-        double fee = raw * feeRate;
-        double net = raw - fee;
+        // PlayerManager의 RegisterSell을 호출하여 실제 매도 처리 시도
+        // amount를 ref로 넘겨서, 함수 내에서 수량이 조정될 수 있도록 함
+        if (PlayerManager.Instance.RegisterSell(lastSelectedSymbol, price, ref amount))
+        {
+            // 매도가 성공했을 때만 현금을 지급
+            // RegisterSell에 의해 amount가 조정되었을 수 있으므로, raw, fee, net을 다시 계산
+            double raw = price * amount;
+            double fee = raw * feeRate;
+            double net = raw - fee;
 
-        PlayerManager.Instance.RegisterSell(lastSelectedSymbol, price, amount);
-        PlayerManager.Instance.bullbitCash += net;
+            PlayerManager.Instance.bullbitCash += net;
 
-        Debug.Log($"[매도 체결] {lastSelectedSymbol} {price} x {amount} = {FormatKRW(raw)} - 수수료 {FormatKRW(fee)} → {FormatKRW(net)}");
+            Debug.Log($"[매도 체결] {lastSelectedSymbol} {price} x {amount} = {FormatKRW(raw)} - 수수료 {FormatKRW(fee)} → {FormatKRW(net)}");
 
-        ClosePanel();
+            ClosePanel();
+        }
+        else
+        {
+            // RegisterSell이 false를 반환하면, 매도 실패
+            Debug.LogWarning("매도 처리에 실패했습니다. 보유 수량을 다시 확인해주세요.");
+        }
     }
 
     void Start() {

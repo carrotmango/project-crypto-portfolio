@@ -51,13 +51,37 @@ public class PlayerManager : MonoBehaviour
         totalBuyQuantity[symbol] += quantity;
     }
 
-    public void RegisterSell(string symbol, double price, double quantity)
+    public bool RegisterSell(string symbol, double price, ref double quantity)
     {
-        if (!holdings.ContainsKey(symbol) || holdings[symbol] < quantity) return;
+        const double Epsilon = 0.0000001;
+
+        if (!holdings.ContainsKey(symbol))
+        {
+            Debug.LogWarning($"[매도 실패] {symbol} 미보유");
+            return false;
+        }
+
+        double ownedQuantity = holdings[symbol];
+
+        // 판매수량이 보유수량보다 아주 약간만 큰 경우 (부동소수점 오차)
+        if (quantity > ownedQuantity && quantity < ownedQuantity + Epsilon)
+        {
+            quantity = ownedQuantity; // 판매수량을 보유수량으로 조정
+        }
+
+        if (ownedQuantity < quantity)
+        {
+            Debug.LogWarning($"[매도 실패] {symbol} 보유 수량 부족. 보유: {ownedQuantity}, 시도: {quantity}");
+            return false;
+        }
+
+        if (!totalBuyQuantity.ContainsKey(symbol) || totalBuyQuantity[symbol] <= Epsilon)
+        {
+            Debug.LogWarning($"[매도 실패] {symbol} 매수 기록 없음");
+            return false;
+        }
 
         holdings[symbol] -= quantity;
-
-        if (!totalBuyQuantity.ContainsKey(symbol) || totalBuyQuantity[symbol] <= 0) return;
 
         double avgPrice = GetAvgPrice(symbol);
         double reduceAmount = avgPrice * quantity;
@@ -65,12 +89,14 @@ public class PlayerManager : MonoBehaviour
         totalBuyAmount[symbol] -= reduceAmount;
         totalBuyQuantity[symbol] -= quantity;
 
-        if (holdings[symbol] <= 0)
+        if (holdings[symbol] < Epsilon)
         {
             holdings[symbol] = 0;
             totalBuyAmount[symbol] = 0;
             totalBuyQuantity[symbol] = 0;
         }
+        
+        return true;
     }
 
     public double GetAvgPrice(string symbol)
