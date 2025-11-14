@@ -35,6 +35,8 @@ public class EventOrchestrator : MonoBehaviour {
             // postYn이 true일 때만 트윗 UI 생성
             if (data.postYn) {
                 feed.SpawnFromData(data);
+
+                XNotificationManager.Instance.Show(data.name, data.key);
             }
 
             // 마켓 및 코인 효과 적용
