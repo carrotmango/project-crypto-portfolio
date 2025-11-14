@@ -198,7 +198,7 @@ public class XNotificationManager : MonoBehaviour {
             $"이용 가능 기간: {nextBillingDate:yyyy-MM-dd} 까지\n" +
             "이후 자동 해지됩니다.";
 
-        btnText.text = "구독취소됨";
+        btnText.text = "취소완료";
         btnText.color = Color.gray;
         subscribeActionBtn.interactable = false;
     }

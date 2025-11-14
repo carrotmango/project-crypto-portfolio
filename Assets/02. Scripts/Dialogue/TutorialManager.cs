@@ -133,7 +133,7 @@ public class TutorialManager : MonoBehaviour {
 
         //
         if (!timePausedOnce) {
-            Time.timeScale = 0f;   
+            Time.timeScale = 0f;
             timePausedOnce = true;
             CoinManager.Instance.SetTimeSpeed(TimeSpeed.Paused);
         }
@@ -197,7 +197,7 @@ public class TutorialManager : MonoBehaviour {
         DialogueNode n6 = new DialogueNode { text = "후... 일단 거래를 하는 방법부터 알려드릴께요." };
 
         DialogueNode n7 = new DialogueNode { text = "일단 하단에 있는 '앱' 버튼을 눌러보세요", action = DialogueAction.HighlightAppButton };
-        DialogueNode n8 = new DialogueNode { text = "이곳에 여러 앱들이 있는데, 간단하게 설명 드리자면"};
+        DialogueNode n8 = new DialogueNode { text = "이곳에 여러 앱들이 있는데, 간단하게 설명 드리자면" };
         DialogueNode n9 = new DialogueNode { text = "여기 있는 불비트가 우리 거래 앱이에요.", highlightTarget = HighlightTarget.Bullbit };
         DialogueNode n10 = new DialogueNode { text = "이곳에서 코인을 사고 팔 수 있어요", highlightTarget = HighlightTarget.Bullbit };
         DialogueNode n11 = new DialogueNode { text = "그리고 이건 은행앱이에요.", highlightTarget = HighlightTarget.Satoshi };
@@ -222,33 +222,33 @@ public class TutorialManager : MonoBehaviour {
         DialogueNode n30 = new DialogueNode { text = "좀 전에 알려드린 사토시 은행앱을 눌러서", highlightTarget = HighlightTarget.Satoshi };
         DialogueNode n31 = new DialogueNode { text = "입금을 한번 해보도록 하죠.", highlightTarget = HighlightTarget.SatoshiDimWithButton, action = DialogueAction.WaitForSatoshiDepositButton };
         DialogueNode n32 = new DialogueNode { text = "좋아요 여기가 은행 화면이에요.", blockPanelAlpha = 0.0f, highlightTarget = HighlightTarget.None };
-        DialogueNode n33 = new DialogueNode { text = $"회사 명의로 '{playerName}님 계좌에 200만원을 넣어드렸어요.",};
+        DialogueNode n33 = new DialogueNode { text = $"회사 명의로 '{playerName}님 계좌에 200만원을 넣어드렸어요.", };
         DialogueNode n34 = new DialogueNode { text = "이 돈을 한번 불비트 거래소로 옮겨보죠.", };
-        DialogueNode n35 = new DialogueNode { text = "화면 중앙에 있는 이체 버튼을 한번 눌러보세요.",highlightTarget= HighlightTarget.WithdrawButton, action = DialogueAction.WaitForWithdrawButton};
+        DialogueNode n35 = new DialogueNode { text = "화면 중앙에 있는 이체 버튼을 한번 눌러보세요.", highlightTarget = HighlightTarget.WithdrawButton, action = DialogueAction.WaitForWithdrawButton };
         DialogueNode n36 = new DialogueNode { text = "잘 하셨어요. 일단 이체할 플랫폼을 먼저 골라야해요.", };
         DialogueNode n37 = new DialogueNode { text = "저희는 거래를 해야하니까, 불비트 거래소로 송금 해야겠죠?", };
         DialogueNode n38 = new DialogueNode { text = "지금은 송금할 수 있는 플랫폼이 몇개 없겠지만", };
         DialogueNode n39 = new DialogueNode { text = "보유한 자금이 늘어나시다보면, 새로운 플랫폼이 해금될거에요.", };
         DialogueNode n40 = new DialogueNode { text = "일단 이체를 진행해 볼까요?", };
-        DialogueNode n41 = new DialogueNode { text = "전액'버튼을 누르고 이체 버튼을 눌러 모든금액을 송금해보죠.", action = DialogueAction.WaitForTransfer, highlightTarget= HighlightTarget.TransferDim };
+        DialogueNode n41 = new DialogueNode { text = "전액'버튼을 누르고 이체 버튼을 눌러 모든금액을 송금해보죠.", action = DialogueAction.WaitForTransfer, highlightTarget = HighlightTarget.TransferDim };
         DialogueNode n42 = new DialogueNode { text = "좋아요. 이렇게하면 정상적으로 송금이 됐을거에요.", };
         DialogueNode n43 = new DialogueNode { text = "그럼 저희는 불비트 거래소로 이동해 볼까요?", action = DialogueAction.HighlightBullbitButton };
         DialogueNode n44 = new DialogueNode { text = $"좋아요 왼쪽 상단을 보시면 입금된 잔액을 볼 수 있어요." };
         DialogueNode n45 = new DialogueNode { text = "잔액이 들어온것은 확인했고, 그러면 코인을 한번 매수해볼까요?" };
         DialogueNode n46 = new DialogueNode { text = "그러면 지금 절반의 비트코인과 이더리움을 매수해보죠." };
         DialogueNode n47 = new DialogueNode { text = "일단 비트코인을 먼저 매수해봐요.", action = DialogueAction.HighlightBitcoinBuy };
-        DialogueNode n48 = new DialogueNode { text = "좋아요, 생각보다 능숙하시네요?"};
+        DialogueNode n48 = new DialogueNode { text = "좋아요, 생각보다 능숙하시네요?" };
         DialogueNode n49 = new DialogueNode { text = "그러면 남은 잔액 전부로 이더리움을 매수해보죠", action = DialogueAction.HighlightEthBuy };
         DialogueNode n50 = new DialogueNode { text = "음, 망설임 없이 매수하시는걸 보니, 트레이더의 성향이 보이긴 하네요.", };
         DialogueNode n51 = new DialogueNode { text = "이제 매수를 했다면, 자신의 포트폴리오를 확인해야겠죠?", };
         DialogueNode n52 = new DialogueNode { text = "하단 자산관리 메뉴 버튼을 누르면, 포트폴리오를 볼 수 있어요.", };
-        DialogueNode n53 = new DialogueNode { text = "지금 바로 확인해볼까요?", action = DialogueAction.HighlightPortfolioButton};
-        DialogueNode n54 = new DialogueNode { text = "좋아요, 여기서 불비트를 선택해 보세요.", action = DialogueAction.WaitForClickBullPort};
+        DialogueNode n53 = new DialogueNode { text = "지금 바로 확인해볼까요?", action = DialogueAction.HighlightPortfolioButton };
+        DialogueNode n54 = new DialogueNode { text = "좋아요, 여기서 불비트를 선택해 보세요.", action = DialogueAction.WaitForClickBullPort };
         DialogueNode n55 = new DialogueNode { text = $"여기서 {playerName}님의 포트폴리오를 볼 수 있어요." };
         DialogueNode n56 = new DialogueNode { text = $"실시간으로 잔고가 요동치는 걸 볼 수 있죠.", action = DialogueAction.HighlightSymbolLabel_ON };
         DialogueNode n57 = new DialogueNode { text = $"코인의 이름을 또는 심볼명을 누르면 ", };
-        DialogueNode n58 = new DialogueNode { text = $"이 화면에서 바로 거래도 가능해요.",  action = DialogueAction.HighlightSymbolLabel_OFF };
-        DialogueNode n59 = new DialogueNode { text = $"좋아요, 매수 매도같이 기본적인 것은 여기까지에요.",};
+        DialogueNode n58 = new DialogueNode { text = $"이 화면에서 바로 거래도 가능해요.", action = DialogueAction.HighlightSymbolLabel_OFF };
+        DialogueNode n59 = new DialogueNode { text = $"좋아요, 매수 매도같이 기본적인 것은 여기까지에요.", };
         DialogueNode n60 = new DialogueNode { text = $"여기서 매수한 코인은 능력껏 잘 팔아보도록 해요.", };
         DialogueNode n61 = new DialogueNode { text = $"자산을 늘리다보면, 추가로 할 수 있는 것들도 열릴거에요.", };
         DialogueNode n62 = new DialogueNode { text = $"그때까지 시장에서 살아남을 수 있을진 모르겠지만...", };
@@ -322,7 +322,7 @@ public class TutorialManager : MonoBehaviour {
             return;
         }
 
-        if(currentNode.action == DialogueAction.WaitForWithdrawButton) {
+        if (currentNode.action == DialogueAction.WaitForWithdrawButton) {
             return;
         }
 
@@ -387,7 +387,7 @@ public class TutorialManager : MonoBehaviour {
             if (currentNode.isChoice) {
                 yesButton.gameObject.SetActive(true);
                 noButton.gameObject.SetActive(true);
-           
+
             }
             // 스킵했을 때도 하이라이트 적용
             if (currentNode.highlightTarget != HighlightTarget.None) {
@@ -525,7 +525,7 @@ public class TutorialManager : MonoBehaviour {
 
             bullbitPortfolioRowButton.onClick.AddListener(() => {
 
-                 porfolioInnerDim.SetActive(false);
+                porfolioInnerDim.SetActive(false);
 
                 // 튜토리얼이 아직 안 끝났을 때만 패널 다시 켬
                 if (!tutorialFinished) {
@@ -630,6 +630,7 @@ public class TutorialManager : MonoBehaviour {
         HighlightButton(halfBtn);
         fifyDim.SetActive(true);
         halfBtn.onClick.AddListener(() => {
+            if (tutorialFinished) return;
             StopHighlight(halfBtn);
             fifyDim.SetActive(false);
 
@@ -675,10 +676,11 @@ public class TutorialManager : MonoBehaviour {
         Button allBtn = ratioBtn.GetComponent<Button>();
         if (allBtn == null) yield break;
 
-        // 50% 버튼 강조
+        // 100% 버튼 강조
         HighlightButton(allBtn);
         AllDim.SetActive(true);
         allBtn.onClick.AddListener(() => {
+            if (tutorialFinished) return;
             StopHighlight(allBtn);
             AllDim.SetActive(false);
 

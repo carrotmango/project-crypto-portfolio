@@ -23,7 +23,7 @@ public class WebBridgeManager : MonoBehaviour
         if (string.IsNullOrEmpty(wallet))
         {
             walletAddress = "Local"; // 
-            Debug.Log("React 지갑주소 없음 → Local 모드로 설정");
+            Debug.Log("React 지갑주소 없음 >> Local 모드로 설정");
         }
         else
         {
