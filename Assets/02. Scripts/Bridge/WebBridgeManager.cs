@@ -28,7 +28,7 @@ public class WebBridgeManager : MonoBehaviour
         else
         {
             walletAddress = wallet;
-            Debug.Log("React로부터 받은 지갑 주소: " + wallet);
+            Debug.Log("React로부터 받은 지갑 / 이메일 주소: " + wallet);
         }
 
         UpdateWalletUI();
@@ -38,7 +38,7 @@ public class WebBridgeManager : MonoBehaviour
     {
         if (walletText != null)
         {
-            walletText.text = "지갑 주소: " + walletAddress;
+            walletText.text = "지갑 / 이메일: " + walletAddress;
         }
     }
 }

@@ -4,6 +4,10 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance { get; private set; }
+    
+    public string playerName;
+    public string birthday;
+    public int characterIndex;
 
     public double bullbitCash;
     public double satoshiBankCash;

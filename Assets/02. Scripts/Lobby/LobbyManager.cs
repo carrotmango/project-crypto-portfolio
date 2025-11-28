@@ -2,34 +2,30 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class LobbyManager : MonoBehaviour {
-    [Header("Game Start Options")]
-    public GameObject startOptionPanel;
+public class LobbyManager : MonoBehaviour
+{
+    [Header("Game Start Options")] public GameObject startOptionPanel;
     public Button newGameButton;
     public Button loadGameButton;
     public Toggle tutorialToggle; // 튜토리얼 실행 여부 선택
 
-    [Header("Panels")]
-    public GameObject lobbyPanel;
+    [Header("Panels")] public GameObject lobbyPanel;
     public GameObject mainPanel;
     public GameObject gameStartPanel;
     public GameObject CharacterPanel;
     public StatusPanelController statusPanelController;
 
-    [Header("UI Elements")]
-    public TMP_InputField nameInput;
+    [Header("UI Elements")] public TMP_InputField nameInput;
     public Button startButton;
     public Button gameStartButton;
     public Button leftArrow;
     public Button rightArrow;
 
-    [Header("Character Selection")]
-    public Image displayImage;
+    [Header("Character Selection")] public Image displayImage;
     public Sprite[] characterSprites;
     private int currentCharacterIndex = 0;
 
-    [Header("Birthday Selection")]
-    public TextMeshProUGUI monthText;
+    [Header("Birthday Selection")] public TextMeshProUGUI monthText;
     public TextMeshProUGUI dayText;
     public Button monthLeftButton;
     public Button monthRightButton;
@@ -41,7 +37,8 @@ public class LobbyManager : MonoBehaviour {
 
     public BgmPlayer bgmPlayer;
 
-    void Start() {
+    void Start()
+    {
         Time.timeScale = 0f;
 
         // 리스너 등록
@@ -65,19 +62,22 @@ public class LobbyManager : MonoBehaviour {
     // -------------------------------
     // 캐릭터 선택
     // -------------------------------
-    void ShowCharacter(int index) {
+    void ShowCharacter(int index)
+    {
         if (characterSprites.Length == 0) return;
         displayImage.sprite = characterSprites[index];
     }
 
-    void PrevCharacter() {
+    void PrevCharacter()
+    {
         currentCharacterIndex--;
         if (currentCharacterIndex < 0)
             currentCharacterIndex = characterSprites.Length - 1;
         ShowCharacter(currentCharacterIndex);
     }
 
-    void NextCharacter() {
+    void NextCharacter()
+    {
         currentCharacterIndex++;
         if (currentCharacterIndex >= characterSprites.Length)
             currentCharacterIndex = 0;
@@ -87,44 +87,52 @@ public class LobbyManager : MonoBehaviour {
     // -------------------------------
     // 생일 설정
     // -------------------------------
-    void PrevMonth() {
+    void PrevMonth()
+    {
         month--;
         if (month < 1) month = 12;
         ClampDayToMonth();
         UpdateBirthdayDisplay();
     }
 
-    void NextMonth() {
+    void NextMonth()
+    {
         month++;
         if (month > 12) month = 1;
         ClampDayToMonth();
         UpdateBirthdayDisplay();
     }
 
-    void PrevDay() {
+    void PrevDay()
+    {
         day--;
         if (day < 1) day = GetDaysInMonth(month);
         UpdateBirthdayDisplay();
     }
 
-    void NextDay() {
+    void NextDay()
+    {
         day++;
         if (day > GetDaysInMonth(month)) day = 1;
         UpdateBirthdayDisplay();
     }
 
-    void UpdateBirthdayDisplay() {
+    void UpdateBirthdayDisplay()
+    {
         monthText.text = $"{month}월";
         dayText.text = $"{day}일";
     }
 
-    void ClampDayToMonth() {
+    void ClampDayToMonth()
+    {
         int maxDay = GetDaysInMonth(month);
         if (day > maxDay) day = maxDay;
     }
 
-    int GetDaysInMonth(int month) {
-        switch (month) {
+    int GetDaysInMonth(int month)
+    {
+        switch (month)
+        {
             case 2: return 28;
             case 4:
             case 6:
@@ -137,8 +145,10 @@ public class LobbyManager : MonoBehaviour {
     // -------------------------------
     // 시작 버튼 동작
     // -------------------------------
-    void OnStartClicked() {
-        if (string.IsNullOrWhiteSpace(nameInput.text)) {
+    void OnStartClicked()
+    {
+        if (string.IsNullOrWhiteSpace(nameInput.text))
+        {
             Debug.LogWarning("이름을 입력해주세요.");
             return;
         }
@@ -148,61 +158,104 @@ public class LobbyManager : MonoBehaviour {
 
         Debug.Log($"플레이어 이름: {playerName}, 생일: {birthday}, 캐릭터 인덱스: {currentCharacterIndex}");
 
+        PlayerManager.Instance.playerName = playerName;
+        PlayerManager.Instance.birthday = birthday;
+        PlayerManager.Instance.characterIndex = currentCharacterIndex;
+
         lobbyPanel.SetActive(false);
         mainPanel.SetActive(true);
 
         statusPanelController.SetPlayerInfo(playerName, currentCharacterIndex, birthday);
 
         WebMessageSender sender = FindAnyObjectByType<WebMessageSender>();
-        if (sender != null) {
+        if (sender != null)
+        {
             sender.playerName = playerName;
             sender.totalAsset = 2100000; // 초기 자산
             sender.SendPlayerDataToWeb(); // 게임 시작 시 Web으로 전송
-        } else {
+        }
+        else
+        {
             Debug.LogWarning("[LobbyManager] WebMessageSender가 씬에 없습니다.");
         }
 
 
         // 튜토리얼 실행 여부 체크
-        if (TutorialManager.Instance != null && tutorialToggle != null && tutorialToggle.isOn) {
+        if (TutorialManager.Instance != null && tutorialToggle != null && tutorialToggle.isOn)
+        {
             TutorialManager.Instance.StartTutorial();
-        } else {
+        }
+        else
+        {
             Debug.Log("[LobbyManager] 튜토리얼 스킵됨");
 
             Time.timeScale = 1f;
             if (CoinManager.Instance != null)
                 CoinManager.Instance.SetTimeSpeed(TimeSpeed.Normal);
         }
-
     }
 
-    void GameStart() {
+    void GameStart()
+    {
         gameStartButton.gameObject.SetActive(false);
         startOptionPanel.SetActive(true);
     }
 
-    void OnNewGameClicked() {
+    void OnNewGameClicked()
+    {
         Debug.Log("새 게임 시작");
         SaveManager.DeleteSave();
 
         CharacterPanel.SetActive(true);
         gameStartPanel.SetActive(false);
         startOptionPanel.SetActive(false);
-
     }
 
-    void OnLoadGameClicked() {
-        Debug.Log("불러오기 시도 중...");
+    void OnLoadGameClicked()
+    {
+        Debug.Log("불러오기 시도...");
         GameData data = SaveManager.Load();
-        if (data != null) {
-            Debug.Log("게임 불러오기 성공!");
+
+        if (data != null)
+        {
+            Debug.Log("불러오기 성공!");
+
+            // PlayerManager에 반영
+            PlayerManager.Instance.playerName = data.playerName;
+            PlayerManager.Instance.birthday = data.birthday;
+            PlayerManager.Instance.characterIndex = data.characterIndex;
+
+            // UI에 표시
             nameInput.text = data.playerName;
-            monthText.text = data.birthday.Split('월')[0] + "월";
-            dayText.text = data.birthday.Split('월')[1];
+
+            string[] temp = data.birthday.Replace("일", "").Split('월');
+            month = int.Parse(temp[0]);
+            day = int.Parse(temp[1]);
+
+            UpdateBirthdayDisplay();
+
             currentCharacterIndex = data.characterIndex;
             ShowCharacter(currentCharacterIndex);
-        } else {
-            Debug.LogWarning("저장된 데이터가 없습니다.");
+
+            // StatusPanel 업데이트
+            statusPanelController.SetPlayerInfo(
+                PlayerManager.Instance.playerName,
+                PlayerManager.Instance.characterIndex,
+                PlayerManager.Instance.birthday
+            );
+
+            // 게임 시작 공통 처리 (TimeScale 등)
+            Time.timeScale = 1f;
+            if (CoinManager.Instance != null)
+                CoinManager.Instance.SetTimeSpeed(TimeSpeed.Normal);
+            
+            // 로비  메인 패널 전환
+            lobbyPanel.SetActive(false);
+            mainPanel.SetActive(true);
+        }
+        else
+        {
+            Debug.LogWarning("저장된 데이터 없음!");
         }
     }
 }
