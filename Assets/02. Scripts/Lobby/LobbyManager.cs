@@ -1,9 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
+using System;
+using static ChartRenderer;
 
-public class LobbyManager : MonoBehaviour
-{
+public class LobbyManager : MonoBehaviour {
     [Header("Game Start Options")] public GameObject startOptionPanel;
     public Button newGameButton;
     public Button loadGameButton;
@@ -37,8 +39,7 @@ public class LobbyManager : MonoBehaviour
 
     public BgmPlayer bgmPlayer;
 
-    void Start()
-    {
+    void Start() {
         Time.timeScale = 0f;
 
         // 리스너 등록
@@ -62,22 +63,19 @@ public class LobbyManager : MonoBehaviour
     // -------------------------------
     // 캐릭터 선택
     // -------------------------------
-    void ShowCharacter(int index)
-    {
+    void ShowCharacter(int index) {
         if (characterSprites.Length == 0) return;
         displayImage.sprite = characterSprites[index];
     }
 
-    void PrevCharacter()
-    {
+    void PrevCharacter() {
         currentCharacterIndex--;
         if (currentCharacterIndex < 0)
             currentCharacterIndex = characterSprites.Length - 1;
         ShowCharacter(currentCharacterIndex);
     }
 
-    void NextCharacter()
-    {
+    void NextCharacter() {
         currentCharacterIndex++;
         if (currentCharacterIndex >= characterSprites.Length)
             currentCharacterIndex = 0;
@@ -87,52 +85,44 @@ public class LobbyManager : MonoBehaviour
     // -------------------------------
     // 생일 설정
     // -------------------------------
-    void PrevMonth()
-    {
+    void PrevMonth() {
         month--;
         if (month < 1) month = 12;
         ClampDayToMonth();
         UpdateBirthdayDisplay();
     }
 
-    void NextMonth()
-    {
+    void NextMonth() {
         month++;
         if (month > 12) month = 1;
         ClampDayToMonth();
         UpdateBirthdayDisplay();
     }
 
-    void PrevDay()
-    {
+    void PrevDay() {
         day--;
         if (day < 1) day = GetDaysInMonth(month);
         UpdateBirthdayDisplay();
     }
 
-    void NextDay()
-    {
+    void NextDay() {
         day++;
         if (day > GetDaysInMonth(month)) day = 1;
         UpdateBirthdayDisplay();
     }
 
-    void UpdateBirthdayDisplay()
-    {
+    void UpdateBirthdayDisplay() {
         monthText.text = $"{month}월";
         dayText.text = $"{day}일";
     }
 
-    void ClampDayToMonth()
-    {
+    void ClampDayToMonth() {
         int maxDay = GetDaysInMonth(month);
         if (day > maxDay) day = maxDay;
     }
 
-    int GetDaysInMonth(int month)
-    {
-        switch (month)
-        {
+    int GetDaysInMonth(int month) {
+        switch (month) {
             case 2: return 28;
             case 4:
             case 6:
@@ -145,10 +135,8 @@ public class LobbyManager : MonoBehaviour
     // -------------------------------
     // 시작 버튼 동작
     // -------------------------------
-    void OnStartClicked()
-    {
-        if (string.IsNullOrWhiteSpace(nameInput.text))
-        {
+    void OnStartClicked() {
+        if (string.IsNullOrWhiteSpace(nameInput.text)) {
             Debug.LogWarning("이름을 입력해주세요.");
             return;
         }
@@ -168,25 +156,19 @@ public class LobbyManager : MonoBehaviour
         statusPanelController.SetPlayerInfo(playerName, currentCharacterIndex, birthday);
 
         WebMessageSender sender = FindAnyObjectByType<WebMessageSender>();
-        if (sender != null)
-        {
+        if (sender != null) {
             sender.playerName = playerName;
             sender.totalAsset = 2100000; // 초기 자산
             sender.SendPlayerDataToWeb(); // 게임 시작 시 Web으로 전송
-        }
-        else
-        {
+        } else {
             Debug.LogWarning("[LobbyManager] WebMessageSender가 씬에 없습니다.");
         }
 
 
         // 튜토리얼 실행 여부 체크
-        if (TutorialManager.Instance != null && tutorialToggle != null && tutorialToggle.isOn)
-        {
+        if (TutorialManager.Instance != null && tutorialToggle != null && tutorialToggle.isOn) {
             TutorialManager.Instance.StartTutorial();
-        }
-        else
-        {
+        } else {
             Debug.Log("[LobbyManager] 튜토리얼 스킵됨");
 
             Time.timeScale = 1f;
@@ -195,14 +177,12 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    void GameStart()
-    {
+    void GameStart() {
         gameStartButton.gameObject.SetActive(false);
         startOptionPanel.SetActive(true);
     }
 
-    void OnNewGameClicked()
-    {
+    void OnNewGameClicked() {
         Debug.Log("새 게임 시작");
         SaveManager.DeleteSave();
 
@@ -211,19 +191,90 @@ public class LobbyManager : MonoBehaviour
         startOptionPanel.SetActive(false);
     }
 
-    void OnLoadGameClicked()
-    {
+    void OnLoadGameClicked() {
         Debug.Log("불러오기 시도...");
         GameData data = SaveManager.Load();
 
-        if (data != null)
-        {
+        if (data != null) {
             Debug.Log("불러오기 성공!");
 
             // PlayerManager에 반영
             PlayerManager.Instance.playerName = data.playerName;
             PlayerManager.Instance.birthday = data.birthday;
             PlayerManager.Instance.characterIndex = data.characterIndex;
+
+            PlayerManager.Instance.bullbitCash = data.bullbitCash;
+            PlayerManager.Instance.satoshiBankCash = data.satoshiBankCash;
+            PlayerManager.Instance.mangoCasinoCash = data.mangoCasinoCash;
+
+            PlayerManager.Instance.holdings.Clear();
+            foreach (var item in data.holdings) {
+                PlayerManager.Instance.holdings[item.symbol] = item.value;
+            }
+
+            PlayerManager.Instance.totalBuyAmount.Clear();
+            foreach (var item in data.totalBuyAmount) {
+                PlayerManager.Instance.totalBuyAmount[item.symbol] = item.value;
+            }
+
+            PlayerManager.Instance.totalBuyQuantity.Clear();
+            foreach (var item in data.totalBuyQuantity) {
+                PlayerManager.Instance.totalBuyQuantity[item.symbol] = item.value;
+            }
+
+            // CoinManager
+            CoinManager.Instance.survivalDays = data.survivalDays;
+
+
+
+            // 날짜 복원
+            if (DateTime.TryParse(data.savedDateTime,
+                null,
+                System.Globalization.DateTimeStyles.RoundtripKind,
+                out DateTime parsed)) {
+                CoinManager.Instance.SetDateTime(parsed);
+            }
+
+            // tickCount 복원
+            CoinManager.Instance.SetTickCount(data.tickCount);
+
+            CoinManager.Instance.coins.Clear();
+
+
+            // --- Step 1) saved.isListed 를 MetaDatabase 에 먼저 반영 ---
+            foreach (var saved in data.savedCoins) {
+                var meta = Array.Find(CoinMetaDatabase.AllCoins, m => m.Symbol == saved.symbol);
+                if (meta != null)
+                    meta.BullbitListed = saved.isListed;
+            }
+
+            // --- Step 2) 반영된 MetaDatabase 를 기준으로 CoinData 리스트 재생성 ---
+            CoinManager.Instance.coins.Clear();
+
+            foreach (var meta in CoinMetaDatabase.AllCoins) {
+                if (meta.BullbitListed) {
+                    var coin = new CoinData(meta.Name, meta.Symbol, meta.InitialPrice, meta.MaxSupply);
+                    CoinManager.Instance.coins.Add(coin);
+                }
+            }
+
+            // --- Step 3) CoinData 에 저장된 세부 정보 덮어쓰기 ---
+            foreach (var saved in data.savedCoins) {
+                var coin = CoinManager.Instance.coins.Find(c => c.Symbol == saved.symbol);
+                if (coin == null)
+                    continue;
+
+                coin.CurrentPrice = saved.currentPrice;
+                coin.InitialPrice = saved.initialPrice;
+
+                coin.PriceHistory = new List<double>(saved.priceHistory);
+                coin.CandleHistory = new List<CandleData>(saved.candles);
+
+                coin.CurrentPhaseOverride = saved.phaseOverride;
+                coin.PhaseOverrideEndTime = new DateTime(saved.phaseOverrideEndTicks);
+            }
+
+
 
             // UI에 표시
             nameInput.text = data.playerName;
@@ -248,14 +299,113 @@ public class LobbyManager : MonoBehaviour
             Time.timeScale = 1f;
             if (CoinManager.Instance != null)
                 CoinManager.Instance.SetTimeSpeed(TimeSpeed.Normal);
-            
+
+            var ui = FindAnyObjectByType<MainUIManager>();
+            if (ui != null) {
+                ui.RefreshCoinRows();
+            }
+
+            RestoreXFeed(data);
+            RestoreActiveEffects(data);
+
+            // ------------------------------
+            // MarketPhase 복원
+            // ------------------------------
+            if (!string.IsNullOrEmpty(data.savedMarketPhase)) {
+                MarketPhase loadedPhase;
+
+                if (Enum.TryParse(data.savedMarketPhase, out loadedPhase)) {
+                    CoinManager.Instance.CurrentMarket = loadedPhase;
+                    Debug.Log("[LOAD] 전체 MarketPhase 복원됨: " + loadedPhase);
+                } else {
+                    Debug.LogWarning("[LOAD] MarketPhase 파싱 실패: " + data.savedMarketPhase);
+                }
+            } else {
+                Debug.Log("[LOAD] savedMarketPhase 없음. 기본 MarketPhase 유지");
+            }
+
+            // ==========================
+            // 구독 정보 복원
+            // ==========================
+            var xn = XNotificationManager.Instance;
+
+            xn.isSubscribed = data.isSubscribed;
+            xn.isCancelRequested = data.isCancelRequested;
+
+            if (!string.IsNullOrEmpty(data.nextBillingDate)) {
+                if (DateTime.TryParse(data.nextBillingDate,
+                    null,
+                    System.Globalization.DateTimeStyles.RoundtripKind,
+                    out DateTime parsedBilling)) {
+                    xn.nextBillingDate = parsedBilling;
+                    Debug.Log("[LOAD] nextBillingDate 복원됨: " + parsedBilling);
+                } else {
+                    Debug.LogWarning("[LOAD] nextBillingDate 파싱 실패: " + data.nextBillingDate);
+                }
+            } else {
+                // nextBillingDate 없으면 기본값
+                xn.nextBillingDate = CoinManager.Instance.CurrentDateTime.AddDays(30);
+            }
+
+
+
+
             // 로비  메인 패널 전환
             lobbyPanel.SetActive(false);
             mainPanel.SetActive(true);
-        }
-        else
-        {
+        } else {
             Debug.LogWarning("저장된 데이터 없음!");
+        }
+    }
+
+    private void RestoreXFeed(GameData data) {
+        if (data == null || data.xFeedPosts == null)
+            return;
+
+        var spawner = XFeedSpawner.Instance;
+        if (spawner == null)
+            return;
+
+        // XFeedSpawner가 저장된 포스트 전체를 UI로 복원
+        spawner.LoadFeed(data.xFeedPosts);
+    }
+
+    private void RestoreActiveEffects(GameData data) {
+        var orch = EventOrchestrator.Instance;
+        var repo = FindAnyObjectByType<XPostRepository>();
+        var now = CoinManager.Instance.CurrentDateTime;
+
+        if (orch == null || repo == null) return;
+
+        foreach (var eff in data.activeEffects) {
+            if (!DateTime.TryParse(eff.startTime, null,
+                System.Globalization.DateTimeStyles.RoundtripKind,
+                out DateTime start))
+                continue;
+
+            if (!repo.TryGet(eff.authorId, eff.eventKey, out var xdata)) {
+                Debug.LogWarning("[Restore] Repo에서 찾지 못함: " + eff.authorId + "/" + eff.eventKey);
+                continue;
+            }
+
+            DateTime end = start.AddHours(xdata.durationHours);
+
+            Debug.Log("[Restore] event=" + eff.eventKey +
+                      " start=" + start +
+                      " end=" + end +
+                      " now=" + now);
+
+            if (now < end) {
+                orch.RestoreEffect(xdata, start);
+                Debug.Log("[Restore] 효과 복원됨");
+            } else {
+                if (!string.IsNullOrEmpty(xdata.marketPhaseAfter)) {
+                    CoinManager.Instance.CurrentMarket =
+                        orch.ParsePhase(xdata.marketPhaseAfter);
+
+                    Debug.Log("[Restore] 기간 지남 >> afterPhase 적용");
+                }
+            }
         }
     }
 }

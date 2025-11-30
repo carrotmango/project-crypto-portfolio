@@ -56,6 +56,8 @@ public class CoinManager : MonoBehaviour
     public AppType currentApp = AppType.Bullbit;
 
     public DateTime CurrentDateTime => currentDateTime;
+    public int TickCount => tickCount;
+
 
     public double GetMangoCasinoAsset() => PlayerManager.Instance.mangoCasinoCash;
 
@@ -256,8 +258,7 @@ public class CoinManager : MonoBehaviour
 
         // 메인 UI 갱신
         var uiManager = FindObjectOfType<MainUIManager>();
-        if (uiManager != null)
-        {
+        if (uiManager != null) {
             uiManager.AddCoinRow(coin);
         }
 
@@ -267,5 +268,11 @@ public class CoinManager : MonoBehaviour
         Debug.Log($"[신규 상장] 코인 '{symbol}'이(가) 시장에 추가되었습니다.");
     }
 
+    public void SetTickCount(int value) {
+        tickCount = value;
+    }
+    public void SetDateTime(DateTime dt) {
+        currentDateTime = dt;
+    }
 
 }

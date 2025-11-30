@@ -21,6 +21,7 @@
           "overrideMarketPhase": true,
           "marketPhaseToSet": "Sideways",
           "durationHours": 8,
+          "marketPhaseAfter": "Sideways",
           "eventMustRequired": true,
           "targetGroups": []
         }
@@ -47,6 +48,7 @@
           "overrideMarketPhase": true,
           "marketPhaseToSet": "Bull",
           "durationHours": 36,
+          "marketPhaseAfter": "Sideways",
           "eventMustRequired": true,
           "targetGroups": [
             {
@@ -78,6 +80,7 @@
           "overrideMarketPhase": false,
           "marketPhaseToSet": "Bull",
           "durationHours": 36,
+          "marketPhaseAfter": "Sideways",
           "eventMustRequired": true,
           "targetGroups": [
             {
@@ -109,6 +112,7 @@
           "overrideMarketPhase": true,
           "marketPhaseToSet": "MildBull",
           "durationHours": 44,
+          "marketPhaseAfter": "Sideways",
           "eventMustRequired": true,
           "targetGroups": [
             {
@@ -145,6 +149,7 @@
           "overrideMarketPhase": true,
           "marketPhaseToSet": "BigBull",
           "durationHours": 72,
+          "marketPhaseAfter": "MildBull",
           "eventMustRequired": true,
           "targetGroups": [
             {
@@ -190,6 +195,7 @@
           "overrideMarketPhase": true,
           "marketPhaseToSet": "MegaBear",
           "durationHours": 48,
+          "marketPhaseAfter": "Bear",
           "eventMustRequired": true,
           "targetGroups": [
             {
@@ -224,6 +230,7 @@
           "overrideMarketPhase": true,
           "marketPhaseToSet": "Sideways",
           "durationHours": 24,
+          "marketPhaseAfter": "MildBull",
           "eventMustRequired": true,
           "targetGroups": [
             {
@@ -254,6 +261,7 @@
           "overrideMarketPhase": true,
           "marketPhaseToSet": "MildBull",
           "durationHours": 48,
+          "marketPhaseAfter": "Sideways",
           "eventMustRequired": true,
           "targetGroups": [
             {
@@ -284,6 +292,7 @@
           "overrideMarketPhase": true,
           "marketPhaseToSet": "MildBear",
           "durationHours": 12,
+          "marketPhaseAfter": "MegaBull",
           "eventMustRequired": true,
           "targetGroups": [
             {
@@ -414,17 +423,14 @@
           "eventSystemEnabled": true,
           "profileImage": "bullbit.png",
           "name": "불비트 뉴스",
-          "date": "01/08/2016",
-          "time": "15:00",
+          "date": "",
+          "time": "",
           "content": "분산형 애플리케이션(dApp)과 디지털 자산을 지원하도록 설계된 차세대 레이어1 블록체인\n 수이가 1월 9일 15:00 에 불비트 거래소에 정식 상장됩니다. 많은 관심 바랍니다.",
           "contentImage": "",
           "width": 550,
           "height": 400,
           "startDate": "01/08/2016 15:00",
           "endDate": "01/08/2016 15:00",
-          "overrideMarketPhase": true,
-          "marketPhaseToSet": "MegaBear",
-          "durationHours": 24,
           "eventMustRequired": true
         },
         {
@@ -465,9 +471,6 @@
           "height": 0,
           "startDate": "01/09/2016 15:30",
           "endDate": "01/09/2016 15:30",
-          "overrideMarketPhase": true,
-          "marketPhaseToSet": "Bear",
-          "durationHours": 24,
           "eventMustRequired": true,
           "targetGroups": [
             {
@@ -476,7 +479,7 @@
               ],
               "priceChangeMin": -20,
               "priceChangeMax": -25,
-              "marketPhaseToSet": "Bear",
+              "marketPhaseToSet": "Sideways",
               "durationHours": 4
             }
           ]
@@ -495,9 +498,6 @@
           "height": 0,
           "startDate": "01/09/2016 20:00",
           "endDate": "01/09/2016 20:00",
-          "overrideMarketPhase": true,
-          "marketPhaseToSet": "Bear",
-          "durationHours": 24,
           "eventMustRequired": true,
           "targetGroups": [
             {

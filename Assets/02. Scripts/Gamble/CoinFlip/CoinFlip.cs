@@ -54,7 +54,7 @@ public class CoinFlip : MonoBehaviour {
         frontButton.interactable = false;
         backButton.interactable = false;
 
-        // ★ 유저 선택 순간 스핀 애니메이션 시작됨
+        // 유저 선택 순간 스핀 애니메이션 시작됨
         coinAnimator.gameObject.SetActive(true);
         coinAnimator.speed = 1f;
         coinAnimator.Play("CoinSpin", -1, 0f);

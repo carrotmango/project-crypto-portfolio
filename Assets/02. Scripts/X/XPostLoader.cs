@@ -2,61 +2,54 @@
 using UnityEngine.UI;
 using TMPro;
 using System.IO;
-using System;
 
 #region Data Structure
 
 [System.Serializable]
 public class XTargetGroup {
-    public string[] symbols;                      // 타겟 코인들
-    public float priceChangeMin = 0f;
-    public float priceChangeMax = 0f;
-    public bool priceChangeFixed = false;         // true: 고정, false: 랜덤
-    public string marketPhaseToSet = "";          // 개별 코인에 부여될 페이즈
-    public int durationHours = 6;                 // 개별 코인에 적용되는 지속 시간
-
+    public string[] symbols;
+    public float priceChangeMin;
+    public float priceChangeMax;
+    public bool priceChangeFixed;
+    public string marketPhaseToSet;
+    public int durationHours;
 }
 
 [System.Serializable]
 public class XPostData {
-    [Header("기본 정보")]
     public string key;
     public string profileImage;
     public string name;
-    public string date;  // "MM/dd/yyyy"
-    public string time;  // "HH:mm"
+    public string date;
+    public string time;
     [TextArea] public string content;
     public string contentImage;
     public float width = 550f;
     public float height = 700f;
-    public string eventType;
 
-    [Header("이벤트 시간 설정")]
-    public string startDate;  // "MM/dd/yyyy HH:mm"
+    public string startDate;
     public string endDate;
-    public bool eventMustRequired = false;
+    public bool eventMustRequired;
 
-    [Header("시장 상태 영향")]
-    public bool overrideMarketPhase = false;
-    public string marketPhaseToSet;
+    public bool overrideMarketPhase;
+    public string marketPhaseToSet;       // 전체 시장용
     public string marketPhaseAfter;
 
-    [Header("이벤트 지속 시간")]
-    public int durationHours = 6;
+    public int durationHours;             // 전체 시장 이벤트 지속시간
+    public bool affectAllCoins;
 
-    [Header("전체 시장 영향 설정")]
-    public bool affectAllCoins = false;  
-
-    [Header("타겟 코인 그룹 영향 설정")]
     public XTargetGroup[] targetGroups;
 
     public bool postYn = true;
+    public string eventType;
+
+    public string authorId;
 }
 
 #endregion
 
 public class XPostLoader : MonoBehaviour {
-    [Header("Refs")]
+    // UI
     public Image profileImage;
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI dateText;
@@ -66,15 +59,78 @@ public class XPostLoader : MonoBehaviour {
     public GameObject contentImageContainer;
     public Image contentImage;
 
+    // Saved Data (UI + 이벤트 시스템)
+    public string key;
+    public string authorName;
+    public string profileImgName;
+    public string contentImgName;
+    public string date;
+    public string time;
+    public string content;
+    public float width;
+    public float height;
+
+    public bool eventMustRequired;
+    public bool overrideMarketPhase;
+    public string marketPhaseToSet;
+    public string marketPhaseAfter;
+    public int durationHours;
+    public bool affectAllCoins;
+
+    public string startDate;
+    public string endDate;
+
+    public XTargetGroup[] targetGroups;
+
+    public bool postYn;
+    public XPostData originalData;
+
+
     public void Load(XPostData data) {
+        // UI 반영
         nameText.text = data.name ?? "Unknown";
         dateText.text = data.date ?? "--/--/----";
         timeText.text = data.time ?? "--:--";
         contentText.text = data.content ?? "(No content)";
 
         TrySetSpriteOrHide(profileImage, "image/profile", data.profileImage, null);
-        TrySetSpriteOrHide(contentImage, "image/content", data.contentImage, contentImageContainer ?? contentImage?.gameObject);
+        TrySetSpriteOrHide(contentImage, "image/content", data.contentImage,
+            contentImageContainer ?? contentImage?.gameObject);
+
+        // 저장될 값들
+        key = data.key;
+        authorName = data.name;
+        profileImgName = data.profileImage;
+        contentImgName = data.contentImage;
+
+        date = data.date;
+        time = data.time;
+        content = data.content;
+
+        width = data.width;
+        height = data.height;
+
+        postYn = data.postYn;
+
+        // 이벤트 정보 저장
+        eventMustRequired = data.eventMustRequired;
+
+        overrideMarketPhase = data.overrideMarketPhase;
+        marketPhaseToSet = data.marketPhaseToSet;         // 전체 시장
+        marketPhaseAfter = data.marketPhaseAfter;
+
+        durationHours = data.durationHours;               // 전체 지속시간
+        affectAllCoins = data.affectAllCoins;
+
+        startDate = data.startDate;
+        endDate = data.endDate;
+
+        // 타겟 그룹
+        targetGroups = data.targetGroups;
+
+        originalData = data;
     }
+
 
     private void TrySetSpriteOrHide(Image target, string folder, string fileName, GameObject containerToToggle) {
         if (string.IsNullOrEmpty(fileName)) {
@@ -97,7 +153,6 @@ public class XPostLoader : MonoBehaviour {
         if (target != null) {
             target.enabled = true;
             target.sprite = sprite;
-            // target.SetNativeSize(); // 필요 시
         }
     }
 }

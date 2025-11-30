@@ -7,9 +7,17 @@ public class EventOrchestrator : MonoBehaviour {
     public XPostRepository repo;
     public XFeedSpawner feed;
     public CoinManager coinManager;
-
-    private List<(XPostData data, DateTime startTime)> activeEffects = new();
+    public List<(XPostData data, DateTime startTime)> activeEffects = new();
     private HashSet<string> executedEvents = new(); // 중복 실행 방지용
+    public static EventOrchestrator Instance;
+
+    private void Awake() {
+        if (Instance != null && Instance != this) {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
 
     private void Update() {
         DateTime now = coinManager.CurrentDateTime;
@@ -58,28 +66,24 @@ public class EventOrchestrator : MonoBehaviour {
         }
     }
 
-    private void ApplyTweetEffect(XPostData data)
-    {
+    private void ApplyTweetEffect(XPostData data) {
         HashSet<string> individuallyHandled = new();
 
         // 1. 개별 코인 그룹(targetGroups)
         if (data.targetGroups != null) // 수정됨: = 를 != 로 변경
         {
-            foreach (var group in data.targetGroups)
-            {
+            foreach (var group in data.targetGroups) {
                 // 상장 이벤트 처리
                 if (!string.IsNullOrEmpty(data.eventType) && data.eventType == "Listing") // 수정됨: ! 추가
                 {
-                    foreach (var symbol in group.symbols)
-                    {
+                    foreach (var symbol in group.symbols) {
                         coinManager.ListNewCoin(symbol);
                     }
                     continue; // 상장 이벤트는 가격 변동 없이 여기서 끝
                 }
 
                 // 기존 가격/페이즈 변동 처리
-                foreach (var symbol in group.symbols)
-                {
+                foreach (var symbol in group.symbols) {
                     var coin = coinManager.coins.Find(c => c.Symbol == symbol);
                     if (coin == null) continue;
 
@@ -118,7 +122,7 @@ public class EventOrchestrator : MonoBehaviour {
         /*Debug.Log($"[시장 페이즈 종료 → 복귀] {afterPhase}");*/
     }
 
-    private MarketPhase ParsePhase(string value, MarketPhase fallback = MarketPhase.Sideways) {
+    public MarketPhase ParsePhase(string value, MarketPhase fallback = MarketPhase.Sideways) {
         if (!string.IsNullOrEmpty(value) && Enum.TryParse(value, out MarketPhase parsed)) {
             return parsed;
         }
@@ -144,6 +148,101 @@ public class EventOrchestrator : MonoBehaviour {
             }
         }
     }
+    public void RestoreEffect(XPostData data, DateTime startTime) {
+        // 지속 효과 재등록
+        activeEffects.Add((data, startTime));
+
+        // 개별 코인 페이즈 복원
+        if (data.targetGroups != null) {
+            foreach (var group in data.targetGroups) {
+                foreach (var symbol in group.symbols) {
+                    var coin = coinManager.coins.Find(c => c.Symbol == symbol);
+                    if (coin == null) continue;
+
+                    if (!string.IsNullOrEmpty(group.marketPhaseToSet)) {
+                        coin.CurrentPhaseOverride = ParsePhase(group.marketPhaseToSet);
+                        coin.PhaseOverrideEndTime = startTime.AddHours(group.durationHours);
+                    }
+                }
+            }
+        }
+
+        // 전체 마켓 페이즈 복원
+        if (data.overrideMarketPhase && !string.IsNullOrEmpty(data.marketPhaseToSet)) {
+            coinManager.CurrentMarket = ParsePhase(data.marketPhaseToSet);
+        }
+
+        Debug.Log("[RestoreEffect] 효과 복원: " + data.key);
+    }
+
+
+    // -------------------------------------------------------------------
+    // 디버그: Duration + MarketPhase 변화 로그
+    // -------------------------------------------------------------------
+
+    private DateTime lastDebugHour;
+    private DateTime lastPhaseCheck;
+    private MarketPhase lastLoggedMarketPhase;
+
+    private void LateUpdate() {
+        DateTime now = coinManager.CurrentDateTime;
+
+        // DurationHours 디버그
+        if (now.Hour != lastDebugHour.Hour || (now - lastDebugHour).TotalHours >= 1) {
+            lastDebugHour = now;
+            PrintDurationDebug(now);
+        }
+
+        // 전체 MarketPhase 디버그 및 변화 감지
+        if (now.Hour != lastPhaseCheck.Hour || (now - lastPhaseCheck).TotalHours >= 1) {
+            lastPhaseCheck = now;
+
+            MarketPhase current = coinManager.CurrentMarket;
+
+            if (current != lastLoggedMarketPhase) {
+                Debug.Log($"[MarketPhase] 변화 감지: {lastLoggedMarketPhase} → {current}");
+            }
+
+            Debug.Log($"[MarketPhase] 현재 전체 MarketPhase: {current}");
+            lastLoggedMarketPhase = current;
+        }
+    }
+
+    private void PrintDurationDebug(DateTime now) {
+        Debug.Log("========== Duration Debug ==========");
+
+        // 1) 전체 마켓페이즈 Duration
+        foreach (var eff in activeEffects) {
+            var data = eff.data;
+
+            if (data.overrideMarketPhase && data.durationHours > 0) {
+                DateTime end = eff.startTime.AddHours(data.durationHours);
+                double remaining = (end - now).TotalHours;
+                if (remaining < 0) remaining = 0;
+
+                Debug.Log($"[MarketPhase] 전체 MarketPhase: {coinManager.CurrentMarket}");
+                Debug.Log($"[MarketPhase] Remaining DurationHours: {remaining:F1}");
+            }
+        }
+
+        // 2) 개별 코인 페이즈
+        //foreach (var coin in coinManager.coins) {
+        //    if (coin.PhaseOverrideEndTime > now) {
+        //        DateTime end = coin.PhaseOverrideEndTime;
+        //        double remaining = (end - now).TotalHours;
+        //        if (remaining < 0) remaining = 0;
+
+        //        Debug.Log(
+        //            $"[CoinPhase] {coin.Symbol} (개별 페이즈 {coin.CurrentPhaseOverride}) " +
+        //            $"Remaining: {remaining:F1}h"
+        //        );
+        //    }
+        //}
+
+        Debug.Log("=====================================");
+    }
+
+
 
     //[ContextMenu("TEST: Elon Event 1")]
     //public void Test_Elon1() => RunTweetEvent("elon", "elonevent1");

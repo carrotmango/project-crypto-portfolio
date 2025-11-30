@@ -115,4 +115,17 @@ public class MainUIManager : MonoBehaviour {
         });
     }
 
+    public void RefreshCoinRows() {
+        // 기존 UI 삭제
+        foreach (Transform child in coinListParent)
+            Destroy(child.gameObject);
+
+        coinRows.Clear();
+
+        // CoinManager.coins 기준으로 UI 재생성
+        foreach (var coin in CoinManager.Instance.coins) {
+            AddCoinRow(coin);
+        }
+    }
+
 }
