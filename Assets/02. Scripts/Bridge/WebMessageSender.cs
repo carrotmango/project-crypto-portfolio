@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Runtime.InteropServices;
 
 public class WebMessageSender : MonoBehaviour
 {
@@ -16,6 +17,26 @@ public class WebMessageSender : MonoBehaviour
     public CoinManager coinManager;
 
     private int lastSyncedDay = -1;
+    
+    public static WebMessageSender Instance { get; private set; }
+    
+    [System.Serializable]
+    public class SavePacket
+    {
+        public string wallet;
+        public string saveData;
+
+        public SavePacket(string wallet, string data)
+        {
+            this.wallet = wallet;
+            this.saveData = data;
+        }
+    }
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
@@ -69,16 +90,29 @@ public class WebMessageSender : MonoBehaviour
         string json = JsonUtility.ToJson(data);
 
         // Debug.Log("[Unity → Web] 전송 JSON: " + json);
-        SendMessageToWeb(json);
+        SendMessageToWeb("PLAYER_SYNC", json);
     }
+    
+    public void SendSaveJsonToWeb(string saveJson)
+    {
+        // React에게 보낼 패킷 구조
+        var packet = new SavePacket(connectedWallet, saveJson);
+        string json = JsonUtility.ToJson(packet);
+
+        SendMessageToWeb("SAVE_DATA",json);
+
+        Debug.Log("[Unity → Web] 저장데이터 전송 완료");
+    }
+    
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-    [System.Runtime.InteropServices.DllImport("__Internal")]
-    private static extern void SendMessageToWeb(string msg);
+[DllImport("__Internal")]
+private static extern void SendMessageToWeb(string msgType, string msgJson);
 #else
-    private static void SendMessageToWeb(string msg)
+    private static void SendMessageToWeb(string msgType, string msgJson)
     {
-        Debug.Log("(에디터 전용) Web 메시지 시뮬레이션: " + msg);
+        Debug.Log("(에디터) Unity → Web: " + msgType + " / " + msgJson);
     }
 #endif
+
 }

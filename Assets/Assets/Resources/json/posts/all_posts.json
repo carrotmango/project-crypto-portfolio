@@ -339,8 +339,8 @@
           "contentImage": "",
           "width": 0,
           "height": 0,
-          "startDate": "01/01/2016 13:30",
-          "endDate": "01/01/2016 13:30",
+          "startDate": "01/01/2016 13:00",
+          "endDate": "01/01/2016 13:00",
           "eventMustRequired": true,
           "targetGroups": [
             {

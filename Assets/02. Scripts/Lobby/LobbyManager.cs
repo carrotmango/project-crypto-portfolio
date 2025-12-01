@@ -191,10 +191,16 @@ public class LobbyManager : MonoBehaviour {
         startOptionPanel.SetActive(false);
     }
 
-    void OnLoadGameClicked() {
-        Debug.Log("불러오기 시도...");
-        GameData data = SaveManager.Load();
+    public void OnReceiveSaveData(string json) {
+        GameData data = JsonUtility.FromJson<GameData>(json);
+        LoadGameWithData(data);
+    }
 
+    public void LoadGameWithData(GameData data) {
+        if (data == null) {
+            Debug.LogWarning("저장된 데이터 없음!");
+            return;
+        }
         if (data != null) {
             Debug.Log("불러오기 성공!");
 
@@ -347,9 +353,6 @@ public class LobbyManager : MonoBehaviour {
                 xn.nextBillingDate = CoinManager.Instance.CurrentDateTime.AddDays(30);
             }
 
-
-
-
             // 로비  메인 패널 전환
             lobbyPanel.SetActive(false);
             mainPanel.SetActive(true);
@@ -357,6 +360,17 @@ public class LobbyManager : MonoBehaviour {
             Debug.LogWarning("저장된 데이터 없음!");
         }
     }
+
+    void OnLoadGameClicked() {
+#if UNITY_WEBGL && !UNITY_EDITOR
+    Application.ExternalCall("UnityToReact_RequestSaveData");
+    return;
+#else
+        var data = SaveManager.Load();
+        LoadGameWithData(data);
+#endif
+    }
+
 
     private void RestoreXFeed(GameData data) {
         if (data == null || data.xFeedPosts == null)

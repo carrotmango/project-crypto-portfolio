@@ -115,6 +115,10 @@ public class TabPanelController : MonoBehaviour {
         if(gamblePanel != null) {
             gamblePanel.SetActive(false);
         }
+
+        if(coinScrollView != null) {
+            coinScrollView.SetActive(false);
+        }
         
     }
     public void ToggleStatusPanel() {

@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System;
 using static ChartRenderer;
 
-public static class SaveManager {
+public static class SaveManager
+{
     private static string path = Application.persistentDataPath + "/save.json";
 
-    public static void Save() {
+    public static void Save()
+    {
         GameData data = new GameData();
 
         // -----------------------------
@@ -47,7 +49,8 @@ public static class SaveManager {
 
         data.savedCoins.Clear();
 
-        foreach (var coin in CoinManager.Instance.coins) {
+        foreach (var coin in CoinManager.Instance.coins)
+        {
             SavedCoin sc = new SavedCoin();
 
             sc.symbol = coin.Symbol;
@@ -57,8 +60,20 @@ public static class SaveManager {
             var meta = Array.Find(CoinMetaDatabase.AllCoins, m => m.Symbol == coin.Symbol);
             sc.isListed = meta != null && meta.BullbitListed;
 
-            sc.priceHistory = new List<double>(coin.PriceHistory);
-            sc.candles = new List<CandleData>(coin.CandleHistory);
+            // 가격 히스토리 마지막 1개만 저장
+            if (coin.PriceHistory != null && coin.PriceHistory.Count > 0) {
+                sc.priceHistory = new List<double> { coin.PriceHistory[^1] };
+            } else {
+                sc.priceHistory = new List<double>();
+            }
+
+            // 캔들 마지막 1개만 저장
+            if (coin.CandleHistory != null && coin.CandleHistory.Count > 0) {
+                sc.candles = new List<CandleData> { coin.CandleHistory[^1] };
+            } else {
+                sc.candles = new List<CandleData>();
+            }
+
 
             sc.phaseOverride = coin.CurrentPhaseOverride;
             sc.phaseOverrideEndTicks = coin.PhaseOverrideEndTime.Ticks;
@@ -73,9 +88,10 @@ public static class SaveManager {
         data.xFeedPosts.Clear();
 
         var feed = XFeedSpawner.Instance;
-        if (feed != null) {
-            foreach (var go in feed.spawnedPosts) {
-
+        if (feed != null)
+        {
+            foreach (var go in feed.spawnedPosts)
+            {
                 var loader = go.GetComponent<XPostLoader>();
                 if (loader == null) continue;
 
@@ -118,14 +134,15 @@ public static class SaveManager {
                 data.xFeedPosts.Add(saved);
             }
         }
+
         // =====================
-         // 구독 정보 저장
-         // =====================
+        // 구독 정보 저장
+        // =====================
         var xn = XNotificationManager.Instance;
 
         data.isSubscribed = xn.isSubscribed;
         data.isCancelRequested = xn.isCancelRequested;
-        data.nextBillingDate = xn.nextBillingDate.ToString("o");   // Round-trip format
+        data.nextBillingDate = xn.nextBillingDate.ToString("o"); // Round-trip format
 
 
         // -----------------------------
@@ -134,13 +151,15 @@ public static class SaveManager {
         data.activeEffects.Clear();
 
         var orch = EventOrchestrator.Instance;
-        if (orch != null) {
-            foreach (var eff in orch.activeEffects) {
-
+        if (orch != null)
+        {
+            foreach (var eff in orch.activeEffects)
+            {
                 var xdata = eff.data;
                 var start = eff.startTime;
 
-                data.activeEffects.Add(new SavedActiveEffect {
+                data.activeEffects.Add(new SavedActiveEffect
+                {
                     authorId = xdata.authorId,
                     eventKey = xdata.key,
                     startTime = start.ToString("o")
@@ -154,14 +173,29 @@ public static class SaveManager {
         // JSON 저장
         // -----------------------------
         string json = JsonUtility.ToJson(data, true);
-        File.WriteAllText(path, json);
 
+#if UNITY_WEBGL && !UNITY_EDITOR
+    // 웹 환경이면 React로 저장 JSON 전송
+    if (WebMessageSender.Instance != null)
+    {
+        WebMessageSender.Instance.SendSaveJsonToWeb(json);
+    }
+    else
+    {
+        Debug.LogError("WebMessageSender 인스턴스를 찾을 수 없습니다.");
+    }
+#else
+        // 로컬 파일 저장
+        File.WriteAllText(path, json);
         Debug.Log("저장 완료: " + path);
+#endif
     }
 
 
-    public static GameData Load() {
-        if (!File.Exists(path)) {
+    public static GameData Load()
+    {
+        if (!File.Exists(path))
+        {
             Debug.LogWarning("저장 파일 없음");
             return null;
         }
@@ -175,7 +209,8 @@ public static class SaveManager {
     }
 
 
-    public static void DeleteSave() {
+    public static void DeleteSave()
+    {
         if (File.Exists(path))
             File.Delete(path);
     }

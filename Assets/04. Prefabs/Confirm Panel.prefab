@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3263724261018318323}
   - component: {fileID: 8876980623979494419}
   - component: {fileID: 892348927785712317}
+  - component: {fileID: -8333160824660435612}
   m_Layer: 5
   m_Name: Confirm Panel
   m_TagString: Untagged
@@ -91,6 +92,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ConfirmPanelController
   messageText: {fileID: 2324263912803440529}
   confirmButton: {fileID: 5311434446819591052}
+--- !u!114 &-8333160824660435612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 257182900147771863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2a0e96766a2f3149a1561c68396ead2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscHandler
+  longPressThreshold: 0.25
+  menuPanel: {fileID: 257182900147771863}
 --- !u!1 &1689720425992017270
 GameObject:
   m_ObjectHideFlags: 0

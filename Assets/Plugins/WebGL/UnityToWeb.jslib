@@ -1,7 +1,10 @@
 mergeInto(LibraryManager.library, {
-  SendMessageToWeb: function (msgPtr) {
-    const message = UTF8ToString(msgPtr);
-    console.log("[Unity → Web] 전송:", message);
+  SendMessageToWeb: function (msgTypePtr, msgJsonPtr) {
+    
+    const msgType = UTF8ToString(msgTypePtr);
+    const msgJson = UTF8ToString(msgJsonPtr);
+    
+    console.log("[Unity → Web] 전송:", msgType, msgJson);
 
     const allowedOrigins = [
       "https://carrotmango.xyz",
@@ -17,8 +20,8 @@ mergeInto(LibraryManager.library, {
     if (window.parent && matchedOrigin) {
       window.parent.postMessage(
         {
-          type: "UNITY_MESSAGE",
-          payload: message,
+          type: msgType,
+          payload: msgJson,
         },
         matchedOrigin
       );

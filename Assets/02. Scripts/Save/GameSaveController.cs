@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class GameSaveController : MonoBehaviour
 {
-    public void OnSaveClicked()
+    public static void OnSaveClicked()
     {
         SaveManager.Save();
     }
 
-    public void OnLoadClicked()
+    public static void OnLoadClicked()
     {
         SaveManager.Load();
     }

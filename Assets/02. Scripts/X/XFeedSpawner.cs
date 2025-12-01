@@ -50,6 +50,9 @@ public class XFeedSpawner : MonoBehaviour {
 
         // 저장된 모든 포스트를 UI로 재생성
         // savedPosts의 순서가 곧 화면 표시 순서
+
+        savedPosts.Reverse();
+
         foreach (var saved in savedPosts) {
             XPostData data = saved.ToXPostData();
 
