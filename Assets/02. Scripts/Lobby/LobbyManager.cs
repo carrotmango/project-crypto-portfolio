@@ -157,7 +157,6 @@ public class LobbyManager : MonoBehaviour {
 
         WebMessageSender sender = FindAnyObjectByType<WebMessageSender>();
         if (sender != null) {
-            sender.playerName = playerName;
             sender.totalAsset = 2100000; // 초기 자산
             sender.SendPlayerDataToWeb(); // 게임 시작 시 Web으로 전송
         } else {

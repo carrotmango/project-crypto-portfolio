@@ -8,7 +8,7 @@ public class WebMessageSender : MonoBehaviour
     public string connectedWallet = "local";
 
     [Tooltip("현재 플레이어 닉네임")]
-    public string playerName = "Player";
+    public string PlayerName => PlayerManager.Instance.playerName;
 
     [Tooltip("현재 총 자산 (불비트 + 은행 등 포함)")]
     public double totalAsset = 0;
@@ -86,7 +86,7 @@ public class WebMessageSender : MonoBehaviour
     [ContextMenu("Send Player Data To Web")]
     public void SendPlayerDataToWeb()
     {
-        PlayerSyncData data = new PlayerSyncData(connectedWallet, playerName, totalAsset);
+        PlayerSyncData data = new PlayerSyncData(connectedWallet, PlayerName, totalAsset);
         string json = JsonUtility.ToJson(data);
 
         // Debug.Log("[Unity → Web] 전송 JSON: " + json);
