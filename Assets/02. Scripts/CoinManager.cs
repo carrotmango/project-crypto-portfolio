@@ -59,7 +59,7 @@ public class CoinManager : MonoBehaviour
     public int TickCount => tickCount;
 
 
-    public double GetMangoCasinoAsset() => PlayerManager.Instance.mangoCasinoCash;
+    public double GetGambleCashFromSatoshiBank() => PlayerManager.Instance.satoshiBankCash;
 
     void Awake()
     {
@@ -76,21 +76,22 @@ public class CoinManager : MonoBehaviour
 
     void Start()
     {
-        foreach (var meta in CoinMetaDatabase.AllCoins)
-        {
-            if (meta.BullbitListed)
-            {
-                var coin = new CoinData(meta.Name, meta.Symbol, meta.InitialPrice, meta.MaxSupply);
-                coins.Add(coin);
-            }
-        }
+        //foreach (var meta in CoinMetaDatabase.AllCoins)
+        //{
+        //    if (meta.BullbitListed)
+        //    {
+        //        var coin = new CoinData(meta.Name, meta.Symbol, meta.InitialPrice, meta.MaxSupply);
+        //        coins.Add(coin);
+        //    }
+        //}
 
-        UpdateCashText();
-        UpdateDateText();
-        UpdateSpeedButtonVisuals();
-        assetPanelController.RenderPlatformRows();
+        //UpdateCashText();
+        //UpdateDateText();
+        //UpdateSpeedButtonVisuals();
+        //assetPanelController.RenderPlatformRows();
 
-        StartCoroutine(GameTickRoutine());
+        //StartCoroutine(GameTickRoutine());
+        StartCoroutine(InitializeRoutine());
     }
 
     IEnumerator GameTickRoutine()
@@ -175,14 +176,15 @@ public class CoinManager : MonoBehaviour
     }
 
     public double GetSatoshiBankAsset() => PlayerManager.Instance.satoshiBankCash;
-    public double GetTotalUserAsset() => GetBullbitAsset() + GetSatoshiBankAsset() + GetMangoCasinoAsset();
+    public double GetTotalUserAsset() => GetBullbitAsset() + GetSatoshiBankAsset();
+    //public double GetTotalUserAsset() => GetBullbitAsset() + GetSatoshiBankAsset() + GetGambleCashFromSatoshiBank(); // 구버전
 
     public void UpdateCashText()
     {
         double total = GetTotalUserAsset();
         double bullbit = GetBullbitAsset();
         double bank = GetSatoshiBankAsset();
-        double mangoCash = GetMangoCasinoAsset();
+        double gambleCash = GetGambleCashFromSatoshiBank();
 
         if (playerTotalAssetText != null)
             playerTotalAssetText.text = $"총자산: {total:N0} KRW";
@@ -204,7 +206,7 @@ public class CoinManager : MonoBehaviour
 
         if (mangoCashText != null)
         {
-            mangoCashText.text = $"{statusPanelController.playerNameText.text}님의 잔액: {mangoCash:N0}원";
+            mangoCashText.text = $"{statusPanelController.playerNameText.text}님의 잔액: {gambleCash:N0}원";
         }
     }
 
@@ -273,6 +275,34 @@ public class CoinManager : MonoBehaviour
     }
     public void SetDateTime(DateTime dt) {
         currentDateTime = dt;
+    }
+    IEnumerator InitializeRoutine() {
+        
+        foreach (var meta in CoinMetaDatabase.AllCoins) {
+            if (meta.BullbitListed) {
+                var coin = new CoinData(meta.Name, meta.Symbol, meta.InitialPrice, meta.MaxSupply);
+                coins.Add(coin);
+            }
+        }
+
+        UpdateCashText();
+        UpdateDateText();
+        UpdateSpeedButtonVisuals();
+        assetPanelController.RenderPlatformRows();
+
+       // 한 프레임 대기
+        yield return null;
+
+        //  UI 강제 최종 동기화 (0.2초 문제 해결 지점)
+        UpdateCashText();
+        UpdateDateText();
+        Canvas.ForceUpdateCanvases();
+
+        // 이제 틱 시작
+        StartCoroutine(GameTickRoutine());
+
+        // 여기서 준비 완료 선언
+        GameBootState.playerReady = true;
     }
 
 }

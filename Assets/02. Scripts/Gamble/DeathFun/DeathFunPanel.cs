@@ -96,7 +96,7 @@ public class DeathFunPanel : MonoBehaviour {
             return;
         }
 
-        PlayerManager.Instance.mangoCasinoCash += currentProfit;
+        PlayerManager.Instance.satoshiBankCash += currentProfit;
         CoinManager.Instance.UpdateCashText();
 
         Debug.Log($"[DeathFun] 수익 확정: {currentProfit:N0}원 지급 완료");

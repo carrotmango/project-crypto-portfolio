@@ -39,8 +39,15 @@ public class LobbyManager : MonoBehaviour {
 
     public BgmPlayer bgmPlayer;
 
+    [Header("로딩")] public LoadingController loadingController;
+    
+
+
     void Start() {
         Time.timeScale = 0f;
+
+        // 로딩관련
+        GameBootState.Reset();
 
         // 리스너 등록
         startButton.onClick.AddListener(OnStartClicked);
@@ -150,8 +157,11 @@ public class LobbyManager : MonoBehaviour {
         PlayerManager.Instance.birthday = birthday;
         PlayerManager.Instance.characterIndex = currentCharacterIndex;
 
+        GameBootState.playerReady = true;
+
         lobbyPanel.SetActive(false);
         mainPanel.SetActive(true);
+        BgmPlayer.Instance.PlayIntroBgm();
 
         statusPanelController.SetPlayerInfo(playerName, currentCharacterIndex, birthday);
 
@@ -166,7 +176,13 @@ public class LobbyManager : MonoBehaviour {
 
         // 튜토리얼 실행 여부 체크
         if (TutorialManager.Instance != null && tutorialToggle != null && tutorialToggle.isOn) {
+
+            // 로딩 완료 선언
+            GameBootState.playerReady = true;
+
             TutorialManager.Instance.StartTutorial();
+
+            return;
         } else {
             Debug.Log("[LobbyManager] 튜토리얼 스킵됨");
 
@@ -174,6 +190,10 @@ public class LobbyManager : MonoBehaviour {
             if (CoinManager.Instance != null)
                 CoinManager.Instance.SetTimeSpeed(TimeSpeed.Normal);
         }
+
+        GameBootState.saveLoaded = true;
+
+        loadingController.BeginLoading();
     }
 
     void GameStart() {
@@ -230,6 +250,7 @@ public class LobbyManager : MonoBehaviour {
             // CoinManager
             CoinManager.Instance.survivalDays = data.survivalDays;
 
+            PartTimeJobController.Instance.lastWorkedDay = data.lastPartTimeWorkDay;
 
 
             // 날짜 복원
@@ -355,6 +376,11 @@ public class LobbyManager : MonoBehaviour {
             // 로비  메인 패널 전환
             lobbyPanel.SetActive(false);
             mainPanel.SetActive(true);
+            BgmPlayer.Instance.PlayIntroBgm();
+
+            // Load 관련
+            GameBootState.saveLoaded = true;
+            GameBootState.playerReady = true;
         } else {
             Debug.LogWarning("저장된 데이터 없음!");
         }
@@ -362,10 +388,18 @@ public class LobbyManager : MonoBehaviour {
 
     void OnLoadGameClicked() {
 #if UNITY_WEBGL && !UNITY_EDITOR
+    loadingController.BeginLoading();
     Application.ExternalCall("UnityToReact_RequestSaveData");
     return;
 #else
         var data = SaveManager.Load();
+
+        if (data == null) {
+            Debug.LogWarning("저장된 데이터가 없어 로드할 수 없습니다.");
+            return; 
+        }
+
+        loadingController.BeginLoading();
         LoadGameWithData(data);
 #endif
     }

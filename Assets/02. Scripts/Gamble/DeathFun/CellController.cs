@@ -23,7 +23,7 @@ public class CellController : MonoBehaviour, IPointerClickHandler {
     private static readonly Color DimGray = new Color(0.5f, 0.5f, 0.5f);
 
     private bool wasPassed = false;
-    private bool wasFailed = false;
+    //private bool wasFailed = false;
 
     private void Awake() {
         rectTransform = GetComponent<RectTransform>();
@@ -91,7 +91,7 @@ public class CellController : MonoBehaviour, IPointerClickHandler {
         yield return StartCoroutine(ShakeAnimation());
 
         if (isBomb) {
-            wasFailed = true;
+            //wasFailed = true;
             Debug.Log($"[실패] {gameObject.name}");
 
             if (stageManager != null) {
@@ -132,7 +132,7 @@ public class CellController : MonoBehaviour, IPointerClickHandler {
     public void ResetCell() {
         isClicked = false;
         wasPassed = false;
-        wasFailed = false;
+        //wasFailed = false;
         isDisabled = false;
         isInteractable = false;
 

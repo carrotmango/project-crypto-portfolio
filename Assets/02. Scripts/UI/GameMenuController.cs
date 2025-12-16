@@ -9,22 +9,43 @@ public class GameMenuController : MonoBehaviour {
     public Button saveButton;          // 저장
     public Button exitButton;          // 게임 종료
 
+    [Header("Audio")]
+    public Slider volumeSlider;
+    public BgmPlayer bgmPlayer;
+
+
     void Start() {
-        // 초기 상태
         menuPanel.SetActive(false);
 
-        // 버튼 연결
         hamburgerButton.onClick.AddListener(OpenMenu);
-        if (closeButton != null)
+        if (closeButton != null) {
             closeButton.onClick.AddListener(CloseMenu);
+        }
 
         saveButton.onClick.AddListener(OnClickSave);
         exitButton.onClick.AddListener(OnClickExit);
+
+        if (bgmPlayer != null && volumeSlider != null) {
+            float currentVolume = bgmPlayer.GetVolume();
+            volumeSlider.value = currentVolume;
+            volumeSlider.onValueChanged.AddListener(OnVolumeChanged);
+        }
+    }
+
+    private void OnVolumeChanged(float value) {
+        if (bgmPlayer != null) {
+            bgmPlayer.SetVolume(value);
+        }
     }
 
     private void OpenMenu() {
         menuPanel.SetActive(true);
+
+        if (bgmPlayer != null && volumeSlider != null) {
+            volumeSlider.value = bgmPlayer.GetVolume();
+        }
     }
+
 
     private void CloseMenu() {
         menuPanel.SetActive(false);

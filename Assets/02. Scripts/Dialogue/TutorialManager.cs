@@ -204,11 +204,11 @@ public class TutorialManager : MonoBehaviour {
         DialogueNode n12 = new DialogueNode { text = "사토시 은행을 통해, 불비트로 돈을 옮기고", highlightTarget = HighlightTarget.Satoshi };
         DialogueNode n13 = new DialogueNode { text = "불비트에서 은행으로 출금을하고, 부동산을 사는 등", highlightTarget = HighlightTarget.Satoshi };
         DialogueNode n14 = new DialogueNode { text = "돈을 움직일땐 은행을 필수로 이용해야 하죠.", highlightTarget = HighlightTarget.Satoshi };
-        DialogueNode n15 = new DialogueNode { text = "그리고 이건 아르바이트 앱 이에요.", highlightTarget = HighlightTarget.PartTimeJob };
-        DialogueNode n16 = new DialogueNode { text = "급전이 필요할때, 하루에 한번 아르바이트를 진행할 수 있어요", highlightTarget = HighlightTarget.PartTimeJob };
-        DialogueNode n17 = new DialogueNode { text = "근데 트레이더라는 사람이..", highlightTarget = HighlightTarget.PartTimeJob };
-        DialogueNode n18 = new DialogueNode { text = "몰래 아르바이트 뛰고 그런거 아니죠...?", highlightTarget = HighlightTarget.PartTimeJob };
-        DialogueNode n19 = new DialogueNode { text = "그럴일은 없길 바랄께요.", highlightTarget = HighlightTarget.PartTimeJob };
+        //DialogueNode n15 = new DialogueNode { text = "그리고 이건 아르바이트 앱 이에요.", highlightTarget = HighlightTarget.PartTimeJob };
+        //DialogueNode n16 = new DialogueNode { text = "급전이 필요할때, 하루에 한번 아르바이트를 진행할 수 있어요", highlightTarget = HighlightTarget.PartTimeJob };
+        //DialogueNode n17 = new DialogueNode { text = "근데 트레이더라는 사람이..", highlightTarget = HighlightTarget.PartTimeJob };
+        //DialogueNode n18 = new DialogueNode { text = "몰래 아르바이트 뛰고 그런거 아니죠...?", highlightTarget = HighlightTarget.PartTimeJob };
+        //DialogueNode n19 = new DialogueNode { text = "그럴일은 없길 바랄께요.", highlightTarget = HighlightTarget.PartTimeJob };
         DialogueNode n20 = new DialogueNode { text = "이건 부동산 매매할때 쓰는 앱이에요", highlightTarget = HighlightTarget.Estate };
         DialogueNode n21 = new DialogueNode { text = "나중에 한번 둘러보세요.", highlightTarget = HighlightTarget.Estate };
         DialogueNode n22 = new DialogueNode { text = "이 앱은 Xbird라는 앱인데,", highlightTarget = HighlightTarget.Xbird };
@@ -216,8 +216,8 @@ public class TutorialManager : MonoBehaviour {
         DialogueNode n24 = new DialogueNode { text = "하지만 가짜정보도 판을치니, 판단을 잘하셔야 할거에요", highlightTarget = HighlightTarget.Xbird };
         DialogueNode n25 = new DialogueNode { text = "그러나 그런 가짜 정보로도 돈을 벌 수 있어야", highlightTarget = HighlightTarget.Xbird };
         DialogueNode n26 = new DialogueNode { text = "진짜 트레이더라고 불릴 수 있다고 저는 생각해요.", highlightTarget = HighlightTarget.Xbird };
-        DialogueNode n27 = new DialogueNode { text = "마지막으로 이 앱은 말그대로 도박 앱이에요", highlightTarget = HighlightTarget.Gamble };
-        DialogueNode n28 = new DialogueNode { text = "당신이 진정한 도파민 중독자라면 추천드릴께요.", highlightTarget = HighlightTarget.Gamble };
+        DialogueNode n27 = new DialogueNode { text = "하단에 뉴스 탭에서도 진입할 수 있어요.", highlightTarget = HighlightTarget.Xbird };
+        //DialogueNode n28 = new DialogueNode { text = "당신이 진정한 도파민 중독자라면 추천드릴께요.", highlightTarget = HighlightTarget.Gamble };
         DialogueNode n29 = new DialogueNode { text = "일단 그러면 저희 불비트 거래소에 입금을 먼저 해볼까요?", };
         DialogueNode n30 = new DialogueNode { text = "좀 전에 알려드린 사토시 은행앱을 눌러서", highlightTarget = HighlightTarget.Satoshi };
         DialogueNode n31 = new DialogueNode { text = "입금을 한번 해보도록 하죠.", highlightTarget = HighlightTarget.SatoshiDimWithButton, action = DialogueAction.WaitForSatoshiDepositButton };
@@ -261,10 +261,14 @@ public class TutorialManager : MonoBehaviour {
         n5.next = n6; n6.next = n7;
         n7.next = n8; n8.next = n9; n9.next = n10;
         n10.next = n11; n11.next = n12; n12.next = n13;
-        n13.next = n14; n14.next = n15; n15.next = n16; n16.next = n17;
-        n17.next = n18; n18.next = n19; n19.next = n20; n20.next = n21;
+        n13.next = n14; n14.next = n20;
+
+        //n15.next = n16; n16.next = n17;
+        //n17.next = n18; n18.next = n19; n19.next = n20;
+
+        n20.next = n21;
         n21.next = n22; n22.next = n23; n23.next = n24; n24.next = n25;
-        n25.next = n26; n26.next = n27; n27.next = n28; n28.next = n29;
+        n25.next = n26; n26.next = n27; n27.next = n29; 
         n29.next = n30; n30.next = n31; n31.next = n32; n32.next = n33;
         n33.next = n34; n34.next = n35; n35.next = n36; n36.next = n37;
         n37.next = n38; n38.next = n39; n39.next = n40; n40.next = n41;

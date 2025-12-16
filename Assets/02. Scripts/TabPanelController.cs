@@ -9,6 +9,7 @@ public class TabPanelController : MonoBehaviour {
     public GameObject statusPanel;
     public GameObject xbirdPanel; // X버드 전용 피드 패널
     public GameObject gamblePanel;
+    public GameObject outingPanel;
 
     public Button bullbitButton;
     private bool isBullbitButtonClicked = false;
@@ -32,9 +33,7 @@ public class TabPanelController : MonoBehaviour {
     }
 
     public void OnGoout() {
-        if (UIManager.Instance != null) {
-            UIManager.Instance.ShowConfirm("외출 기능 개발 중!");
-        }
+        ShowOutingPanel();
     }
 
 
@@ -119,12 +118,30 @@ public class TabPanelController : MonoBehaviour {
         if(coinScrollView != null) {
             coinScrollView.SetActive(false);
         }
-        
+
+        if (outingPanel != null) {
+            outingPanel.SetActive(false);
+        }
     }
     public void ToggleStatusPanel() {
         CloseSubPanelsIfOpen(); 
         statusPanel.SetActive(true);
     }
 
+    public void ShowOutingPanel() {
+        CloseSubPanelsIfOpen();
 
+        totalAssetPanel.SetActive(false);
+        coinScrollView.SetActive(false);
+        bankPanel.SetActive(false);
+        appPanel.SetActive(false);
+
+        if (xbirdPanel != null) xbirdPanel.SetActive(false);
+        if (gamblePanel != null) gamblePanel.SetActive(false);
+
+        if (outingPanel != null)
+            outingPanel.SetActive(true);
+
+        Debug.Log("[TabPanel] Outing Panel Opened");
+    }
 }

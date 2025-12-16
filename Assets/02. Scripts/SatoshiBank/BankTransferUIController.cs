@@ -21,7 +21,7 @@ public class BankTransferUIController : MonoBehaviour {
 
     void InitializePlatformDropdown() {
         platformDropdown.ClearOptions();
-        platformDropdown.AddOptions(new System.Collections.Generic.List<string> { "불비트", "망고카지노" });
+        platformDropdown.AddOptions(new System.Collections.Generic.List<string> { "불비트" });
     }
 
     void ValidateInput(string input) {

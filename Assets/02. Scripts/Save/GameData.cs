@@ -49,4 +49,9 @@ public class GameData {
     public bool isCancelRequested;
     public string nextBillingDate;
 
+    // PartTime Job
+    public int lastPartTimeWorkDay;
+
+
+
 }

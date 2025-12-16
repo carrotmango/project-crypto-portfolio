@@ -22,7 +22,18 @@
           "marketPhaseToSet": "Sideways",
           "durationHours": 8,
           "eventMustRequired": true,
-          "targetGroups": []
+          "targetGroups": [
+            {
+              "symbols": [
+                "BTC",
+                "ETH"
+              ],
+              "priceChangeMin": 5,
+              "priceChangeMax": 10,
+              "marketPhaseToSet": "BigBull",
+              "durationHours": 12000
+            }
+          ]
         }
       ]
     },

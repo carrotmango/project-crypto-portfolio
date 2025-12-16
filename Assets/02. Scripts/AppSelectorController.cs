@@ -78,6 +78,24 @@ public class AppSelectorController : MonoBehaviour {
         }
     }
 
+    public void OpenFourNance() {
+        if (UIManager.Instance != null) {
+            UIManager.Instance.ShowConfirm("포낸스 선물 거래소 개발 중!");
+        }
+    }
+
+    public void OpenGhostWallet() {
+        if (UIManager.Instance != null) {
+            UIManager.Instance.ShowConfirm("지갑 컨텐츠 개발 중!");
+        }
+    }
+
+    public void OpenMangoSwap() {
+        if (UIManager.Instance != null) {
+            UIManager.Instance.ShowConfirm("망고 스왑 DEX 거래소 개발 중!");
+        }
+    }
+
     public void OpenGambleApp() {
         if (coinManager != null) {
             coinManager.currentApp = AppType.Gamble;

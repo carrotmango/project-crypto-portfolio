@@ -6,11 +6,14 @@ using static ChartRenderer;
 
 public static class SaveManager
 {
+
     private static string path = Application.persistentDataPath + "/save.json";
 
     public static void Save()
     {
         GameData data = new GameData();
+
+        // 옵션 저장
 
         // -----------------------------
         // PlayerManager 저장
@@ -22,6 +25,9 @@ public static class SaveManager
         data.bullbitCash = PlayerManager.Instance.bullbitCash;
         data.satoshiBankCash = PlayerManager.Instance.satoshiBankCash;
         data.mangoCasinoCash = PlayerManager.Instance.mangoCasinoCash;
+
+        // PartTime Job
+        data.lastPartTimeWorkDay = PartTimeJobController.Instance.lastWorkedDay;
 
         data.holdings.Clear();
         foreach (var kv in PlayerManager.Instance.holdings)

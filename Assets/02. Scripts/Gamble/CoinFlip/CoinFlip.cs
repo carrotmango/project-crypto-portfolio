@@ -97,7 +97,7 @@ public class CoinFlip : MonoBehaviour {
             else if (selectedBetButton == gambleManager.bet3Button) baseAmount = 10000000;
 
             double reward = baseAmount * 2;
-            PlayerManager.Instance.mangoCasinoCash += reward;
+            PlayerManager.Instance.satoshiBankCash += reward;
         }
 
         CoinManager.Instance.UpdateCashText();

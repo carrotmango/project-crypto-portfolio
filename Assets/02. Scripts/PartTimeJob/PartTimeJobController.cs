@@ -7,8 +7,15 @@ public class PartTimeJobController : MonoBehaviour {
     public PlayerManager playerManager;
     public CoinManager coinManager;
 
+    public static PartTimeJobController Instance;
 
-    private int lastWorkedDay = -1;
+
+    public int lastWorkedDay = -1;
+
+
+    private void Awake() {
+        Instance = this;
+    }
 
     public void DoPartTimeJob() {
         int today = coinManager.survivalDays; // 게임일수참조

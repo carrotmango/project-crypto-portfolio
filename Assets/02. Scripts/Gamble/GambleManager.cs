@@ -4,11 +4,8 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class GambleManager : MonoBehaviour {
-    public GameObject withdrawPanel;
 
     [Header("UI 연결")]
-    public TMP_InputField withdrawInput;
-    public Button withdrawButton;
     public Button allButton;
     public TextMeshProUGUI alert;
     public Button goButton;
@@ -39,13 +36,6 @@ public class GambleManager : MonoBehaviour {
     };
 
     void Start() {
-        withdrawInput.onValueChanged.AddListener(OnValueChanged);
-        withdrawButton.onClick.AddListener(OnClickWithdraw);
-        allButton.onClick.AddListener(OnClickAll);
-
-        withdrawInput.contentType = TMP_InputField.ContentType.DecimalNumber;
-        withdrawInput.text = "";
-        withdrawButton.interactable = false;
 
         odds.text = "";
         selectedBetButton = null;
@@ -54,64 +44,10 @@ public class GambleManager : MonoBehaviour {
         UpdateGameLabel();
     }
 
-    public void OpenPanel() {
-        withdrawPanel.SetActive(true);
-        withdrawInput.text = "";
-        withdrawButton.interactable = false;
-        selectedBetButton = null;
 
-        UpdateBetButtonStates();
-        UpdateGameLabel();
-    }
-
-    public void ClosePanel() {
-        withdrawPanel.SetActive(false);
-    }
-
-    void OnValueChanged(string input) {
-        string raw = input.Replace(",", "");
-        if (double.TryParse(raw, out double value)) {
-            double currentPoint = PlayerManager.Instance.mangoCasinoCash;
-            withdrawButton.interactable = value >= 10000 && value <= currentPoint;
-        } else {
-            withdrawButton.interactable = false;
-        }
-    }
-
-    public void OnClickWithdraw() {
-        double fee = 1000;
-        string raw = withdrawInput.text.Replace(",", "");
-        if (double.TryParse(raw, out double value)) {
-            double currentPoint = PlayerManager.Instance.mangoCasinoCash;
-            if (value < 10000 || value > currentPoint) return;
-
-            PlayerManager.Instance.mangoCasinoCash -= value;
-            PlayerManager.Instance.satoshiBankCash += value - fee;
-
-            CoinManager.Instance.UpdateCashText();
-            withdrawInput.text = "";
-            withdrawButton.interactable = false;
-
-            Debug.Log($"망고카지노 포인트 {value:N0}원 출금 완료 → 사토시은행");
-
-            UpdateBetButtonStates();
-            ClosePanel();
-        }
-    }
-
-    public void OnClickAll() {
-        double point = PlayerManager.Instance.mangoCasinoCash;
-        if (point >= 10000) {
-            withdrawInput.text = point.ToString("N0");
-            withdrawButton.interactable = true;
-        } else {
-            withdrawInput.text = "";
-            withdrawButton.interactable = false;
-        }
-    }
 
     public void UpdateBetButtonStates() {
-        double cash = PlayerManager.Instance.mangoCasinoCash;
+        double cash = PlayerManager.Instance.satoshiBankCash;
 
         SetBetButton(bet1Button, cash >= 100000);
         SetBetButton(bet2Button, cash >= 1000000);
@@ -168,25 +104,22 @@ public class GambleManager : MonoBehaviour {
         else if (selectedBetButton == bet2Button) betAmount = 1000000;
         else if (selectedBetButton == bet3Button) betAmount = 10000000;
 
-        if (PlayerManager.Instance.mangoCasinoCash < betAmount) {
+        if (PlayerManager.Instance.satoshiBankCash < betAmount) {
             StartCoroutine(ShowAlert("잔액이 부족합니다"));
             return;
         }
 
-        PlayerManager.Instance.mangoCasinoCash -= betAmount;
+        PlayerManager.Instance.satoshiBankCash -= betAmount;
         CoinManager.Instance.UpdateCashText();
         UpdateBetButtonStates();
 
         string mode = gameModes[currentGameIndex];
 
-        if (mode == "GAMBLE MONSTER") {
-            withdrawPanel.SetActive(false);
+        if (mode == "GAMBLE MONSTER") { 
             gambleMonster.GambleStart();
         } else if (mode == "COIN FLIP") {
-            withdrawPanel.SetActive(false);
             coinFlip.GambleStart();
         } else if (mode == "DEATH FUN") {
-            withdrawPanel.SetActive(false);
             deathFun.GambleStart();
         }
     }
@@ -197,25 +130,6 @@ public class GambleManager : MonoBehaviour {
         alert.gameObject.SetActive(true);
         yield return new WaitForSeconds(3f);
         alert.gameObject.SetActive(false);
-    }
-
-    public void GambleFinish(int coinCount) {
-        double unit = 0;
-
-        if (selectedBetButton == bet1Button) unit = 2000;
-        else if (selectedBetButton == bet2Button) unit = 25000;
-        else if (selectedBetButton == bet3Button) unit = 300000;
-
-        double reward = coinCount * unit;
-
-        PlayerManager.Instance.mangoCasinoCash += reward;
-        CoinManager.Instance.UpdateCashText();
-
-        selectedBetButton = null;
-        if (odds != null) odds.text = "";
-        UpdateBetButtonStates();
-
-        Debug.Log($"코인 {coinCount}개 × {unit:N0}원 → {reward:N0}원 환급 완료!");
     }
 
     public void OnClickGameNext() {
@@ -247,7 +161,7 @@ public class GambleManager : MonoBehaviour {
         else if (betButton == bet3Button) unit = 300000;
 
         double reward = coinCount * unit;
-        PlayerManager.Instance.mangoCasinoCash += reward;
+        PlayerManager.Instance.satoshiBankCash += reward;
         CoinManager.Instance.UpdateCashText();
 
         UpdateBetButtonStates();
