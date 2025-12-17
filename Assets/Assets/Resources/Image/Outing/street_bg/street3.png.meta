@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 6a0f4ff1c1393764698d8f5e65b34fe1
+guid: 8659adc0f4d493444a95e83151a671f3
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -9165269369270641522
-    second: veryNice3_0
+      213: -4547473259725095362
+    second: street3_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: veryNice3_0
+      name: street3_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1024
-        height: 585
+        width: 1344
+        height: 768
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e8cdadd711c6ec080800000000000000
-      internalID: -9165269369270641522
+      spriteID: e3e7f70f92124e0c0800000000000000
+      internalID: -4547473259725095362
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      veryNice3_0: -9165269369270641522
+      street3_0: -4547473259725095362
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

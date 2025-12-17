@@ -15,6 +15,10 @@ public class OutingManager : MonoBehaviour {
     public TextMeshProUGUI tooltipText;  //  미리 UI에 배치해둘 TextMeshPro
     public GameObject tooltipObject;     //  TextMeshPro 부모 오브젝트(패널)
 
+    [Header("건물 오브젝트")]
+    public GameObject partimeJob;
+    public GameObject partimePanel;
+
     // 외출 오락실 진입
     public void EnterArcade() {
         if (coinManager != null) {
@@ -31,6 +35,30 @@ public class OutingManager : MonoBehaviour {
             GambleManager gm = GamblePanel.GetComponent<GambleManager>();
             if (gm != null)
                 gm.UpdateBetButtonStates();
+        }
+    }
+
+    public void EnterPartimeJob() {
+        if (partimeJob != null) {
+            partimeJob.SetActive(true);
+        }
+    }
+
+    public void ExitPartimeJob() {
+        if (partimeJob != null) {
+            partimeJob.SetActive(false);
+        }
+    }
+
+    public void OpenPartimeJobPanel() {
+        if (partimePanel != null) {
+            partimePanel.SetActive(true);
+        }
+    }
+
+    public void ClosePartimeJobPanel() {
+        if (partimePanel != null) {
+            partimePanel.SetActive(false);
         }
     }
 

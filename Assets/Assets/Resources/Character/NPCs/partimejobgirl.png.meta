@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9726748def20a0c4499ef54a0d309103
+guid: 75a48c30b1c1a2942815d196cc9e4cd2
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3220627324271449328
-    second: veryNice_0
+      213: -3003127923153510595
+    second: partimejobgirl_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: veryNice_0
+      name: partimejobgirl_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 117
         y: 0
-        width: 1024
-        height: 585
+        width: 731
+        height: 1264
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0f4dd11ec77f1bc20800000000000000
-      internalID: 3220627324271449328
+      spriteID: d3fd06da01fb256d0800000000000000
+      internalID: -3003127923153510595
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      veryNice_0: 3220627324271449328
+      partimejobgirl_0: -3003127923153510595
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
