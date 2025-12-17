@@ -21,6 +21,9 @@ public class TabPanelController : MonoBehaviour {
     public TotalAssetPanelController assetPanelController;
     public CoinManager coinManager; //  현재 앱 상태 확인용
 
+    [Header("외출 건물들")]
+    public GameObject partimeJob;
+
     void Start() {
         if (bullbitButton != null) {
             bullbitButton.onClick.AddListener(() => {
@@ -121,6 +124,10 @@ public class TabPanelController : MonoBehaviour {
 
         if (outingPanel != null) {
             outingPanel.SetActive(false);
+        }
+
+        if(partimeJob != null) {
+            partimeJob.SetActive(false);
         }
     }
     public void ToggleStatusPanel() {

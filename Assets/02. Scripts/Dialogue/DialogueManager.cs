@@ -56,7 +56,7 @@ public class DialogueManager : MonoBehaviour {
     public void OnDialogueClick() {
         if (state != State.Dialogue) return;
 
-        // (1) 애니메이션 중 → 전체 출력
+        // (1) 애니메이션 중 >> 전체 출력
         if (isTyping) {
             StopCoroutine(typingCoroutine);
             dialogueText.text = currentNode.text;

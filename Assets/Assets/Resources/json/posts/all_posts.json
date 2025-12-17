@@ -31,7 +31,7 @@
               "priceChangeMin": 5,
               "priceChangeMax": 10,
               "marketPhaseToSet": "BigBull",
-              "durationHours": 12000
+              "durationHours": 3
             }
           ]
         }

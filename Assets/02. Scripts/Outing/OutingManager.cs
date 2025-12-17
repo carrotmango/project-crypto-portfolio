@@ -50,17 +50,6 @@ public class OutingManager : MonoBehaviour {
         }
     }
 
-    public void OpenPartimeJobPanel() {
-        if (partimePanel != null) {
-            partimePanel.SetActive(true);
-        }
-    }
-
-    public void ClosePartimeJobPanel() {
-        if (partimePanel != null) {
-            partimePanel.SetActive(false);
-        }
-    }
 
     // ÅøÆÁ Ç¥½Ã
     public void ShowTooltip(string text) {
