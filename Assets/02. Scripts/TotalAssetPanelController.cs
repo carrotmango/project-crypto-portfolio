@@ -166,5 +166,12 @@ public class TotalAssetPanelController : MonoBehaviour {
         satoshiPortfolioPanel.SetActive(false);
         totalAssetPanel.SetActive(true); // 총자산 패널 다시 켜기
     }
+    public void OpenBullbitPortfolioFromOutside() {
+        if(totalAssetPanel != null) {
+            totalAssetPanel.SetActive(true);
 
+            OpenPortfolioPanel("bullbit");
+        }
+
+    }
 }

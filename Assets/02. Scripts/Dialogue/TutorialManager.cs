@@ -184,7 +184,7 @@ public class TutorialManager : MonoBehaviour {
 
     private void SetupNodes() {
         string playerName = "Player";
-        var status = FindObjectOfType<StatusPanelController>();
+        var status = FindAnyObjectByType<StatusPanelController>();
         if (status != null && status.playerNameText != null)
             playerName = status.playerNameText.text;
 
@@ -627,7 +627,7 @@ public class TutorialManager : MonoBehaviour {
         // BuyPanelController가 뜰 때까지 대기
         BuyPanelController buyPanel = null;
         while (buyPanel == null || !buyPanel.panel.activeSelf) {
-            buyPanel = FindObjectOfType<BuyPanelController>();
+            buyPanel = FindAnyObjectByType<BuyPanelController>();
             yield return null;
         }
 
@@ -677,7 +677,7 @@ public class TutorialManager : MonoBehaviour {
         // BuyPanelController가 뜰 때까지 대기
         BuyPanelController buyPanel = null;
         while (buyPanel == null || !buyPanel.panel.activeSelf) {
-            buyPanel = FindObjectOfType<BuyPanelController>();
+            buyPanel = FindAnyObjectByType<BuyPanelController>();
             yield return null;
         }
 

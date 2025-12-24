@@ -200,16 +200,16 @@ public class EventOrchestrator : MonoBehaviour {
             MarketPhase current = coinManager.CurrentMarket;
 
             if (current != lastLoggedMarketPhase) {
-                Debug.Log($"[MarketPhase] 변화 감지: {lastLoggedMarketPhase} → {current}");
+                //Debug.Log($"[MarketPhase] 변화 감지: {lastLoggedMarketPhase} → {current}");
             }
 
-            Debug.Log($"[MarketPhase] 현재 전체 MarketPhase: {current}");
+            //Debug.Log($"[MarketPhase] 현재 전체 MarketPhase: {current}");
             lastLoggedMarketPhase = current;
         }
     }
 
     private void PrintDurationDebug(DateTime now) {
-        Debug.Log("========== Duration Debug ==========");
+        //Debug.Log("========== Duration Debug ==========");
 
         // 1) 전체 마켓페이즈 Duration
         foreach (var eff in activeEffects) {

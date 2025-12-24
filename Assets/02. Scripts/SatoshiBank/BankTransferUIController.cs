@@ -77,4 +77,21 @@ public class BankTransferUIController : MonoBehaviour {
         amountInputField.caretPosition = amountInputField.text.Length;
         ValidateInput(amountInputField.text);
     }
+
+    public void PrepareForBullbitDeposit() {
+        if (platformDropdown != null) {
+            platformDropdown.value = 0;
+            platformDropdown.RefreshShownValue();
+        }
+
+        amountInputField.text = "";
+        confirmButton.interactable = false;
+    }
+    public void PrepareForBullbit() {
+        platformDropdown.value = 0;
+        platformDropdown.RefreshShownValue();
+        amountInputField.text = "";
+        confirmButton.interactable = false;
+    }
+
 }

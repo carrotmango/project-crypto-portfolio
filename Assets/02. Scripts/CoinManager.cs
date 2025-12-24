@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.Linq;
 
 public enum TimeSpeed
 {
@@ -58,9 +59,41 @@ public class CoinManager : MonoBehaviour
     public DateTime CurrentDateTime => currentDateTime;
     public int TickCount => tickCount;
 
-    public double GetGambleCashFromSatoshiBank() => PlayerManager.Instance.satoshiBankCash;
+    public double GetStashoCash() => PlayerManager.Instance.satoshiBankCash;
     public bool IsTimePaused => UIPauseManager.IsPaused;
 
+    public struct CoinChangeInfo {
+        public CoinData coin;
+        public double changeRate;
+    }
+
+    public void GetMajorDailyChanges(
+    out List<CoinChangeInfo> topGainers,
+    out List<CoinChangeInfo> topLosers) {
+        List<CoinChangeInfo> all = new();
+
+        foreach (var coin in coins) {
+            if (coin.InitialPrice <= 0) continue;
+
+            double rate =
+                (coin.CurrentPrice - coin.InitialPrice) / coin.InitialPrice * 100.0;
+
+            all.Add(new CoinChangeInfo {
+                coin = coin,
+                changeRate = rate
+            });
+        }
+
+        topGainers = all
+            .OrderByDescending(x => x.changeRate)
+            .Take(2)
+            .ToList();
+
+        topLosers = all
+            .OrderBy(x => x.changeRate)
+            .Take(2)
+            .ToList();
+    }
 
     void Awake()
     {
@@ -190,7 +223,7 @@ public class CoinManager : MonoBehaviour
         double total = GetTotalUserAsset();
         double bullbit = GetBullbitAsset();
         double bank = GetSatoshiBankAsset();
-        double gambleCash = GetGambleCashFromSatoshiBank();
+        double satoshiCash = GetStashoCash();
 
         //if (playerTotalAssetText != null)
         //    playerTotalAssetText.text = $"총자산: {total:N0} KRW";
@@ -204,15 +237,11 @@ public class CoinManager : MonoBehaviour
             {
                 bankCashText.text = $"₩{bank:N0}원";
             }
-            else
-            {
-                bankCashText.text = "";
-            }
         }
 
         if (mangoCashText != null)
         {
-            mangoCashText.text = $"{statusPanelController.playerNameText.text}님의 잔액: {gambleCash:N0}원";
+            mangoCashText.text = $"{statusPanelController.playerNameText.text}님의 잔액: {satoshiCash:N0}원";
         }
     }
 
@@ -265,7 +294,7 @@ public class CoinManager : MonoBehaviour
         coins.Add(coin);
 
         // 메인 UI 갱신
-        var uiManager = FindObjectOfType<MainUIManager>();
+        var uiManager = FindAnyObjectByType<MainUIManager>();
         if (uiManager != null) {
             uiManager.AddCoinRow(coin);
         }
@@ -321,5 +350,10 @@ public class CoinManager : MonoBehaviour
 
         return meta.BullbitListed;
     }
+    public void RenderBankCashOnce() {
+        if (bankCashText == null) return;
 
+        double bank = PlayerManager.Instance.satoshiBankCash;
+        bankCashText.text = $"₩{bank:N0}원";
+    }
 }

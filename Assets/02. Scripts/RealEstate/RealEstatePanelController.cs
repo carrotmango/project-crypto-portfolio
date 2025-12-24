@@ -67,6 +67,14 @@ public class RealEstatePanelController : MonoBehaviour {
             owned = false,
             imageKey = "estate_1000"
         },
+                new RealEstateData {
+            id = "room_002",
+            name = "오이도 쓰리룸",
+            price = 70000000,
+            monthlyYield = 0.016f,
+            owned = false,
+            imageKey = "estate_7000"
+        },
         new RealEstateData {
             id = "room_003",
             name = "구로동 원룸",
