@@ -14,7 +14,7 @@ public class XAuthor {
 }
 
 public class XPostRepository : MonoBehaviour {
-    [Header("json/posts/all_posts")]
+    [Header("json/News")]
     public TextAsset allPostsJson; // 비워두면 Resources에서 로드
 
     private Dictionary<string, Dictionary<string, XPostData>> map;
@@ -26,10 +26,10 @@ public class XPostRepository : MonoBehaviour {
 
     public void Load() {
         if (allPostsJson == null)
-            allPostsJson = Resources.Load<TextAsset>("json/posts/all_posts");
+            allPostsJson = Resources.Load<TextAsset>("json/News");
 
         if (allPostsJson == null) {
-            Debug.LogError("all_posts.json 없어용: Resources/json/posts/");
+            Debug.LogError("News.json 없어용: Resources/json");
             map = new();
             return;
         }

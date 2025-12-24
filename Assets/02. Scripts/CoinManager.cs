@@ -27,7 +27,7 @@ public class CoinManager : MonoBehaviour
 
     [Header("UI 연결")]
     public TextMeshProUGUI cashText;
-    public TextMeshProUGUI playerTotalAssetText;
+    //public TextMeshProUGUI playerTotalAssetText;
     public TextMeshProUGUI cashTextLabel;
     public TextMeshProUGUI bankCashText;
     public TextMeshProUGUI mangoCashText;
@@ -58,8 +58,9 @@ public class CoinManager : MonoBehaviour
     public DateTime CurrentDateTime => currentDateTime;
     public int TickCount => tickCount;
 
-
     public double GetGambleCashFromSatoshiBank() => PlayerManager.Instance.satoshiBankCash;
+    public bool IsTimePaused => UIPauseManager.IsPaused;
+
 
     void Awake()
     {
@@ -98,6 +99,11 @@ public class CoinManager : MonoBehaviour
     {
         while (true)
         {
+            if (UIPauseManager.IsPaused) {
+                yield return null;
+                continue;
+            }
+
             float interval = GetUpdateInterval();
             if (interval == float.MaxValue)
             {
@@ -186,8 +192,8 @@ public class CoinManager : MonoBehaviour
         double bank = GetSatoshiBankAsset();
         double gambleCash = GetGambleCashFromSatoshiBank();
 
-        if (playerTotalAssetText != null)
-            playerTotalAssetText.text = $"총자산: {total:N0} KRW";
+        //if (playerTotalAssetText != null)
+        //    playerTotalAssetText.text = $"총자산: {total:N0} KRW";
 
         if (cashText != null)
             cashText.text = $"불비트 자산: ₩{bullbit:N0}";
@@ -303,6 +309,17 @@ public class CoinManager : MonoBehaviour
 
         // 여기서 준비 완료 선언
         GameBootState.playerReady = true;
+    }
+
+    public bool HasCoinMeta(string symbol) {
+        return Array.Exists(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
+    }
+
+    public bool IsCoinListedOnBullbit(string symbol) {
+        var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
+        if (meta == null) return false;
+
+        return meta.BullbitListed;
     }
 
 }

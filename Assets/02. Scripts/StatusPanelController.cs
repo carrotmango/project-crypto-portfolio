@@ -12,6 +12,7 @@ public class StatusPanelController : MonoBehaviour {
     public TextMeshProUGUI CryptoAsset;
     public TextMeshProUGUI CashAsset;
     public TextMeshProUGUI estateAsset;
+    public TextMeshProUGUI totalAsset;
 
 
     public void SetPlayerInfo(string name, int characterIndex, string birthday = "") {
@@ -26,14 +27,46 @@ public class StatusPanelController : MonoBehaviour {
         }
     }
 
+    double GetEstateAsset() {
+        if (RealEstatePanelController.Instance == null)
+            return 0;
+
+        var estates = RealEstatePanelController.Instance.GetAllEstates();
+        if (estates == null)
+            return 0;
+
+        long total = 0;
+
+        foreach (var estate in estates) {
+            if (!estate.owned)
+                continue;
+
+            total += estate.price;
+        }
+
+        return total;
+    }
+
+
 
     public void UpdateAssetFromStatus() {
-        double crypto = CoinManager.Instance.GetBullbitAsset(); // 추후 다른 거래소 추가 시 확장 필요
+        double crypto = CoinManager.Instance.GetBullbitAsset();
         double cash = CoinManager.Instance.GetSatoshiBankAsset();
-        double estate = 0; // 현재 부동산 자산은 없으므로 0으로 처리
+        double estate = GetEstateAsset();
 
         CryptoAsset.text = $"불비트: {crypto:N0} KRW";
         CashAsset.text = $"은행: {cash:N0} KRW";
-        estateAsset.text = $"부동산: {estate:N0} KRW"; // 항상 0으로 표시
+        estateAsset.text = $"부동산: {estate:N0} KRW";
+        totalAsset.text = $"총자산: {GetTotalBalance():N0} KRW";
     }
+
+
+    double GetTotalBalance() {
+        double crypto = CoinManager.Instance.GetBullbitAsset();
+        double cash = CoinManager.Instance.GetSatoshiBankAsset();
+        double estate = GetEstateAsset();
+
+        return crypto + cash + estate;
+    }
+
 }

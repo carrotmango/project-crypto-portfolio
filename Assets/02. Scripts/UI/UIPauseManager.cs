@@ -3,6 +3,8 @@ using UnityEngine;
 public static class UIPauseManager {
     private static int openPanelCount = 0;
 
+    public static bool IsPaused => openPanelCount > 0;
+
     public static void RegisterPanel() {
         openPanelCount++;
 

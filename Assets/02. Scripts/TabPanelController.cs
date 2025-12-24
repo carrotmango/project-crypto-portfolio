@@ -10,6 +10,7 @@ public class TabPanelController : MonoBehaviour {
     public GameObject xbirdPanel; // X버드 전용 피드 패널
     public GameObject gamblePanel;
     public GameObject outingPanel;
+    public GameObject realEstatePanel;
 
     public Button bullbitButton;
     private bool isBullbitButtonClicked = false;
@@ -128,6 +129,10 @@ public class TabPanelController : MonoBehaviour {
 
         if(partimeJob != null) {
             partimeJob.SetActive(false);
+        }
+
+        if(realEstatePanel != null) {
+            realEstatePanel.SetActive(false);
         }
     }
     public void ToggleStatusPanel() {

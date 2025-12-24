@@ -81,7 +81,7 @@ public class CellController : MonoBehaviour, IPointerClickHandler {
     }
 
     private IEnumerator DelayedShakeAnimation() {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSecondsRealtime(0.2f);
 
         image.color = isBomb ? Color.red : Color.green;
 
@@ -122,12 +122,13 @@ public class CellController : MonoBehaviour, IPointerClickHandler {
         while (elapsed < duration) {
             float x = Mathf.Sin(elapsed * 50f) * strength;
             rectTransform.localPosition = originalPos + new Vector3(x, 0, 0);
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             yield return null;
         }
 
         rectTransform.localPosition = originalPos;
     }
+
 
     public void ResetCell() {
         isClicked = false;

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 using System;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class BullbitPortfolioRenderer : MonoBehaviour {
     [Header("Prefab & Content")]
@@ -49,72 +50,102 @@ public class BullbitPortfolioRenderer : MonoBehaviour {
             TutorialManager.Instance.portfolioCoinLabelTexts.Clear();
         }
 
-        foreach (var coin in CoinManager.Instance.coins) {
-            if (!PlayerManager.Instance.holdings.TryGetValue(coin.Symbol, out double amount) || amount <= 0)
-                continue;
+        foreach (var kv in PlayerManager.Instance.holdings) {
+            string symbol = kv.Key;
+            double amount = kv.Value;
+
+            if (amount <= 0) continue;
+
+            bool listed = CoinManager.Instance.IsCoinListedOnBullbit(symbol);
+
+            CoinData coin = null;
+            if (listed) {
+                coin = CoinManager.Instance.coins
+                    .Find(c => c.Symbol == symbol);
+            }
 
             GameObject row = Instantiate(portfolioCoinRowPrefab, contentParent);
-            string coinSymbol = coin.Symbol;
 
-            // CoinSymbol 클릭 시 패널 열기
-            var symbolBtn = row.transform.Find("CoinSymbol").GetComponent<Button>();
-            if (symbolBtn != null && tradeOptionPanelController != null) {
-                symbolBtn.onClick.RemoveAllListeners();
-                symbolBtn.onClick.AddListener(() => {
-                    Debug.Log($"[디버그] CoinSymbol 버튼 클릭됨: {coinSymbol}");
-                    tradeOptionPanelController.ShowPanel(coinSymbol);
-                });
-            }
-
-            // CoinNameText 클릭 시 패널 열기
-            var nameBtn = row.transform.Find("CoinNameText").GetComponent<Button>();
-            if (nameBtn != null && tradeOptionPanelController != null) {
-                nameBtn.onClick.RemoveAllListeners();
-                nameBtn.onClick.AddListener(() => {
-                    Debug.Log($"[디버그] CoinNameText 버튼 클릭됨: {coinSymbol}");
-                    tradeOptionPanelController.ShowPanel(coinSymbol);
-                });
-            }
-
-            // 아이콘 설정
+            // >> 아이콘
             Image icon = row.transform.Find("CoinIcon").GetComponent<Image>();
-            Sprite loadedSprite = Resources.Load<Sprite>($"Coins/{coin.Symbol}");
+            Sprite loadedSprite = Resources.Load<Sprite>($"Coins/{symbol}");
             if (loadedSprite != null) icon.sprite = loadedSprite;
 
-            // 텍스트 설정
-            row.transform.Find("CoinSymbol").GetComponent<TextMeshProUGUI>().text = coin.Symbol;
-            row.transform.Find("CoinNameText").GetComponent<TextMeshProUGUI>().text = coin.Name;
-            row.transform.Find("HoldingAmountText").GetComponent<TextMeshProUGUI>().text = amount.ToString("N4");
+            var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
 
-            double avgPrice = PlayerManager.Instance.GetAvgPrice(coin.Symbol);
+            // >> 기본 텍스트
+            row.transform.Find("CoinSymbol").GetComponent<TextMeshProUGUI>().text = symbol;
+            row.transform.Find("CoinNameText").GetComponent<TextMeshProUGUI>().text =
+                meta != null ? meta.Name : symbol;
+
+            row.transform.Find("HoldingAmountText")
+                .GetComponent<TextMeshProUGUI>().text = amount.ToString("N4");
+
+            // 거래 패널 클릭
+            var symbolBtn = row.transform.Find("CoinSymbol").GetComponent<Button>();
+            var nameBtn = row.transform.Find("CoinNameText").GetComponent<Button>();
+
+            //  기본값은 항상 비활성
+            symbolBtn.interactable = false;
+            nameBtn.interactable = false;
+
+            // >> 상장된 경우에만 활성
+            if (listed && tradeOptionPanelController != null) {
+                symbolBtn.onClick.RemoveAllListeners();
+                symbolBtn.onClick.AddListener(() => tradeOptionPanelController.ShowPanel(symbol));
+                symbolBtn.interactable = true;
+
+                nameBtn.onClick.RemoveAllListeners();
+                nameBtn.onClick.AddListener(() => tradeOptionPanelController.ShowPanel(symbol));
+                nameBtn.interactable = true;
+            }
+
+
+            // >> 가격 / 평가 계산
+            double avgPrice = PlayerManager.Instance.GetAvgPrice(symbol);
             double buyTotal = avgPrice * amount;
-            double evalTotal = coin.CurrentPrice * amount;
-            double profitLoss = evalTotal - buyTotal;
-            double returnRate = (buyTotal > 0) ? (profitLoss / buyTotal) * 100 : 0;
 
-            row.transform.Find("BuyAvgPriceText").GetComponent<TextMeshProUGUI>().text = FormatPriceKRW(avgPrice);
-            row.transform.Find("BuyTotalText").GetComponent<TextMeshProUGUI>().text = buyTotal.ToString("N0");
-            row.transform.Find("EvalTotalText").GetComponent<TextMeshProUGUI>().text = evalTotal.ToString("N0");
+            double evalTotal = listed && coin != null
+                ? coin.CurrentPrice * amount
+                : 0;
+
+            double profitLoss = evalTotal - buyTotal;
+            double returnRate = buyTotal > 0 ? (profitLoss / buyTotal) * 100 : 0;
+
+            row.transform.Find("BuyAvgPriceText")
+                .GetComponent<TextMeshProUGUI>().text =
+                listed ? FormatPriceKRW(avgPrice) : "-";
+
+            row.transform.Find("BuyTotalText")
+                .GetComponent<TextMeshProUGUI>().text =
+                listed ? buyTotal.ToString("N0") : "-";
+
+            row.transform.Find("EvalTotalText")
+                .GetComponent<TextMeshProUGUI>().text =
+                listed ? evalTotal.ToString("N0") : "-";
 
             var profitText = row.transform.Find("ProfitLossText").GetComponent<TextMeshProUGUI>();
-            profitText.text = profitLoss >= 0 ? $"+{profitLoss:N0}" : profitLoss.ToString("N0");
-            profitText.color = profitLoss >= 0 ? Color.green : Color.red;
-
             var rateText = row.transform.Find("ProfitLossPercentText").GetComponent<TextMeshProUGUI>();
-            rateText.text = returnRate >= 0 ? $"+{returnRate:F2}%" : $"{returnRate:F2}%";
-            rateText.color = returnRate >= 0 ? Color.green : Color.red;
 
-            totalBuy += buyTotal;
-            totalEval += evalTotal;
+            if (listed) {
+                profitText.text = profitLoss >= 0 ? $"+{profitLoss:N0}" : profitLoss.ToString("N0");
+                profitText.color = profitLoss >= 0 ? Color.green : Color.red;
 
-            if (TutorialManager.Instance != null) {
-                var symbolText = row.transform.Find("CoinSymbol")?.GetComponent<TextMeshProUGUI>();
-                var nameText = row.transform.Find("CoinNameText")?.GetComponent<TextMeshProUGUI>();
+                rateText.text = returnRate >= 0 ? $"+{returnRate:F2}%" : $"{returnRate:F2}%";
+                rateText.color = returnRate >= 0 ? Color.green : Color.red;
+            } else {
+                // << 상장 전 표시
+                profitText.text = "-";
+                profitText.color = Color.gray;
 
-                if (symbolText != null)
-                    TutorialManager.Instance.portfolioCoinSymbolTexts.Add(symbolText);
-                if (nameText != null)
-                    TutorialManager.Instance.portfolioCoinLabelTexts.Add(nameText);
+                rateText.text = "상장 예정";
+                rateText.color = Color.gray;
+            }
+
+            // >> 합계는 상장 코인만 반영
+            if (listed) {
+                totalBuy += buyTotal;
+                totalEval += evalTotal;
             }
         }
 
@@ -150,8 +181,6 @@ public class BullbitPortfolioRenderer : MonoBehaviour {
                                          totalReturnRate < 0 ? Color.red : Color.white;
         }
     }
-
-
     private string FormatPriceKRW(double price) {
         if (price >= 1000)
             return price.ToString("N0");

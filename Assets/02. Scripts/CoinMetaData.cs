@@ -55,7 +55,8 @@ public static class CoinMetaDatabase {
         new("애니메코인", "ANIME", 80.0, 115000000, CoinTheme.NFT, 4, "애니메이션 및 서브컬쳐 NFT 유틸리티", ""),
         new("무브먼트", "MOVE", 578.5, 115000000, CoinTheme.GameFi, 5, "실생활 활동 연계 + 게임 보상", ""),
         new("앱토스", "APT", 1000, 115000000, CoinTheme.Layer1, 3, "차세대 고성능 Layer1 블록체인", "", bullbitListed:false),
-        new("수이", "SUI", 300, 115000000, CoinTheme.Layer1, 3, "분산형 애플리케이션(dApp)과 디지털 자산을 지원하도록 설계된 차세대 레이어1 블록체인", "", bullbitListed:false)
-        
+        new("수이", "SUI", 300, 115000000, CoinTheme.Layer1, 3, "분산형 애플리케이션(dApp)과 디지털 자산을 지원하도록 설계된 차세대 레이어1 블록체인", "", bullbitListed:false),
+        new("펭구코인", "PENGU", 10.0, 115000000, CoinTheme.Meme, 4, "귀여운 펭구 밈코인", "", bullbitListed:false)
+
     };
 }

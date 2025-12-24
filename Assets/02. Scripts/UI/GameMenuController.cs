@@ -10,8 +10,11 @@ public class GameMenuController : MonoBehaviour {
     public Button exitButton;          // 게임 종료
 
     [Header("Audio")]
-    public Slider volumeSlider;
+    public Slider bgmSlider;
+    public Slider sfxSlider;
     public BgmPlayer bgmPlayer;
+    public SfxPlayer sfxPlayer;
+
 
 
     void Start() {
@@ -25,26 +28,44 @@ public class GameMenuController : MonoBehaviour {
         saveButton.onClick.AddListener(OnClickSave);
         exitButton.onClick.AddListener(OnClickExit);
 
-        if (bgmPlayer != null && volumeSlider != null) {
-            float currentVolume = bgmPlayer.GetVolume();
-            volumeSlider.value = currentVolume;
-            volumeSlider.onValueChanged.AddListener(OnVolumeChanged);
+        if (bgmPlayer != null && bgmSlider != null) {
+            bgmSlider.value = bgmPlayer.GetVolume();
+            bgmSlider.onValueChanged.AddListener(OnBgmVolumeChanged);
+        }
+
+        if (sfxPlayer != null && sfxSlider != null) {
+            sfxSlider.value = sfxPlayer.GetVolume();
+            sfxSlider.onValueChanged.AddListener(OnSfxVolumeChanged);
         }
     }
 
-    private void OnVolumeChanged(float value) {
+
+    private void OnBgmVolumeChanged(float value) {
         if (bgmPlayer != null) {
             bgmPlayer.SetVolume(value);
         }
     }
 
+    private void OnSfxVolumeChanged(float value) {
+        if (sfxPlayer != null) {
+            sfxPlayer.SetVolume(value);
+        }
+    }
+
+
+
     private void OpenMenu() {
         menuPanel.SetActive(true);
 
-        if (bgmPlayer != null && volumeSlider != null) {
-            volumeSlider.value = bgmPlayer.GetVolume();
+        if (bgmPlayer != null && bgmSlider != null) {
+            bgmSlider.value = bgmPlayer.GetVolume();
+        }
+
+        if (sfxPlayer != null && sfxSlider != null) {
+            sfxSlider.value = sfxPlayer.GetVolume();
         }
     }
+
 
 
     private void CloseMenu() {
@@ -63,9 +84,15 @@ public class GameMenuController : MonoBehaviour {
 
     private void OnClickExit() {
         Debug.Log("Exit clicked");
-        // 게임 종료 처리
-        // Application.Quit();
+
+        var lobby = FindAnyObjectByType<LobbyManager>();
+        if (lobby != null) {
+            lobby.RestartGame();
+        } else {
+            Debug.LogWarning("로비매니저 없음");
+        }
     }
+
 
     void Update() {
         if (menuPanel.activeSelf) {

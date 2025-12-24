@@ -6,11 +6,24 @@ public class CoinEntry {
     public string symbol;
     public double value;
 }
+[Serializable]
 public class SavedActiveEffect {
     public string authorId;
     public string eventKey;
     public string startTime;
 }
+
+[Serializable]
+public class SavedRealEstate {
+    public string id;
+    public bool owned;
+    public int price;
+    public float monthlyYield;
+    public string buyDate;
+    public string nextIncomeDate;
+    public string lastPriceUpdateDate;
+}
+
 
 
 [Serializable]
@@ -39,7 +52,7 @@ public class GameData {
     public List<SavedXPost> xFeedPosts = new();
 
     // DurationTime
-    public List<SavedActiveEffect> activeEffects = new List<SavedActiveEffect>();
+    public List<SavedActiveEffect> activeEffects = new();
 
     // MarketPhase
     public string savedMarketPhase;
@@ -52,6 +65,7 @@ public class GameData {
     // PartTime Job
     public int lastPartTimeWorkDay;
 
-
+    // RealEstate
+    public List<SavedRealEstate> savedRealEstates = new();
 
 }

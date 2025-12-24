@@ -66,6 +66,10 @@ public class TutorialManager : MonoBehaviour {
 
     private bool timePausedOnce = false;
 
+    [Header("Typing Sound")]
+    [SerializeField] private AudioClip typingClip;
+
+
 
     //void Update() {
     //    if (!tutorialFinished && Time.timeScale != 0f)
@@ -344,8 +348,15 @@ public class TutorialManager : MonoBehaviour {
 
         foreach (char c in message) {
             dialogueText.text += c;
+
+            if (!char.IsWhiteSpace(c) && typingClip != null) {
+                SfxPlayer.Instance?.Play(typingClip);
+            }
+
+
             yield return new WaitForSecondsRealtime(textSpeed);
         }
+
 
         isTyping = false;
         textCompleted = true;

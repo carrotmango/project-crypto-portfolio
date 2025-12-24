@@ -135,4 +135,37 @@ public class PlayerManager : MonoBehaviour
 
         return $"총자산 ₩{total:N0} (불비트 ₩{bullbit:N0} / 사토시 ₩{bank:N0})";
     }
+
+    public void ChangeSatoshiMoney(double amount) {
+        satoshiBankCash += amount;
+    }
+
+    public void ChangeBullbitCash(double amount) {
+        bullbitCash += amount;
+    }
+
+    public void ChangeCoin(string symbol, double amount) {
+        if (!holdings.ContainsKey(symbol)) {
+            holdings[symbol] = 0;
+            totalBuyAmount[symbol] = 0;
+            totalBuyQuantity[symbol] = 0;
+        }
+
+        holdings[symbol] += amount;
+
+        // 에어드랍 / 이벤트 지급은
+        // 평균단가 0원으로 "매수된 것"처럼 처리
+        if (amount > 0) {
+            totalBuyQuantity[symbol] += amount;
+            // totalBuyAmount는 증가시키지 않음 >> avgPrice = 0
+        }
+
+        const double Epsilon = 0.0000001;
+        if (Mathf.Abs((float)holdings[symbol]) < Epsilon) {
+            holdings[symbol] = 0;
+            totalBuyAmount[symbol] = 0;
+            totalBuyQuantity[symbol] = 0;
+        }
+    }
+
 }

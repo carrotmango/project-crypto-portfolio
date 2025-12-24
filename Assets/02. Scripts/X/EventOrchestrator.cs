@@ -220,8 +220,9 @@ public class EventOrchestrator : MonoBehaviour {
                 double remaining = (end - now).TotalHours;
                 if (remaining < 0) remaining = 0;
 
-                Debug.Log($"[MarketPhase] 전체 MarketPhase: {coinManager.CurrentMarket}");
-                Debug.Log($"[MarketPhase] Remaining DurationHours: {remaining:F1}");
+                //Debug.Log($"[MarketPhase] 전체 MarketPhase: {coinManager.CurrentMarket}");
+                //Debug.Log($"[MarketPhase] Remaining DurationHours: {remaining:F1}");
+                // 마켓페이즈 확인용 로그 중요
             }
         }
 

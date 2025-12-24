@@ -156,7 +156,7 @@ public class StageManager : MonoBehaviour {
 
         // 첫 층 다시 활성화
         currentFloor = 0;
-        UpdateFloorState(); 
+        UpdateFloorState();
     }
     public void DisableAllCellsOnFloor(int floor) {
         if (floor < 0 || floor >= stageRows.Count) return;

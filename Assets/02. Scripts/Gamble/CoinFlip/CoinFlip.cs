@@ -69,25 +69,22 @@ public class CoinFlip : MonoBehaviour {
 
         resultText.text = "동전 던지는 중...";
 
-        // 2.5 초간 스핀
-        yield return new WaitForSeconds(2f);
+        // timeScale 무시하고 실제 2초 대기
+        yield return new WaitForSecondsRealtime(2f);
 
-        // 결과 결정
         string[] outcomes = { "앞", "뒤" };
         string result = outcomes[Random.Range(0, 2)];
         bool isWin = (playerChoice == result);
 
-        //  스핀 끄기
         coinAnimator.speed = 0f;
         coinAnimator.gameObject.SetActive(false);
 
-        //  결과 스프라이트 표시
         coinSprite.enabled = true;
         coinSprite.sprite = (result == "앞") ? frontSprite : backSprite;
 
         resultText.text = $"결과: {result}";
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSecondsRealtime(1f);
 
         // 보상 처리
         double baseAmount = 0;
@@ -102,10 +99,10 @@ public class CoinFlip : MonoBehaviour {
 
         CoinManager.Instance.UpdateCashText();
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSecondsRealtime(1f);
 
-        // 패널 닫기
         coinFlipPanel.SetActive(false);
         gambleManager.UpdateBetButtonStates();
     }
+
 }

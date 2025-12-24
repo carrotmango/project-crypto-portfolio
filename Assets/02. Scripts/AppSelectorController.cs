@@ -13,19 +13,18 @@ public class AppSelectorController : MonoBehaviour {
     [Header("패널들")]
     public GameObject marketPanel; // 코인 리스트 패널
     public GameObject bankPanel;   // 은행 패널
+    public GameObject xbirdPanel; // 엑스버드 패널
+    public GameObject GamblePanel; // 도박패널
+    public GameObject RealEstatePanel; // 부동산 패널
+    public GameObject OutingPanel; // 외출패널
 
-    [Header("CoinManager 연결")]
+    [Header("CoinManager")]
     public CoinManager coinManager;
 
-    [Header("Xbird 연결")]
-    public GameObject xbirdPanel;
-
-    [Header("App Panel 가져오기")]
+  
+    [Header("App Panel")]
     public GameObject appPanel;
 
-
-    [Header("App Panel 가져오기")]
-    public GameObject GamblePanel;
 
 
     public void OpenBullbitApp() {
@@ -73,8 +72,14 @@ public class AppSelectorController : MonoBehaviour {
     }
 
     public void OpenEstateApp() {
-        if(UIManager.Instance != null) {
-            UIManager.Instance.ShowConfirm("부동산 컨텐츠는 개발 중!");
+    if(RealEstatePanel != null) {
+            RealEstatePanel.SetActive(true);
+        }
+    }
+
+    public void CloseEstateApp() {
+        if (RealEstatePanel != null) {
+            RealEstatePanel.SetActive(false);
         }
     }
 
@@ -96,6 +101,12 @@ public class AppSelectorController : MonoBehaviour {
         }
     }
 
+    public void OpenOpenLake() {
+        if (UIManager.Instance != null) {
+            UIManager.Instance.ShowConfirm("OPENLAKE NFT 거래소 개발 중!");
+        }
+    }
+
     public void OpenGambleApp() {
         if (coinManager != null) {
             coinManager.currentApp = AppType.Gamble;
@@ -108,7 +119,7 @@ public class AppSelectorController : MonoBehaviour {
         if (GamblePanel != null) {
             GamblePanel.SetActive(true); // 패널 열기
 
-            // 🟢 GambleManager 컴포넌트 받아와서 베팅 버튼 초기화
+            // GambleManager 컴포넌트 받아와서 베팅 버튼 초기화
             GambleManager gm = GamblePanel.GetComponent<GambleManager>();
             if (gm != null) {
                 gm.UpdateBetButtonStates();
@@ -119,10 +130,13 @@ public class AppSelectorController : MonoBehaviour {
     public void CloseGambleApp() {
         if (GamblePanel != null)
             GamblePanel.SetActive(false);
-        appPanel.SetActive(true);
-        if (coinManager != null)
-            GamblePanel.SetActive(false);
-        coinManager.currentApp = AppType.Bullbit; 
+        if(OutingPanel != null) {
+            OutingPanel.SetActive(true);
+        }
+        //    if (coinManager != null)
+        //        GamblePanel.SetActive(false);
+        //    coinManager.currentApp = AppType.Bullbit; 
+        //}
     }
 
 }

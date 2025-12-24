@@ -4,6 +4,7 @@ using TMPro;
 using System.Collections.Generic;
 using System;
 using static ChartRenderer;
+using UnityEngine.SceneManagement;
 
 public class LobbyManager : MonoBehaviour {
     [Header("Game Start Options")] public GameObject startOptionPanel;
@@ -40,7 +41,7 @@ public class LobbyManager : MonoBehaviour {
     public BgmPlayer bgmPlayer;
 
     [Header("로딩")] public LoadingController loadingController;
-    
+
 
 
     void Start() {
@@ -252,6 +253,8 @@ public class LobbyManager : MonoBehaviour {
 
             PartTimeJobController.Instance.lastWorkedDay = data.lastPartTimeWorkDay;
 
+            // RealEstate 복원
+            RestoreRealEstates(data);
 
             // 날짜 복원
             if (DateTime.TryParse(data.savedDateTime,
@@ -396,13 +399,50 @@ public class LobbyManager : MonoBehaviour {
 
         if (data == null) {
             Debug.LogWarning("저장된 데이터가 없어 로드할 수 없습니다.");
-            return; 
+            return;
         }
 
         loadingController.BeginLoading();
         LoadGameWithData(data);
 #endif
     }
+
+    private void RestoreRealEstates(GameData data) {
+        if (data.savedRealEstates == null || data.savedRealEstates.Count == 0)
+            return;
+
+        var estateCtrl = RealEstatePanelController.Instance;
+        if (estateCtrl == null) {
+            Debug.LogWarning("[LOAD] RealEstatePanelController 없음");
+            return;
+        }
+
+        var estates = estateCtrl.GetAllEstates();
+
+        foreach (var saved in data.savedRealEstates) {
+            var estate = estates.Find(e => e.id == saved.id);
+            if (estate == null)
+                continue;
+
+            estate.owned = saved.owned;
+            estate.price = saved.price;
+            estate.monthlyYield = saved.monthlyYield;
+
+            if (DateTime.TryParse(saved.buyDate, out var buy))
+                estate.buyDate = buy;
+
+            if (DateTime.TryParse(saved.nextIncomeDate, out var next))
+                estate.nextIncomeDate = next;
+
+            if (DateTime.TryParse(saved.lastPriceUpdateDate, out var last))
+                estate.lastPriceUpdateDate = last;
+        }
+
+        estateCtrl.RefreshPage();
+
+        Debug.Log("[LOAD] 부동산 데이터 복원 완료");
+    }
+
 
 
     private void RestoreXFeed(GameData data) {
@@ -454,5 +494,9 @@ public class LobbyManager : MonoBehaviour {
                 }
             }
         }
+    }
+    public void RestartGame() {
+        Time.timeScale = 1f; 
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

@@ -29,6 +29,21 @@ public static class SaveManager
         // PartTime Job
         data.lastPartTimeWorkDay = PartTimeJobController.Instance.lastWorkedDay;
 
+        // RealEstate
+        data.savedRealEstates.Clear();
+
+        foreach (var estate in RealEstatePanelController.Instance.GetAllEstates()) {
+            data.savedRealEstates.Add(new SavedRealEstate {
+                id = estate.id,
+                owned = estate.owned,
+                price = estate.price,
+                monthlyYield = estate.monthlyYield,
+                buyDate = estate.buyDate.ToString("O"),
+                nextIncomeDate = estate.nextIncomeDate.ToString("O"),
+                lastPriceUpdateDate = estate.lastPriceUpdateDate.ToString("O")
+            });
+        }
+
         data.holdings.Clear();
         foreach (var kv in PlayerManager.Instance.holdings)
             data.holdings.Add(new CoinEntry { symbol = kv.Key, value = kv.Value });

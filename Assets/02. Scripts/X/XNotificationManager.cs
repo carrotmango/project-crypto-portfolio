@@ -59,7 +59,7 @@ public class XNotificationManager : MonoBehaviour {
 
         DateTime now = coinManager.CurrentDateTime;
 
-        // 취소 신청된 상태 → 결제일 도달 시 완전 해지
+        // 취소 신청된 상태 > 결제일 도달 시 완전 해지
         if (isCancelRequested == true) {
             if (now >= nextBillingDate) {
                 isSubscribed = false;
@@ -69,7 +69,7 @@ public class XNotificationManager : MonoBehaviour {
             return;
         }
 
-        // 일반 구독 상태 → 자동 결제
+        // 일반 구독 상태 >> 자동 결제
         if (now >= nextBillingDate) {
             ChargeSubscription();
         }
