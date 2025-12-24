@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2e6a21ed7d756c64cbabd08ba63dcccd
+guid: 3992c67b8e15b2f4ea1c798bb3d2d42d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 272621144051382011
-    second: estate_1000 1_0
+      213: 1136786885435969333
+    second: estate_1000_1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: estate_1000 1_0
+      name: estate_1000_1_0
       rect:
         serializedVersion: 2
-        x: 74
-        y: 46
-        width: 428
-        height: 360
+        x: 153
+        y: 4
+        width: 389
+        height: 327
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bf671717c7b88c300800000000000000
-      internalID: 272621144051382011
+      spriteID: 53fcbbb36ada6cf00800000000000000
+      internalID: 1136786885435969333
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      estate_1000 1_0: 272621144051382011
+      estate_1000_1_0: 1136786885435969333
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
