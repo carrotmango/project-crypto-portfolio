@@ -48,11 +48,12 @@ public class BankTransferUIController : MonoBehaviour {
             PlayerManager.Instance.satoshiBankCash -= amount;
             PlayerManager.Instance.bullbitCash += amount;
             Debug.Log($"사토시 → 불비트 {amount}원 이체 완료");
-        } else if (platform == "망고카지노") {
-            PlayerManager.Instance.satoshiBankCash -= amount;
-            PlayerManager.Instance.mangoCasinoCash += amount;
-            Debug.Log($"사토시 → 망고카지노 {amount}원 이체 완료");
         }
+        //else if (platform == "망고카지노") {
+        //    PlayerManager.Instance.satoshiBankCash -= amount;
+        //    PlayerManager.Instance.mangoCasinoCash += amount;
+        //    Debug.Log($"사토시 → 망고카지노 {amount}원 이체 완료");
+        //}
 
         amountInputField.text = "";
         confirmButton.interactable = false;
@@ -60,6 +61,8 @@ public class BankTransferUIController : MonoBehaviour {
 
         if (withdrawPanelController != null)
             withdrawPanelController.ClosePanel();
+
+        CoinManager.Instance.RenderBankCashOnce();
     }
 
     void FormatInputAsCurrency(string input) {

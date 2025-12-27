@@ -62,10 +62,13 @@ public class CoinManager : MonoBehaviour
     public double GetStashoCash() => PlayerManager.Instance.satoshiBankCash;
     public bool IsTimePaused => UIPauseManager.IsPaused;
 
+
+
     public struct CoinChangeInfo {
         public CoinData coin;
         public double changeRate;
     }
+
 
     public void GetMajorDailyChanges(
     out List<CoinChangeInfo> topGainers,
@@ -100,7 +103,7 @@ public class CoinManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -150,12 +153,17 @@ public class CoinManager : MonoBehaviour
             currentDateTime = currentDateTime.AddMinutes(30);
 
             if (currentDateTime.Hour == 9 && currentDateTime.Minute == 0)
-            {
+            {   
                 foreach (var coin in coins)
                 {
                     coin.InitialPrice = coin.CurrentPrice;
                 }
             }
+
+            if (currentDateTime.Hour == 8 && currentDateTime.Minute == 0) {
+                FearIndexManager.Instance?.RecalculateDailyFear();
+            }
+
 
             if (currentDateTime.Hour == 0 && currentDateTime.Minute == 0)
             {
@@ -229,7 +237,7 @@ public class CoinManager : MonoBehaviour
         //    playerTotalAssetText.text = $"총자산: {total:N0} KRW";
 
         if (cashText != null)
-            cashText.text = $"불비트 자산: ₩{bullbit:N0}";
+            cashText.text = $"불비트 자산: {bullbit:N0}원";
 
         if (bankCashText != null)
         {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
@@ -18,12 +19,14 @@ public class PlayerManager : MonoBehaviour
     public Dictionary<string, double> totalBuyAmount = new();
     public Dictionary<string, double> totalBuyQuantity = new();
 
+    public event Action OnPlayerNameChanged;
+
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -39,9 +42,9 @@ public class PlayerManager : MonoBehaviour
         // totalBuyQuantity["BTC"] = 1.0;
     }
 
-    void Update()
-    {
-        // 추후 로직 삽입 가능
+    public void SetPlayerName(string name) {
+        playerName = name;
+        OnPlayerNameChanged?.Invoke();
     }
 
     public void RegisterBuy(string symbol, double price, double quantity)

@@ -86,7 +86,7 @@ public class TabPanelController : MonoBehaviour {
             gamblePanel.SetActive(true);
         }
 
-        Debug.Log($"[ShowMarketPanel] current: {coinManager.currentApp}, target: {appToShow}");
+        //Debug.Log($"[ShowMarketPanel] current: {coinManager.currentApp}, target: {appToShow}");
     }
 
 

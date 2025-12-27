@@ -2,6 +2,7 @@
   "events": [
     {
       "id": "lost_phone",
+      "title": "불운",
       "description": "휴대폰을 잃어버렸습니다. 다행히 보험이 적용되어 5만원이 청구되었습니다.",
       "satoshiBankChange": -50000,
       "bullbitChange": 0,
@@ -10,6 +11,7 @@
     },
     {
       "id": "side_job_bonus",
+      "title": "행운",
       "description": "운이 좋습니다! 길을 걷다가 3만원을 주웠습니다.",
       "satoshiBankChange": 30000,
       "bullbitChange": 0,
@@ -18,6 +20,7 @@
     },
     {
       "id": "bullbit_fee",
+      "title": "분실",
       "description": "산책을 다녀오는 길에 2만원을 잃어버렸습니다.",
       "satoshiBankChange": -20000,
       "bullbitChange": 0,
@@ -26,6 +29,7 @@
     },
     {
       "id": "btc_small_airdrop",
+      "title": "당첨",
       "description": "이전 이벤트 참여 보상으로 소량의 비트코인을 받았습니다.",
       "satoshiBankChange": 0,
       "bullbitChange": 0,
@@ -36,6 +40,7 @@
     },
     {
       "id": "lucky_day_1",
+      "title": "행운",
       "description": "자주 안입는 옷을 정리하다가 주머니에서 6만원을 발견했습니다.",
       "satoshiBankChange": 60000,
       "bullbitChange": 0,
@@ -44,6 +49,7 @@
     },
     {
       "id": "early_test_airdrop",
+      "title": "당첨",
       "description": "이벤트 당첨으로 펭구코인 1만개를 에어드랍을 받았습니다.",
       "satoshiBankChange": 0,
       "bullbitChange": 0,
@@ -54,6 +60,7 @@
     },
     {
       "id": "sui_early_airdrop",
+      "title": "보상",
       "description": "초기 네트워크 참여 보상으로 SUI 에어드랍을 받았습니다.",
       "satoshiBankChange": 0,
       "bullbitChange": 0,
@@ -64,6 +71,7 @@
     },
     {
       "id": "missed_bus",
+      "title": "지각",
       "description": "버스를 놓쳐 택시를 이용했습니다. 예상치 못한 지출이 발생했습니다.",
       "satoshiBankChange": -12000,
       "bullbitChange": 0,
@@ -72,6 +80,7 @@
     },
     {
       "id": "friend_repay",
+      "title": "의리",
       "description": "친구가 예전에 빌린 돈을 갚았습니다.",
       "satoshiBankChange": 40000,
       "bullbitChange": 0,
@@ -80,6 +89,7 @@
     },
     {
       "id": "market_coupon",
+      "title": "행운",
       "description": "불비트 이벤트 쿠폰을 사용해 현금 보상을 받았습니다.",
       "satoshiBankChange": 0,
       "bullbitChange": 25000,

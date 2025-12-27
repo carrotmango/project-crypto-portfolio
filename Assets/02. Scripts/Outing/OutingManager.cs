@@ -32,9 +32,9 @@ public class OutingManager : MonoBehaviour {
         if (GamblePanel != null) {
             GamblePanel.SetActive(true);
 
-            GambleManager gm = GamblePanel.GetComponent<GambleManager>();
-            if (gm != null)
-                gm.UpdateBetButtonStates();
+            GambleManager_renewal gm = GamblePanel.GetComponent<GambleManager_renewal>();
+            if (gm != null)               
+            gm.OpenPanel();
         }
     }
 

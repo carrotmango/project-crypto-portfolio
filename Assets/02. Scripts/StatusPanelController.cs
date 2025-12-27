@@ -16,6 +16,7 @@ public class StatusPanelController : MonoBehaviour {
 
 
     public void SetPlayerInfo(string name, int characterIndex, string birthday = "") {
+        PlayerManager.Instance.SetPlayerName(name);
         playerNameText.text = name;
 
         if (!string.IsNullOrEmpty(birthday)) {

@@ -118,8 +118,13 @@ public class RandomEventManager : MonoBehaviour {
     }
 
     void ShowEventMessage(RandomEventData data) {
-        UIManager.Instance.ShowConfirm(data.description);
+        if (string.IsNullOrEmpty(data.title)) {
+            UIManager.Instance.ShowConfirm(data.description);
+        } else {
+            UIManager.Instance.ShowConfirm(data.title, data.description);
+        }
     }
+
 
     void LoadEvents() {
         TextAsset json = Resources.Load<TextAsset>("json/RandomEvents");
