@@ -19,7 +19,7 @@ public class MajorChangeRotator : MonoBehaviour {
         while (true) {
             CoinManager.Instance.GetMajorDailyChanges(out var gainers, out var losers);
 
-            Debug.Log($"Gainers: {gainers.Count}, Losers: {losers.Count}");
+            //Debug.Log($"Gainers: {gainers.Count}, Losers: {losers.Count}");
 
             if (gainers.Count == 0 && losers.Count == 0) {
                 yield return null;

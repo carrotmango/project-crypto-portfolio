@@ -1,0 +1,88 @@
+{
+    "items": [
+        {
+            "key": "welcome_to_project_crypto",
+            "type": 0,
+            "title": "",
+            "message": "Xbird에 오신걸 환영합니다.\n 이 곳에서 크립토를 하는데 필요한 중요한 정보들을 전달받을 수 있습니다.",
+            "profileImage": "Xbird_01.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 400
+        },
+        {
+            "key": "movement_A_delist_risk_rumor",
+            "type": 2,
+            "title": "전화",
+            "message": "???: 어이 나 투자왕 장태웅인데, 그? 무비? 무브먼트? 그거 곧 \n 상장폐지할 거 같다고 하니까.. 당장 처분해!!",
+            "profileImage": "anonymous.jpg",
+            "contentImage": ""
+        },
+        {
+            "key": "movement_A_delist_risk",
+            "type": 0,
+            "authorName": "Shocking News",
+            "title": "",
+            "message": "최근 커뮤니티에서 확산되고 있는 무브먼트(Movement) 코인 관련 루머에 대해 불비트 거래소가 상황을 주시 중인 것으로 알려졌습니다.\n해당 루머는 개발사 MoveLabs 소속 핵심 인물과 관련된 의혹을 포함하고 있으며, 거래소는 사실 관계를 확인하고 있습니다.\n불비트 측은 현재 상장 유지 여부를 검토 중이며, 빠르면 다음 날 관련 결정이 내려질 수 있습니다.",
+            "profileImage": "shocking.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 400
+        },
+        {
+            "key": "movement_B_delisted",
+            "type": 0,
+            "authorName": "Shocking News",
+            "title": "",
+            "message": "불비트 거래소는 내부 심사 결과에 따라 무브먼트(Movement) 코인의 \n개발자 Rushi Manche의 범행이 사실로 들어났으며, 상장폐지를 최종 결정했습니다.\n본 공지 이후 무브먼트 코인의 모든 거래는 즉시 중단되며, 추가적인 입출금 지원 여부는 추후 안내될 예정입니다.",
+            "profileImage": "shocking.jpg",
+            "contentImage": "shocking_news_01",
+            "width": 550,
+            "height": 700
+        },
+        {
+            "key": "movement_B_not_delisted",
+            "type": 0,
+            "authorName": "Shocking News",
+            "title": "",
+            "message": "무브먼트(Movement) 코인 개발진과 관련해 제기되었던 의혹은 사실이 아닌 것으로 확인되었습니다.\n\n불비트 거래소는 상장폐지 검토를 철회했으며, 무브먼트 코인의 거래는 기존과 동일하게 유지됩니다.",
+            "profileImage": "shocking.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 360
+        },
+        {
+            "key": "movement_C_engine_upgrade",
+            "type": 0,
+            "authorName": "Shocking News",
+            "title": "",
+            "message": "무브먼트(Movement) 개발팀은 네트워크 성능과 안정성을 대폭 개선하는 신규 엔진 업그레이드를 공개했습니다.\n\n이번 업데이트를 통해 처리 속도와 확장성이 강화되며, 향후 생태계 확장을 위한 기반이 마련될 예정입니다.",
+            "profileImage": "shocking.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 340
+        },
+        {
+            "key": "movement_D_revival_prepare",
+            "type": 0,
+            "authorName": "Shocking News",
+            "title": "",
+            "message": "무브먼트(Movement) 프로젝트 팀은 거래 중단 이후 프로젝트 재정비에 착수했다고 밝혔습니다.\n\n개발 로드맵 재정렬과 내부 구조 개선을 거쳐, 향후 재상장을 목표로 준비가 진행 중입니다.",
+            "profileImage": "shocking.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 340
+        },
+        {
+            "key": "movement_E_relist",
+            "type": 0,
+            "authorName": "Shocking News",
+            "title": "",
+            "message": "불비트 거래소는 내부 심사를 마친 뒤 무브먼트(Movement) 코인의 재상장을 공식 발표했습니다.\n\n무브먼트 코인은 금일 오전부터 거래가 재개되며, 향후 변동성 확대에 대한 주의가 필요합니다.",
+            "profileImage": "shocking.jpg",
+            "contentImage": "shocking_news_01",
+            "width": 550,
+            "height": 380
+        }
+    ]
+}

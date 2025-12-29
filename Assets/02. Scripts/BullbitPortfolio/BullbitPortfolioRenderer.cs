@@ -138,7 +138,7 @@ public class BullbitPortfolioRenderer : MonoBehaviour {
                 profitText.text = "-";
                 profitText.color = Color.gray;
 
-                rateText.text = "상장 예정";
+                rateText.text = "비상장";
                 rateText.color = Color.gray;
             }
 

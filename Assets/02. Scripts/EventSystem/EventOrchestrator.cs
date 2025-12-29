@@ -11,6 +11,7 @@ public class EventOrchestrator : MonoBehaviour {
     private HashSet<string> executedEvents = new(); // 중복 실행 방지용
     public static EventOrchestrator Instance;
     public NewsManager newsManager;
+    public NewsRepository newsRepo;
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -41,75 +42,83 @@ public class EventOrchestrator : MonoBehaviour {
     }
 
     public void RunTweetEvent(string authorId, string eventKey) {
+
         if (executedEvents.Contains(eventKey)) return;
 
-        if (repo.TryGet(authorId, eventKey, out var data)) {
-            // postYn이 true일 때만 트윗 UI 생성
-            if (data.postYn) {
-                feed.SpawnFromData(data);
+        // 1. UI 처리 (여기서 알림 여부 결정)
+        TriggerUI(eventKey);
 
-                XNotificationManager.Instance.Show(data.name, data.key);
+        // 2. XPost / Effect
+        if (repo.TryGet(authorId, eventKey, out var data)) {
+
+            if (data.postYn) {
+                feed.SpawnFromData(data); // 피드만
             }
 
-            // 마켓 및 코인 효과 적용
             ApplyTweetEffect(data);
-
-            // 지속 등록
             activeEffects.Add((data, coinManager.CurrentDateTime));
-
-            // 한 번 실행한 이벤트는 다시 실행 안 함
-            executedEvents.Add(eventKey);
-
-            // 실행 시각으로 date/time 필드 덮어쓰기
-            data.date = coinManager.CurrentDateTime.ToString("MM/dd/yyyy");
-            data.time = coinManager.CurrentDateTime.ToString("HH:mm");
-
-
-            Debug.Log($"[트윗 실행] {authorId}/{eventKey}");
-        } else {
-            Debug.LogWarning($"Lookup failed: {authorId} / {eventKey}");
         }
+
+        executedEvents.Add(eventKey);
+        Debug.Log($"[Event 실행] {authorId}/{eventKey}");
     }
 
-    private void ApplyTweetEffect(XPostData data) {
-        HashSet<string> individuallyHandled = new();
 
-        if (data.targetGroups != null) 
-        {
-            foreach (var group in data.targetGroups) {
-                // 상장 이벤트 처리
-                if (!string.IsNullOrEmpty(data.eventType) && data.eventType == "Listing") // 상장
-                {
-                    foreach (var symbol in group.symbols) {
-                        coinManager.ListNewCoin(symbol);
+
+    private void ApplyTweetEffect(XPostData data) {
+
+        if (data.targetGroups == null) return;
+
+        foreach (var group in data.targetGroups) {
+            foreach (var symbol in group.symbols) {
+
+                var coin = coinManager.coins.Find(c => c.Symbol == symbol);
+                if (coin == null) continue;
+
+                // =========================
+                // 1. 이벤트 타입 (문자열 기반)
+                // =========================
+                if (group.eventType == "Relisting") {
+                    // 실제 Relist는 Effect에서 끝났다고 가정
+                    // 여기선 안전 보정만
+                    if (coin.IsDelisted) {
+                        coin.ApplyRelist(
+                            group.relistBasePrice > 0
+                                ? group.relistBasePrice
+                                : coin.InitialPrice
+                        );
                     }
-                    continue; // 상장 이벤트는 가격 변동 없이 여기서 끝
+                } else if (group.eventType == "Delisting") {
+                    // XPost에서는 상태 변경 금지
+                    continue;
                 }
 
-                // 기존 가격/페이즈 변동 처리
-                foreach (var symbol in group.symbols) {
-                    var coin = coinManager.coins.Find(c => c.Symbol == symbol);
-                    if (coin == null) continue;
+                // =========================
+                // 2. 가격 연출
+                // =========================
+                if (!coin.IsDelisted) {
+                    float percent = UnityEngine.Random.Range(
+                        group.priceChangeMin,
+                        group.priceChangeMax
+                    );
 
-                    individuallyHandled.Add(symbol);
-
-                    float percent = UnityEngine.Random.Range(group.priceChangeMin, group.priceChangeMax);
+                    double before = coin.CurrentPrice;
                     coin.CurrentPrice *= 1f + percent / 100f;
 
-                    if (!string.IsNullOrEmpty(group.marketPhaseToSet))
-                    {
-                        coin.CurrentPhaseOverride = ParsePhase(group.marketPhaseToSet);
-                        coin.PhaseOverrideEndTime = coinManager.CurrentDateTime.AddHours(group.durationHours);
-                    }
+                    Debug.Log(
+                        $"[TweetEffect] {symbol} {percent}% | {before} → {coin.CurrentPrice}"
+                    );
+                }
+
+                // =========================
+                // 3. 페이즈 연출
+                // =========================
+                if (!string.IsNullOrEmpty(group.marketPhaseToSet)) {
+                    coin.CurrentPhaseOverride = ParsePhase(group.marketPhaseToSet);
+                    coin.PhaseOverrideEndTime =
+                        coinManager.CurrentDateTime.AddHours(group.durationHours);
                 }
             }
-        }
-
-        // 2. 전체 마켓 페이즈 적용 (개별 코인에 포함되지 않은 경우에만)
-        if (data.overrideMarketPhase && !string.IsNullOrEmpty(data.marketPhaseToSet)) 
-        {
-            MarketPhase parsedPhase = ParsePhase(data.marketPhaseToSet);
-            coinManager.CurrentMarket = parsedPhase;
         }
     }
 
@@ -150,4 +159,23 @@ public class EventOrchestrator : MonoBehaviour {
 
         Debug.Log("[RestoreEffect] 효과 복원: " + data.key);
     }
+    private void TriggerUI(string uiKey) {
+        if (string.IsNullOrEmpty(uiKey)) return;
+
+        var uiData = newsRepo.Get(uiKey);
+        if (uiData == null) return;
+
+        // UI 출력
+        EventUIManager.Instance.Show(uiData);
+
+        if (uiData.type == UIEventType.News) {
+            XNotificationManager.Instance?.Show(
+                uiData.authorName,
+                uiData.key
+            );
+        }
+    }
+
+
+
 }

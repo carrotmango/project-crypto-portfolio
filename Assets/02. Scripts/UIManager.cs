@@ -8,6 +8,8 @@ public class UIManager : MonoBehaviour {
     public GameObject ConfrimPanel;
     public Transform uiParent;
     public GameObject InstantEventPanel;
+    public GameObject IncomingCallPanel;
+
 
     void Awake() {
         if (Instance == null) {
@@ -39,6 +41,45 @@ public class UIManager : MonoBehaviour {
 
         if (panel != null) {
             panel.SetMessage(message);
+        }
+    }
+    public void ShowConfirmTyping(string title, string message) {
+        if (InstantEventPanel == null) return;
+
+        GameObject instance = Instantiate(InstantEventPanel, uiParent);
+        ConfirmPanelController panel = instance.GetComponent<ConfirmPanelController>();
+
+        if (panel != null) {
+            panel.SetTitle(title);
+            StartCoroutine(
+                TypingTextPlayer.Play(
+                    panel.messageText, 
+                    message,
+                    0.03f,
+                    null               
+                )
+            );
+        }
+    }
+    public void ShowIncomingCall(
+    string title,
+    string message
+) {
+        if (IncomingCallPanel == null) return;
+
+        GameObject instance = Instantiate(IncomingCallPanel, uiParent);
+        var panel = instance.GetComponent<IncomingCallPanelController>();
+
+        if (panel != null) {
+            panel.Init(
+                onYes: () => {
+                    // 전화 받음 → 실제 내용 표시
+                    ShowConfirmTyping(title, message);
+                },
+                onNo: () => {
+                    // 전화 안 받음 → 아무것도 안 함
+                }
+            );
         }
     }
 }

@@ -457,6 +457,47 @@ MonoBehaviour:
   contentText: {fileID: 1959812797149319808}
   contentImageContainer: {fileID: 7111403211563068612}
   contentImage: {fileID: 2027711379723997474}
+  key: 
+  authorName: 
+  profileImgName: 
+  contentImgName: 
+  date: 
+  time: 
+  content: 
+  width: 0
+  height: 0
+  eventMustRequired: 0
+  overrideMarketPhase: 0
+  marketPhaseToSet: 
+  marketPhaseAfter: 
+  durationHours: 0
+  affectAllCoins: 0
+  startDate: 
+  endDate: 
+  targetGroups: []
+  postYn: 0
+  originalData:
+    key: 
+    profileImage: 
+    name: 
+    date: 
+    time: 
+    content: 
+    contentImage: 
+    width: 550
+    height: 700
+    startDate: 
+    endDate: 
+    eventMustRequired: 0
+    overrideMarketPhase: 0
+    marketPhaseToSet: 
+    marketPhaseAfter: 
+    durationHours: 0
+    affectAllCoins: 0
+    targetGroups: []
+    postYn: 1
+    eventType: 
+    authorId: 
 --- !u!1 &6859723588360378276
 GameObject:
   m_ObjectHideFlags: 0

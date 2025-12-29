@@ -14,6 +14,9 @@ public class MainUIManager : MonoBehaviour {
 
     void Start() {
         foreach (var coin in CoinManager.Instance.coins) {
+            if (coin.IsDelisted)
+                continue;
+
             GameObject row = Instantiate(coinRowPrefab, coinListParent);
             coinRows.Add(row);
 
@@ -60,33 +63,52 @@ public class MainUIManager : MonoBehaviour {
             });
         }
     }
-
-
     void Update() {
-        for (int i = 0; i < CoinManager.Instance.coins.Count; i++) {
-            var coin = CoinManager.Instance.coins[i];
-            var row = coinRows[i];
+        foreach (var row in coinRows) {
+            var symbol = row.transform
+                .Find("SymbolText")
+                .GetComponent<TextMeshProUGUI>()
+                .text;
 
-            row.transform.Find("PriceText").GetComponent<TextMeshProUGUI>().text = coin.GetFormattedPriceKRW();
+            var coin = CoinManager.Instance.coins
+                .Find(c => c.Symbol == symbol);
 
-            // 등락률 계산 및 표시
-            double change = ((coin.CurrentPrice - coin.InitialPrice) / coin.InitialPrice) * 100.0;
-            var changeText = row.transform.Find("ChangeText").GetComponent<TextMeshProUGUI>();
+            if (coin == null || coin.IsDelisted)
+                continue;
+
+            row.transform.Find("PriceText")
+                .GetComponent<TextMeshProUGUI>()
+                .text = coin.GetFormattedPriceKRW();
+
+            var changeText = row.transform.Find("ChangeText")
+                .GetComponent<TextMeshProUGUI>();
+
+            if (coin.InitialPrice <= 0) {
+                changeText.text = "-";
+                changeText.color = Color.white;
+                continue;
+            }
+
+            double change =
+                ((coin.CurrentPrice - coin.InitialPrice) / coin.InitialPrice) * 100.0;
+
             changeText.text = $"{change:+0.##;-0.##}%";
 
-            // 색상 적용
-            if (change > 0) {
-                changeText.color = new Color32(37, 167, 80, 255); // 초록
-            } else if (change < 0) {
-                changeText.color = new Color32(255, 77, 77, 255); // 빨강
-            } else {
-                changeText.color = Color.white; // 변동 없음
-            }
+            if (change > 0)
+                changeText.color = new Color32(37, 167, 80, 255);
+            else if (change < 0)
+                changeText.color = new Color32(255, 77, 77, 255);
+            else
+                changeText.color = Color.white;
         }
     }
-    
+
+
     public void AddCoinRow(CoinData coin)
     {
+        if (coin.IsDelisted)
+            return;
+
         GameObject row = Instantiate(coinRowPrefab, coinListParent);
         coinRows.Add(row);
 

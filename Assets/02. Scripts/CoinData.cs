@@ -10,6 +10,8 @@ public class CoinData {
     public double InitialPrice;
     public double Supply;
 
+    public bool IsDelisted = false;
+
     public MarketPhase CurrentPhaseOverride = MarketPhase.Sideways;
     public DateTime PhaseOverrideEndTime = DateTime.MinValue;
 
@@ -30,10 +32,28 @@ public class CoinData {
         Supply = supply;
         PriceHistory.Add(startPrice);
     }
-    
+
+    public void ApplyRelist(double basePrice) {
+        IsDelisted = false;
+
+        CurrentPrice = basePrice > 0 ? basePrice : InitialPrice;
+        InitialPrice = CurrentPrice;
+
+        PhaseOverrideEndTime = DateTime.MinValue;
+        CurrentPhaseOverride = MarketPhase.Sideways;
+
+        currentOpen = null;
+        currentHigh = double.MinValue;
+        currentLow = double.MaxValue;
+    }
+
+
 
     public void GenerateNextPrice(MarketPhase inputPhase, float maxChangePct = 1f, float externalBias = 0f) {
-        MarketPhase phase = Symbol == "MOVE" ? GetRandomMovePhase() : inputPhase;
+        if (IsDelisted)
+            return;
+
+        MarketPhase phase = Symbol == "123A" ? GetRandomMovePhase() : inputPhase;
 
         double directionBias = phase switch {
             MarketPhase.MegaBull => 0.90,

@@ -340,7 +340,7 @@ public class TutorialManager : MonoBehaviour {
         }
     }
 
-
+    // 나중에 Typing Text Player꺼이식하기
     private IEnumerator TypeText(string message) {
         dialogueText.text = "";
         isTyping = true;

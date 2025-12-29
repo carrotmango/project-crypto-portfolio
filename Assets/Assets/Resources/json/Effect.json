@@ -1,0 +1,105 @@
+{
+  "effects": [
+    {
+      "key": "movement_A_delist_risk",
+      "durationHours": 24,
+      "globalMarketPhase": {
+        "phase": 4,
+        "durationHours": 24
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "MOVE"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 5,
+          "priceChangeMin": -52,
+          "priceChangeMax": -80,
+          "durationHours": 24
+        }
+      ]
+    },
+    {
+      "key": "movement_B_delisted",
+      "durationHours": 24,
+      "globalMarketPhase": {
+        "phase": 8,
+        "durationHours": 24
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "MOVE"
+          ],
+          "coinEventType": 1,
+          "targetMarketPhase": 9,
+          "priceChangeMin": -80,
+          "priceChangeMax": -60,
+          "durationHours": 24
+        }
+      ]
+    },
+    {
+      "key": "movement_E_relist",
+      "durationHours": 24,
+      "globalMarketPhase": {
+        "phase": 2,
+        "durationHours": 24
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "MOVE"
+          ],
+          "coinEventType": 2,
+          "relistBasePrice": 400,
+          "targetMarketPhase": 1,
+          "priceChangeMin": 40,
+          "priceChangeMax": 50,
+          "durationHours": 24
+        }
+      ]
+    },
+    {
+      "key": "movement_B_not_delisted",
+      "durationHours": 24,
+      "globalMarketPhase": {
+        "phase": 3,
+        "durationHours": 24
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "MOVE"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 3,
+          "priceChangeMin": 20,
+          "priceChangeMax": 50,
+          "durationHours": 3
+        }
+      ]
+    },
+    {
+      "key": "movement_C_engine_upgrade",
+      "durationHours": 24,
+      "globalMarketPhase": {
+        "phase": 1,
+        "durationHours": 24
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "MOVE"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 3,
+          "priceChangeMin": 30,
+          "priceChangeMax": 55,
+          "durationHours": 3
+        }
+      ]
+    }
+  ]
+}

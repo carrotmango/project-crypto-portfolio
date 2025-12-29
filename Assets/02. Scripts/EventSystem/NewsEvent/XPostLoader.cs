@@ -13,7 +13,13 @@ public class XTargetGroup {
     public bool priceChangeFixed;
     public string marketPhaseToSet;
     public int durationHours;
+
+    public int coinEventType = 0;      // Delist / Relist 대응용 더미
+    public int targetMarketPhase = 0;  // enum MarketPhase 대응 더미
+    public double relistBasePrice = 0; // 재상장 베이스가 대응용
+    public string eventType;
 }
+
 
 [System.Serializable]
 public class XPostData {
@@ -42,8 +48,9 @@ public class XPostData {
 
     public bool postYn = true;
     public string eventType;
-
     public string authorId;
+    public string uiKey;
+
 }
 
 #endregion

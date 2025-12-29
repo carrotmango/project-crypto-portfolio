@@ -61,7 +61,8 @@ public class CoinManager : MonoBehaviour
 
     public double GetStashoCash() => PlayerManager.Instance.satoshiBankCash;
     public bool IsTimePaused => UIPauseManager.IsPaused;
-
+    public event Action<DateTime> OnTimeAdvanced;
+    public event Action OnCoinListChanged;
 
 
     public struct CoinChangeInfo {
@@ -151,6 +152,7 @@ public class CoinManager : MonoBehaviour
 
             tickCount++;
             currentDateTime = currentDateTime.AddMinutes(30);
+            OnTimeAdvanced?.Invoke(currentDateTime);
 
             if (currentDateTime.Hour == 9 && currentDateTime.Minute == 0)
             {   
@@ -312,6 +314,67 @@ public class CoinManager : MonoBehaviour
 
         Debug.Log($"[신규 상장] 코인 '{symbol}'이(가) 시장에 추가되었습니다.");
     }
+
+    public void DelistCoin(string symbol) {
+        var coin = coins.Find(c => c.Symbol == symbol);
+        if (coin == null)
+            return;
+
+        if (coin.IsDelisted)
+            return;
+
+        // 메타데이터 반영
+        var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
+        if (meta != null)
+            meta.BullbitListed = false;
+
+        // 코인 상태 변경
+        coin.IsDelisted = true;
+        coin.CurrentPrice = 0;
+        coin.InitialPrice = 0; 
+
+        coin.CurrentPhaseOverride = MarketPhase.MegaBear;
+        coin.PhaseOverrideEndTime = DateTime.MaxValue;
+
+        // UI 갱신
+        assetPanelController?.RenderPlatformRows();
+
+        // 메인 코인 리스트 갱신
+        var uiManager = FindAnyObjectByType<MainUIManager>();
+        uiManager?.RefreshCoinRows();
+
+        var ui = FindAnyObjectByType<MainUIManager>();
+        if (ui != null) {
+            ui.RefreshCoinRows();
+        }
+
+
+        Debug.Log($"[상폐 → 비상장] {symbol}");
+    }
+
+    public void RelistCoin(string symbol, double basePrice) {
+        var coin = coins.Find(c => c.Symbol == symbol);
+        if (coin == null) {
+            Debug.LogWarning($"[RelistCoin] 코인 없음: {symbol}");
+            return;
+        }
+
+        coin.ApplyRelist(basePrice); 
+        // 메타데이터 복구 (이거 중요)
+        var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
+        if (meta != null)
+            meta.BullbitListed = true;
+
+        Debug.Log($"[CoinManager] 재상장 처리: {symbol}");
+
+        // UI 즉시 반영
+        assetPanelController?.RenderPlatformRows();
+
+        var ui = FindAnyObjectByType<MainUIManager>();
+        ui?.RefreshCoinRows();
+    }
+
+
 
     public void SetTickCount(int value) {
         tickCount = value;
