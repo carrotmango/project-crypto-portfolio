@@ -80,9 +80,127 @@
             "title": "",
             "message": "불비트 거래소는 내부 심사를 마친 뒤 무브먼트(Movement) 코인의 재상장을 공식 발표했습니다.\n\n무브먼트 코인은 금일 오전부터 거래가 재개되며, 향후 변동성 확대에 대한 주의가 필요합니다.",
             "profileImage": "shocking.jpg",
-            "contentImage": "shocking_news_01",
+            "contentImage": "",
             "width": 550,
             "height": 380
-        }
+        },
+        {
+            "key": "pengu_A_listing_announce",
+            "type": 0,
+            "authorName": "Shocking News",
+            "title": "",
+            "message": "불비트 거래소는 신규 코인 PENGU의 상장을 예고했습니다.\n\nPENGU 코인은 약 하루 뒤 거래가 시작될 예정이며, 투자자들의 관심이 집중되고 있습니다.",
+            "profileImage": "shocking.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 360
+        },
+        {
+            "key": "pengu_B_listed",
+            "type": 0,
+            "authorName": "Shocking News",
+            "title": "",
+            "message": "불비트 거래소는 금일 PENGU 코인의 상장을 완료했습니다.\n\n현재 PENGU 코인은 기준가로 거래되고 있으며, 초기 시장 안정화가 진행 중입니다.",
+            "profileImage": "shocking.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 360
+        },
+        {
+  "key": "elonevent1",
+  "type": 0,
+  "authorName": "Elon Musk",
+  "title": "",
+  "message": "도지는 이미 달에 있다.\n페페가 조종하고 있음.\n나도 그냥 매일 웃음밖에 안 나와.",
+  "profileImage": "elon.jpg",
+  "contentImage": "elon_doge_02.jpg",
+  "width": 550,
+  "height": 700
+}
+,
+{
+  "key": "dogepepefix",
+  "type": 0,
+  "authorName": "Shocking News",
+  "title": "",
+  "message": "급등 이후 도지(DOGE)와 페페(PEPE) 코인에 대한 차익 실현 매물이 대거 출회되고 있습니다.\n\n시장에서는 단기 과열 해소 과정으로 해석하고 있으며, 변동성 확대에 주의가 필요합니다.",
+  "profileImage": "shocking.jpg",
+  "contentImage": "",
+  "width": 550,
+  "height": 360
+}
+,
+{
+  "key": "elonevent2",
+  "type": 0,
+  "authorName": "Elon Musk",
+  "title": "",
+  "message": "요즘 애니메이션 볼만한 거 없나?",
+  "profileImage": "elon.jpg",
+  "contentImage": "elon_anime_01.png",
+  "width": 550,
+  "height": 300
+}
+,
+{
+  "key": "trumpevent1",
+  "type": 0,
+  "authorName": "Donald Trump",
+  "title": "",
+  "message": "나는 비트코인을 사랑한다. 정말 사랑한다.\n암호화폐 시장? 지금 폭발하고 있어. 미래다.\n그리고 나는 이 시장을 엄청 긍정적으로 본다.\n솔직히 말해서, 내 전 재산을 전부 넣어도 아깝지 않아.\n날 믿어라. 나를 따라와라. 절대 후회하지 않을 거다.",
+  "profileImage": "trump.jpg",
+  "contentImage": "trump_bitcoin_01.jpg",
+  "width": 550,
+  "height": 700
+}
+,
+{
+  "key": "powellevent1",
+  "type": 0,
+  "authorName": "Jerome Hayden Powell",
+  "title": "",
+  "message": "암호화폐는 통화가 아닙니다.\n불법 자금 세탁과 범죄 은닉에 사용되는 위험한 자산입니다.\n강력한 규제와 감독 없이는 금융 안정은 불가능합니다.\n규제 없이는 파멸뿐입니다.",
+  "profileImage": "powell.jpg",
+  "contentImage": "powell_announce_01.jpg",
+  "width": 550,
+  "height": 700
+},
+{
+  "key": "aptos_listing_news",
+  "type": 0,
+  "authorName": "불비트 뉴스",
+  "title": "",
+  "message": "차세대 고성능 레이어 1 블록체인으로 주목받던 앱토스(APT)가 오늘부로 불비트 거래소에 정식 상장되었습니다.\n\n초기 변동성이 예상되오니 투자에 유의하시기 바랍니다.",
+  "profileImage": "bullbit.png",
+  "contentImage": "",
+  "width": 550,
+  "height": 400
+}
+,
+{
+  "key": "sui_listing_soon_news",
+  "type": 0,
+  "authorName": "불비트 뉴스",
+  "title": "",
+  "message": "차세대 레이어1 블록체인 수이(SUI)가 곧 불비트 거래소에 상장될 예정입니다.\n\n많은 관심 바랍니다.",
+  "profileImage": "bullbit.png",
+  "contentImage": "",
+  "width": 550,
+  "height": 400
+},
+{
+  "key": "sui_listing_news",
+  "type": 0,
+  "authorName": "불비트 뉴스",
+  "title": "",
+  "message": "차세대 레이어1 블록체인 수이(SUI)가 오늘부로 불비트 거래소에 정식 상장되었습니다.\n\n상장 직후 변동성이 클 수 있으니 투자에 유의하시기 바랍니다.",
+  "profileImage": "bullbit.png",
+  "contentImage": "",
+  "width": 550,
+  "height": 400
+}
+
+
+
     ]
 }

@@ -106,20 +106,11 @@ public class EffectManager : MonoBehaviour {
         foreach (var group in data.targetGroups) {
             foreach (var symbol in group.symbols) {
 
-                var coin = coinManager.coins
-                    .FirstOrDefault(c => c.Symbol == symbol);
-
-                if (coin == null) {
-                    Debug.LogWarning($"[Effect] 코인 없음: {symbol}");
-                    continue;
-                }
-
-                // =============================
-                // 이벤트 타입 분기
-                // =============================
-
                 CoinEventType eventType = (CoinEventType)group.coinEventType;
 
+                // =============================
+                // 상태 변경 이벤트 먼저 처리
+                // =============================
                 if (group.coinEventType >= 0) {
 
                     switch (eventType) {
@@ -127,22 +118,32 @@ public class EffectManager : MonoBehaviour {
                         case CoinEventType.Listing:
                             coinManager.ListNewCoin(symbol);
                             Debug.Log($"[Effect] 신규 상장: {symbol}");
-                            continue;
+                            continue; // 여기서 끝
 
                         case CoinEventType.Delisting:
                             coinManager.DelistCoin(symbol);
                             Debug.Log($"[Effect] 상폐 처리: {symbol}");
                             continue;
 
-                        case CoinEventType.Relisting:
-                            coinManager.RelistCoin(
-                                symbol,
-                                group.relistBasePrice > 0
+                        case CoinEventType.Relisting: {
+                                var meta = CoinMetaDatabase.AllCoins
+                                    .FirstOrDefault(c => c.Symbol == symbol);
+
+                                if (meta == null) {
+                                    Debug.LogError($"[Effect] Relisting 실패 - Meta 없음: {symbol}");
+                                    continue;
+                                }
+
+                                double basePrice = group.relistBasePrice > 0
                                     ? group.relistBasePrice
-                                    : coin.InitialPrice
-                            );
-                            Debug.Log($"[Effect] 재상장 처리: {symbol}");
-                            break;
+                                    : meta.InitialPrice;
+
+                                coinManager.RelistCoin(symbol, basePrice);
+                                Debug.Log($"[Effect] 재상장 처리: {symbol}");
+                                continue;
+                            }
+
+
 
                         case CoinEventType.Rename:
                             Debug.Log($"[Effect] Rename 이벤트 (미구현): {symbol}");
@@ -150,7 +151,16 @@ public class EffectManager : MonoBehaviour {
                     }
                 }
 
+                // =============================
+                // 여기부터는 코인이 반드시 있어야 함
+                // =============================
+                var coin = coinManager.coins
+                    .FirstOrDefault(c => c.Symbol == symbol);
 
+                if (coin == null) {
+                    Debug.LogWarning($"[Effect] 코인 없음 (가격/페이즈 스킵): {symbol}");
+                    continue;
+                }
 
                 // =============================
                 // 가격 변동

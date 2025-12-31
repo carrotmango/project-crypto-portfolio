@@ -41,8 +41,8 @@ public enum CoinTheme {
 // Example static loader (to be used inside CoinManager or a DataLoader script)
 public static class CoinMetaDatabase {
     public static readonly CoinMetaData[] AllCoins = new CoinMetaData[] {
-        new("비트코인", "BTC", 100000.0, 21000000, CoinTheme.Layer1, 1, "대표적인 Layer 1 블록체인. 디지털 금 자산", ""),
-        new("이더리움", "ETH", 20000.0, 115000000, CoinTheme.Layer1, 2, "스마트 컨트랙트의 표준 플랫폼", ""),
+        new("비트코인", "BTC", 11000000.0, 21000000, CoinTheme.Layer1, 1, "대표적인 Layer 1 블록체인. 디지털 금 자산", ""),
+        new("이더리움", "ETH", 2000000, 115000000, CoinTheme.Layer1, 2, "스마트 컨트랙트의 표준 플랫폼", ""),
         new("라이트코인", "LTC", 5000.0, 115000000, CoinTheme.Layer1, 3, "비트코인의 라이트한 버전", ""),
         new("도지코인", "DOGE", 0.15, 115000000, CoinTheme.Meme, 5, "시바견 밈에서 시작된 암호화폐", ""),
         new("리플", "XRP", 30.0, 115000000, CoinTheme.RealWorldAsset, 3, "국제 송금 시장을 위한 플랫폼", ""),

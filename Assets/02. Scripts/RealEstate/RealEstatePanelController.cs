@@ -304,18 +304,14 @@ public class RealEstatePanelController : MonoBehaviour {
                     estate.price * estate.monthlyYield
                 );
 
-                totalIncome += income;
+                PlayerManager.Instance.satoshiBankCash += income;
 
-                // 테스트용 3일 주기
-                estate.nextIncomeDate = estate.nextIncomeDate.AddDays(2);
-
-                // 수익률 미세 변동
-                float drift = UnityEngine.Random.Range(-0.0015f, 0.0015f);
-                estate.monthlyYield = Mathf.Clamp(
-                    estate.monthlyYield + drift,
-                    0.01f,
-                    0.03f
+                DailyIncomeManager.Instance.AddEstateIncome(
+                    estate.name,
+                    income
                 );
+
+                estate.nextIncomeDate = estate.nextIncomeDate.AddDays(2);
             }
         }
 

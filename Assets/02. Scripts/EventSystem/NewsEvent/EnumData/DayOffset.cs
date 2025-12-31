@@ -6,10 +6,16 @@ public class DayOffset {
 
     // Fixed
     public int days;
+    //  +
+    public int hours;
+    public int minutes;
+
 
     // Range
     public int min;
     public int max;
+
+
 
     // 옵션
     public bool forceAfterMax;   // max 지나면 무조건 실행

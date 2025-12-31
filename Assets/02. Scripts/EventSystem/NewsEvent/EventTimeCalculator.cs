@@ -17,8 +17,12 @@ public static class EventTimeCalculator {
                     break;
 
                 case DayOffsetType.Fixed:
-                    result = result.AddDays(dayOffset.days);
+                    result = result
+                        .AddDays(dayOffset.days)
+                        .AddHours(dayOffset.hours)
+                        .AddMinutes(dayOffset.minutes);
                     break;
+
 
                 case DayOffsetType.Range:
                     int d = UnityEngine.Random.Range(dayOffset.min, dayOffset.max + 1);

@@ -62,7 +62,7 @@ public class CoinManager : MonoBehaviour
     public double GetStashoCash() => PlayerManager.Instance.satoshiBankCash;
     public bool IsTimePaused => UIPauseManager.IsPaused;
     public event Action<DateTime> OnTimeAdvanced;
-    public event Action OnCoinListChanged;
+    //public event Action OnCoinListChanged;
 
 
     public struct CoinChangeInfo {
@@ -167,10 +167,15 @@ public class CoinManager : MonoBehaviour
             }
 
 
-            if (currentDateTime.Hour == 0 && currentDateTime.Minute == 0)
-            {
+            if (currentDateTime.Hour == 0 && currentDateTime.Minute == 0) {
                 survivalDays++;
+
+                OfficeManager.Instance?.TryPaySalary();
+                RealEstatePanelController.Instance?.ProcessDailyEstateIncome(currentDateTime);
+
+                DailyIncomeManager.Instance?.FlushAndNotify();
             }
+
 
             foreach (var coin in coins)
             {

@@ -18,6 +18,7 @@ public class OutingManager : MonoBehaviour {
     [Header("건물 오브젝트")]
     public GameObject partimeJob;
     public GameObject partimePanel;
+    public GameObject office;
 
     // 외출 오락실 진입
     public void EnterArcade() {
@@ -47,6 +48,18 @@ public class OutingManager : MonoBehaviour {
     public void ExitPartimeJob() {
         if (partimeJob != null) {
             partimeJob.SetActive(false);
+        }
+    }
+
+    public void EnterOffice() {
+        if (office != null) {
+            office.SetActive(true);
+        }
+    }
+
+    public void ExitOffice() {
+        if (office != null) {
+            office.SetActive(false);
         }
     }
 

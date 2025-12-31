@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour {
     public Transform uiParent;
     public GameObject InstantEventPanel;
     public GameObject IncomingCallPanel;
+    public GameObject SMSResult;
 
 
     void Awake() {
@@ -37,6 +38,17 @@ public class UIManager : MonoBehaviour {
         if (ConfrimPanel == null) return;
 
         GameObject instance = Instantiate(ConfrimPanel, uiParent);
+        ConfirmPanelController panel = instance.GetComponent<ConfirmPanelController>();
+
+        if (panel != null) {
+            panel.SetMessage(message);
+        }
+    }
+
+    public void ShowSMSResult(string message) {
+        if (SMSResult == null) return;
+
+        GameObject instance = Instantiate(SMSResult, uiParent);
         ConfirmPanelController panel = instance.GetComponent<ConfirmPanelController>();
 
         if (panel != null) {

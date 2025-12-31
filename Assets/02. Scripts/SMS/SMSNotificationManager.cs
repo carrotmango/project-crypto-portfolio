@@ -53,7 +53,7 @@ public class SMSNotificationManager : MonoBehaviour {
     private void OnClickSMS() {
         panel.SetActive(false);
 
-        UIManager.Instance.ShowConfirm(
+        UIManager.Instance.ShowSMSResult(
             $"πﬂΩ≈¿Œ: {senderText.text}\n\n{fullMessage}"
         );
     }
