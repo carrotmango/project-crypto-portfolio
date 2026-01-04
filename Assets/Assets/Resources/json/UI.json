@@ -11,7 +11,7 @@
             "height": 400
         },
         {
-            "key": "movement_A_delist_risk_rumor",
+            "key": "movement_rumor",
             "type": 2,
             "title": "전화",
             "message": "???: 어이 나 투자왕 장태웅인데, 그? 무비? 무브먼트? 그거 곧 \n 상장폐지할 거 같다고 하니까.. 당장 처분해!!",
@@ -24,6 +24,17 @@
             "authorName": "Shocking News",
             "title": "",
             "message": "최근 커뮤니티에서 확산되고 있는 무브먼트(Movement) 코인 관련 루머에 대해 불비트 거래소가 상황을 주시 중인 것으로 알려졌습니다.\n해당 루머는 개발사 MoveLabs 소속 핵심 인물과 관련된 의혹을 포함하고 있으며, 거래소는 사실 관계를 확인하고 있습니다.\n불비트 측은 현재 상장 유지 여부를 검토 중이며, 빠르면 다음 날 관련 결정이 내려질 수 있습니다.",
+            "profileImage": "shocking.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 400
+        },
+                {
+            "key": "movement_rumor_is_rumor",
+            "type": 0,
+            "authorName": "Shocking News",
+            "title": "",
+            "message": "무브먼트 랩스가 올해 TVL이 무려 40배나 증가했다고 발표했습니다. \n 앞으로도 기대할 것이 한발 더 남았다 라고 예고도 했습니다.",
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
@@ -139,7 +150,7 @@
   "profileImage": "elon.jpg",
   "contentImage": "elon_anime_01.png",
   "width": 550,
-  "height": 300
+  "height": 700
 }
 ,
 {

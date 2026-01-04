@@ -12,9 +12,11 @@ public class CoinData {
 
     public bool IsDelisted = false;
 
+    // ===== 기존 구조 유지 =====
+    public const int MaxCandleHistory = 35;
+
     public MarketPhase CurrentPhaseOverride = MarketPhase.Sideways;
     public DateTime PhaseOverrideEndTime = DateTime.MinValue;
-
 
     public List<double> PriceHistory = new();
     public Dictionary<string, object> Attributes = new();
@@ -24,6 +26,36 @@ public class CoinData {
     private double currentHigh = double.MinValue;
     private double currentLow = double.MaxValue;
 
+    // ===== 정석 구조 (신규 추가) =====
+
+    // 가장 짧은 봉 (Base Candle)
+    public class BaseCandle {
+        public double open;
+        public double high;
+        public double low;
+        public double close;
+
+        public BaseCandle(double price) {
+            open = price;
+            high = price;
+            low = price;
+            close = price;
+        }
+
+        public void Update(double price) {
+            high = Math.Max(high, price);
+            low = Math.Min(low, price);
+            close = price;
+        }
+    }
+
+    // Base Candle 저장소 (오늘은 70개만)
+    public List<BaseCandle> BaseCandleHistory = new();
+    public BaseCandle CurrentBaseCandle;
+
+    public int MaxBaseCandles = 70;
+
+    // ===== 생성자 =====
     public CoinData(string name, string symbol, double startPrice, double supply) {
         Name = name;
         Symbol = symbol;
@@ -45,10 +77,13 @@ public class CoinData {
         currentOpen = null;
         currentHigh = double.MinValue;
         currentLow = double.MaxValue;
+
+        // BaseCandle도 초기화
+        CurrentBaseCandle = null;
+        BaseCandleHistory.Clear();
     }
 
-
-
+    // ===== 가격 생성 =====
     public void GenerateNextPrice(MarketPhase inputPhase, float maxChangePct = 1f, float externalBias = 0f) {
         if (IsDelisted)
             return;
@@ -94,14 +129,13 @@ public class CoinData {
 
         OnPriceUpdate(newPrice);
         PriceHistory.Add(CurrentPrice);
-
-        // 개발용 로그 확인
-        /*Debug.Log($"[{Symbol}] {phase} Δ={deltaPct:F3}% → ₩{CurrentPrice:N2}");*/
     }
 
+    // ===== 가격 반영 (BaseCandle 포함) =====
     public void OnPriceUpdate(double newPrice) {
         CurrentPrice = newPrice;
 
+        // 기존 캔들 로직 유지
         if (currentOpen == null) {
             currentOpen = newPrice;
             currentHigh = newPrice;
@@ -110,8 +144,16 @@ public class CoinData {
             currentHigh = Math.Max(currentHigh, newPrice);
             currentLow = Math.Min(currentLow, newPrice);
         }
+
+        // BaseCandle 로직 (정석)
+        if (CurrentBaseCandle == null) {
+            CurrentBaseCandle = new BaseCandle(newPrice);
+        } else {
+            CurrentBaseCandle.Update(newPrice);
+        }
     }
 
+    // ===== 기존 캔들 확정 (유지) =====
     public void RecordCurrentCandle() {
         if (currentOpen == null) return;
 
@@ -122,11 +164,30 @@ public class CoinData {
             low = (float)currentLow
         });
 
+        if (CandleHistory.Count > MaxCandleHistory) {
+            CandleHistory.RemoveAt(0);
+        }
+
         currentOpen = CurrentPrice;
         currentHigh = CurrentPrice;
         currentLow = CurrentPrice;
     }
 
+    // ===== BaseCandle 확정 (신규, 봉 경계에서 호출) =====
+    public void CloseBaseCandle() {
+        if (CurrentBaseCandle == null)
+            return;
+
+        BaseCandleHistory.Add(CurrentBaseCandle);
+
+        if (BaseCandleHistory.Count > MaxBaseCandles) {
+            BaseCandleHistory.RemoveAt(0);
+        }
+
+        CurrentBaseCandle = new BaseCandle(CurrentBaseCandle.close);
+    }
+
+    // ===== 기타 =====
     private MarketPhase GetRandomMovePhase() {
         float roll = UnityEngine.Random.value;
         if (roll < 0.15f) return MarketPhase.MildBull;
@@ -136,6 +197,12 @@ public class CoinData {
         return MarketPhase.BigBear;
     }
 
+    public MarketPhase GetEffectivePhase(DateTime now, MarketPhase globalPhase) {
+        if (now < PhaseOverrideEndTime) {
+            return CurrentPhaseOverride;
+        }
+        return globalPhase;
+    }
     public string GetFormattedPriceKRW() {
         if (CurrentPrice >= 1000)
             return $"₩{CurrentPrice:N0}";
@@ -146,7 +213,6 @@ public class CoinData {
         else
             return $"₩{CurrentPrice:N4}";
     }
-
     public void AddAttribute(string key, object value) {
         Attributes[key] = value;
     }
@@ -155,13 +221,6 @@ public class CoinData {
         if (Attributes.TryGetValue(key, out var value) && value is T t)
             return t;
         return defaultValue;
-    }
-
-    public MarketPhase GetEffectivePhase(DateTime now, MarketPhase globalPhase) {
-        if (now < PhaseOverrideEndTime) {
-            return CurrentPhaseOverride;
-        }
-        return globalPhase;
     }
 
 }

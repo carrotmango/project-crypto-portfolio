@@ -64,6 +64,9 @@ public class CoinManager : MonoBehaviour
     public event Action<DateTime> OnTimeAdvanced;
     //public event Action OnCoinListChanged;
 
+    public event Action<DateTime> OnCandleBoundary;
+
+
 
     public struct CoinChangeInfo {
         public CoinData coin;
@@ -176,6 +179,18 @@ public class CoinManager : MonoBehaviour
                 DailyIncomeManager.Instance?.FlushAndNotify();
             }
 
+            if (IsFourHourBoundary(currentDateTime)) {
+
+                // BaseCandle 확정 (차트 열려 있든 말든 무조건)
+                foreach (var coin in coins) {
+                    coin.RecordCurrentCandle();
+                    coin.CloseBaseCandle();
+                }
+
+                // 기존 이벤트 (차트용, UI용)
+                OnCandleBoundary?.Invoke(currentDateTime);
+            }
+
 
             foreach (var coin in coins)
             {
@@ -183,17 +198,16 @@ public class CoinManager : MonoBehaviour
                 coin.GenerateNextPrice(phase, 2f, 0f);
             }
 
-            if (tickCount % 2 == 0)
+            if (tickCount % 1 == 0)
             {
                 foreach (var coin in coins)
                 {
-                    coin.RecordCurrentCandle();
-                    if (chartPanelController != null &&
-                        chartPanelController.chartPanel.activeSelf &&
-                        chartPanelController.currentCoin == coin)
-                    {
-                        chartPanelController.chartRenderer.SetDataAndRender(coin, coin.CandleHistory);
-                    }
+                    //if (chartPanelController != null &&
+                    //    chartPanelController.chartPanel.activeSelf &&
+                    //    chartPanelController.currentCoin == coin)
+                    //{
+                    //    chartPanelController.chartRenderer.SetDataAndRender(coin, coin.CandleHistory);
+                    //}
                 }
             }
 
@@ -282,7 +296,7 @@ public class CoinManager : MonoBehaviour
         return currentSpeed switch
         {
             TimeSpeed.Paused => float.MaxValue,
-            TimeSpeed.Normal => 2f,
+            TimeSpeed.Normal => 1f,
             TimeSpeed.Double => 0.25f,
             _ => 2f
         };
@@ -431,5 +445,14 @@ public class CoinManager : MonoBehaviour
 
         double bank = PlayerManager.Instance.satoshiBankCash;
         bankCashText.text = $"₩{bank:N0}원";
+    }
+
+    bool IsFourHourBoundary(DateTime time) {
+        return time.Minute == 0 &&
+               (time.Hour == 9 ||
+                time.Hour == 13 ||
+                time.Hour == 17 ||
+                time.Hour == 21 ||
+                time.Hour == 0);
     }
 }

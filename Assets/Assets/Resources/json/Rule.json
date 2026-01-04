@@ -14,22 +14,53 @@
       "outcomes": [],
       "uiKey": "welcome_to_project_crypto"
     },
-
     {
-      "key": "movement_A_delist_risk_rumor",
+      "key": "movement_rumor",
       "authorId": "system",
       "executionMode": 1,
-      "startDate": "2016-01-07 09:00",
-      "endDate": "2016-01-10 22:00",
-      "timeRule": { "type": 2 },
+      "startDate": "2016-01-05 09:00",
+      "endDate": "2016-01-05 10:00",
+      "timeRule": { "type": 0 },
       "probability": 1.0,
       "repeatType": 1,
       "gate": false,
       "prerequisites": [],
       "outcomes": [
-        { "key": "movement_A_delist_risk_news", "weight": 1.0 }
+        { "key": "movement_A_delist_risk_rumor", "weight": 0.25 },
+        { "key": "movement_rumor_is_rumor", "weight": 0.75 }
       ],
-      "uiKey": "movement_A_delist_risk_rumor"
+      "outcomeRule":"OneOf",
+      "uiKey": "movement_rumor"
+    },
+        {
+      "key": "movement_rumor_is_rumor",
+      "authorId": "system",
+      "executionMode": 2,
+    "dayOffset": { "type": 1, "days": 2 },
+      "timeRule": { "type": 2 },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisites": ["movement_rumor"],
+      "outcomes": [
+        { "key": "movement_C_engine_upgrade_2", "weight": 1.0 }
+      ],
+      "uiKey": "movement_rumor_is_rumor",
+      "effectKey": "movement_rumor_is_rumor"
+    },
+    {
+      "key": "movement_A_delist_risk_rumor",
+      "authorId": "system",
+      "executionMode": 2,
+    "dayOffset": { "type": 1, "days": 2 },
+      "timeRule": { "type": 2 },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisites": ["movement_rumor"],
+      "outcomes": [
+        { "key": "movement_A_delist_risk_news", "weight": 1.0 }
+      ]
     },
 
     {
@@ -43,6 +74,7 @@
       "gate": true,
       "effectKey": "movement_A_delist_risk",
       "uiKey": "movement_A_delist_risk",
+      "outcomeRule": "OneOf",
       "outcomes": [
         { "key": "movement_B_delisted", "weight": 0.5 },
         { "key": "movement_B_not_delisted", "weight": 0.5 }
@@ -64,7 +96,6 @@
         { "key": "movement_D_revival_prepare", "weight": 1.0 }
       ]
     },
-
     {
       "key": "movement_B_not_delisted",
       "authorId": "system",
@@ -80,12 +111,23 @@
         { "key": "movement_C_engine_upgrade", "weight": 1.0 }
       ]
     },
-
     {
       "key": "movement_C_engine_upgrade",
       "authorId": "system",
       "executionMode": 2,
       "prerequisites": ["movement_B_not_delisted"],
+      "dayOffset": { "type": 1, "days": 4 },
+      "timeRule": { "type": 1, "hour": 18, "minute": 0 },
+      "repeatType": 1,
+      "gate": true,
+      "effectKey": "movement_C_engine_upgrade",
+      "uiKey": "movement_C_engine_upgrade"
+    },
+        {
+      "key": "movement_C_engine_upgrade_2",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": ["movement_rumor_is_rumor"],
       "dayOffset": { "type": 1, "days": 4 },
       "timeRule": { "type": 1, "hour": 18, "minute": 0 },
       "repeatType": 1,
@@ -108,7 +150,6 @@
         { "key": "movement_E_relist", "weight": 1.0 }
       ]
     },
-
     {
       "key": "movement_E_relist",
       "authorId": "system",
@@ -141,8 +182,8 @@
   "key": "elonevent2",
   "authorId": "system",
   "executionMode": 1,
-  "startDate": "2016-01-04 12:00",
-  "endDate": "2016-01-05 20:00",
+  "startDate": "2016-01-05 12:00",
+  "endDate": "2016-01-06 20:00",
   "timeRule": { "type": 0 },
   "probability": 1.0,
   "repeatType": 1,
@@ -363,11 +404,8 @@
   "timeRule": { "type": 1, "hour": 11, "minute": 0 },
   "repeatType": 1,
   "gate": true,
-  "effectKey": "pengu_pump_1"
+  "effectKey": "pengu_C_pump_big"
 }
-
-
-
 
   ]
 }

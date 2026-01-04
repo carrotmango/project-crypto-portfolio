@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.InputSystem.iOS;
 
 public class PartTimeJobController : MonoBehaviour {
     public GameObject floatingLabelPrefab;

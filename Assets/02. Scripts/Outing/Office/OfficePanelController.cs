@@ -83,8 +83,10 @@ public class OfficePanelController : MonoBehaviour {
     void RefreshName() {
         if (userNameLabel == null || PlayerManager.Instance == null) return;
 
+        //userNameLabel.text =
+        //    $"æ»≥Á«œººø‰, {PlayerManager.Instance.playerName}¥‘";
         userNameLabel.text =
-            $"æ»≥Á«œººø‰, {PlayerManager.Instance.playerName}¥‘";
+    $"";
     }
 
     void RefreshCapital() {

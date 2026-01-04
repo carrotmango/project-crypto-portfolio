@@ -101,6 +101,26 @@
         }
       ]
     },
+      {
+      "key": "movement_rumor_is_rumor",
+      "durationHours": 24,
+      "globalMarketPhase": {
+        "phase": 4,
+        "durationHours": 24
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "MOVE"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 3,
+          "priceChangeMin": 235,
+          "priceChangeMax": 411,
+          "durationHours": 3
+        }
+      ]
+    },
         {
       "key": "pengu_B_listed",
       "durationHours": 3,
