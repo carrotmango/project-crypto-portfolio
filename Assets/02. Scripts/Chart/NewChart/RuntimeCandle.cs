@@ -56,4 +56,14 @@ public class RuntimeCandle {
         IsClosed = true;
     }
 
+    // 기존 생성자는 그대로 두고, 이 함수를 추가합니다.
+    public void SetupAsActive(double open, double high, double low, double close) {
+        Open = open;
+        High = high;
+        Low = low;
+        Close = close;
+
+        IsInitialized = true;
+        IsClosed = false; // 핵심: 닫히지 않은 상태로 설정
+    }
 }

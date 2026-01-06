@@ -53,12 +53,12 @@ public class EventManager : MonoBehaviour {
 
             if (!DateTime.TryParse(rule.startDate, out var start) ||
                 !DateTime.TryParse(rule.endDate, out var end)) {
-                Debug.LogWarning($"[Event] 날짜 파싱 실패: {rule.key}");
+                //Debug.LogWarning($"[Event] 날짜 파싱 실패: {rule.key}");
                 continue;
             }
 
             if (end <= start) {
-                Debug.LogWarning($"[Event] 날짜 범위 오류: {rule.key}");
+                //Debug.LogWarning($"[Event] 날짜 범위 오류: {rule.key}");
                 continue;
             }
 
@@ -69,7 +69,7 @@ public class EventManager : MonoBehaviour {
             DateTime now = coinManager.CurrentDateTime;
 
             if (executeAt <= now) {
-                Debug.Log($"[Event] 과거 예약 스킵: {rule.key} @ {executeAt}");
+                //Debug.Log($"[Event] 과거 예약 스킵: {rule.key} @ {executeAt}");
                 continue;
             }
 
@@ -78,7 +78,7 @@ public class EventManager : MonoBehaviour {
                 executeAt = executeAt
             });
 
-            Debug.Log($"[Event] 예약됨(Random): {rule.key} @ {executeAt}");
+            //Debug.Log($"[Event] 예약됨(Random): {rule.key} @ {executeAt}");
         }
     }
 
@@ -102,13 +102,13 @@ public class EventManager : MonoBehaviour {
         DateTime now = coinManager.CurrentDateTime;
 
         if (string.IsNullOrEmpty(rule.authorId)) {
-            Debug.LogWarning($"[Event] authorId 없음: {rule.key}");
+            //Debug.LogWarning($"[Event] authorId 없음: {rule.key}");
             return;
         }
 
         // 1. Effect 실행
         if (!string.IsNullOrEmpty(rule.effectKey)) {
-            Debug.Log($"[Event] Effect 호출: {rule.effectKey}");
+            //Debug.Log($"[Event] Effect 호출: {rule.effectKey}");
             EffectManager.Instance.Apply(rule.effectKey);
         }
 
@@ -119,7 +119,7 @@ public class EventManager : MonoBehaviour {
         executed.Add(rule.key);
         executedTime[rule.key] = now;
 
-        Debug.Log($"[Event] 실행됨: {rule.key}");
+        //Debug.Log($"[Event] 실행됨: {rule.key}");
 
         // 4. Outcome 해금 (핵심 추가)
         ResolveOutcome(rule);
@@ -154,13 +154,13 @@ public class EventManager : MonoBehaviour {
 
                 if (entry.key != picked.key) {
                     outcomeRule.gate = false;
-                    Debug.Log($"[Outcome] 차단됨: {entry.key}");
+                    //Debug.Log($"[Outcome] 차단됨: {entry.key}");
                 } else {
-                    Debug.Log($"[Outcome] 선택됨: {entry.key} (weight={entry.weight})");
+                    //Debug.Log($"[Outcome] 선택됨: {entry.key} (weight={entry.weight})");
                 }
             }
         } else if (rule.outcomeRule == OutcomeRule.NonRequired) {
-            Debug.Log($"[Outcome] NonRequired - 선택 없음 가능: {rule.key}");
+            //Debug.Log($"[Outcome] NonRequired - 선택 없음 가능: {rule.key}");
         }
     }
 
@@ -211,7 +211,7 @@ public class EventManager : MonoBehaviour {
             DateTime now = coinManager.CurrentDateTime;
 
             if (executeAt <= now) {
-                Debug.Log($"[Event] AfterPrerequisite 과거 예약 스킵: {rule.key} @ {executeAt}");
+                //Debug.Log($"[Event] AfterPrerequisite 과거 예약 스킵: {rule.key} @ {executeAt}");
                 continue;
             }
 
@@ -220,7 +220,7 @@ public class EventManager : MonoBehaviour {
                 executeAt = executeAt
             });
 
-            Debug.Log($"[Event] AfterPrerequisite 예약: {rule.key} @ {executeAt}");
+            //Debug.Log($"[Event] AfterPrerequisite 예약: {rule.key} @ {executeAt}");
         }
     }
 }

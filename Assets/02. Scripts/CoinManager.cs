@@ -60,7 +60,7 @@ public class CoinManager : MonoBehaviour
     public int TickCount => tickCount;
 
     public double GetStashoCash() => PlayerManager.Instance.satoshiBankCash;
-    public bool IsTimePaused => UIPauseManager.IsPaused;
+    public bool IsTimePaused => UIPauseManager.IsPaused || currentSpeed == TimeSpeed.Paused;
     public event Action<DateTime> OnTimeAdvanced;
     //public event Action OnCoinListChanged;
 
@@ -181,15 +181,26 @@ public class CoinManager : MonoBehaviour
 
             if (IsFourHourBoundary(currentDateTime)) {
 
-                // BaseCandle 확정 (차트 열려 있든 말든 무조건)
                 foreach (var coin in coins) {
-                    coin.RecordCurrentCandle();
+
+                    // 진행 중 RuntimeCandle 확정
+                    coin.CloseRuntimeCandle();
+
+                    // 다음 캔들 시작
+                    double nextOpen =
+                        coin.CandleHistory.Count > 0
+                            ? coin.CandleHistory[^1].close
+                            : coin.CurrentPrice;
+
+                    coin.EnsureRuntimeCandle(nextOpen);
+
+                    // BaseCandle은 그대로
                     coin.CloseBaseCandle();
                 }
 
-                // 기존 이벤트 (차트용, UI용)
                 OnCandleBoundary?.Invoke(currentDateTime);
             }
+
 
 
             foreach (var coin in coins)
@@ -418,6 +429,10 @@ public class CoinManager : MonoBehaviour
        // 한 프레임 대기
         yield return null;
 
+        foreach (var coin in coins) {
+            coin.EnsureRuntimeCandle(coin.CurrentPrice);
+        }
+
         //  UI 강제 최종 동기화 (0.2초 문제 해결 지점)
         UpdateCashText();
         UpdateDateText();
@@ -448,11 +463,14 @@ public class CoinManager : MonoBehaviour
     }
 
     bool IsFourHourBoundary(DateTime time) {
-        return time.Minute == 0 &&
-               (time.Hour == 9 ||
-                time.Hour == 13 ||
-                time.Hour == 17 ||
-                time.Hour == 21 ||
-                time.Hour == 0);
+        // 기준: 게임 시작 시각 = 09:00
+        int hoursSinceStart =
+            (int)(time - new DateTime(time.Year, time.Month, time.Day, 9, 0, 0)).TotalHours;
+
+        if (hoursSinceStart < 0)
+            hoursSinceStart += 24;
+
+        return time.Minute == 0 && hoursSinceStart % 4 == 0;
     }
+
 }

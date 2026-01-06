@@ -20,38 +20,32 @@ public class TradeOptionPanelController : MonoBehaviour {
     private CoinData currentCoin;
 
     private void Awake() {
-        tradeOptionPanel.SetActive(false);
+        // 시작할 때는 꺼두기
+        if (tradeOptionPanel != null) tradeOptionPanel.SetActive(false);
 
-        // 닫기 버튼 리스너 연결
         if (closeButton != null) {
             closeButton.onClick.RemoveAllListeners();
             closeButton.onClick.AddListener(HidePanel);
-        } else {
-            Debug.LogWarning("[TradeOption] CloseButton이 연결되지 않았습니다.");
         }
     }
 
     public void ShowPanel(string symbol) {
-        Debug.Log($"[TradeOption] 패널 열기 시도: {symbol}");
-        currentCoin = FindCoin(symbol);
-        if (currentCoin == null) {
-            Debug.LogWarning($"코인 '{symbol}'을 찾을 수 없습니다.");
-            return;
-        }
+        // 코인 정보 찾기
+        currentCoin = CoinManager.Instance.coins.Find(c => c.Symbol == symbol);
+        if (currentCoin == null) return;
 
-        // 텍스트 설정
-        symbolText.text = currentCoin.Symbol;
-        nameText.text = currentCoin.Name;
+        // UI 갱신
+        if (symbolText) symbolText.text = currentCoin.Symbol;
+        if (nameText) nameText.text = currentCoin.Name;
 
-        // 아이콘 설정
         Sprite iconSprite = Resources.Load<Sprite>($"Coins/{currentCoin.Symbol}");
-        iconImage.sprite = iconSprite != null ? iconSprite : null;
+        if (iconImage) iconImage.sprite = iconSprite != null ? iconSprite : null;
 
-        // 버튼 리스너 설정
+        // 버튼 리스너 (매수/매도 창으로 넘어가기)
         buyButton.onClick.RemoveAllListeners();
         buyButton.onClick.AddListener(() => {
-            HidePanel();
-            buyPanel.OpenPanel(currentCoin);
+            HidePanel(); // 옵션창 닫고
+            buyPanel.OpenPanel(currentCoin); // 매수창 열기
         });
 
         sellButton.onClick.RemoveAllListeners();
@@ -60,14 +54,12 @@ public class TradeOptionPanelController : MonoBehaviour {
             sellPanel.OpenPanel(currentCoin);
         });
 
+        // [중요] 패널을 켜고, 화면 맨 앞으로 가져오기
         tradeOptionPanel.SetActive(true);
+        tradeOptionPanel.transform.SetAsLastSibling();
     }
 
     public void HidePanel() {
-        tradeOptionPanel.SetActive(false);
-    }
-
-    private CoinData FindCoin(string symbol) {
-        return CoinManager.Instance.coins.Find(c => c.Symbol == symbol);
+        if (tradeOptionPanel) tradeOptionPanel.SetActive(false);
     }
 }

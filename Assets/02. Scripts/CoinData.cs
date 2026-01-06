@@ -28,6 +28,32 @@ public class CoinData {
 
     // ===== 정석 구조 (신규 추가) =====
 
+    public RuntimeCandle CurrentRuntimeCandle { get; private set; }
+
+    public void EnsureRuntimeCandle(double startPrice) {
+        if (CurrentRuntimeCandle != null && !CurrentRuntimeCandle.IsClosed)
+            return;
+
+        CurrentRuntimeCandle = new RuntimeCandle();
+        CurrentRuntimeCandle.Start(startPrice);
+    }
+
+    public void CloseRuntimeCandle() {
+        if (CurrentRuntimeCandle == null || CurrentRuntimeCandle.IsClosed)
+            return;
+
+        CurrentRuntimeCandle.CloseCandle();
+
+        CandleHistory.Add(new ChartRenderer.CandleData {
+            open = CurrentRuntimeCandle.Open,
+            high = CurrentRuntimeCandle.High,
+            low = CurrentRuntimeCandle.Low,
+            close = CurrentRuntimeCandle.Close
+        });
+
+        CurrentRuntimeCandle = null;
+    }
+
     // 가장 짧은 봉 (Base Candle)
     public class BaseCandle {
         public double open;
@@ -135,7 +161,7 @@ public class CoinData {
     public void OnPriceUpdate(double newPrice) {
         CurrentPrice = newPrice;
 
-        // 기존 캔들 로직 유지
+        // 기존 캔들 로직
         if (currentOpen == null) {
             currentOpen = newPrice;
             currentHigh = newPrice;
@@ -145,13 +171,19 @@ public class CoinData {
             currentLow = Math.Min(currentLow, newPrice);
         }
 
-        // BaseCandle 로직 (정석)
+        // BaseCandle
         if (CurrentBaseCandle == null) {
             CurrentBaseCandle = new BaseCandle(newPrice);
         } else {
             CurrentBaseCandle.Update(newPrice);
         }
+
+        // 핵심 추가
+        if (CurrentRuntimeCandle != null && !CurrentRuntimeCandle.IsClosed) {
+            CurrentRuntimeCandle.UpdatePrice(newPrice);
+        }
     }
+
 
     // ===== 기존 캔들 확정 (유지) =====
     public void RecordCurrentCandle() {
