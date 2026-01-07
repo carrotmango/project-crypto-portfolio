@@ -5,8 +5,6 @@ public class DailyIncomeManager : MonoBehaviour {
     public static DailyIncomeManager Instance;
 
     private int salaryIncome = 0;
-    private int estateIncomeTotal = 0; // ★ 핵심: 부동산 합계
-    private List<string> estateLogs = new();
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -16,56 +14,49 @@ public class DailyIncomeManager : MonoBehaviour {
         Instance = this;
     }
 
-    // 급여 등록
     public void AddSalary(int amount, string label) {
         if (amount <= 0) return;
         salaryIncome += amount;
     }
-
-    // 부동산 수입 등록 (건물 단위)
     public void AddEstateIncome(string estateName, int amount) {
-        if (amount <= 0) return;
-
-        estateIncomeTotal += amount; // ★ 여기서 누적
-        estateLogs.Add($"{estateName}: +{amount:N0}원");
+        // RealEstatePanelController가 직접 알림을 보내므로 여기선 집계하지 않음
     }
 
-    // 하루 종료 시 호출
+    // 하루 종료(00:00) 시 호출
     public void FlushAndNotify() {
-        if (salaryIncome == 0 && estateIncomeTotal == 0)
-            return;
+        // 급여가 없으면 알림 안 보냄
+        if (salaryIncome <= 0) return;
 
-        int total = salaryIncome + estateIncomeTotal;
+        int total = salaryIncome;
 
-        string body = "";
+        // 1. 알림창 제목/내용 (심플하게)
+        string notiTitle = "급여 입금";
+        string notiMsg = $"급여 {total:N0}원이 입금되었습니다.";
 
-        if (salaryIncome > 0) {
-            body += "■ 급여\n";
-            body += $"- 대표 급여: +{salaryIncome:N0}원\n\n";
+        // 2. 상세 팝업 내용
+        string fullBody = "[급여 명세서]\n\n";
+        fullBody += $"■ 기본 급여: +{total:N0}원\n";
+        fullBody += "\n--------------------------------\n";
+        fullBody += $"실 수령액: {total:N0}원\n";
+        fullBody += "사토시 은행 계좌로 지급되었습니다.";
+
+        // 3. 글로벌 알림 호출 (파란색 Bank 테마)
+        if (GlobalNotificationManager.Instance != null) {
+            GlobalNotificationManager.Instance.ShowNotification(
+                "Bank",
+                notiTitle,
+                notiMsg,
+                () => {         // 클릭 시 상세 명세서 팝업
+                    if (UIManager.Instance != null) {
+                        UIManager.Instance.ShowSMSResult(
+                            $"발신인: 사토시 은행\n\n{fullBody}"
+                        );
+                    }
+                }
+            );
         }
 
-        if (estateLogs.Count > 0) {
-            body += "■ 부동산\n";
-            foreach (var log in estateLogs) {
-                body += $"- {log}\n";
-            }
-            body += "\n";
-        }
-
-        body += $"총 수입: +{total:N0}원";
-
-        SMSNotificationManager.Instance.ReceiveSMS(
-            "일일 수입 정산",
-            $"오늘 수입 +{total:N0}원",
-            body
-        );
-
-        Clear();
-    }
-
-    void Clear() {
+        // 초기화
         salaryIncome = 0;
-        estateIncomeTotal = 0;
-        estateLogs.Clear();
     }
 }

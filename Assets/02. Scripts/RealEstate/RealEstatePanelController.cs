@@ -296,34 +296,39 @@ public class RealEstatePanelController : MonoBehaviour {
         int totalIncome = 0;
 
         foreach (var estate in dataList) {
-            if (!estate.owned)
-                continue;
+            if (!estate.owned) continue;
 
             if (now.Date >= estate.nextIncomeDate.Date) {
-                int income = Mathf.RoundToInt(
-                    estate.price * estate.monthlyYield
-                );
-
+                int income = Mathf.RoundToInt(estate.price * estate.monthlyYield);
                 PlayerManager.Instance.satoshiBankCash += income;
-
-                DailyIncomeManager.Instance.AddEstateIncome(
-                    estate.name,
-                    income
-                );
-
+                DailyIncomeManager.Instance.AddEstateIncome(estate.name, income);
                 estate.nextIncomeDate = estate.nextIncomeDate.AddDays(2);
+
+                totalIncome += income;
             }
         }
 
+
         if (totalIncome > 0) {
-            PlayerManager.Instance.satoshiBankCash += totalIncome;
+            // [핵심 수정]
+            if (GlobalNotificationManager.Instance != null) {
 
-            SMSNotificationManager.Instance.ReceiveSMS(
-                "부동산",
-                $"월세 {totalIncome:N0}원이 입금되었...",
-                $"월세 {totalIncome:N0}원이\n계좌로 입금되었습니다."
-            );
+                string message = $"{totalIncome:N0}원이 입금되었습니다.";
+                string fullDetail = $"[부동산 월세 입금]\n\n보유하신 부동산에서 월세 수익이 발생하여 계좌로 입금되었습니다.\n\n입금액: +{totalIncome:N0}원";
 
+                GlobalNotificationManager.Instance.ShowNotification(
+                    "RealEstate",   // 타입 (초록색 or 파란색)
+                    "월세 입금",     // 제목
+                    message,        // 내용
+                    () => {         // [클릭 이벤트]
+                        if (UIManager.Instance != null) {
+                            UIManager.Instance.ShowSMSResult(
+                                $"발신인: 부동산 관리인\n\n{fullDetail}"
+                            );
+                        }
+                    }
+                );
+            }
             Debug.Log($"[부동산] 월세 총 정산 +{totalIncome}");
         }
     }

@@ -65,6 +65,7 @@ public class CoinManager : MonoBehaviour
     //public event Action OnCoinListChanged;
 
     public event Action<DateTime> OnCandleBoundary;
+    private HashSet<string> dailySurgeAlerts = new HashSet<string>();
 
 
 
@@ -163,6 +164,7 @@ public class CoinManager : MonoBehaviour
                 {
                     coin.InitialPrice = coin.CurrentPrice;
                 }
+                dailySurgeAlerts.Clear();
             }
 
             if (currentDateTime.Hour == 8 && currentDateTime.Minute == 0) {
@@ -207,6 +209,8 @@ public class CoinManager : MonoBehaviour
             {
                 var phase = coin.GetEffectivePhase(currentDateTime, CurrentMarket);
                 coin.GenerateNextPrice(phase, 2f, 0f);
+
+                CheckPriceSurgeAndNotify(coin);
             }
 
             if (tickCount % 1 == 0)
@@ -233,6 +237,59 @@ public class CoinManager : MonoBehaviour
                 statusPanelController.UpdateAssetFromStatus();
             }
         }
+    }
+
+    //  급등/급락 체크 및 문자 발송 함수
+    private void CheckPriceSurgeAndNotify(CoinData coin) {
+        // 1. 미보유시 패스
+        if (!PlayerManager.Instance.holdings.ContainsKey(coin.Symbol) ||
+            PlayerManager.Instance.holdings[coin.Symbol] <= 0) return;
+
+        // 2. 이미 알림 보냈으면 패스
+        if (dailySurgeAlerts.Contains(coin.Symbol)) return;
+
+        if (coin.InitialPrice <= 0) return;
+
+        // 등락률 계산
+        double changeRate = (coin.CurrentPrice - coin.InitialPrice) / coin.InitialPrice * 100.0;
+
+        // [추가] 내가 산 가격(평단가)이 시가보다 훨씬 높으면(이미 떡상 후 매수), '오늘 급등' 알림은 뒷북일 수 있음.
+        // 원하시면 이 주석을 풀어서 사용하세요. (평단가가 시가 대비 15% 이상 높으면 알림 스킵)
+        // double myAvg = PlayerManager.Instance.GetAvgPrice(coin.Symbol);
+        // if (myAvg > coin.InitialPrice * 1.15) return; 
+
+        // 3. 급등 (+15% 이상)
+        if (changeRate >= 15.0) {
+            SendAlert(coin, "Bullbit", "급등 알림", $"보유종목 '{coin.Name}'({coin.Symbol})\n현재 {changeRate:F2}% 급등 중입니다!");
+        }
+        // 4. 급락 (-15% 이하)
+        else if (changeRate <= -15.0) {
+            SendAlert(coin, "Bullbit", "급락 주의", $"보유종목 '{coin.Name}'({coin.Symbol})\n현재 {changeRate:F2}% 급락 중입니다. 주의하세요.");
+        }
+    }
+    // [신규] 매수 시 호출: 이미 변동폭이 큰 코인이면 알림 스킵 처리
+    public void CheckAndSkipAlertForNewBuy(string symbol) {
+        if (dailySurgeAlerts.Contains(symbol)) return; // 이미 등록됨
+
+        var coin = coins.Find(c => c.Symbol == symbol);
+        if (coin == null || coin.InitialPrice <= 0) return;
+
+        double rate = (coin.CurrentPrice - coin.InitialPrice) / coin.InitialPrice * 100.0;
+
+        // 이미 15% 이상 올랐거나 내린 상태에서 샀다면, 오늘 알림은 안 보냄 (뒷북 방지)
+        if (Math.Abs(rate) >= 15.0) {
+            dailySurgeAlerts.Add(symbol);
+            Debug.Log($"[알림 스킵] {symbol}은 이미 {rate:F2}% 변동된 상태에서 매수함.");
+        }
+    }
+
+    // 알림 발송 헬퍼
+    private void SendAlert(CoinData coin, string type, string title, string msg) {
+        if (GlobalNotificationManager.Instance != null) {
+            GlobalNotificationManager.Instance.ShowNotification(type, title, msg);
+        }
+        // 알림 보냈음 표시
+        dailySurgeAlerts.Add(coin.Symbol);
     }
 
     void UpdateDateText()

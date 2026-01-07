@@ -4,6 +4,12 @@ using System.Collections.Generic;
 using System;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+
+public enum ChartInterval {
+    _4H,
+    _1D
+}
 
 public class LiveChartRenderer : MonoBehaviour {
     [Header("Refs")]
@@ -13,6 +19,31 @@ public class LiveChartRenderer : MonoBehaviour {
 
     [Header("Drivers")]
     public ChartPriceDriver priceDriver;
+
+    [Header("UI Controls")]
+    public Button btn4H;
+    public Button btn1D;
+    public Button btnZoomIn;
+    public Button btnZoomOut;
+
+    [Header("Horizontal Line Settings")]
+    public Button btnHLine;
+    public GameObject hLinePrefab;
+    public Color hLineColor = Color.yellow;
+    private bool isPlacingHLine = false;
+    private List<HorizontalLineView> activeHLines = new List<HorizontalLineView>();
+
+    public Color activeBtnColor = new Color32(255, 255, 255, 255);
+    public Color inactiveBtnColor = new Color32(100, 100, 100, 255);
+
+    [Header("Measurement Tool Settings")]
+    public Button btnMeasure;            // [신규] 측정 도구 버튼
+    public GameObject measurementPrefab;
+    private MeasurementView currentMeasurement;
+    private bool isMeasuring = false;
+    private bool isMeasurementMode = false; // [신규] 측정 모드 플래그
+    private Vector2 measureStartPos;
+    private double measureStartPrice;
 
     [Header("UI")]
     public TextMeshProUGUI priceInfoLabel;
@@ -27,16 +58,16 @@ public class LiveChartRenderer : MonoBehaviour {
     public int futureEmptyCandles = 3;
     public int maxPastScrollCandles = 100;
 
-    // ===== Crosshair UI (추가됨) =====
     [Header("Crosshair UI")]
-    public RectTransform crosshairV; // 세로선
-    public RectTransform crosshairH; // 가로선
-    // ===============================
+    public RectTransform crosshairV;
+    public RectTransform crosshairH;
 
     private CoinData targetCoin;
     private RuntimeCandle currentCandle;
     private List<RuntimeCandle> candles = new();
     private List<CandleView> candleViews = new();
+
+    private ChartInterval currentInterval = ChartInterval._4H;
 
     [Header("High/Low Indicators")]
     public TextMeshProUGUI highPriceText;
@@ -61,6 +92,10 @@ public class LiveChartRenderer : MonoBehaviour {
     private int visibleEndIndex = 0;
     private bool lastPausedState = false;
 
+    // Y좌표 역계산을 위한 임시 변수
+    private double currentVisibleMinPrice;
+    private double currentVisibleMaxPrice;
+
     [Header("Current Price UI")]
     public RectTransform currentPriceLineRect;
     public RectTransform priceTagOverlayRect;
@@ -73,19 +108,31 @@ public class LiveChartRenderer : MonoBehaviour {
     public TextMeshProUGUI avgPriceTagText;
     public Image avgPriceTagImage;
 
-    [Header("Y-Axis Grid (Prefab Auto-Gen)")]
+    [Header("Y-Axis Grid")]
     public RectTransform yAxisGridContainer;
     public GameObject gridLabelPrefab;
     public int gridCount = 5;
     private List<TextMeshProUGUI> gridLabels = new List<TextMeshProUGUI>();
 
     [Header("Zoom Settings")]
-    public float minCandleSpacing = 2f;  // 제일 작게 (많이 보임)
-    public float maxCandleSpacing = 50f; // 제일 크게 (적게 보임)
-    public float zoomSensitivity = 2f;   // 휠 감도
+    public float minCandleSpacing = 2f;
+    public float maxCandleSpacing = 50f;
+    public float zoomSensitivity = 2f;
+    public float buttonZoomStep = 5f;
+
+    private void Awake() {
+        if (btn4H != null) btn4H.onClick.AddListener(() => SwitchInterval(ChartInterval._4H));
+        if (btn1D != null) btn1D.onClick.AddListener(() => SwitchInterval(ChartInterval._1D));
+        if (btnZoomIn != null) btnZoomIn.onClick.AddListener(OnZoomInBtn);
+        if (btnZoomOut != null) btnZoomOut.onClick.AddListener(OnZoomOutBtn);
+
+        if (btnHLine != null) btnHLine.onClick.AddListener(ToggleHLineMode);
+
+        // [신규] 측정 버튼 리스너
+        if (btnMeasure != null) btnMeasure.onClick.AddListener(ToggleMeasurementMode);
+    }
 
     public void Initialize(CoinData coin) {
-        ClearChart();
         if (CoinManager.Instance != null) {
             CoinManager.Instance.OnCandleBoundary -= HandleCandleBoundary;
             CoinManager.Instance.OnCandleBoundary += HandleCandleBoundary;
@@ -101,40 +148,206 @@ public class LiveChartRenderer : MonoBehaviour {
         coinName = coin.Name;
         coinSymbol = coin.Symbol;
 
-        for (int i = 0; i < coin.CandleHistory.Count; i++) {
-            CreateCandleVisual(new RuntimeCandle(
-                coin.CandleHistory[i].open,
-                coin.CandleHistory[i].high,
-                coin.CandleHistory[i].low,
-                coin.CandleHistory[i].close
-            ));
+        SetupCrosshairs();
+        InitializeGridLabels();
+
+        SwitchInterval(ChartInterval._4H);
+
+        priceDriver.Initialize(coin.CurrentPrice);
+        initialized = true;
+
+        StartCoroutine(SnapInitialNextFrame());
+    }
+
+    public void SwitchInterval(ChartInterval interval) {
+        currentInterval = interval;
+        ClearChart();
+
+        isDragging = false;
+        followLatest = true;
+        currentCandle = null;
+
+        UpdateIntervalButtonUI();
+
+        List<RuntimeCandle> dataToRender = new List<RuntimeCandle>();
+        var history = targetCoin.CandleHistory;
+
+        if (interval == ChartInterval._4H) {
+            foreach (ChartRenderer.CandleData h in history) {
+                dataToRender.Add(new RuntimeCandle(h.open, h.high, h.low, h.close));
+            }
+            SetupCurrentCandleFor4H();
+        } else {
+            int totalCount = history.Count;
+            int remainder = totalCount % 6;
+            int fullDayCount = totalCount - remainder;
+
+            dataToRender = AggregateFullDaysOnly(history, fullDayCount);
+
+            List<ChartRenderer.CandleData> todayPartialHistory = new List<ChartRenderer.CandleData>();
+            for (int i = fullDayCount; i < totalCount; i++) {
+                todayPartialHistory.Add(history[i]);
+            }
+            SetupCurrentCandleFor1D(todayPartialHistory);
         }
 
-        var realCandle = coin.CurrentRuntimeCandle;
-        if (realCandle != null) {
-            currentCandle = new RuntimeCandle();
-            currentCandle.SetupAsActive(realCandle.Open, realCandle.High, realCandle.Low, realCandle.Close);
-            CreateCandleVisual(currentCandle);
-            priceDriver.Initialize(currentCandle.Close);
-        } else {
-            priceDriver.Initialize(coin.CurrentPrice);
+        if (currentCandle != null) {
+            dataToRender.Add(currentCandle);
+        }
+
+        foreach (var c in dataToRender) {
+            CreateCandleVisual(c);
         }
 
         initialized = true;
-        followLatest = true;
-
-        // [추가] 십자선 초기화
-        SetupCrosshairs();
-
+        RefreshAllCandlePositions();
+        Canvas.ForceUpdateCanvases();
+        SnapToLatest();
         StartCoroutine(SnapInitialNextFrame());
-        InitializeGridLabels();
+    }
+
+    private List<RuntimeCandle> AggregateFullDaysOnly(List<ChartRenderer.CandleData> history, int limitCount) {
+        List<RuntimeCandle> list = new List<RuntimeCandle>();
+        if (limitCount <= 0) return list;
+        double o = 0, h = double.MinValue, l = double.MaxValue, c = 0;
+        int count = 0;
+        for (int i = 0; i < limitCount; i++) {
+            var data = history[i];
+            if (count == 0) o = data.open;
+            if (data.high > h) h = data.high;
+            if (data.low < l) l = data.low;
+            c = data.close;
+            count++;
+            if (count == 6) {
+                list.Add(new RuntimeCandle(o, h, l, c));
+                count = 0;
+                h = double.MinValue; l = double.MaxValue;
+            }
+        }
+        return list;
+    }
+
+    private void SetupCurrentCandleFor4H() {
+        var real = targetCoin.CurrentRuntimeCandle;
+        if (real != null) {
+            currentCandle = new RuntimeCandle();
+            currentCandle.SetupAsActive(real.Open, real.High, real.Low, real.Close);
+        }
+    }
+
+    private void SetupCurrentCandleFor1D(List<ChartRenderer.CandleData> todayHistory) {
+        var real = targetCoin.CurrentRuntimeCandle;
+        double open = 0, high = double.MinValue, low = double.MaxValue, close = 0;
+        bool hasData = false;
+        if (todayHistory != null && todayHistory.Count > 0) {
+            open = todayHistory[0].open;
+            foreach (var p in todayHistory) {
+                if (p.high > high) high = p.high;
+                if (p.low < low) low = p.low;
+            }
+            close = todayHistory[todayHistory.Count - 1].close;
+            hasData = true;
+        }
+        if (real != null) {
+            if (!hasData) {
+                open = real.Open;
+                high = real.High;
+                low = real.Low;
+            } else {
+                if (real.High > high) high = real.High;
+                if (real.Low < low) low = real.Low;
+            }
+            close = real.Close;
+            hasData = true;
+        }
+        if (hasData) {
+            currentCandle = new RuntimeCandle();
+            currentCandle.SetupAsActive(open, high, low, close);
+        }
+    }
+
+    private void UpdateIntervalButtonUI() {
+        if (btn4H != null) btn4H.GetComponent<Image>().color = (currentInterval == ChartInterval._4H) ? activeBtnColor : inactiveBtnColor;
+        if (btn1D != null) btn1D.GetComponent<Image>().color = (currentInterval == ChartInterval._1D) ? activeBtnColor : inactiveBtnColor;
+    }
+
+    public void OnZoomInBtn() { ApplyZoom(buttonZoomStep); }
+    public void OnZoomOutBtn() { ApplyZoom(-buttonZoomStep); }
+
+    public void ToggleHLineMode() {
+        isPlacingHLine = !isPlacingHLine;
+        if (btnHLine != null) {
+            btnHLine.GetComponent<Image>().color = isPlacingHLine ? activeBtnColor : inactiveBtnColor;
+        }
+
+        // 수평선 모드 켤 때 측정 모드는 끄기 (충돌 방지)
+        if (isPlacingHLine && isMeasurementMode) ToggleMeasurementMode();
+    }
+
+    // [신규] 측정 모드 토글
+    public void ToggleMeasurementMode() {
+        isMeasurementMode = !isMeasurementMode;
+        if (btnMeasure != null) {
+            btnMeasure.GetComponent<Image>().color = isMeasurementMode ? activeBtnColor : inactiveBtnColor;
+        }
+
+        // 측정 모드 켤 때 수평선 모드는 끄기
+        if (isMeasurementMode && isPlacingHLine) ToggleHLineMode();
+    }
+
+    private void CreateHorizontalLineAtMouse() {
+        if (hLinePrefab == null) return;
+
+        Camera cam = (parentCanvas.renderMode == RenderMode.ScreenSpaceOverlay) ? null : parentCanvas.worldCamera;
+        Vector2 localPoint;
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(viewport, Input.mousePosition, cam, out localPoint)) {
+            return;
+        }
+
+        double price = YToPrice(localPoint.y);
+
+        Transform overlayParent = crosshairV.parent;
+        GameObject go = Instantiate(hLinePrefab, overlayParent);
+        go.transform.SetAsLastSibling();
+
+        HorizontalLineView view = go.GetComponent<HorizontalLineView>();
+        if (view != null) {
+            view.Setup(this, price, hLineColor);
+            float yPos = PriceToY(price);
+            view.UpdatePosition(yPos);
+            activeHLines.Add(view);
+        }
+    }
+
+    public void RemoveHorizontalLine(HorizontalLineView line) {
+        if (activeHLines.Contains(line)) {
+            activeHLines.Remove(line);
+            Destroy(line.gameObject);
+        }
+    }
+
+    private double YToPrice(float yPos) {
+        float halfHeight = chartHeight * 0.5f;
+        float normalized = (yPos + halfHeight) / chartHeight;
+        double range = currentVisibleMaxPrice - currentVisibleMinPrice;
+        if (range <= 0) range = 1f;
+        double price = currentVisibleMinPrice + (normalized * range);
+        return price;
+    }
+
+    private void ApplyZoom(float amount) {
+        float newSpacing = candleSpacing + amount;
+        newSpacing = Mathf.Clamp(newSpacing, minCandleSpacing, maxCandleSpacing);
+        if (Mathf.Abs(newSpacing - candleSpacing) > 0.001f) {
+            candleSpacing = newSpacing;
+            RefreshAllCandlePositions();
+        }
     }
 
     private void InitializeGridLabels() {
         foreach (var lbl in gridLabels) if (lbl != null) Destroy(lbl.gameObject);
         gridLabels.Clear();
         if (yAxisGridContainer == null || gridLabelPrefab == null) return;
-
         for (int i = 0; i < gridCount; i++) {
             GameObject go = Instantiate(gridLabelPrefab, yAxisGridContainer);
             TextMeshProUGUI tmp = go.GetComponent<TextMeshProUGUI>();
@@ -165,12 +378,20 @@ public class LiveChartRenderer : MonoBehaviour {
             UpdateCurrentCandle();
         }
 
-        HandleInput();
+        // [핵심] 모드에 따른 입력 처리 분리
+        // Shift 키를 누르고 있거나, 측정 버튼 모드가 켜져있으면 측정 입력 처리
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || isMeasurementMode) {
+            HandleMeasurementInput();
+        } else {
+            // 그 외에는 일반 입력(드래그) 및 수평선 입력
+            HandleInput();
+            HandleHorizontalLineInput();
+        }
+
         HandleZoom();
-        // [추가] 십자선 업데이트 (일시정지 상관없이 항상 작동)
         HandleCursorTracking();
 
-        if (followLatest && !isDragging) {
+        if (followLatest && !isDragging && !isMeasuring) {
             SnapToLatest();
         }
 
@@ -179,65 +400,125 @@ public class LiveChartRenderer : MonoBehaviour {
         UpdateAveragePriceLine();
     }
 
-    // ===== 십자선 로직 (추가됨) =====
-    // [수정] 초기 설정: 앵커를 중앙(0.5, 0.5)으로 통일해야 좌표 오차가 사라짐
+    private void HandleMeasurementInput() {
+        Camera cam = (parentCanvas.renderMode == RenderMode.ScreenSpaceOverlay) ? null : parentCanvas.worldCamera;
+
+        // 1. 클릭 시작 (측정 시작)
+        if (Input.GetMouseButtonDown(0) && !isMeasuring) {
+
+            // [중요] 버튼 클릭 방지 (버튼 눌러서 모드 켰는데, 또 버튼 누르면 측정 시작되면 안됨)
+            if (IsPointerOverButton(btnMeasure, cam)) return;
+
+            if (RectTransformUtility.RectangleContainsScreenPoint(viewport, Input.mousePosition, cam)) {
+                isMeasuring = true;
+                followLatest = false;
+
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(chartContent, Input.mousePosition, cam, out measureStartPos);
+
+                Vector2 viewportLocalPos;
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(viewport, Input.mousePosition, cam, out viewportLocalPos);
+                measureStartPrice = YToPrice(viewportLocalPos.y);
+
+                if (currentMeasurement != null) {
+                    Destroy(currentMeasurement.gameObject);
+                }
+
+                if (measurementPrefab != null) {
+                    GameObject go = Instantiate(measurementPrefab, chartContent);
+                    currentMeasurement = go.GetComponent<MeasurementView>();
+                    currentMeasurement.Setup(measureStartPos);
+                }
+            }
+        }
+
+        // 2. 드래그 중
+        if (isMeasuring && Input.GetMouseButton(0)) {
+            if (currentMeasurement != null) {
+                Vector2 currentPos;
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(chartContent, Input.mousePosition, cam, out currentPos);
+
+                Vector2 viewportLocalPos;
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(viewport, Input.mousePosition, cam, out viewportLocalPos);
+                double currentPrice = YToPrice(viewportLocalPos.y);
+
+                currentMeasurement.UpdateView(measureStartPos, currentPos, measureStartPrice, currentPrice);
+            }
+        }
+
+        // 3. 마우스 뗌 (측정 종료 및 삭제)
+        if (Input.GetMouseButtonUp(0)) {
+            if (isMeasuring) {
+                isMeasuring = false;
+                if (currentMeasurement != null) {
+                    Destroy(currentMeasurement.gameObject);
+                    currentMeasurement = null;
+                }
+
+                // [핵심] 일회성: 버튼으로 모드를 켰다면, 측정 후 자동으로 꺼줌
+                if (isMeasurementMode) {
+                    ToggleMeasurementMode();
+                }
+            }
+        }
+    }
+
+    private void HandleHorizontalLineInput() {
+        if (Input.GetKeyDown(KeyCode.H) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))) {
+            Camera cam = (parentCanvas.renderMode == RenderMode.ScreenSpaceOverlay) ? null : parentCanvas.worldCamera;
+            if (RectTransformUtility.RectangleContainsScreenPoint(viewport, Input.mousePosition, cam)) {
+                CreateHorizontalLineAtMouse();
+            }
+        }
+
+        if (isPlacingHLine && Input.GetMouseButtonDown(0)) {
+            Camera cam = (parentCanvas.renderMode == RenderMode.ScreenSpaceOverlay) ? null : parentCanvas.worldCamera;
+            if (!IsPointerOverButton(btnHLine, cam) &&
+                !IsPointerOverButton(btn4H, cam) &&
+                !IsPointerOverButton(btn1D, cam) &&
+                RectTransformUtility.RectangleContainsScreenPoint(viewport, Input.mousePosition, cam)) {
+                CreateHorizontalLineAtMouse();
+                ToggleHLineMode();
+            }
+        }
+    }
+
     void SetupCrosshairs() {
         if (crosshairV != null) {
-            // 세로선: 가로 위치는 중앙 기준, 세로는 꽉 차게
             crosshairV.anchorMin = new Vector2(0.5f, 0f);
             crosshairV.anchorMax = new Vector2(0.5f, 1f);
             crosshairV.pivot = new Vector2(0.5f, 0.5f);
-            crosshairV.sizeDelta = new Vector2(1f, 0f); // 폭 1px, 높이는 0(Stretch)
+            crosshairV.sizeDelta = new Vector2(1f, 0f);
             crosshairV.gameObject.SetActive(false);
         }
-
         if (crosshairH != null) {
-            // 가로선: 세로 위치는 중앙 기준, 가로는 꽉 차게
             crosshairH.anchorMin = new Vector2(0f, 0.5f);
             crosshairH.anchorMax = new Vector2(1f, 0.5f);
             crosshairH.pivot = new Vector2(0.5f, 0.5f);
-            crosshairH.sizeDelta = new Vector2(0f, 1f); // 폭 0(Stretch), 높이 1px
+            crosshairH.sizeDelta = new Vector2(0f, 1f);
             crosshairH.gameObject.SetActive(false);
         }
     }
 
-    // [수정] 마우스 추적 로직
     void HandleCursorTracking() {
         if (crosshairV == null || crosshairH == null) return;
-
-        // 캔버스 렌더 모드에 따라 카메라 설정 (Overlay면 null, Camera면 worldCamera)
         Camera cam = null;
-        if (parentCanvas.renderMode == RenderMode.ScreenSpaceCamera || parentCanvas.renderMode == RenderMode.WorldSpace) {
+        if (parentCanvas.renderMode == RenderMode.ScreenSpaceCamera || parentCanvas.renderMode == RenderMode.WorldSpace)
             cam = parentCanvas.worldCamera;
-        }
 
-        // 마우스가 Viewport 안에 있는지 확인
         bool isInside = RectTransformUtility.RectangleContainsScreenPoint(viewport, Input.mousePosition, cam);
-
         if (crosshairV.gameObject.activeSelf != isInside) crosshairV.gameObject.SetActive(isInside);
         if (crosshairH.gameObject.activeSelf != isInside) crosshairH.gameObject.SetActive(isInside);
 
         if (!isInside) return;
-
-        // 마우스 좌표를 Viewport 기준 로컬 좌표로 변환
-        // 이 좌표는 Viewport의 Pivot(보통 중앙)을 기준으로 나옵니다.
         Vector2 localPoint;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(viewport, Input.mousePosition, cam, out localPoint);
-
-        // 십자선의 앵커도 중앙(0.5, 0.5)으로 맞췄으므로, 좌표를 그대로 넣으면 정확히 일치합니다.
-
-        // 세로선: X좌표만 따라감
         crosshairV.anchoredPosition = new Vector2(localPoint.x, 0f);
-
-        // 가로선: Y좌표만 따라감
         crosshairH.anchoredPosition = new Vector2(0f, localPoint.y);
     }
-    // ===============================
 
     private void UpdateCurrentPriceLine() {
         double currentPrice = priceDriver.displayPrice;
         float yPos = PriceToY(currentPrice);
-
         if (currentPriceLineRect != null) currentPriceLineRect.anchoredPosition = new Vector2(0f, yPos);
         if (priceTagOverlayRect != null) {
             float currentX = priceTagOverlayRect.anchoredPosition.x;
@@ -245,29 +526,25 @@ public class LiveChartRenderer : MonoBehaviour {
         }
         if (priceTagText != null) priceTagText.text = FormatPrice(currentPrice);
         if (currentCandle != null && priceTagImage != null) {
-            bool isBull = currentPrice >= currentCandle.Open;
+            double openPrice = currentCandle.Open > 0 ? currentCandle.Open : currentPrice;
+            bool isBull = currentPrice >= openPrice;
             priceTagImage.color = isBull ? colorHigh : colorLow;
         }
     }
 
     private void UpdateAveragePriceLine() {
         if (avgPriceLineRect == null || avgPriceTagOverlayRect == null) return;
-
-        bool hasCoin = PlayerManager.Instance.holdings.ContainsKey(coinSymbol) &&
-                       PlayerManager.Instance.holdings[coinSymbol] > 0;
-
+        bool hasCoin = PlayerManager.Instance.holdings.ContainsKey(coinSymbol) && PlayerManager.Instance.holdings[coinSymbol] > 0;
         if (!hasCoin) {
             if (avgPriceLineRect.gameObject.activeSelf) avgPriceLineRect.gameObject.SetActive(false);
             if (avgPriceTagOverlayRect.gameObject.activeSelf) avgPriceTagOverlayRect.gameObject.SetActive(false);
             return;
         }
-
         if (!avgPriceLineRect.gameObject.activeSelf) avgPriceLineRect.gameObject.SetActive(true);
         if (!avgPriceTagOverlayRect.gameObject.activeSelf) avgPriceTagOverlayRect.gameObject.SetActive(true);
 
         double avgPrice = PlayerManager.Instance.GetAvgPrice(coinSymbol);
         float rawY = PriceToY(avgPrice);
-
         float viewportHalfHeight = viewport.rect.height * 0.5f;
         float tagHalfHeight = avgPriceTagOverlayRect.rect.height * 0.5f;
         float clampLimit = viewportHalfHeight - tagHalfHeight;
@@ -300,15 +577,20 @@ public class LiveChartRenderer : MonoBehaviour {
 
     private void HandleInput() {
         Camera cam = parentCanvas != null ? parentCanvas.worldCamera : null;
-
         if (Input.GetMouseButtonDown(0)) {
+            if (IsPointerOverButton(btn4H, cam) || IsPointerOverButton(btn1D, cam) ||
+                IsPointerOverButton(btnZoomIn, cam) || IsPointerOverButton(btnZoomOut, cam) ||
+                IsPointerOverButton(btnHLine, cam) || IsPointerOverButton(btnMeasure, cam)) { // [수정] 측정 버튼도 예외 처리
+                return;
+            }
             if (RectTransformUtility.RectangleContainsScreenPoint(viewport, Input.mousePosition, cam)) {
-                isDragging = true;
-                followLatest = false;
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(viewport, Input.mousePosition, cam, out lastLocalMousePos);
+                if (!isPlacingHLine) {
+                    isDragging = true;
+                    followLatest = false;
+                    RectTransformUtility.ScreenPointToLocalPointInRectangle(viewport, Input.mousePosition, cam, out lastLocalMousePos);
+                }
             }
         }
-
         if (isDragging && Input.GetMouseButton(0)) {
             Vector2 currentLocalPos;
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(viewport, Input.mousePosition, cam, out currentLocalPos)) {
@@ -325,12 +607,22 @@ public class LiveChartRenderer : MonoBehaviour {
                 }
             }
         }
+        if (Input.GetMouseButtonUp(0)) {
+            isDragging = false;
+        }
+    }
 
-        if (Input.GetMouseButtonUp(0)) isDragging = false;
+    private bool IsPointerOverButton(Button btn, Camera cam) {
+        if (btn == null || !btn.gameObject.activeInHierarchy) return false;
+        return RectTransformUtility.RectangleContainsScreenPoint(btn.GetComponent<RectTransform>(), Input.mousePosition, cam);
     }
 
     private void SnapToLatest() {
         if (candles.Count == 0) return;
+        float expectedWidth = (candles.Count + futureEmptyCandles) * candleSpacing;
+        if (Mathf.Abs(chartContent.sizeDelta.x - expectedWidth) > 1f) {
+            chartContent.sizeDelta = new Vector2(expectedWidth, chartContent.sizeDelta.y);
+        }
         chartContent.anchoredPosition = new Vector2(GetLatestDataScrollX(), 0f);
     }
 
@@ -369,32 +661,42 @@ public class LiveChartRenderer : MonoBehaviour {
         int maxHighIndex = -1;
         int minLowIndex = -1;
 
-        // [핵심] 현재 줌 상태(spacing)에 맞춰 캔들 너비 결정 (0.8 = 80% 채우기, 20% 여백)
-        // 캔들 간격이 아무리 좁아져도 최소 1px은 보이게 Max(1f, ...) 처리
         float currentBodyWidth = Mathf.Max(1f, candleSpacing * 0.8f);
 
         for (int i = 0; i < candleViews.Count; i++) {
             bool isVisible = (i >= visibleStartIndex && i <= visibleEndIndex);
-
             if (candleViews[i].gameObject.activeSelf != isVisible)
                 candleViews[i].gameObject.SetActive(isVisible);
 
             if (isVisible) {
-                // [수정] 너비 값을 같이 넘겨줌
                 candleViews[i].UpdateView(candles[i], currentBodyWidth);
-
                 var c = candles[i];
                 if (c.High >= maxHigh) { maxHigh = c.High; maxHighIndex = i; }
                 if (c.Low < minLow) { minLow = c.Low; minLowIndex = i; }
             }
         }
-
         UpdateHighLowIndicators(maxHighIndex, maxHigh, minLowIndex, minLow);
-
         if (maxHigh > minLow) {
             double range = maxHigh - minLow;
             double padding = (range == 0) ? maxHigh * 0.01 : range * verticalPadding;
-            UpdateGridLabels(minLow - padding, maxHigh + padding);
+
+            currentVisibleMinPrice = minLow - padding;
+            currentVisibleMaxPrice = maxHigh + padding;
+
+            UpdateGridLabels(currentVisibleMinPrice, currentVisibleMaxPrice);
+        }
+
+        UpdateHorizontalLines();
+    }
+
+    private void UpdateHorizontalLines() {
+        if (activeHLines.Count == 0) return;
+
+        foreach (var line in activeHLines) {
+            if (line != null) {
+                float yPos = PriceToY(line.TargetPrice);
+                line.UpdatePosition(yPos);
+            }
         }
     }
 
@@ -463,6 +765,12 @@ public class LiveChartRenderer : MonoBehaviour {
     }
 
     void HandleCandleBoundary(DateTime time) {
+        if (currentInterval == ChartInterval._1D) {
+            if (time.Hour == 9 && time.Minute == 0) {
+                SwitchInterval(ChartInterval._1D);
+            }
+            return;
+        }
         var realRuntime = targetCoin.CurrentRuntimeCandle;
         if (realRuntime == null) return;
         currentCandle = new RuntimeCandle();
@@ -474,92 +782,38 @@ public class LiveChartRenderer : MonoBehaviour {
         priceDriver.SetTargetPrice(targetCoin.CurrentPrice);
         priceDriver.Tick(Time.deltaTime);
     }
+
     void UpdateCurrentCandle() {
         if (currentCandle == null || currentCandle.IsClosed) return;
         currentCandle.UpdatePrice(priceDriver.displayPrice);
     }
+
     private void UpdatePriceLabel(double price) {
         if (priceInfoLabel != null && targetCoin != null) {
             priceInfoLabel.text = $"{coinName}({coinSymbol}) {targetCoin.GetFormattedPriceKRW()}";
         }
     }
+
     private void ClearChart() {
-        foreach (var view in candleViews) if (view != null) Destroy(view.gameObject);
+        foreach (var view in candleViews) if (view != null) DestroyImmediate(view.gameObject);
         candles.Clear();
         candleViews.Clear();
-        chartContent.anchoredPosition = Vector2.zero;
-        initialized = false;
-        followLatest = true;
     }
-    // ===== 줌(Zoom) 로직 추가 =====
+
     void HandleZoom() {
-        // 1. 휠 입력 감지
         float scroll = Input.mouseScrollDelta.y;
         if (Mathf.Abs(scroll) < 0.01f) return;
-
-        // 2. 줌 기준점 계산 (마우스 위치)
-        // 마우스가 Viewport 안에 없으면 줌 동작 안 함
-        Camera cam = (parentCanvas.renderMode == RenderMode.ScreenSpaceOverlay) ? null : parentCanvas.worldCamera;
-        if (!RectTransformUtility.RectangleContainsScreenPoint(viewport, Input.mousePosition, cam)) return;
-
-        // 마우스의 Viewport 내 로컬 좌표 구하기
-        Vector2 localMousePos;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(viewport, Input.mousePosition, cam, out localMousePos);
-
-        // 현재 차트 위치 기준으로, 마우스가 "몇 번째 캔들" 위에 있는지 계산 (Pivot Index)
-        // 수식: (마우스X - 차트시작X) / 간격 = 인덱스
-        float chartX = chartContent.anchoredPosition.x;
-        // Viewport 중심이 (0,0)이고 Pivot이 (0.5,0.5)일 때의 보정 필요할 수 있으나, 
-        // 보통 Content.anchoredPosition과 마우스 좌표 차이를 이용함.
-        // 여기서는 간단히 상대 거리를 이용:
-        float mousePosInContent = localMousePos.x - chartX;
-        float pivotIndex = mousePosInContent / candleSpacing;
-
-        // 3. 간격 변경 (Zoom)
-        float oldSpacing = candleSpacing;
-        float newSpacing = oldSpacing + (scroll * zoomSensitivity);
-        newSpacing = Mathf.Clamp(newSpacing, minCandleSpacing, maxCandleSpacing);
-
-        // 변화가 없으면 리턴
-        if (Mathf.Abs(newSpacing - oldSpacing) < 0.001f) return;
-
-        candleSpacing = newSpacing;
-
-        // 4. 모든 캔들 위치 재배치 (성능 최적화를 위해 보여지는 것만 할 수도 있지만, 구조상 전체 갱신이 안전)
-        RefreshAllCandlePositions();
-
-        // 5. 위치 보정 (Pivot 유지)
-        // 아까 마우스 아래에 있던 그 인덱스가, 새로운 간격에서도 마우스 아래에 오도록 차트 이동
-        // 새 마우스 위치(이론상) = pivotIndex * newSpacing
-        // 이동해야 할 거리 = (새 마우스 위치 - 옛 마우스 위치) 만큼 차트를 반대로 밀어야 함
-        float newMousePosInContent = pivotIndex * newSpacing;
-        float diff = newMousePosInContent - mousePosInContent;
-
-        Vector2 newChartPos = chartContent.anchoredPosition;
-        newChartPos.x -= diff; // 차트를 이동시켜 마우스 위치 고정
-
-        // 스크롤 범위 제한 (너무 멀리 안 가게)
-        float maxScrollX = maxPastScrollCandles * candleSpacing;
-        float minScrollX = GetMaxFutureScrollX();
-        newChartPos.x = Mathf.Clamp(newChartPos.x, minScrollX, maxScrollX);
-
-        chartContent.anchoredPosition = newChartPos;
-
-        // 줌을 하면 '최신 따라가기' 모드를 끌지 말지 결정 (보통 줌하면 끔)
-        followLatest = false;
+        ApplyZoom(scroll * zoomSensitivity);
     }
 
-    // 캔들 간격이 바뀌었으므로 모든 캔들의 X좌표를 다시 잡아주는 함수
     void RefreshAllCandlePositions() {
+        if (candles.Count == 0) return;
         for (int i = 0; i < candleViews.Count; i++) {
             RectTransform rt = candleViews[i].GetComponent<RectTransform>();
             float xPos = i * candleSpacing;
             rt.anchoredPosition = new Vector2(xPos, 0f);
         }
-
-        // Content 전체 크기 조절
         float contentWidth = (candles.Count + futureEmptyCandles) * candleSpacing;
         chartContent.sizeDelta = new Vector2(contentWidth, chartContent.sizeDelta.y);
     }
-
 }

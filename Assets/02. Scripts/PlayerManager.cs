@@ -56,6 +56,9 @@ public class PlayerManager : MonoBehaviour
         holdings[symbol] += quantity;
         totalBuyAmount[symbol] += price * quantity;
         totalBuyQuantity[symbol] += quantity;
+        if (CoinManager.Instance != null) {
+            CoinManager.Instance.CheckAndSkipAlertForNewBuy(symbol);
+        }
     }
 
     public bool RegisterSell(string symbol, double price, ref double quantity)
