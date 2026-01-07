@@ -90,6 +90,22 @@ public class RealEstatePanelController : MonoBehaviour {
             monthlyYield = 0.018f,
             owned = false,
             imageKey = "estate_10000"
+        },
+         new RealEstateData {
+            id = "room_005",
+            name = "·Ôµ¥Ä³½½ Àá½Ç (166m©÷)",
+            price = 3000000000,
+            monthlyYield = 0.033f,
+            owned = false,
+            imageKey = "estate_3B"
+        },
+        new RealEstateData {
+            id = "room_005",
+            name = "ÇÑ³² ´õ Èú",
+            price = 11000000000,
+            monthlyYield = 0.045f,
+            owned = false,
+            imageKey = "estate_10B"
         }
     };
 
@@ -190,7 +206,7 @@ public class RealEstatePanelController : MonoBehaviour {
         pageCanvasGroup.alpha = from;
 
         while (t < fadeDuration) {
-            t += Time.unscaledDeltaTime;  
+            t += Time.unscaledDeltaTime;
             pageCanvasGroup.alpha = Mathf.Lerp(from, to, t / fadeDuration);
             yield return null;
         }

@@ -17,7 +17,7 @@ public class SavedActiveEffect {
 public class SavedRealEstate {
     public string id;
     public bool owned;
-    public int price;
+    public long price;
     public float monthlyYield;
     public string buyDate;
     public string nextIncomeDate;

@@ -15,6 +15,10 @@ public class BuyPanelController : MonoBehaviour {
     public TextMeshProUGUI feeText;
     public TextMeshProUGUI amountUnitLabel;
     public TextMeshProUGUI totalCostUnitLabel;
+    private CoinData currentCoinData;
+
+    [Header("외부 연결")]
+    public LiveChartRenderer chartRenderer;
 
     [Header("설정")]
     [Range(0f, 0.05f)]
@@ -26,6 +30,7 @@ public class BuyPanelController : MonoBehaviour {
     private string lastSelectedSymbol = "";
 
     public void OpenPanel(CoinData coin) {
+        currentCoinData = coin;
         price = coin.CurrentPrice;
         availableCash = PlayerManager.Instance.bullbitCash;
         lastSelectedSymbol = coin.Symbol;
@@ -154,6 +159,11 @@ public class BuyPanelController : MonoBehaviour {
         PlayerManager.Instance.RegisterBuy(lastSelectedSymbol, price, amount);
 
         Debug.Log($"[매수 체결] {lastSelectedSymbol} {price} x {amount} = {FormatKRW(baseCost)} + 수수료 {FormatKRW(fee)} → 총 {FormatKRW(totalCost)} (잔액: {FormatKRW(PlayerManager.Instance.bullbitCash)})");
+
+        // [수정] 클래스 이름(LiveChartRenderer) 대신 연결된 변수(chartRenderer)를 사용해야 합니다.
+        if (chartRenderer != null) {
+            chartRenderer.RegisterTrade(currentCoinData, true);// true = 매수(Buy)
+        }
 
         ClosePanel();
     }

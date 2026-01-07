@@ -14,6 +14,11 @@ public class SellPanelController : MonoBehaviour {
     public Button resetButton;
     public TextMeshProUGUI amountUnitLabel;
     public TextMeshProUGUI totalCostUnitLabel;
+    private CoinData currentCoinData;
+
+    // [추가] 차트 스크립트를 연결할 변수
+    [Header("외부 연결")]
+    public LiveChartRenderer chartRenderer;
 
     private string lastSelectedSymbol;
     private double price;
@@ -22,6 +27,7 @@ public class SellPanelController : MonoBehaviour {
     private double owned;
 
     public void OpenPanel(CoinData coin) {
+        currentCoinData = coin;
         panel.SetActive(true);
         Time.timeScale = 0;
 
@@ -46,32 +52,29 @@ public class SellPanelController : MonoBehaviour {
         Time.timeScale = 1;
     }
 
+    // ... (OnOrderAmountChanged, OnTotalCostChanged, OnPercentButtonClicked, OnResetClicked 등 중간 생략 - 기존과 동일) ...
+
     public void OnOrderAmountChanged(string input) {
         if (isUpdating) return;
         isUpdating = true;
-
         if (double.TryParse(input, out double amount)) {
             double raw = price * amount;
             totalCostInput.text = Math.Floor(raw).ToString("F0");
-
             confirmButton.interactable = amount > 0 && raw >= 5000 && amount <= owned + 0.00001;
         } else {
             totalCostInput.text = "";
             confirmButton.interactable = false;
         }
-
         isUpdating = false;
     }
 
     public void OnTotalCostChanged(string input) {
         if (isUpdating) return;
         isUpdating = true;
-
         string sanitized = input.Replace(",", "").Replace("\u20A9", "").Replace("\uFFE6", "").Replace("₩", "");
         if (double.TryParse(sanitized, out double total)) {
             double amount = total / price;
             orderAmountInput.text = amount.ToString("0.####");
-
             double raw = price * amount;
             bool valid = amount > 0 && raw >= 5000 && amount <= owned + 0.00001;
             confirmButton.interactable = valid;
@@ -79,17 +82,14 @@ public class SellPanelController : MonoBehaviour {
             orderAmountInput.text = "";
             confirmButton.interactable = false;
         }
-
         isUpdating = false;
     }
 
     public void OnPercentButtonClicked(float percent) {
         double amount = owned * (percent / 100.0);
-
         isUpdating = true;
         orderAmountInput.text = amount.ToString("0.####");
         isUpdating = false;
-
         OnOrderAmountChanged(orderAmountInput.text);
     }
 
@@ -100,8 +100,7 @@ public class SellPanelController : MonoBehaviour {
     }
 
     public void OnConfirmClicked() {
-        if (!double.TryParse(orderAmountInput.text, out double amount))
-        {
+        if (!double.TryParse(orderAmountInput.text, out double amount)) {
             Debug.LogWarning("잘못된 수량을 입력했습니다.");
             return;
         }
@@ -113,7 +112,7 @@ public class SellPanelController : MonoBehaviour {
             Debug.LogWarning("보유 수량을 초과하여 매도할 수 없습니다.");
             return;
         }
-        
+
         double rawPrice = price * amount;
         if (rawPrice < 5000) {
             Debug.LogWarning("최소 주문 금액은 5,000원 이상이어야 합니다.");
@@ -121,11 +120,7 @@ public class SellPanelController : MonoBehaviour {
         }
 
         // PlayerManager의 RegisterSell을 호출하여 실제 매도 처리 시도
-        // amount를 ref로 넘겨서, 함수 내에서 수량이 조정될 수 있도록 함
-        if (PlayerManager.Instance.RegisterSell(lastSelectedSymbol, price, ref amount))
-        {
-            // 매도가 성공했을 때만 현금을 지급
-            // RegisterSell에 의해 amount가 조정되었을 수 있으므로, raw, fee, net을 다시 계산
+        if (PlayerManager.Instance.RegisterSell(lastSelectedSymbol, price, ref amount)) {
             double raw = price * amount;
             double fee = raw * feeRate;
             double net = raw - fee;
@@ -134,11 +129,13 @@ public class SellPanelController : MonoBehaviour {
 
             Debug.Log($"[매도 체결] {lastSelectedSymbol} {price} x {amount} = {FormatKRW(raw)} - 수수료 {FormatKRW(fee)} → {FormatKRW(net)}");
 
+            // [추가] 차트에 매도(S) 마크 찍기 (false = Sell)
+            if (chartRenderer != null) {
+                chartRenderer.RegisterTrade(currentCoinData, false);
+            }
+
             ClosePanel();
-        }
-        else
-        {
-            // RegisterSell이 false를 반환하면, 매도 실패
+        } else {
             Debug.LogWarning("매도 처리에 실패했습니다. 보유 수량을 다시 확인해주세요.");
         }
     }
