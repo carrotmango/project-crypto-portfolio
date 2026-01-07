@@ -284,18 +284,37 @@ public class RealEstatePanelController : MonoBehaviour {
     //    }
     //}
 
-
     void CheckEstatePrice() {
         foreach (var data in dataList) {
+            // 초기화 안됐으면 현재 시간으로 설정
             if (data.lastPriceUpdateDate == default)
                 data.lastPriceUpdateDate = Now;
 
             int days = (Now - data.lastPriceUpdateDate).Days;
 
+            // 랜덤하게 3~6일 지났는지 체크
             if (days >= UnityEngine.Random.Range(3, 6)) {
+
+                // 변동폭 계산 (-0.4% ~ +0.4%)
                 float change = UnityEngine.Random.Range(-0.004f, 0.004f);
-                data.price = Mathf.RoundToInt(data.price * (1f + change));
+
+                // [수정 포인트 1] 계산을 double로 정밀하게 하고 long으로 변환
+                double newPrice = data.price * (1.0 + change);
+
+                // [수정 포인트 2] long으로 변환 (Mathf.RoundToInt 쓰면 안됨!)
+                data.price = (long)System.Math.Round(newPrice);
+
+                // [수정 포인트 3] 가격이 너무 떨어져서 0원이나 음수가 되는 것 방지 (최소값 설정)
+                // 예: 원래 가격의 10% 밑으로는 절대 안 떨어지게 하거나, 최소 100만원 고정 등
+                long minPrice = 1000000; // 최소 100만원
+                if (data.price < minPrice) {
+                    data.price = minPrice;
+                }
+
                 data.lastPriceUpdateDate = Now;
+
+                // 디버그용: 가격 변동 로그
+                // Debug.Log($"[시세변동] {data.name}: {change*100:F2}% 변동 -> {data.price:N0}원");
             }
         }
     }

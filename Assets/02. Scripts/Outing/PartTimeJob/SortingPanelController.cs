@@ -46,7 +46,8 @@ public class SortingPanelController : MonoBehaviour {
     public void ResetGame() {
         score = 0;
         UpdateScore();
-        ClearBoxes();
+        ClearBoxes();        // 기존 박스 정리
+        ClearFlyingEffects(); // [추가] 날아가던 이펙트 박스 정리
         SpawnInitialBoxes();
     }
 
@@ -122,6 +123,16 @@ public class SortingPanelController : MonoBehaviour {
             for (int i = slot.childCount - 1; i >= 0; i--) {
                 Destroy(slot.GetChild(i).gameObject);
             }
+        }
+    }
+
+    // [추가됨] 날아가는 박스 잔여물 제거 함수
+    private void ClearFlyingEffects() {
+        if (exitSlot == null) return;
+
+        // exitSlot 아래에 있는 모든 자식(날아가는 박스들)을 파괴
+        for (int i = exitSlot.childCount - 1; i >= 0; i--) {
+            Destroy(exitSlot.GetChild(i).gameObject);
         }
     }
 

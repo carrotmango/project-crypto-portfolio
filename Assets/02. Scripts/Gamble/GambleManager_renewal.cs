@@ -53,7 +53,7 @@ public class GambleManager_renewal : MonoBehaviour {
     // 배팅금액
     public long currentBetAmount { get; private set; }
 
-    private const int GAMBLE_MONSTER_RATE_NUM = 150;   // 분자
+    private const int GAMBLE_MONSTER_RATE_NUM = 45;   // 분자
     private const int GAMBLE_MONSTER_RATE_DEN = 10000; // 분모
 
 

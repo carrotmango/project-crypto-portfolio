@@ -55531,6 +55531,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GlobalNotificationManager
   notificationContainer: {fileID: 1298688239}
   notificationPrefab: {fileID: 3364883285252343019, guid: 0a4df347a61bd0c459970467446ec2f9, type: 3}
+  maxMessageLength: 25
   iconBullbit: {fileID: 21300000, guid: c377236df272764408002c74a9feadae, type: 3}
   iconXbird: {fileID: 21300000, guid: 2dcf065413d41de43b1e7bc0a594d4ac, type: 3}
   iconBank: {fileID: 6195718540040979456, guid: ab966b0d865f8e145adf5af2303cee4d, type: 3}
@@ -60670,12 +60671,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1240408715}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1296807661}
+  m_Father: {fileID: 1894037680}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1240408717
 MonoBehaviour:
@@ -60689,7 +60690,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99457e7f5cc6686459918472c568d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RandomEventManager
-  eventChance: 1
+  eventChance: 0.1
   dailyCheckCount: 3
 --- !u!1 &1241156026
 GameObject:
@@ -62322,7 +62323,7 @@ MonoBehaviour:
   birthday: 
   characterIndex: 0
   bullbitCash: 0
-  satoshiBankCash: 100000000
+  satoshiBankCash: 2000000
   mangoCasinoCash: 0
   userStress: 0
   userSleep: 0
@@ -63792,7 +63793,6 @@ Transform:
   - {fileID: 259206554}
   - {fileID: 1649747156}
   - {fileID: 232692137}
-  - {fileID: 1240408716}
   - {fileID: 1062583509}
   - {fileID: 807412001}
   - {fileID: 954561203}
@@ -83742,7 +83742,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: v0.8.5
+  m_text: v0.8.7
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a12f1ff442a41054696c5c843f43cf38, type: 2}
   m_sharedMaterial: {fileID: -3748478843339084537, guid: a12f1ff442a41054696c5c843f43cf38, type: 2}
@@ -96544,6 +96544,7 @@ Transform:
   - {fileID: 2025895159}
   - {fileID: 664095359}
   - {fileID: 1574688662}
+  - {fileID: 1240408716}
   m_Father: {fileID: 1296807661}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1900127733

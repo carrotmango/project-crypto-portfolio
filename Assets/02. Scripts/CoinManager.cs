@@ -260,11 +260,11 @@ public class CoinManager : MonoBehaviour
 
         // 3. 급등 (+15% 이상)
         if (changeRate >= 15.0) {
-            SendAlert(coin, "Bullbit", "급등 알림", $"보유종목 '{coin.Name}'({coin.Symbol})\n현재 {changeRate:F2}% 급등 중입니다!");
+            SendAlert(coin, "Bullbit", "[급등]", $"'{coin.Symbol}' 현재 {changeRate:F2}% 급등 중!");
         }
         // 4. 급락 (-15% 이하)
         else if (changeRate <= -15.0) {
-            SendAlert(coin, "Bullbit", "급락 주의", $"보유종목 '{coin.Name}'({coin.Symbol})\n현재 {changeRate:F2}% 급락 중입니다. 주의하세요.");
+            SendAlert(coin, "Bullbit", "[급락]", $"'{coin.Symbol}'현재 {changeRate:F2}% 급락 중!");
         }
     }
     // [신규] 매수 시 호출: 이미 변동폭이 큰 코인이면 알림 스킵 처리

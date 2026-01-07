@@ -9,32 +9,41 @@ public class GlobalNotificationManager : MonoBehaviour {
     public Transform notificationContainer;
     public GameObject notificationPrefab;
 
+    // [신규] 메시지 최대 길이 설정 (이 길이를 넘으면 ... 처리)
+    public int maxMessageLength = 25;
+
     [Header("아이콘 리소스")]
     public Sprite iconBullbit;
     public Sprite iconXbird;
     public Sprite iconBank;
     public Sprite iconRealEstate;
 
-    [Header("배경 색상 설정")] // [신규]
-    public Color colBullbit = new Color32(40, 40, 40, 240);    // 검회색
-    public Color colXbird = new Color32(0, 0, 0, 240);         // 검정 (X 느낌)
-    public Color colBank = new Color32(0, 50, 120, 240);       // 파랑 (은행 느낌)
-    public Color colRealEstate = new Color32(0, 100, 50, 240); // 초록 (부동산 느낌)
+    [Header("배경 색상 설정")]
+    public Color colBullbit = new Color32(40, 40, 40, 240);
+    public Color colXbird = new Color32(0, 0, 0, 240);
+    public Color colBank = new Color32(0, 50, 120, 240);
+    public Color colRealEstate = new Color32(0, 100, 50, 240);
 
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
 
-    // [수정] onClickAction 매개변수 추가 (기본값 null)
     public void ShowNotification(string type, string sender, string message, Action onClickAction = null) {
         if (notificationPrefab == null || notificationContainer == null) return;
+
+        // [핵심 수정] 메시지 길이 자르기 로직
+        string displayMessage = message;
+        if (message.Length > maxMessageLength) {
+            // 설정한 길이만큼 자르고 뒤에 "..." 붙이기
+            displayMessage = message.Substring(0, maxMessageLength) + "...";
+        }
 
         GameObject go = Instantiate(notificationPrefab, notificationContainer);
         NotificationItem item = go.GetComponent<NotificationItem>();
 
         Sprite icon = null;
-        Color bgCol = Color.black; // 기본값
+        Color bgCol = Color.black;
 
         switch (type) {
             case "Bullbit":
@@ -55,8 +64,8 @@ public class GlobalNotificationManager : MonoBehaviour {
                 break;
         }
 
-        // 아이콘, 색상, 클릭 이벤트를 모두 넘겨줌
-        item.Setup(sender, message, icon, bgCol, onClickAction);
+        // 가공된 displayMessage를 전달
+        item.Setup(sender, displayMessage, icon, bgCol, onClickAction);
 
         go.transform.SetAsLastSibling();
     }

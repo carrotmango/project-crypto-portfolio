@@ -879,7 +879,47 @@ public class LiveChartRenderer : MonoBehaviour {
     void HandleZoom() {
         float scroll = Input.mouseScrollDelta.y;
         if (Mathf.Abs(scroll) < 0.01f) return;
-        ApplyZoom(scroll * zoomSensitivity);
+
+        Camera cam = (parentCanvas.renderMode == RenderMode.ScreenSpaceOverlay) ? null : parentCanvas.worldCamera;
+        Vector2 localMousePos;
+
+        // 1. 뷰포트 내부에서의 마우스 위치를 구함
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(viewport, Input.mousePosition, cam, out localMousePos)) {
+
+            // [핵심 1] 줌 하기 전, "컨텐츠 시작점(0)"에서 "마우스"까지의 거리 계산
+            float oldContentX = chartContent.anchoredPosition.x;
+            float mouseOffsetFromOrigin = localMousePos.x - oldContentX;
+
+            // [핵심 2] 줌 실행 (spacing 변경)
+            float oldSpacing = candleSpacing;
+            ApplyZoom(scroll * zoomSensitivity);
+            float newSpacing = candleSpacing;
+
+            // 간격이 실제로 변했을 때만 위치 보정 수행
+            if (Mathf.Abs(newSpacing - oldSpacing) > 0.001f) {
+                // [핵심 3] 확대/축소 비율 계산 (예: 10 -> 20이면 2배)
+                float zoomRatio = newSpacing / oldSpacing;
+
+                // [핵심 4] 비율에 맞춰 새로운 거리 계산
+                // 예: 거리가 100이었는데 2배 줌되면 200이 되어야 함
+                float newMouseOffset = mouseOffsetFromOrigin * zoomRatio;
+
+                // [핵심 5] 마우스 커서 위치는 화면에 고정되어야 하므로,
+                // 늘어난 거리만큼 컨텐츠 시작점(X)을 뒤로 밀어줌
+                float newContentX = localMousePos.x - newMouseOffset;
+
+                // 범위 제한 (너무 멀리 스크롤되지 않게)
+                float maxScrollX = maxPastScrollCandles * candleSpacing;
+                float minScrollX = GetMaxFutureScrollX();
+                newContentX = Mathf.Clamp(newContentX, minScrollX, maxScrollX);
+
+                // 위치 적용
+                chartContent.anchoredPosition = new Vector2(newContentX, 0f);
+
+                // 마우스로 줌을 당겼다는 건 특정 지점을 보고 싶다는 뜻이므로 '최신 따라가기' 해제
+                followLatest = false;
+            }
+        }
     }
     void RefreshAllCandlePositions() {
         if (candles.Count == 0) return;
