@@ -4,6 +4,14 @@ using UnityEngine.UI;
 
 public class OfficePanelController : MonoBehaviour {
 
+    [Header("Main Panels")]
+    public GameObject officeMainPanel;    // 버튼 5개가 있는 첫 화면
+    public GameObject statusPanel;        // 상세 상태창 패널
+    public GameObject skillUpgradePanel;  // 스킬 강화 패널
+    public GameObject glossaryPanel;      // 용어 정리 패널
+    public GameObject dialoguePanel;      // 대화 패널
+    public GameObject messageLogPanel;    // 메시지 로그 패널
+
     [Header("User")]
     public TextMeshProUGUI userNameLabel;
 
@@ -22,7 +30,6 @@ public class OfficePanelController : MonoBehaviour {
     [Header("Bank")]
     public TextMeshProUGUI bankCashLabel;
 
-
     // 하루 변경 감지용
     private int lastShownSurvivalDay = -1;
 
@@ -38,6 +45,7 @@ public class OfficePanelController : MonoBehaviour {
     private void OnEnable() {
         RefreshAll();
         SyncDay();
+        ShowMainOffice(); // 켜질 때 항상 메인 버튼 화면으로 초기화
     }
 
     private void Start() {
@@ -55,6 +63,47 @@ public class OfficePanelController : MonoBehaviour {
         }
     }
 
+    // =========================
+    // 패널 전환 시스템 (Navigation)
+    // =========================
+
+    // 모든 서브 패널을 끄고 메인 화면만 보여주는 함수
+    public void ShowMainOffice() {
+        if (officeMainPanel != null) officeMainPanel.SetActive(true);
+
+        if (statusPanel != null) statusPanel.SetActive(false);
+        if (skillUpgradePanel != null) skillUpgradePanel.SetActive(false);
+        if (glossaryPanel != null) glossaryPanel.SetActive(false);
+        if (dialoguePanel != null) dialoguePanel.SetActive(false);
+        if (messageLogPanel != null) messageLogPanel.SetActive(false);
+    }
+
+    // 상태창 열기 (상태 버튼에 연결)
+    public void OpenStatusPanel() {
+        if (officeMainPanel != null)
+        if (statusPanel != null) {
+            statusPanel.SetActive(true);
+            // StatusPanelController가 있다면 데이터 갱신 호출
+            statusPanel.GetComponent<StatusPanelController>()?.UpdateAssetFromStatus();
+        }
+    }
+
+    // 상태창에서 뒤로가기 버튼 (뒤로 버튼에 연결)
+    public void OnClickStatusBack() {
+        ShowMainOffice();
+    }
+
+    // 기타 패널 오픈 함수들
+    public void OpenSkillUpgrade() { if (officeMainPanel != null) officeMainPanel.SetActive(false); skillUpgradePanel?.SetActive(true); }
+    public void OpenGlossary() { if (officeMainPanel != null) officeMainPanel.SetActive(false); glossaryPanel?.SetActive(true); }
+    public void OpenDialogue() { if (officeMainPanel != null) officeMainPanel.SetActive(false); dialoguePanel?.SetActive(true); }
+    public void OpenMessageLog() { if (officeMainPanel != null) officeMainPanel.SetActive(false); messageLogPanel?.SetActive(true); }
+
+
+    // =========================
+    // 데이터 리프레시 로직 (기존 유지)
+    // =========================
+
     void SyncDay() {
         if (CoinManager.Instance != null) {
             lastShownSurvivalDay = CoinManager.Instance.survivalDays;
@@ -62,6 +111,11 @@ public class OfficePanelController : MonoBehaviour {
     }
 
     public void RefreshAll() {
+        // StatusPanelController가 별도 관할이므로 있으면 호출만 해줌
+        if (statusPanel != null && statusPanel.activeSelf) {
+            statusPanel.GetComponent<StatusPanelController>()?.UpdateAssetFromStatus();
+        }
+
         RefreshName();
         RefreshCapital();
         RefreshNextCapitalGoal();
@@ -71,29 +125,17 @@ public class OfficePanelController : MonoBehaviour {
 
     void RefreshBankCash() {
         if (bankCashLabel == null || PlayerManager.Instance == null) return;
-
-        bankCashLabel.text =
-            $"은행 잔액: {PlayerManager.Instance.satoshiBankCash:N0}원";
+        bankCashLabel.text = $"은행 잔액: {PlayerManager.Instance.satoshiBankCash:N0}원";
     }
 
-
-    // =========================
-    // 기본 정보
-    // =========================
     void RefreshName() {
         if (userNameLabel == null || PlayerManager.Instance == null) return;
-
-        //userNameLabel.text =
-        //    $"안녕하세요, {PlayerManager.Instance.playerName}님";
-        userNameLabel.text =
-    $"";
+        userNameLabel.text = "";
     }
 
     void RefreshCapital() {
         if (capitalAmountLabel == null || OfficeManager.Instance == null) return;
-
-        capitalAmountLabel.text =
-            $"{OfficeManager.Instance.companyCapital:N0}원";
+        capitalAmountLabel.text = $"{OfficeManager.Instance.companyCapital:N0}원";
     }
 
     public void OpenDepositPanel() {
@@ -102,15 +144,8 @@ public class OfficePanelController : MonoBehaviour {
         }
     }
 
-    // =========================
-    // 자본 목표
-    // =========================
     void RefreshNextCapitalGoal() {
-        if (OfficeManager.Instance == null ||
-            nextCapitalGoalLabel == null ||
-            nextCapitalRewardLabel == null) {
-            return;
-        }
+        if (OfficeManager.Instance == null || nextCapitalGoalLabel == null || nextCapitalRewardLabel == null) return;
 
         OfficeManager office = OfficeManager.Instance;
         long nextGoal = office.GetNextCapitalMilestone();
@@ -122,8 +157,7 @@ public class OfficePanelController : MonoBehaviour {
         }
 
         nextCapitalGoalLabel.text = $"{nextGoal:N0}원";
-        nextCapitalRewardLabel.text =
-            GetCapitalRewardName(office.capitalMilestoneIndex);
+        nextCapitalRewardLabel.text = GetCapitalRewardName(office.capitalMilestoneIndex);
     }
 
     string GetCapitalRewardName(int index) {
@@ -135,78 +169,43 @@ public class OfficePanelController : MonoBehaviour {
         }
     }
 
-    // =========================
-    // 급여 정보
-    // =========================
     void RefreshSalaryInfo() {
-        if (OfficeManager.Instance == null ||
-            salaryInfoLabel == null ||
-            nextSalaryLabel == null) {
-            return;
-        }
+        if (OfficeManager.Instance == null || salaryInfoLabel == null || nextSalaryLabel == null) return;
 
         OfficeManager office = OfficeManager.Instance;
-
         int salary = office.currentMonthlySalary;
         float cycleDays = office.GetSalaryCycleDays();
-
         float remainDaysRaw = office.GetDaysUntilNextSalary();
         int remainDaysInt = Mathf.CeilToInt(remainDaysRaw);
 
-        if (remainDaysInt == 0 && remainDaysRaw > 0f) {
-            remainDaysInt = 1;
-        }
+        if (remainDaysInt == 0 && remainDaysRaw > 0f) remainDaysInt = 1;
 
-        salaryInfoLabel.text =
-            $"당신의 급여: {salary:N0}원 / {cycleDays:0.0}d";
-
-        nextSalaryLabel.text =
-            $"다음 급여까지: {remainDaysInt}일";
+        salaryInfoLabel.text = $"당신의 급여: {salary:N0}원 / {cycleDays:0.0}d";
+        nextSalaryLabel.text = $"다음 급여까지: {remainDaysInt}일";
 
         RefreshSalarySkillUI();
     }
 
-    // =========================
-    // 업무 효율 UI
-    // =========================
     void RefreshSalarySkillUI() {
         if (OfficeManager.Instance == null) return;
 
         OfficeManager office = OfficeManager.Instance;
-
         int level = office.salarySkillLevel;
         float percent = office.GetSalaryEfficiencyPercent();
 
-        if (salarySkillLevelLabel != null) {
-            salarySkillLevelLabel.text = $"업무 효율 Lv{level}";
-        }
-
-        if (salarySkillEffectLabel != null) {
-            salarySkillEffectLabel.text =
-                $"급여 지급 금액 상승: {percent:0.#}%";
-        }
+        if (salarySkillLevelLabel != null) salarySkillLevelLabel.text = $"업무 효율 Lv{level}";
+        if (salarySkillEffectLabel != null) salarySkillEffectLabel.text = $"급여 지급 금액 상승: {percent:0.#}%";
 
         if (salarySkillCostLabel != null) {
-            if (level >= OfficeManager.MAX_SALARY_SKILL_LEVEL) {
-                salarySkillCostLabel.text = "비용: MAX";
-            } else {
-                salarySkillCostLabel.text =
-                    $"비용: {office.GetSkillUpgradeCost():N0}원";
-            }
+            if (level >= OfficeManager.MAX_SALARY_SKILL_LEVEL) salarySkillCostLabel.text = "비용: MAX";
+            else salarySkillCostLabel.text = $"비용: {office.GetSkillUpgradeCost():N0}원";
         }
 
-        if (salarySkillUpgradeButton != null) {
-            salarySkillUpgradeButton.interactable =
-                office.CanUpgradeSalarySkill();
-        }
+        if (salarySkillUpgradeButton != null) salarySkillUpgradeButton.interactable = office.CanUpgradeSalarySkill();
     }
 
-    // =========================
-    // 버튼
-    // =========================
     public void OnClickUpgradeSalarySkill() {
         if (OfficeManager.Instance == null) return;
-
         OfficeManager.Instance.TryUpgradeSalarySkill();
         RefreshAll();
     }

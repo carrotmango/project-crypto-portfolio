@@ -6,11 +6,12 @@ public class TabPanelController : MonoBehaviour {
     public GameObject coinScrollView;        // 불비트 코인 리스트
     public GameObject bankPanel;             // 사토시 은행 패널
     public GameObject totalAssetPanel;
-    public GameObject statusPanel;
+    public GameObject officePanel;
     public GameObject xbirdPanel; // X버드 전용 피드 패널
     public GameObject gamblePanel;
     public GameObject outingPanel;
     public GameObject realEstatePanel;
+    public GameObject statusPanel;
 
     public Button bullbitButton;
     private bool isBullbitButtonClicked = false;
@@ -109,8 +110,8 @@ public class TabPanelController : MonoBehaviour {
         if (withdrawPanelController != null && withdrawPanelController.IsOpen()) {
             withdrawPanelController.ClosePanel();
         }
-        if (statusPanel != null) {
-            statusPanel.SetActive(false); // 
+        if (officePanel != null) {
+            officePanel.SetActive(false); // 
         }
         if(xbirdPanel != null) {
             xbirdPanel.SetActive(false);
@@ -134,10 +135,13 @@ public class TabPanelController : MonoBehaviour {
         if(realEstatePanel != null) {
             realEstatePanel.SetActive(false);
         }
+        if(statusPanel != null) {
+            statusPanel.SetActive(false);
+        }
     }
     public void ToggleStatusPanel() {
         CloseSubPanelsIfOpen(); 
-        statusPanel.SetActive(true);
+        officePanel.SetActive(true);
     }
 
     public void ShowOutingPanel() {

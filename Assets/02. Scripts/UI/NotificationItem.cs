@@ -58,7 +58,7 @@ public class NotificationItem : MonoBehaviour {
         cg.alpha = 1f;
 
         // 대기 (3초)
-        yield return new WaitForSeconds(3.0f);
+        yield return new WaitForSecondsRealtime(3.0f);
 
         // 퇴장
         t = 0f;
