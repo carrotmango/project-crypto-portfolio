@@ -26,8 +26,8 @@
       "gate": false,
       "prerequisites": [],
       "outcomes": [
-        { "key": "movement_A_delist_risk_rumor", "weight": 0.25 },
-        { "key": "movement_rumor_is_rumor", "weight": 0.75 }
+        { "key": "movement_A_delist_risk_rumor", "weight": 0.55 },
+        { "key": "movement_rumor_is_rumor", "weight": 0.45 }
       ],
       "outcomeRule":"OneOf",
       "uiKey": "movement_rumor"

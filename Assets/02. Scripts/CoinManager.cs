@@ -65,9 +65,8 @@ public class CoinManager : MonoBehaviour
     //public event Action OnCoinListChanged;
 
     public event Action<DateTime> OnCandleBoundary;
+    public System.Action OnMarketUpdated;
     private HashSet<string> dailySurgeAlerts = new HashSet<string>();
-
-
 
     public struct CoinChangeInfo {
         public CoinData coin;
@@ -212,7 +211,7 @@ public class CoinManager : MonoBehaviour
 
                 CheckPriceSurgeAndNotify(coin);
             }
-
+            OnMarketUpdated?.Invoke();
             if (tickCount % 1 == 0)
             {
                 foreach (var coin in coins)
