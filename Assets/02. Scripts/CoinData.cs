@@ -25,6 +25,13 @@ public class CoinData {
     private double? currentOpen = null;
     private double currentHigh = double.MinValue;
     private double currentLow = double.MaxValue;
+    public double OwnedAmount { get; private set; }
+
+    public void SetOwnedAmount(double amount) {
+        OwnedAmount = amount;
+    }
+
+
 
     // ===== 정석 구조 (신규 추가) =====
 
@@ -74,6 +81,7 @@ public class CoinData {
             close = price;
         }
     }
+
 
     // Base Candle 저장소 (오늘은 70개만)
     public List<BaseCandle> BaseCandleHistory = new();

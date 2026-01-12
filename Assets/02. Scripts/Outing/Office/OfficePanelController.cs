@@ -8,11 +8,11 @@ public class OfficePanelController : MonoBehaviour {
     public GameObject officeMainPanel;    // 배경 및 기본 UI
     public GameObject officeMainButton;   // Hierarchy의 'Buttons' (메인 버튼 5개 그룹)
     public GameObject statusPanel;        // Hierarchy의 'UserStatusPanel'
+    public GameObject capitalDepositPanel;
     public GameObject skillUpgradePanel;
     public GameObject glossaryPanel;      // Hierarchy의 'GlossaryPanel' (에어드랍 버튼 등이 있는 곳)
     public GameObject dialoguePanel;
     public GameObject messageLogPanel;
-    public GameObject npcArea;            // Hierarchy의 'Npc'
 
     [Header("FAQ Sub Content")]
     public GameObject glossariesParent;   // Hierarchy의 'Glossaries' (상세 내용들의 부모)
@@ -74,6 +74,7 @@ public class OfficePanelController : MonoBehaviour {
         if (glossaryPanel != null) glossaryPanel.SetActive(false);
         if (dialoguePanel != null) dialoguePanel.SetActive(false);
         if (messageLogPanel != null) messageLogPanel.SetActive(false);
+        if(capitalDepositPanel != null) capitalDepositPanel.SetActive(false);
 
         // Glossary 관련 상세 내용들도 전부 끔
         if (glossariesParent != null) glossariesParent.SetActive(false);
@@ -82,7 +83,6 @@ public class OfficePanelController : MonoBehaviour {
         // 2. 오피스 메인 요소 활성화 (버튼 소생 포인트)
         if (officeMainPanel != null) officeMainPanel.SetActive(true);
         if (officeMainButton != null) officeMainButton.SetActive(true);
-        if (npcArea != null) npcArea.SetActive(true);
     }
 
     // 상태창(UserStatusPanel) 오픈
@@ -99,6 +99,20 @@ public class OfficePanelController : MonoBehaviour {
         if (officeMainButton != null) officeMainButton.SetActive(false); // 메인 버튼 숨기기
         if (glossaryPanel != null) {
             glossaryPanel.SetActive(true);
+        }
+    }
+
+    public void OpenCapitalDeposit() {
+        if (officeMainButton != null) officeMainButton.SetActive(false); // 메인 버튼 숨기기
+        if (capitalDepositPanel != null) {
+            capitalDepositPanel.SetActive(true);
+        }
+    }
+
+    public void OpenSkillUpgrade() {
+        if (officeMainButton != null) officeMainButton.SetActive(false); // 메인 버튼 숨기기
+        if (skillUpgradePanel != null) {
+            skillUpgradePanel.SetActive(true);
         }
     }
 
@@ -189,7 +203,7 @@ public class OfficePanelController : MonoBehaviour {
         float remainDaysRaw = office.GetDaysUntilNextSalary();
         int remainDaysInt = Mathf.CeilToInt(remainDaysRaw);
         if (remainDaysInt == 0 && remainDaysRaw > 0f) remainDaysInt = 1;
-        salaryInfoLabel.text = $"당신의 급여: {salary:N0}원 / {cycleDays:0.0}d";
+        salaryInfoLabel.text = $"현재 급여: \n {salary:N0}원 / {cycleDays:0.0}d";
         nextSalaryLabel.text = $"다음 급여까지: {remainDaysInt}일";
         RefreshSalarySkillUI();
     }
@@ -197,7 +211,7 @@ public class OfficePanelController : MonoBehaviour {
     void RefreshSalarySkillUI() {
         if (OfficeManager.Instance == null) return;
         OfficeManager office = OfficeManager.Instance;
-        int level = office.salarySkillLevel;
+        int level = office.SalarySkillLevel;
         float percent = office.GetSalaryEfficiencyPercent();
         if (salarySkillLevelLabel != null) salarySkillLevelLabel.text = $"업무 효율 Lv{level}";
         if (salarySkillEffectLabel != null) salarySkillEffectLabel.text = $"급여 지급 금액 상승: {percent:0.#}%";

@@ -35,14 +35,22 @@ public class MainUIManager : MonoBehaviour {
     private bool pendingRefresh = false;
     private bool marketInitialized = false;
 
-    // 🔴 핵심 플래그
+    // 핵심 플래그
     private bool suppressRowUpdateThisFrame = false;
+    private bool filterOwnedOnly = false;
+
+    [Header("Filter UI")]
+    public Toggle ownedOnlyToggle;
 
     void Start() {
         AddButtonListener(symbolButton, SortType.Symbol);
         AddButtonListener(nameButton, SortType.Name);
         AddButtonListener(priceButton, SortType.Price);
         AddButtonListener(changeButton, SortType.Change);
+
+        if (ownedOnlyToggle != null) {
+            ownedOnlyToggle.onValueChanged.AddListener(ToggleOwnedFilter);
+        }
 
         RefreshCoinRows();
     }
@@ -76,7 +84,7 @@ public class MainUIManager : MonoBehaviour {
 
     void Update() {
 
-        // 🔴 Row 재생성 프레임에서는 UI 갱신 스킵
+        //  Row 재생성 프레임에서는 UI 갱신 스킵
         if (suppressRowUpdateThisFrame) {
             suppressRowUpdateThisFrame = false;
             return;
@@ -151,11 +159,21 @@ public class MainUIManager : MonoBehaviour {
         }
     }
 
+    public void ToggleOwnedFilter(bool enabled) {
+        filterOwnedOnly = enabled;
+        RefreshCoinRows();
+    }
+
+
     public void RefreshCoinRows() {
         // 1. 데이터 리스트 가져오기 (필터링 및 정렬)
         List<CoinData> list = CoinManager.Instance.coins
             .Where(c => !c.IsDelisted)
             .ToList();
+
+        if (filterOwnedOnly) {
+            list = list.Where(c => c.OwnedAmount > 0).ToList();
+        }
 
         if (currentSortOrder != SortOrder.Normal) {
             bool highFirst = (currentSortOrder == SortOrder.Ascending);
@@ -198,6 +216,11 @@ public class MainUIManager : MonoBehaviour {
             Destroy(kvp.Key);
             rowDataMap.Remove(kvp.Key);
             coinRows.Remove(kvp.Key);
+        }
+
+        foreach (var kvp in rowDataMap) {
+            bool shouldBeVisible = list.Contains(kvp.Value);
+            kvp.Key.SetActive(shouldBeVisible);
         }
     }
 

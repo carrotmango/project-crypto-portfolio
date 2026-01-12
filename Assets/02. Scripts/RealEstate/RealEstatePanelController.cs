@@ -99,14 +99,14 @@ public class RealEstatePanelController : MonoBehaviour {
             owned = false,
             imageKey = "estate_3B"
         },
-        new RealEstateData {
-            id = "room_005",
-            name = "ÇÑ³² ´õ Èú",
-            price = 11000000000,
-            monthlyYield = 0.045f,
-            owned = false,
-            imageKey = "estate_10B"
-        }
+        //new RealEstateData {
+        //    id = "room_005",
+        //    name = "ÇÑ³² ´õ Èú",
+        //    price = 11000000000,
+        //    monthlyYield = 0.045f,
+        //    owned = false,
+        //    imageKey = "estate_10B"
+        //}
     };
 
         LoadImages();

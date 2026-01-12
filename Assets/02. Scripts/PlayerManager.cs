@@ -58,6 +58,8 @@ public class PlayerManager : MonoBehaviour
         totalBuyQuantity[symbol] += quantity;
         if (CoinManager.Instance != null) {
             CoinManager.Instance.CheckAndSkipAlertForNewBuy(symbol);
+            SyncCoinOwnedAmount(symbol);
+
         }
     }
 
@@ -99,13 +101,14 @@ public class PlayerManager : MonoBehaviour
         totalBuyAmount[symbol] -= reduceAmount;
         totalBuyQuantity[symbol] -= quantity;
 
+
         if (holdings[symbol] < Epsilon)
         {
             holdings[symbol] = 0;
             totalBuyAmount[symbol] = 0;
             totalBuyQuantity[symbol] = 0;
         }
-        
+        SyncCoinOwnedAmount(symbol);
         return true;
     }
 
@@ -164,6 +167,7 @@ public class PlayerManager : MonoBehaviour
         if (amount > 0) {
             totalBuyQuantity[symbol] += amount;
             // totalBuyAmount는 증가시키지 않음 >> avgPrice = 0
+
         }
 
         const double Epsilon = 0.0000001;
@@ -172,6 +176,27 @@ public class PlayerManager : MonoBehaviour
             totalBuyAmount[symbol] = 0;
             totalBuyQuantity[symbol] = 0;
         }
+        SyncCoinOwnedAmount(symbol);
     }
+    public void UpdateHolding(string symbol, double amount) {
+        holdings[symbol] = amount;
+
+        CoinData coin = CoinManager.Instance.coins
+            .Find(c => c.Symbol == symbol);
+
+        if (coin != null) {
+            coin.SetOwnedAmount(amount);
+        }
+    }
+    private void SyncCoinOwnedAmount(string symbol) {
+        if (CoinManager.Instance == null) return;
+
+        CoinData coin = CoinManager.Instance.coins
+            .Find(c => c.Symbol == symbol);
+
+        if (coin != null)
+            coin.SetOwnedAmount(GetHoldingAmount(symbol));
+    }
+
 
 }

@@ -12,12 +12,15 @@ public class TabPanelController : MonoBehaviour {
     public GameObject gamblePanel;
     public GameObject outingPanel;
     public GameObject appPanel;
+    public GameObject chartPanel;
 
     [Header("Office Sub Panels (Direct Management)")]
     public GameObject officeButtons;    // Hierarchy의 'Buttons'
     public GameObject statusPanel;      // Hierarchy의 'UserStatusPanel'
     public GameObject glossaryPanel;    // Hierarchy의 'GlossaryPanel'
     public GameObject glossaries;       // Hierarchy의 'Glossaries' (에어드랍 상세 등 부모)
+    public GameObject capitalDeposit;
+    public GameObject skillUpgrade;
 
     [Header("Controllers")]
     public WithdrawPanelController withdrawPanelController;
@@ -72,17 +75,22 @@ public class TabPanelController : MonoBehaviour {
         appPanel.SetActive(true);
     }
 
-    // 형님이 말씀하신 "패널 켜져있으면 끄고 리셋해주는" 핵심 함수
     void CloseSubPanelsIfOpen() {
         // 1. 외부 컨트롤러 정리
         if (assetPanelController != null) assetPanelController.ClosePortfolioPanels();
         if (withdrawPanelController != null && withdrawPanelController.IsOpen()) withdrawPanelController.ClosePanel();
 
-        // 2. 오피스 하위 패널들 직접 리셋 (여기가 핵심!)
+        // 2. 오피스 하위 패널들 직접 리셋
         if (statusPanel != null) statusPanel.SetActive(false);
         if (glossaryPanel != null) glossaryPanel.SetActive(false);
         if (glossaries != null) glossaries.SetActive(false);
-        // 메인 버튼은 일단 꺼둡니다 (사무실 탭을 누를 때만 켜짐)
+        if (capitalDeposit != null) capitalDeposit.SetActive(false);
+        if (skillUpgrade != null) skillUpgrade.SetActive(false);
+
+        // 차트
+        if (chartPanel != null) chartPanel.SetActive(false);
+
+        // 메인 버튼은 일단 꺼둡니다
         if (officeButtons != null) officeButtons.SetActive(false);
 
         // 3. 모든 메인 탭 패널들 끄기
