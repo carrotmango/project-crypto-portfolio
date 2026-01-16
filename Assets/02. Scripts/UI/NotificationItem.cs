@@ -51,19 +51,19 @@ public class NotificationItem : MonoBehaviour {
         // 등장
         float t = 0f;
         while (t < 0.2f) {
-            t += Time.deltaTime;
+            // [수정] Time.deltaTime -> Time.unscaledDeltaTime (일시정지 무시)
+            t += Time.unscaledDeltaTime;
             cg.alpha = Mathf.Lerp(0f, 1f, t / 0.2f);
             yield return null;
         }
         cg.alpha = 1f;
 
-        // 대기 (3초)
         yield return new WaitForSecondsRealtime(3.0f);
 
         // 퇴장
         t = 0f;
         while (t < 0.5f) {
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime;
             cg.alpha = Mathf.Lerp(1f, 0f, t / 0.5f);
             yield return null;
         }

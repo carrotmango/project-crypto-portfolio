@@ -13,6 +13,7 @@ public class TabPanelController : MonoBehaviour {
     public GameObject outingPanel;
     public GameObject appPanel;
     public GameObject chartPanel;
+    public GameObject realEstatePanel;
 
     [Header("Office Sub Panels (Direct Management)")]
     public GameObject officeButtons;    // Hierarchy의 'Buttons'
@@ -22,6 +23,7 @@ public class TabPanelController : MonoBehaviour {
     public GameObject capitalDeposit;
     public GameObject skillUpgrade;
 
+
     [Header("Controllers")]
     public WithdrawPanelController withdrawPanelController;
     public TotalAssetPanelController assetPanelController;
@@ -29,7 +31,7 @@ public class TabPanelController : MonoBehaviour {
 
     [Header("외출 건물들")]
     public GameObject partimeJob;
-    public GameObject realEstatePanel;
+    public GameObject convPanel;
 
     public Button bullbitButton;
     private bool isBullbitButtonClicked = false;
@@ -104,6 +106,7 @@ public class TabPanelController : MonoBehaviour {
         if (outingPanel != null) outingPanel.SetActive(false);
         if (partimeJob != null) partimeJob.SetActive(false);
         if (realEstatePanel != null) realEstatePanel.SetActive(false);
+        if (convPanel != null) convPanel.SetActive(false);
     }
 
     public void ToggleStatusPanel() {

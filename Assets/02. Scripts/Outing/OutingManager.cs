@@ -19,6 +19,7 @@ public class OutingManager : MonoBehaviour {
     public GameObject partimeJob;
     public GameObject partimePanel;
     public GameObject office;
+    public GameObject conv;
 
     // 외출 오락실 진입
     public void EnterArcade() {
@@ -60,6 +61,18 @@ public class OutingManager : MonoBehaviour {
     public void ExitOffice() {
         if (office != null) {
             office.SetActive(false);
+        }
+    }
+
+    public void EnterConv() {
+        if (conv != null) {
+            conv.SetActive(true);
+        }
+    }
+
+    public void ExitConv() {
+        if (conv != null) {
+            conv.SetActive(false);
         }
     }
 
