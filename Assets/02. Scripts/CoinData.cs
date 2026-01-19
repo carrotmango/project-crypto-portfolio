@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using static ChartRenderer;
 
+public enum CoinType { Normal, Stable }
+
 public class CoinData {
     public string Name;
     public string Symbol;
     public double CurrentPrice;
     public double InitialPrice;
     public double Supply;
-
+    public CoinType Type = CoinType.Normal;
+    public double FixedDollarValue = 1.0;
     public bool IsDelisted = false;
 
     // ===== 기존 구조 유지 =====
     public const int MaxCandleHistory = 35;
-
     public MarketPhase CurrentPhaseOverride = MarketPhase.Sideways;
     public DateTime PhaseOverrideEndTime = DateTime.MinValue;
 
@@ -31,16 +33,12 @@ public class CoinData {
         OwnedAmount = amount;
     }
 
-
-
-    // ===== 정석 구조 (신규 추가) =====
-
+    // ===== 런타임 캔들 구조 =====
     public RuntimeCandle CurrentRuntimeCandle { get; private set; }
 
     public void EnsureRuntimeCandle(double startPrice) {
         if (CurrentRuntimeCandle != null && !CurrentRuntimeCandle.IsClosed)
             return;
-
         CurrentRuntimeCandle = new RuntimeCandle();
         CurrentRuntimeCandle.Start(startPrice);
     }
@@ -48,20 +46,16 @@ public class CoinData {
     public void CloseRuntimeCandle() {
         if (CurrentRuntimeCandle == null || CurrentRuntimeCandle.IsClosed)
             return;
-
         CurrentRuntimeCandle.CloseCandle();
-
         CandleHistory.Add(new ChartRenderer.CandleData {
             open = CurrentRuntimeCandle.Open,
             high = CurrentRuntimeCandle.High,
             low = CurrentRuntimeCandle.Low,
             close = CurrentRuntimeCandle.Close
         });
-
         CurrentRuntimeCandle = null;
     }
 
-    // 가장 짧은 봉 (Base Candle)
     public class BaseCandle {
         public double open;
         public double high;
@@ -69,10 +63,7 @@ public class CoinData {
         public double close;
 
         public BaseCandle(double price) {
-            open = price;
-            high = price;
-            low = price;
-            close = price;
+            open = price; high = price; low = price; close = price;
         }
 
         public void Update(double price) {
@@ -82,152 +73,148 @@ public class CoinData {
         }
     }
 
-
-    // Base Candle 저장소 (오늘은 70개만)
     public List<BaseCandle> BaseCandleHistory = new();
     public BaseCandle CurrentBaseCandle;
-
     public int MaxBaseCandles = 70;
 
-    // ===== 생성자 =====
-    public CoinData(string name, string symbol, double startPrice, double supply) {
+    // ===== 생성자 (수정됨) =====
+    public CoinData(string name, string symbol, double startPrice, double supply, CoinType type = CoinType.Normal) {
         Name = name;
         Symbol = symbol;
-        InitialPrice = startPrice;
-        CurrentPrice = startPrice;
         Supply = supply;
-        PriceHistory.Add(startPrice);
+        Type = type;
+
+        if (Type == CoinType.Stable) {
+            FixedDollarValue = 1.0; // USDT, USDC 등
+            CurrentPrice = FixedDollarValue * GlobalEconomyManager.UsdToKrw;
+        } else {
+            CurrentPrice = startPrice;
+        }
+
+        InitialPrice = CurrentPrice;
+        PriceHistory.Add(CurrentPrice);
     }
 
     public void ApplyRelist(double basePrice) {
         IsDelisted = false;
-
         CurrentPrice = basePrice > 0 ? basePrice : InitialPrice;
         InitialPrice = CurrentPrice;
-
         PhaseOverrideEndTime = DateTime.MinValue;
         CurrentPhaseOverride = MarketPhase.Sideways;
-
         currentOpen = null;
         currentHigh = double.MinValue;
         currentLow = double.MaxValue;
-
-        // BaseCandle도 초기화
         CurrentBaseCandle = null;
         BaseCandleHistory.Clear();
     }
 
-    // ===== 가격 생성 =====
-    public void GenerateNextPrice(MarketPhase inputPhase, float maxChangePct = 1f, float externalBias = 0f) {
-        if (IsDelisted)
-            return;
+    // ===== 가격 생성 (핵심 로직 수정) =====
+    public void GenerateNextPrice(MarketPhase inputPhase, int volatilityLevel = 1, float maxChangePct = 1f, float externalBias = 0f) {
+        if (IsDelisted) return;
 
-        MarketPhase phase = Symbol == "123A" ? GetRandomMovePhase() : inputPhase;
+        if (Type == CoinType.Stable) {
+            // 스테이블 코인: 환율을 추종하며 미세한 노이즈(디페깅) 발생
+            double depeggingNoise = UnityEngine.Random.Range(-0.0005f, 0.0005f);
+            CurrentPrice = (FixedDollarValue + depeggingNoise) * GlobalEconomyManager.UsdToKrw;
+        } else {
+            // 일반 코인: 기존 변동성 알고리즘 사용
+            MarketPhase phase = inputPhase;
 
-        double directionBias = phase switch {
-            MarketPhase.MegaBull => 0.90,
-            MarketPhase.SuperBull => 0.75,
-            MarketPhase.BigBull => 0.65,
-            MarketPhase.Bull => 0.60,
-            MarketPhase.MildBull => 0.55,
-            MarketPhase.Sideways => 0.5,
-            MarketPhase.MildBear => 0.45,
-            MarketPhase.Bear => 0.35,
-            MarketPhase.BigBear => 0.20,
-            MarketPhase.SuperBear => 0.10,
-            MarketPhase.MegaBear => 0.05,
-            _ => 0.5,
-        };
+            double directionBias = phase switch {
+                MarketPhase.MegaBull => 0.90,
+                MarketPhase.SuperBull => 0.75,
+                MarketPhase.BigBull => 0.65,
+                MarketPhase.Bull => 0.60,
+                MarketPhase.MildBull => 0.55,
+                MarketPhase.Sideways => 0.5,
+                MarketPhase.MildBear => 0.45,
+                MarketPhase.Bear => 0.35,
+                MarketPhase.BigBear => 0.20,
+                MarketPhase.SuperBear => 0.10,
+                MarketPhase.MegaBear => 0.05,
+                _ => 0.5,
+            };
 
-        double baseBias = phase switch {
-            MarketPhase.MegaBull => 0.02,
-            MarketPhase.SuperBull => 0.01,
-            MarketPhase.BigBull => 0.005,
-            MarketPhase.Bull => 0.0025,
-            MarketPhase.MildBull => 0.0015,
-            MarketPhase.Sideways => 0,
-            MarketPhase.MildBear => -0.002,
-            MarketPhase.Bear => -0.005,
-            MarketPhase.BigBear => -0.01,
-            MarketPhase.SuperBear => -0.015,
-            MarketPhase.MegaBear => -0.03,
-            _ => 0,
-        };
+            double baseMagnitude = phase switch {
+                MarketPhase.MegaBull => 1.8,
+                MarketPhase.MegaBear => 2.2,
+                MarketPhase.SuperBull => 1.0,
+                MarketPhase.SuperBear => 1.2,
+                MarketPhase.Sideways => 0.12,
+                MarketPhase.MildBull => 0.25,
+                MarketPhase.MildBear => 0.25,
+                _ => 0.5,
+            };
 
-        bool isUp = UnityEngine.Random.value < directionBias;
-        double magnitude = UnityEngine.Random.Range(0f, maxChangePct);
-        double deltaPct = (isUp ? magnitude : -magnitude) + baseBias + externalBias;
+            double volMultiplier = volatilityLevel switch {
+                1 => 0.85,
+                2 => 1.25,
+                3 => 2.0,
+                4 => 3.2,
+                5 => 4.5,
+                _ => 1.0,
+            };
 
-        double newPrice = CurrentPrice * (1 + deltaPct / 100.0);
-        newPrice = Math.Max(newPrice, 0.01);
+            double finalMaxMagnitude = baseMagnitude * volMultiplier;
 
-        OnPriceUpdate(newPrice);
+            double baseBias = phase switch {
+                MarketPhase.MegaBull => 0.06 * volMultiplier,
+                MarketPhase.MegaBear => -0.09 * volMultiplier,
+                MarketPhase.Sideways => 0,
+                _ => (baseMagnitude * 0.02) * volMultiplier
+            };
+
+            bool isUp = UnityEngine.Random.value < directionBias;
+            double magnitude = UnityEngine.Random.Range(0f, (float)finalMaxMagnitude);
+            double deltaPct = (isUp ? magnitude : -magnitude) + baseBias + externalBias;
+
+            CurrentPrice = CurrentPrice * (1 + deltaPct / 100.0);
+            CurrentPrice = Math.Max(CurrentPrice, 0.01);
+        }
+
+        OnPriceUpdate(CurrentPrice);
         PriceHistory.Add(CurrentPrice);
     }
 
-    // ===== 가격 반영 (BaseCandle 포함) =====
     public void OnPriceUpdate(double newPrice) {
         CurrentPrice = newPrice;
-
-        // 기존 캔들 로직
         if (currentOpen == null) {
-            currentOpen = newPrice;
-            currentHigh = newPrice;
-            currentLow = newPrice;
+            currentOpen = newPrice; currentHigh = newPrice; currentLow = newPrice;
         } else {
             currentHigh = Math.Max(currentHigh, newPrice);
             currentLow = Math.Min(currentLow, newPrice);
         }
 
-        // BaseCandle
         if (CurrentBaseCandle == null) {
             CurrentBaseCandle = new BaseCandle(newPrice);
         } else {
             CurrentBaseCandle.Update(newPrice);
         }
 
-        // 핵심 추가
         if (CurrentRuntimeCandle != null && !CurrentRuntimeCandle.IsClosed) {
             CurrentRuntimeCandle.UpdatePrice(newPrice);
         }
     }
 
-
-    // ===== 기존 캔들 확정 (유지) =====
     public void RecordCurrentCandle() {
         if (currentOpen == null) return;
-
         CandleHistory.Add(new CandleData {
             open = (float)currentOpen.Value,
             close = (float)CurrentPrice,
             high = (float)currentHigh,
             low = (float)currentLow
         });
-
-        if (CandleHistory.Count > MaxCandleHistory) {
-            CandleHistory.RemoveAt(0);
-        }
-
-        currentOpen = CurrentPrice;
-        currentHigh = CurrentPrice;
-        currentLow = CurrentPrice;
+        if (CandleHistory.Count > MaxCandleHistory) CandleHistory.RemoveAt(0);
+        currentOpen = CurrentPrice; currentHigh = CurrentPrice; currentLow = CurrentPrice;
     }
 
-    // ===== BaseCandle 확정 (신규, 봉 경계에서 호출) =====
     public void CloseBaseCandle() {
-        if (CurrentBaseCandle == null)
-            return;
-
+        if (CurrentBaseCandle == null) return;
         BaseCandleHistory.Add(CurrentBaseCandle);
-
-        if (BaseCandleHistory.Count > MaxBaseCandles) {
-            BaseCandleHistory.RemoveAt(0);
-        }
-
+        if (BaseCandleHistory.Count > MaxBaseCandles) BaseCandleHistory.RemoveAt(0);
         CurrentBaseCandle = new BaseCandle(CurrentBaseCandle.close);
     }
 
-    // ===== 기타 =====
     private MarketPhase GetRandomMovePhase() {
         float roll = UnityEngine.Random.value;
         if (roll < 0.15f) return MarketPhase.MildBull;
@@ -238,29 +225,20 @@ public class CoinData {
     }
 
     public MarketPhase GetEffectivePhase(DateTime now, MarketPhase globalPhase) {
-        if (now < PhaseOverrideEndTime) {
-            return CurrentPhaseOverride;
-        }
+        if (now < PhaseOverrideEndTime) return CurrentPhaseOverride;
         return globalPhase;
     }
+
     public string GetFormattedPriceKRW() {
-        if (CurrentPrice >= 1000)
-            return $"₩{CurrentPrice:N0}";
-        else if (CurrentPrice >= 100)
-            return $"₩{CurrentPrice:N2}";
-        else if (CurrentPrice >= 10)
-            return $"₩{CurrentPrice:N3}";
-        else
-            return $"₩{CurrentPrice:N4}";
-    }
-    public void AddAttribute(string key, object value) {
-        Attributes[key] = value;
+        if (CurrentPrice >= 1000) return $"₩{CurrentPrice:N0}";
+        else if (CurrentPrice >= 100) return $"₩{CurrentPrice:N2}";
+        else if (CurrentPrice >= 10) return $"₩{CurrentPrice:N3}";
+        else return $"₩{CurrentPrice:N4}";
     }
 
+    public void AddAttribute(string key, object value) { Attributes[key] = value; }
     public T GetAttribute<T>(string key, T defaultValue = default) {
-        if (Attributes.TryGetValue(key, out var value) && value is T t)
-            return t;
+        if (Attributes.TryGetValue(key, out var value) && value is T t) return t;
         return defaultValue;
     }
-
 }

@@ -216,13 +216,20 @@ public class CoinManager : MonoBehaviour
 
 
 
-            foreach (var coin in coins)
-            {
+            GlobalEconomyManager.TickExchangeRate();
+
+            foreach (var coin in coins) {
                 var phase = coin.GetEffectivePhase(currentDateTime, CurrentMarket);
-                coin.GenerateNextPrice(phase, 2f, 0f);
+                var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == coin.Symbol);
+                int vol = (meta != null) ? meta.VolatilityLevel : 1;
+
+                // 이제 CoinData 내부에서 Type을 체크하므로, 
+                // Stable 코인은 phase 영향을 받지 않고 환율만 따르게 됩니다.
+                coin.GenerateNextPrice(phase, vol, 2f, 0f);
 
                 CheckPriceSurgeAndNotify(coin);
             }
+
             OnMarketUpdated?.Invoke();
             if (tickCount % 1 == 0)
             {
@@ -482,10 +489,14 @@ public class CoinManager : MonoBehaviour
         currentDateTime = dt;
     }
     IEnumerator InitializeRoutine() {
-        
+
         foreach (var meta in CoinMetaDatabase.AllCoins) {
             if (meta.BullbitListed) {
-                var coin = new CoinData(meta.Name, meta.Symbol, meta.InitialPrice, meta.MaxSupply);
+                // Theme가 RealWorldAsset이면 Stable 타입으로 생성
+                CoinType type = (meta.Theme == CoinTheme.RealWorldAsset) ? CoinType.Stable : CoinType.Normal;
+
+                // CoinData 생성자 파라미터에 type 추가 (CoinData 생성자 수정 필요)
+                var coin = new CoinData(meta.Name, meta.Symbol, meta.InitialPrice, meta.MaxSupply, type);
                 coins.Add(coin);
             }
         }

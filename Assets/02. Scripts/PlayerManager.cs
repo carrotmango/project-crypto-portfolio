@@ -13,6 +13,7 @@ public class PlayerManager : MonoBehaviour
     public double bullbitCash;
     public double satoshiBankCash;
     public double mangoCasinoCash; // 망고카지노 현금
+    public double fournanceCash;
     public float userStress, userSleep, userHungry;
 
     public Dictionary<string, double> holdings = new();
