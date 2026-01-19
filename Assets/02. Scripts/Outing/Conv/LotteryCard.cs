@@ -255,6 +255,7 @@ public class LotteryCard : MonoBehaviour {
             newTex.Apply();
 
             dim.texture = newTex;
+            dim.enabled = true;
             dim.raycastTarget = true;
         }
     }
@@ -262,5 +263,23 @@ public class LotteryCard : MonoBehaviour {
     bool IsMyDim(RawImage img) {
         foreach (var d in dimCovers) if (d == img) return true;
         return false;
+    }
+
+    public void OnClickInstantScratch() {
+        // 1. 게임 시작(구매) 안 했으면 작동 X
+        if (!isGameActive) {
+            return;
+        }
+
+        foreach (var dim in dimCovers) {
+            // 복잡한 픽셀 연산 대신, 그냥 화면에서 이미지를 꺼버립니다. (제일 빠름)
+            dim.enabled = false;
+
+            // 다 긁은 걸로 치기 위해 레이캐스트도 끕니다.
+            dim.raycastTarget = false;
+        }
+
+        // 바로 결과 정산하러 갑니다.
+        CheckAllClearedAndFinish();
     }
 }
