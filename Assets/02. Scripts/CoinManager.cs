@@ -32,6 +32,7 @@ public class CoinManager : MonoBehaviour
     public TextMeshProUGUI cashTextLabel;
     public TextMeshProUGUI bankCashText;
     public TextMeshProUGUI mangoCashText;
+    public TextMeshProUGUI lobbySatoshiText;
 
     public TimeSpeed currentSpeed = TimeSpeed.Normal;
 
@@ -133,6 +134,17 @@ public class CoinManager : MonoBehaviour
 
         //StartCoroutine(GameTickRoutine());
         StartCoroutine(InitializeRoutine());
+        StartCoroutine(RealtimeUIUpdateRoutine());
+    }
+
+    IEnumerator RealtimeUIUpdateRoutine() {
+        // 게임이 꺼질 때까지 무한 반복
+        while (true) {
+            // UI 텍스트 강제 갱신
+            UpdateCashText();
+
+            yield return new WaitForSecondsRealtime(0.1f);
+        }
     }
 
     IEnumerator GameTickRoutine()
@@ -314,29 +326,30 @@ public class CoinManager : MonoBehaviour
     public double GetTotalUserAsset() => GetBullbitAsset() + GetSatoshiBankAsset();
     //public double GetTotalUserAsset() => GetBullbitAsset() + GetSatoshiBankAsset() + GetGambleCashFromSatoshiBank(); // 구버전
 
-    public void UpdateCashText()
-    {
+    public void UpdateCashText() {
         double total = GetTotalUserAsset();
         double bullbit = GetBullbitAsset();
         double bank = GetSatoshiBankAsset();
         double satoshiCash = GetStashoCash();
 
-        //if (playerTotalAssetText != null)
-        //    playerTotalAssetText.text = $"총자산: {total:N0} KRW";
-
+        // [기존] 불비트 자산
         if (cashText != null)
             cashText.text = $"불비트 자산: {bullbit:N0}원";
 
-        if (bankCashText != null)
-        {
-            if (currentApp == AppType.SatoshiBank)
-            {
+        // [기존] 사토시 뱅크 앱을 켰을 때만 보이는 텍스트
+        if (bankCashText != null) {
+            if (currentApp == AppType.SatoshiBank) {
                 bankCashText.text = $"₩{bank:N0}원";
             }
         }
 
-        if (mangoCashText != null)
-        {
+    
+        if (lobbySatoshiText != null) {
+            lobbySatoshiText.text = $"사토시 은행 잔고 {bank:N0}원"; 
+        }
+
+        // [기존] 망고 캐시
+        if (mangoCashText != null) {
             mangoCashText.text = $"{statusPanelController.playerNameText.text}님의 잔액: {satoshiCash:N0}원";
         }
     }
@@ -527,6 +540,10 @@ public class CoinManager : MonoBehaviour
             hoursSinceStart += 24;
 
         return time.Minute == 0 && hoursSinceStart % 4 == 0;
+    }
+    public string GetCurrentDateString() {
+
+        return currentDateTime.ToString("yyyy/MM/dd");
     }
 
 }
