@@ -12,9 +12,10 @@ public class AppSelectorController : MonoBehaviour {
 
     [Header("패널들")]
     public GameObject marketPanel; // 코인 리스트 패널
+    public GameObject PerpPanel; //Forunace
     public GameObject bankPanel;   // 은행 패널
     public GameObject xbirdPanel; // 엑스버드 패널
-    public GameObject GamblePanel; // 도박패널
+    //public GameObject GamblePanel; // 도박패널
     public GameObject RealEstatePanel; // 부동산 패널
     public GameObject OutingPanel; // 외출패널
 
@@ -84,8 +85,17 @@ public class AppSelectorController : MonoBehaviour {
     }
 
     public void OpenFourNance() {
-        if (UIManager.Instance != null) {
-            UIManager.Instance.ShowConfirm("포낸스 선물 거래소 개발 중!");
+        if(appPanel != null) {
+            appPanel.SetActive(false);
+        }
+        if (PerpPanel != null) {
+            PerpPanel.SetActive(true);
+        }
+    }
+
+    public void CloseFourNance() {
+        if (PerpPanel != null) {
+            PerpPanel.SetActive(false);
         }
     }
 
@@ -107,36 +117,8 @@ public class AppSelectorController : MonoBehaviour {
         }
     }
 
-    public void OpenGambleApp() {
-        if (coinManager != null) {
-            coinManager.currentApp = AppType.Gamble;
-            coinManager.UpdateCashText();
-        }
 
-        if (tabPanelController != null)
-            tabPanelController.ShowMarketPanel();
 
-        if (GamblePanel != null) {
-            GamblePanel.SetActive(true); // 패널 열기
 
-            // GambleManager 컴포넌트 받아와서 베팅 버튼 초기화
-            GambleManager gm = GamblePanel.GetComponent<GambleManager>();
-            if (gm != null) {
-                gm.UpdateBetButtonStates();
-            }
-        }
-    }
-
-    public void CloseGambleApp() {
-        if (GamblePanel != null)
-            GamblePanel.SetActive(false);
-        if(OutingPanel != null) {
-            OutingPanel.SetActive(true);
-        }
-        //    if (coinManager != null)
-        //        GamblePanel.SetActive(false);
-        //    coinManager.currentApp = AppType.Bullbit; 
-        //}
-    }
 
 }

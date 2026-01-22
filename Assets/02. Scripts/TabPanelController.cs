@@ -14,6 +14,7 @@ public class TabPanelController : MonoBehaviour {
     public GameObject appPanel;
     public GameObject chartPanel;
     public GameObject realEstatePanel;
+    public GameObject perpPanel;
 
     [Header("Office Sub Panels (Direct Management)")]
     public GameObject officeButtons;    // Hierarchy의 'Buttons'
@@ -107,6 +108,7 @@ public class TabPanelController : MonoBehaviour {
         if (partimeJob != null) partimeJob.SetActive(false);
         if (realEstatePanel != null) realEstatePanel.SetActive(false);
         if (convPanel != null) convPanel.SetActive(false);
+        if (perpPanel !=null) perpPanel.SetActive(false);
     }
 
     public void ToggleStatusPanel() {

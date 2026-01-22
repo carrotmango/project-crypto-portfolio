@@ -46,6 +46,8 @@ public class CoinManager : MonoBehaviour
     public Color selectedColor = new Color32(50, 50, 50, 255);
     public Color defaultColor = new Color32(255, 255, 255, 0);
 
+    public FourNanceManager fournanceManager;
+
     public enum AppType
     {
         Bullbit,
@@ -338,6 +340,10 @@ public class CoinManager : MonoBehaviour
         double bullbit = GetBullbitAsset();
         double bank = GetSatoshiBankAsset();
         double satoshiCash = GetStashoCash();
+
+        if (fournanceManager != null && fournanceManager.gameObject.activeInHierarchy) {
+            fournanceManager.RefreshUI();
+        }
 
         // [기존] 불비트 자산
         if (cashText != null)

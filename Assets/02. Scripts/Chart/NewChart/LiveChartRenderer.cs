@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
 using System;
@@ -11,13 +11,13 @@ public enum ChartInterval {
     _1D
 }
 
-// [½Å±Ô] ÇÑ Äµµé¿¡ ¸Å¼ö/¸Åµµ »óÅÂ¸¦ Áßº¹ ¾øÀÌ ÀúÀåÇÏ±â À§ÇÑ ÇÃ·¡±×
+// [ì‹ ê·œ] í•œ ìº”ë“¤ì— ë§¤ìˆ˜/ë§¤ë„ ìƒíƒœë¥¼ ì¤‘ë³µ ì—†ì´ ì €ì¥í•˜ê¸° ìœ„í•œ í”Œë˜ê·¸
 [System.Flags]
 public enum TradeType {
     None = 0,
     Buy = 1 << 0,  // 1
     Sell = 1 << 1  // 2
-    // Buy | Sell = 3 (µÑ ´Ù ÀÖ´Â °æ¿ì)
+    // Buy | Sell = 3 (ë‘˜ ë‹¤ ìˆëŠ” ê²½ìš°)
 }
 
 public class LiveChartRenderer : MonoBehaviour {
@@ -54,22 +54,22 @@ public class LiveChartRenderer : MonoBehaviour {
     private Vector2 measureStartPos;
     private double measureStartPrice;
 
-    [Header("Trade Indicators (B/S)")] // [½Å±Ô] °Å·¡ ¸¶Ä¿ ¼³Á¤
-    public GameObject tradeMarkerPrefab; // 'B' ¶Ç´Â 'S' ¶ó°í ÀûÈù ÅØ½ºÆ® ÇÁ¸®ÆÕ (¹è°æ ÀÌ¹ÌÁö Æ÷ÇÔ ±ÇÀå)
-    public Transform tradeMarkerContainer; // ¸¶Ä¿µéÀÌ ¸ğ¿©ÀÖÀ» ºÎ¸ğ (¾øÀ¸¸é chartContent »ç¿ë)
-    public float tradeMarkerYOffset = 10f; // Äµµé À§/¾Æ·¡ °£°İ (±âÁ¸ tradeMarkerOffset ´ëÃ¼)
-    public float tradeMarkerXOffset = 0f;  // ÁÂ¿ì ¹Ì¼¼ Á¶Á¤¿ë ¿ÀÇÁ¼Â
-    public Color buyMarkerColor = new Color32(50, 214, 149, 255); // ¸Å¼ö »ö»ó
-    public Color sellMarkerColor = new Color32(230, 60, 60, 255); // ¸Åµµ »ö»ó
-    public float minMarkerFontSize = 7f; // ÁÜ ¾Æ¿ô ÇßÀ» ¶§ ÃÖ¼Ò ±ÛÀÚ Å©±â
-    public float maxMarkerFontSize = 11f; // ÁÜ ÀÎ ÇßÀ» ¶§(±âº») ÃÖ´ë ±ÛÀÚ Å©±â
+    [Header("Trade Indicators (B/S)")] // [ì‹ ê·œ] ê±°ë˜ ë§ˆì»¤ ì„¤ì •
+    public GameObject tradeMarkerPrefab; // 'B' ë˜ëŠ” 'S' ë¼ê³  ì íŒ í…ìŠ¤íŠ¸ í”„ë¦¬íŒ¹ (ë°°ê²½ ì´ë¯¸ì§€ í¬í•¨ ê¶Œì¥)
+    public Transform tradeMarkerContainer; // ë§ˆì»¤ë“¤ì´ ëª¨ì—¬ìˆì„ ë¶€ëª¨ (ì—†ìœ¼ë©´ chartContent ì‚¬ìš©)
+    public float tradeMarkerYOffset = 10f; // ìº”ë“¤ ìœ„/ì•„ë˜ ê°„ê²© (ê¸°ì¡´ tradeMarkerOffset ëŒ€ì²´)
+    public float tradeMarkerXOffset = 0f;  // ì¢Œìš° ë¯¸ì„¸ ì¡°ì •ìš© ì˜¤í”„ì…‹
+    public Color buyMarkerColor = new Color32(50, 214, 149, 255); // ë§¤ìˆ˜ ìƒ‰ìƒ
+    public Color sellMarkerColor = new Color32(230, 60, 60, 255); // ë§¤ë„ ìƒ‰ìƒ
+    public float minMarkerFontSize = 7f; // ì¤Œ ì•„ì›ƒ í–ˆì„ ë•Œ ìµœì†Œ ê¸€ì í¬ê¸°
+    public float maxMarkerFontSize = 11f; // ì¤Œ ì¸ í–ˆì„ ë•Œ(ê¸°ë³¸) ìµœëŒ€ ê¸€ì í¬ê¸°
     private TradeType pendingOfflineTrades = TradeType.None;
 
-    // RuntimeCandle(°´Ã¼) ´ë½Å int(ÀÎµ¦½º)·Î º¯°æÇÏ¿© ¿µ±¸ º¸Á¸
-    // Key: Á¾¸ñÄÚµå(Symbol), Value: { Äµµé¹øÈ£(Index) : °Å·¡Å¸ÀÔ }
+    // RuntimeCandle(ê°ì²´) ëŒ€ì‹  int(ì¸ë±ìŠ¤)ë¡œ ë³€ê²½í•˜ì—¬ ì˜êµ¬ ë³´ì¡´
+    // Key: ì¢…ëª©ì½”ë“œ(Symbol), Value: { ìº”ë“¤ë²ˆí˜¸(Index) : ê±°ë˜íƒ€ì… }
     private Dictionary<string, Dictionary<int, TradeType>> allCoinTradeHistory = new Dictionary<string, Dictionary<int, TradeType>>();
 
-    // ¸¶Ä¿ UI ¿ÀºêÁ§Æ® Ç®
+    // ë§ˆì»¤ UI ì˜¤ë¸Œì íŠ¸ í’€
     private List<TextMeshProUGUI> tradeMarkerPool = new List<TextMeshProUGUI>();
 
     [Header("UI")]
@@ -89,7 +89,7 @@ public class LiveChartRenderer : MonoBehaviour {
     public RectTransform crosshairV;
     public RectTransform crosshairH;
 
-    private CoinData targetCoin;
+    protected CoinData targetCoin;
     private RuntimeCandle currentCandle;
     private List<RuntimeCandle> candles = new();
     private List<CandleView> candleViews = new();
@@ -138,7 +138,7 @@ public class LiveChartRenderer : MonoBehaviour {
     public RectTransform yAxisGridContainer;
     public GameObject gridLabelPrefab;
     public int gridCount = 5;
-    private List<TextMeshProUGUI> gridLabels = new List<TextMeshProUGUI>();
+    protected List<TextMeshProUGUI> gridLabels = new List<TextMeshProUGUI>();
 
     [Header("Zoom Settings")]
     public float minCandleSpacing = 2f;
@@ -185,49 +185,49 @@ public class LiveChartRenderer : MonoBehaviour {
         StartCoroutine(SnapInitialNextFrame());
     }
 
-    // [¼öÁ¤µÊ] ¿ÜºÎ¿¡¼­ È£Ãâ ½Ã ÄÚÀÎ µ¥ÀÌÅÍ¸¦ ¸íÈ®È÷ ÁöÁ¤ÇÏ´Â ¹öÀü (±ÇÀå)
-    // Â÷Æ®°¡ ²¨Á®ÀÖ°Å³ª, ´Ù¸¥ ÄÚÀÎÀ» º¸°í ÀÖ¾îµµ ±â·ÏÀÌ Á¤È®È÷ ³²½À´Ï´Ù.
+    // [ìˆ˜ì •ë¨] ì™¸ë¶€ì—ì„œ í˜¸ì¶œ ì‹œ ì½”ì¸ ë°ì´í„°ë¥¼ ëª…í™•íˆ ì§€ì •í•˜ëŠ” ë²„ì „ (ê¶Œì¥)
+    // ì°¨íŠ¸ê°€ êº¼ì ¸ìˆê±°ë‚˜, ë‹¤ë¥¸ ì½”ì¸ì„ ë³´ê³  ìˆì–´ë„ ê¸°ë¡ì´ ì •í™•íˆ ë‚¨ìŠµë‹ˆë‹¤.
     public void RegisterTrade(CoinData coin, bool isBuy) {
         if (coin == null) return;
 
         string symbol = coin.Symbol;
         TradeType typeToAdd = isBuy ? TradeType.Buy : TradeType.Sell;
 
-        // ÇöÀç »ı¼º ÁßÀÎ ÄµµéÀÇ ÀÎµ¦½º (History °³¼ö¿Í µ¿ÀÏ)
+        // í˜„ì¬ ìƒì„± ì¤‘ì¸ ìº”ë“¤ì˜ ì¸ë±ìŠ¤ (History ê°œìˆ˜ì™€ ë™ì¼)
         int currentIndex = coin.CandleHistory.Count;
 
-        // 1. ÇØ´ç ÄÚÀÎÀÇ ÀåºÎ°¡ ¾øÀ¸¸é »õ·Î »ı¼º
+        // 1. í•´ë‹¹ ì½”ì¸ì˜ ì¥ë¶€ê°€ ì—†ìœ¼ë©´ ìƒˆë¡œ ìƒì„±
         if (!allCoinTradeHistory.ContainsKey(symbol)) {
             allCoinTradeHistory[symbol] = new Dictionary<int, TradeType>();
         }
 
-        // 2. ÇØ´ç ÀÎµ¦½º¿¡ ±â·Ï ¾øÀ¸¸é ÃÊ±âÈ­
+        // 2. í•´ë‹¹ ì¸ë±ìŠ¤ì— ê¸°ë¡ ì—†ìœ¼ë©´ ì´ˆê¸°í™”
         if (!allCoinTradeHistory[symbol].ContainsKey(currentIndex)) {
             allCoinTradeHistory[symbol][currentIndex] = TradeType.None;
         }
 
-        // 3. ±â·Ï Ãß°¡ (OR ¿¬»ê)
+        // 3. ê¸°ë¡ ì¶”ê°€ (OR ì—°ì‚°)
         allCoinTradeHistory[symbol][currentIndex] |= typeToAdd;
     }
 
-    // [À¯Áö] ±âÁ¸ ÄÚµå È£È¯¿ë (ÇöÀç º¸°í ÀÖ´Â ÄÚÀÎ¿¡ ±â·Ï)
-    // ÁÖÀÇ: Â÷Æ®°¡ ÄÑÁ®ÀÖÀ» ¶§¸¸ Á¤»ó ÀÛµ¿ÇÕ´Ï´Ù.
+    // [ìœ ì§€] ê¸°ì¡´ ì½”ë“œ í˜¸í™˜ìš© (í˜„ì¬ ë³´ê³  ìˆëŠ” ì½”ì¸ì— ê¸°ë¡)
+    // ì£¼ì˜: ì°¨íŠ¸ê°€ ì¼œì ¸ìˆì„ ë•Œë§Œ ì •ìƒ ì‘ë™í•©ë‹ˆë‹¤.
     public void RegisterTrade(bool isBuy) {
         if (targetCoin != null) {
             RegisterTrade(targetCoin, isBuy);
         } else {
-            Debug.LogWarning("Â÷Æ®°¡ ÃÊ±âÈ­µÇÁö ¾Ê¾Æ °Å·¡ ±â·ÏÀ» ³²±æ ¼ö ¾ø½À´Ï´Ù. CoinData¸¦ Æ÷ÇÔÇÑ RegisterTrade¸¦ »ç¿ëÇÏ¼¼¿ä.");
+            Debug.LogWarning("ì°¨íŠ¸ê°€ ì´ˆê¸°í™”ë˜ì§€ ì•Šì•„ ê±°ë˜ ê¸°ë¡ì„ ë‚¨ê¸¸ ìˆ˜ ì—†ìŠµë‹ˆë‹¤. CoinDataë¥¼ í¬í•¨í•œ RegisterTradeë¥¼ ì‚¬ìš©í•˜ì„¸ìš”.");
         }
     }
 
-    // [¼öÁ¤µÊ] tradeHistory.Clear()¸¦ Á¦°ÅÇÏ¿© ±â·Ï À¯Áö
+    // [ìˆ˜ì •ë¨] tradeHistory.Clear()ë¥¼ ì œê±°í•˜ì—¬ ê¸°ë¡ ìœ ì§€
     public void SwitchInterval(ChartInterval interval) {
         currentInterval = interval;
-        ClearChart(); // ½Ã°¢Àû Äµµé °´Ã¼¸¸ ÃÊ±âÈ­
+        ClearChart(); // ì‹œê°ì  ìº”ë“¤ ê°ì²´ë§Œ ì´ˆê¸°í™”
 
-        // [Áß¿ä] tradeHistory.Clear(); <-- ÀÌ ÁÙÀ» »èÁ¦Çß±â ¶§¹®¿¡ ±â·ÏÀÌ À¯ÁöµË´Ï´Ù.
-        // ´Ü, 4H¿Í 1DÀÇ ÀÎµ¦½º´Â ´Ù¸£¹Ç·Î 1D·Î ¹Ù²Ù¸é ¸¶Ä¿ À§Ä¡°¡ ¾È ¸ÂÀ» ¼ö ÀÖ½À´Ï´Ù.
-        // (¿Ïº®ÇÑ ÇØ°áÀ» À§ÇØ¼± Timestamp°¡ ÇÊ¿äÇÏÁö¸¸, ÇöÀç ¿äÃ»ÇÏ½Å 'À¯Áö' ±â´ÉÀº ÀÌ°ÍÀ¸·Î ÃæºĞÇÕ´Ï´Ù)
+        // [ì¤‘ìš”] tradeHistory.Clear(); <-- ì´ ì¤„ì„ ì‚­ì œí–ˆê¸° ë•Œë¬¸ì— ê¸°ë¡ì´ ìœ ì§€ë©ë‹ˆë‹¤.
+        // ë‹¨, 4Hì™€ 1Dì˜ ì¸ë±ìŠ¤ëŠ” ë‹¤ë¥´ë¯€ë¡œ 1Dë¡œ ë°”ê¾¸ë©´ ë§ˆì»¤ ìœ„ì¹˜ê°€ ì•ˆ ë§ì„ ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+        // (ì™„ë²½í•œ í•´ê²°ì„ ìœ„í•´ì„  Timestampê°€ í•„ìš”í•˜ì§€ë§Œ, í˜„ì¬ ìš”ì²­í•˜ì‹  'ìœ ì§€' ê¸°ëŠ¥ì€ ì´ê²ƒìœ¼ë¡œ ì¶©ë¶„í•©ë‹ˆë‹¤)
 
         isDragging = false;
         followLatest = true;
@@ -336,7 +336,7 @@ public class LiveChartRenderer : MonoBehaviour {
         if (btn4H != null) btn4H.GetComponent<Image>().color = (currentInterval == ChartInterval._4H) ? activeBtnColor : inactiveBtnColor;
         if (btn1D != null) btn1D.GetComponent<Image>().color = (currentInterval == ChartInterval._1D) ? activeBtnColor : inactiveBtnColor;
     }
-    // ... (Zoom, HLine, Measurement °ü·Ã ÇÔ¼öµéÀº ±âÁ¸°ú µ¿ÀÏ, »ı·«ÇÏÁö ¾Ê°í ±¸Á¶ À¯Áö) ...
+    // ... (Zoom, HLine, Measurement ê´€ë ¨ í•¨ìˆ˜ë“¤ì€ ê¸°ì¡´ê³¼ ë™ì¼, ìƒëµí•˜ì§€ ì•Šê³  êµ¬ì¡° ìœ ì§€) ...
 
     public void OnZoomInBtn() { ApplyZoom(buttonZoomStep); }
     public void OnZoomOutBtn() { ApplyZoom(-buttonZoomStep); }
@@ -408,7 +408,7 @@ public class LiveChartRenderer : MonoBehaviour {
         SnapToLatest();
     }
 
-    private void Update() {
+    protected virtual void Update() {
         if (!initialized || targetCoin == null) return;
 
         bool paused = CoinManager.Instance.IsTimePaused;
@@ -422,7 +422,7 @@ public class LiveChartRenderer : MonoBehaviour {
             UpdateCurrentCandle();
         }
 
-        // ... (³ª¸ÓÁö Update ·ÎÁ÷ ±×´ë·Î À¯Áö) ...
+        // ... (ë‚˜ë¨¸ì§€ Update ë¡œì§ ê·¸ëŒ€ë¡œ ìœ ì§€) ...
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || isMeasurementMode) {
             HandleMeasurementInput();
         } else {
@@ -510,7 +510,7 @@ public class LiveChartRenderer : MonoBehaviour {
         crosshairV.anchoredPosition = new Vector2(localPoint.x, 0f);
         crosshairH.anchoredPosition = new Vector2(0f, localPoint.y);
     }
-    private void UpdateCurrentPriceLine() {
+    protected virtual void UpdateCurrentPriceLine() {
         double currentPrice = priceDriver.displayPrice;
         float yPos = PriceToY(currentPrice);
         if (currentPriceLineRect != null) currentPriceLineRect.anchoredPosition = new Vector2(0f, yPos);
@@ -657,29 +657,29 @@ public class LiveChartRenderer : MonoBehaviour {
         UpdateHorizontalLines();
     }
 
-    // [½Å±Ô] °Å·¡ ¸¶Ä¿(B/S) À§Ä¡ ¹× È°¼ºÈ­ ¾÷µ¥ÀÌÆ®
-    // [¼öÁ¤µÊ] 4H/1D Â÷Æ® Å¸ÀÔ¿¡ ¸ÂÃç ¹øÁö¼ö¸¦ Á¦´ë·Î Ã£¾Æ°¡µµ·Ï ¼öÁ¤
-    // [¼öÁ¤µÊ] ÇöÀç º¸°í ÀÖ´Â ÄÚÀÎ(coinSymbol)ÀÇ ÀåºÎ¸¸ °¡Á®¿Í¼­ ±×¸®±â
+    // [ì‹ ê·œ] ê±°ë˜ ë§ˆì»¤(B/S) ìœ„ì¹˜ ë° í™œì„±í™” ì—…ë°ì´íŠ¸
+    // [ìˆ˜ì •ë¨] 4H/1D ì°¨íŠ¸ íƒ€ì…ì— ë§ì¶° ë²ˆì§€ìˆ˜ë¥¼ ì œëŒ€ë¡œ ì°¾ì•„ê°€ë„ë¡ ìˆ˜ì •
+    // [ìˆ˜ì •ë¨] í˜„ì¬ ë³´ê³  ìˆëŠ” ì½”ì¸(coinSymbol)ì˜ ì¥ë¶€ë§Œ ê°€ì ¸ì™€ì„œ ê·¸ë¦¬ê¸°
     private void UpdateTradeMarkers() {
         if (tradeMarkerPrefab == null) return;
-        if (targetCoin == null) return; // ÄÚÀÎ Á¤º¸ ¾øÀ¸¸é Áß´Ü
+        if (targetCoin == null) return; // ì½”ì¸ ì •ë³´ ì—†ìœ¼ë©´ ì¤‘ë‹¨
 
-        // ÇöÀç ÄÚÀÎÀÇ ÀåºÎ°¡ ¾Æ¿¹ ¾øÀ¸¸é ±×¸± °Íµµ ¾øÀ½
+        // í˜„ì¬ ì½”ì¸ì˜ ì¥ë¶€ê°€ ì•„ì˜ˆ ì—†ìœ¼ë©´ ê·¸ë¦´ ê²ƒë„ ì—†ìŒ
         if (!allCoinTradeHistory.ContainsKey(coinSymbol)) {
-            // ¸¶Ä¿ ¸ğµÎ ²ô°í ¸®ÅÏ
+            // ë§ˆì»¤ ëª¨ë‘ ë„ê³  ë¦¬í„´
             foreach (var m in tradeMarkerPool) m.gameObject.SetActive(false);
             return;
         }
 
-        // ÇöÀç ÄÚÀÎÀÇ ±â·Ï¸¸ °¡Á®¿È
+        // í˜„ì¬ ì½”ì¸ì˜ ê¸°ë¡ë§Œ ê°€ì ¸ì˜´
         var myHistory = allCoinTradeHistory[coinSymbol];
         int usedMarkerCount = 0;
 
-        // ÁÜ ºñÀ²¿¡ µû¸¥ ÆùÆ® Å©±â °è»ê
+        // ì¤Œ ë¹„ìœ¨ì— ë”°ë¥¸ í°íŠ¸ í¬ê¸° ê³„ì‚°
         float zoomRatio = Mathf.InverseLerp(minCandleSpacing, maxCandleSpacing, candleSpacing);
         float currentFontSize = Mathf.Lerp(minMarkerFontSize, maxMarkerFontSize, zoomRatio);
 
-        // ÇöÀç º¸ÀÌ´Â Äµµé ¹üÀ§ ³»¿¡¼­¸¸ ·çÇÁ
+        // í˜„ì¬ ë³´ì´ëŠ” ìº”ë“¤ ë²”ìœ„ ë‚´ì—ì„œë§Œ ë£¨í”„
         for (int i = visibleStartIndex; i <= visibleEndIndex; i++) {
             if (i < 0 || i >= candles.Count) continue;
 
@@ -687,10 +687,10 @@ public class LiveChartRenderer : MonoBehaviour {
             TradeType flags = TradeType.None;
 
             if (currentInterval == ChartInterval._4H) {
-                // 4H: 1´ë1 ¸ÅÄª
+                // 4H: 1ëŒ€1 ë§¤ì¹­
                 myHistory.TryGetValue(i, out flags);
             } else {
-                // 1D: 6°³ ÇÕÄ¡±â
+                // 1D: 6ê°œ í•©ì¹˜ê¸°
                 int startRawIndex = i * 6;
                 for (int k = 0; k < 6; k++) {
                     if (myHistory.TryGetValue(startRawIndex + k, out TradeType f)) {
@@ -740,16 +740,16 @@ public class LiveChartRenderer : MonoBehaviour {
             }
         }
 
-        // ³²Àº ¸¶Ä¿ ºñÈ°¼ºÈ­
+        // ë‚¨ì€ ë§ˆì»¤ ë¹„í™œì„±í™”
         for (int i = usedMarkerCount; i < tradeMarkerPool.Count; i++) {
             if (tradeMarkerPool[i].gameObject.activeSelf)
                 tradeMarkerPool[i].gameObject.SetActive(false);
         }
     }
 
-    // [½Å±Ô] ¸¶Ä¿ Ç®¸µ ½Ã½ºÅÛ
+    // [ì‹ ê·œ] ë§ˆì»¤ í’€ë§ ì‹œìŠ¤í…œ
     private TextMeshProUGUI GetMarkerFromPool(int index) {
-        // Ç®ÀÌ ¸ğÀÚ¶ó¸é »ı¼º
+        // í’€ì´ ëª¨ìë¼ë©´ ìƒì„±
         while (tradeMarkerPool.Count <= index) {
             GameObject go = Instantiate(tradeMarkerPrefab, tradeMarkerContainer);
             TextMeshProUGUI tmp = go.GetComponent<TextMeshProUGUI>();
@@ -760,8 +760,8 @@ public class LiveChartRenderer : MonoBehaviour {
         return tradeMarkerPool[index];
     }
 
-    // ... (UpdateHorizontalLines, GridLabels, FormatPrice, HighLowIndicators, PriceToY, HandleCandleBoundary, TickPrice, UpdateCurrentCandle µî ³ª¸ÓÁö ±âÁ¸ ·ÎÁ÷ À¯Áö) ...
-    private void UpdateHorizontalLines() {
+    // ... (UpdateHorizontalLines, GridLabels, FormatPrice, HighLowIndicators, PriceToY, HandleCandleBoundary, TickPrice, UpdateCurrentCandle ë“± ë‚˜ë¨¸ì§€ ê¸°ì¡´ ë¡œì§ ìœ ì§€) ...
+    protected virtual void UpdateHorizontalLines() {
         if (activeHLines.Count == 0) return;
         foreach (var line in activeHLines) {
             if (line != null) {
@@ -770,7 +770,7 @@ public class LiveChartRenderer : MonoBehaviour {
             }
         }
     }
-    private void UpdateGridLabels(double minPrice, double maxPrice) {
+    protected virtual void UpdateGridLabels(double minPrice, double maxPrice) {
         if (gridLabels.Count == 0) return;
         double priceRange = maxPrice - minPrice;
         double step = priceRange / (gridCount - 1);
@@ -781,22 +781,23 @@ public class LiveChartRenderer : MonoBehaviour {
             gridLabels[i].rectTransform.anchoredPosition = new Vector2(0, yPos);
         }
     }
+
     private string FormatPrice(double price) {
         if (price >= 1000) return price.ToString("N0");
         else if (price >= 100) return price.ToString("N2");
         else if (price >= 10) return price.ToString("N3");
         else return price.ToString("N4");
     }
-    // [¼öÁ¤µÊ] ÁÜ ·¹º§¿¡ µû¶ó ÅØ½ºÆ®¿Í Äµµé »çÀÌÀÇ °Å¸®¸¦ ÀÚµ¿ Á¶Àı
-    private void UpdateHighLowIndicators(int highIndex, double highPrice, int lowIndex, double lowPrice) {
-        // ±âÁ¸: float leftGap = candleSpacing * 1.0f; (ÇÊ¿ä ¾øÀ½)
+    // [ìˆ˜ì •ë¨] ì¤Œ ë ˆë²¨ì— ë”°ë¼ í…ìŠ¤íŠ¸ì™€ ìº”ë“¤ ì‚¬ì´ì˜ ê±°ë¦¬ë¥¼ ìë™ ì¡°ì ˆ
+    protected virtual void UpdateHighLowIndicators(int highIndex, double highPrice, int lowIndex, double lowPrice) {
+        // ê¸°ì¡´: float leftGap = candleSpacing * 1.0f; (í•„ìš” ì—†ìŒ)
 
-        // [ÇÙ½É] ÇöÀç ÁÜ »óÅÂ(candleSpacing)¿¡ ºñ·ÊÇÏ¿© YÃà °£°İ Á¶Àı
-        // candleSpacingÀÌ Å¬¼ö·Ï(ÁÜÀÎ) ¸Ö¸®, ÀÛÀ»¼ö·Ï(ÁÜ¾Æ¿ô) °¡±õ°Ô
-        // ±âº»°ª 30f´Â candleSpacingÀÌ 10fÀÏ ¶§ ±âÁØÀÌ¶ó°í °¡Á¤ÇÏ°í ºñÀ² Àû¿ë
+        // [í•µì‹¬] í˜„ì¬ ì¤Œ ìƒíƒœ(candleSpacing)ì— ë¹„ë¡€í•˜ì—¬ Yì¶• ê°„ê²© ì¡°ì ˆ
+        // candleSpacingì´ í´ìˆ˜ë¡(ì¤Œì¸) ë©€ë¦¬, ì‘ì„ìˆ˜ë¡(ì¤Œì•„ì›ƒ) ê°€ê¹ê²Œ
+        // ê¸°ë³¸ê°’ 30fëŠ” candleSpacingì´ 10fì¼ ë•Œ ê¸°ì¤€ì´ë¼ê³  ê°€ì •í•˜ê³  ë¹„ìœ¨ ì ìš©
         float dynamicYOffset = indicatorYOffset * (candleSpacing / 10f);
 
-        // ³Ê¹« µü ºÙ°Å³ª ³Ê¹« ¸Ö¾îÁöÁö ¾Ê°Ô ÃÖ¼Ò/ÃÖ´ë°ª Á¦ÇÑ (ÃëÇâ²¯ Á¶Àı °¡´É)
+        // ë„ˆë¬´ ë”± ë¶™ê±°ë‚˜ ë„ˆë¬´ ë©€ì–´ì§€ì§€ ì•Šê²Œ ìµœì†Œ/ìµœëŒ€ê°’ ì œí•œ (ì·¨í–¥ê» ì¡°ì ˆ ê°€ëŠ¥)
         dynamicYOffset = Mathf.Clamp(dynamicYOffset, 15f, 60f);
 
         void SetupIndicator(TextMeshProUGUI tmp, int index, double price, bool isHigh) {
@@ -814,10 +815,10 @@ public class LiveChartRenderer : MonoBehaviour {
                 rt.pivot = new Vector2(0.5f, 0.5f);
                 rt.sizeDelta = new Vector2(150f, 50f);
 
-                // X À§Ä¡: ÇØ´ç ÄµµéÀÇ Á¤Áß¾Ó
+                // X ìœ„ì¹˜: í•´ë‹¹ ìº”ë“¤ì˜ ì •ì¤‘ì•™
                 float xPos = (index * candleSpacing) + indicatorXOffset;
 
-                // Y À§Ä¡: Äµµé ³¡(High/Low) + µ¿Àû ¿ÀÇÁ¼Â
+                // Y ìœ„ì¹˜: ìº”ë“¤ ë(High/Low) + ë™ì  ì˜¤í”„ì…‹
                 float yBase = PriceToY(price);
                 float yPos = isHigh ? (yBase + dynamicYOffset) : (yBase - dynamicYOffset);
 
@@ -828,7 +829,7 @@ public class LiveChartRenderer : MonoBehaviour {
         SetupIndicator(highPriceText, highIndex, highPrice, true);
         SetupIndicator(lowPriceText, lowIndex, lowPrice, false);
     }
-    private float PriceToY(double price) {
+    protected virtual float PriceToY(double price) {
         if (candles.Count == 0) return 0f;
         double min = double.MaxValue;
         double max = double.MinValue;
@@ -862,11 +863,11 @@ public class LiveChartRenderer : MonoBehaviour {
         priceDriver.SetTargetPrice(targetCoin.CurrentPrice);
         priceDriver.Tick(Time.deltaTime);
     }
-    void UpdateCurrentCandle() {
+    protected virtual void UpdateCurrentCandle() {
         if (currentCandle == null || currentCandle.IsClosed) return;
         currentCandle.UpdatePrice(priceDriver.displayPrice);
     }
-    private void UpdatePriceLabel(double price) {
+    protected virtual void UpdatePriceLabel(double price) {
         if (priceInfoLabel != null && targetCoin != null) {
             priceInfoLabel.text = $"{coinName}({coinSymbol}) {targetCoin.GetFormattedPriceKRW()}";
         }
@@ -883,40 +884,40 @@ public class LiveChartRenderer : MonoBehaviour {
         Camera cam = (parentCanvas.renderMode == RenderMode.ScreenSpaceOverlay) ? null : parentCanvas.worldCamera;
         Vector2 localMousePos;
 
-        // 1. ºäÆ÷Æ® ³»ºÎ¿¡¼­ÀÇ ¸¶¿ì½º À§Ä¡¸¦ ±¸ÇÔ
+        // 1. ë·°í¬íŠ¸ ë‚´ë¶€ì—ì„œì˜ ë§ˆìš°ìŠ¤ ìœ„ì¹˜ë¥¼ êµ¬í•¨
         if (RectTransformUtility.ScreenPointToLocalPointInRectangle(viewport, Input.mousePosition, cam, out localMousePos)) {
 
-            // [ÇÙ½É 1] ÁÜ ÇÏ±â Àü, "ÄÁÅÙÃ÷ ½ÃÀÛÁ¡(0)"¿¡¼­ "¸¶¿ì½º"±îÁöÀÇ °Å¸® °è»ê
+            // [í•µì‹¬ 1] ì¤Œ í•˜ê¸° ì „, "ì»¨í…ì¸  ì‹œì‘ì (0)"ì—ì„œ "ë§ˆìš°ìŠ¤"ê¹Œì§€ì˜ ê±°ë¦¬ ê³„ì‚°
             float oldContentX = chartContent.anchoredPosition.x;
             float mouseOffsetFromOrigin = localMousePos.x - oldContentX;
 
-            // [ÇÙ½É 2] ÁÜ ½ÇÇà (spacing º¯°æ)
+            // [í•µì‹¬ 2] ì¤Œ ì‹¤í–‰ (spacing ë³€ê²½)
             float oldSpacing = candleSpacing;
             ApplyZoom(scroll * zoomSensitivity);
             float newSpacing = candleSpacing;
 
-            // °£°İÀÌ ½ÇÁ¦·Î º¯ÇßÀ» ¶§¸¸ À§Ä¡ º¸Á¤ ¼öÇà
+            // ê°„ê²©ì´ ì‹¤ì œë¡œ ë³€í–ˆì„ ë•Œë§Œ ìœ„ì¹˜ ë³´ì • ìˆ˜í–‰
             if (Mathf.Abs(newSpacing - oldSpacing) > 0.001f) {
-                // [ÇÙ½É 3] È®´ë/Ãà¼Ò ºñÀ² °è»ê (¿¹: 10 -> 20ÀÌ¸é 2¹è)
+                // [í•µì‹¬ 3] í™•ëŒ€/ì¶•ì†Œ ë¹„ìœ¨ ê³„ì‚° (ì˜ˆ: 10 -> 20ì´ë©´ 2ë°°)
                 float zoomRatio = newSpacing / oldSpacing;
 
-                // [ÇÙ½É 4] ºñÀ²¿¡ ¸ÂÃç »õ·Î¿î °Å¸® °è»ê
-                // ¿¹: °Å¸®°¡ 100ÀÌ¾ú´Âµ¥ 2¹è ÁÜµÇ¸é 200ÀÌ µÇ¾î¾ß ÇÔ
+                // [í•µì‹¬ 4] ë¹„ìœ¨ì— ë§ì¶° ìƒˆë¡œìš´ ê±°ë¦¬ ê³„ì‚°
+                // ì˜ˆ: ê±°ë¦¬ê°€ 100ì´ì—ˆëŠ”ë° 2ë°° ì¤Œë˜ë©´ 200ì´ ë˜ì–´ì•¼ í•¨
                 float newMouseOffset = mouseOffsetFromOrigin * zoomRatio;
 
-                // [ÇÙ½É 5] ¸¶¿ì½º Ä¿¼­ À§Ä¡´Â È­¸é¿¡ °íÁ¤µÇ¾î¾ß ÇÏ¹Ç·Î,
-                // ´Ã¾î³­ °Å¸®¸¸Å­ ÄÁÅÙÃ÷ ½ÃÀÛÁ¡(X)À» µÚ·Î ¹Ğ¾îÁÜ
+                // [í•µì‹¬ 5] ë§ˆìš°ìŠ¤ ì»¤ì„œ ìœ„ì¹˜ëŠ” í™”ë©´ì— ê³ ì •ë˜ì–´ì•¼ í•˜ë¯€ë¡œ,
+                // ëŠ˜ì–´ë‚œ ê±°ë¦¬ë§Œí¼ ì»¨í…ì¸  ì‹œì‘ì (X)ì„ ë’¤ë¡œ ë°€ì–´ì¤Œ
                 float newContentX = localMousePos.x - newMouseOffset;
 
-                // ¹üÀ§ Á¦ÇÑ (³Ê¹« ¸Ö¸® ½ºÅ©·ÑµÇÁö ¾Ê°Ô)
+                // ë²”ìœ„ ì œí•œ (ë„ˆë¬´ ë©€ë¦¬ ìŠ¤í¬ë¡¤ë˜ì§€ ì•Šê²Œ)
                 float maxScrollX = maxPastScrollCandles * candleSpacing;
                 float minScrollX = GetMaxFutureScrollX();
                 newContentX = Mathf.Clamp(newContentX, minScrollX, maxScrollX);
 
-                // À§Ä¡ Àû¿ë
+                // ìœ„ì¹˜ ì ìš©
                 chartContent.anchoredPosition = new Vector2(newContentX, 0f);
 
-                // ¸¶¿ì½º·Î ÁÜÀ» ´ç°å´Ù´Â °Ç Æ¯Á¤ ÁöÁ¡À» º¸°í ½Í´Ù´Â ¶æÀÌ¹Ç·Î 'ÃÖ½Å µû¶ó°¡±â' ÇØÁ¦
+                // ë§ˆìš°ìŠ¤ë¡œ ì¤Œì„ ë‹¹ê²¼ë‹¤ëŠ” ê±´ íŠ¹ì • ì§€ì ì„ ë³´ê³  ì‹¶ë‹¤ëŠ” ëœ»ì´ë¯€ë¡œ 'ìµœì‹  ë”°ë¼ê°€ê¸°' í•´ì œ
                 followLatest = false;
             }
         }

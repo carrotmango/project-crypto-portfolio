@@ -86,7 +86,7 @@ public class BullbitWithdrawManager : MonoBehaviour {
         coinDropdown.ClearOptions();
         coinDropdown.AddOptions(new List<string> { "USDT", "USDC", "ETH" });
         exchangeDropdown.ClearOptions();
-        exchangeDropdown.AddOptions(new List<string> { "포넨스 (Fournace)", "고스트 월렛", "외부 직접 입력" });
+        exchangeDropdown.AddOptions(new List<string> { "포넨스 거래소", "고스트 월렛", "외부 직접 입력" });
         networkDropdown.interactable = false;
     }
 
@@ -102,8 +102,8 @@ public class BullbitWithdrawManager : MonoBehaviour {
         if (currentMode == WithdrawMode.Bank) {
             currentFee = 1000;
             currentMinWithdraw = 5000;
-            feeLabelText.text = $"수수료: {currentFee:N0}원";
-            noticeLabelText.text = "최소 이체 금액: 5,000원\n사토시 은행으로 즉시 전송됩니다.";
+            feeLabelText.text = $"출금액은 은행계좌에 입금되며,\n 수수료  {currentFee:N0}원이 부과됩니다. 최소 출금 5,000원";
+            //noticeLabelText.text = "최소 이체 금액: 5,000원\n사토시 은행으로 즉시 전송됩니다.";
         } else {
             RefreshCryptoSettings();
         }
@@ -112,14 +112,18 @@ public class BullbitWithdrawManager : MonoBehaviour {
     // [핵심 업데이트] 코인별 상세 경고문 및 수수료 설정
     void RefreshCryptoSettings() {
         if (currentMode == WithdrawMode.Bank) return;
+
         string coin = coinDropdown.options[coinDropdown.value].text;
         networkDropdown.ClearOptions();
+
+        // 1. 거래소 드롭다운 필터링 로직 추가
+        FilterExchangeOptions(coin);
 
         switch (coin) {
             case "USDT":
                 networkDropdown.AddOptions(new List<string> { "TRON (TRC-20)" });
-                currentFee = 1.0;      // 1 USDT
-                currentMinWithdraw = 100; // 100 USDT
+                currentFee = 1.0;
+                currentMinWithdraw = 100;
                 feeLabelText.text = $"수수료: {currentFee} USDT";
                 noticeLabelText.text = $"<color=red>⚠ 최소 출금: {currentMinWithdraw} USDT</color>\n네트워크 수수료 {currentFee} USDT가 별도로 차감됩니다.";
                 break;
@@ -218,18 +222,32 @@ public class BullbitWithdrawManager : MonoBehaviour {
         if (!double.TryParse(raw, out double amount)) return;
 
         if (currentMode == WithdrawMode.Bank) {
+            // ... 은행 이체 로직 ...
             PlayerManager.Instance.bullbitCash -= (amount + currentFee);
             PlayerManager.Instance.satoshiBankCash += amount;
-            Debug.Log($"[은행] {amount:N0}원 이체 완료");
         } else {
             string symbol = coinDropdown.options[coinDropdown.value].text.Trim().ToUpper();
+            string destination = exchangeDropdown.options[exchangeDropdown.value].text;
+
+            // 포넨스 입금 시 ETH 차단 (Filter에서 이미 막았지만 이중 방어)
+            if (destination.Contains("포넨스") && symbol == "ETH") return;
+
+            // 1. 현물 지갑에서 코인 차감 (테더/USDC 수량 그대로)
             PlayerManager.Instance.ChangeCoin(symbol, -(amount + currentFee));
 
-            if (exchangeDropdown.options[exchangeDropdown.value].text.Contains("포넨스")) {
-                var coinData = CoinManager.Instance.coins.Find(c => c.Symbol == symbol);
-                double price = (coinData != null) ? coinData.CurrentPrice : (symbol == "ETH" ? 3500000 : GlobalEconomyManager.UsdToKrw);
-                PlayerManager.Instance.fournanceCash += (amount * price);
-                Debug.Log($"[포넨스] {amount} {symbol} 입금 완료");
+            if (destination.Contains("포넨스")) {
+                // [수정된 고증] 스테이블 코인은 1:1로 바로 입금
+                if (symbol == "USDT" || symbol == "USDC") {
+                    // 환율 안 따지고 테더 수량만큼 달러 잔고 업!
+                    PlayerManager.Instance.fournanceCash += amount;
+                    Debug.Log($"[포넨스 입금] 스테이블 코인 {symbol} 수량 그대로 ${amount:F2} 입금 완료");
+                } else {
+                    // 혹시 나중에 다른 코인 추가될 때를 위한 기존 환율 로직 (ETH 등)
+                    var coinData = CoinManager.Instance.coins.Find(c => c.Symbol == symbol);
+                    double priceInKrw = (coinData != null) ? coinData.CurrentPrice : 0;
+                    double amountInUsd = (amount * priceInKrw) / GlobalEconomyManager.UsdToKrw;
+                    PlayerManager.Instance.fournanceCash += amountInUsd;
+                }
             }
         }
         CoinManager.Instance.UpdateCashText();
@@ -239,4 +257,26 @@ public class BullbitWithdrawManager : MonoBehaviour {
     void OnExchangeChanged() {
         UpdateAddressUI();
     }
+    void FilterExchangeOptions(string selectedCoin) {
+        string currentSelection = exchangeDropdown.options[exchangeDropdown.value].text;
+        exchangeDropdown.ClearOptions();
+
+        List<string> options = new List<string>();
+
+        // ETH가 아닐 때만 포넨스 거래소 추가
+        if (selectedCoin != "ETH") {
+            options.Add("포넨스 거래소");
+        }
+
+        options.Add("고스트 월렛");
+        options.Add("외부 직접 입력");
+
+        exchangeDropdown.AddOptions(options);
+
+        // 이전에 선택했던 게 리스트에 여전히 있으면 유지, 없으면 첫 번째로 초기화
+        int newIndex = options.FindIndex(x => x == currentSelection);
+        exchangeDropdown.value = (newIndex != -1) ? newIndex : 0;
+        exchangeDropdown.RefreshShownValue();
+    }
+
 }

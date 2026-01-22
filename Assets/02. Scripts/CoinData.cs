@@ -241,4 +241,16 @@ public class CoinData {
         if (Attributes.TryGetValue(key, out var value) && value is T t) return t;
         return defaultValue;
     }
+    public double GetCurrentPriceUSD() {
+        // 현재 원화가격을 실시간 환율로 나눔
+        return CurrentPrice / GlobalEconomyManager.UsdToKrw;
+    }
+
+    public string GetFormattedPriceUSD(double? customPrice = null) {
+        double price = customPrice ?? GetCurrentPriceUSD();
+        // 달러 표기법: $1,234.56
+        if (price >= 1000) return $"${price:N2}";
+        else if (price >= 1) return $"${price:N2}";
+        else return $"${price:N4}"; // 소액 코인은 소수점 4자리
+    }
 }
