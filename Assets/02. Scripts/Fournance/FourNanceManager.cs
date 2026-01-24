@@ -15,30 +15,40 @@ public class FourNanceManager : MonoBehaviour {
     public void RefreshUI() {
         if (PlayerManager.Instance == null) return;
 
-        // 1. 현재 지갑에 남은 현금 (주문 가능 금액)
+        // 1. 현재 지갑 잔고 (단순 현금)
         double currentCash = PlayerManager.Instance.fournanceCash;
 
-        // 2. 포지션들에 묶여있는 증거금 합계
+        // 2. 증거금 합계
         double usedMargin = GetUsedMargin();
 
         // 3. 미실현 손익
         double pnlUsd = GetCurrentPnL();
 
-        // [수정된 로직] 
-        // 보유 잔액(Equity) = (남은 현금 + 묶인 증거금) + 현재 손익
-        // 수익이 나면 잔액이 늘어나 보이고, 손실이 나면 줄어들어 보입니다.
+        // ---------------------------------------------------------------
+        // [수정 1] 총 자산 (Equity) = 현금 + 증거금 + PnL
+        // ---------------------------------------------------------------
         double totalWalletBalance = currentCash + usedMargin + pnlUsd;
 
-        // [UI 적용]
-        // 보유 잔액: PnL에 따라 실시간 변동
         if (totalBalanceText != null)
             totalBalanceText.text = $"${Math.Max(0, totalWalletBalance):N2}";
 
-        // 주문 가능 금액: 아직 실현 안 했으니 PnL 제외한 '찐 현금'만 표시
-        if (availableMarginText != null)
-            availableMarginText.text = $"${Math.Max(0, currentCash):N2}";
+        // ---------------------------------------------------------------
+        // [수정 2] 주문 가능 금액 (Available Margin)
+        // 변경: FutureChartRenderer의 GetBuyingPower() 호출 (쓴 돈 뺀 금액)
+        // ---------------------------------------------------------------
+        double availableMargin = currentCash; // 기본값
 
-        // 미실현 손익: 색상 처리
+        if (FutureChartRenderer.Instance != null) {
+            // [핵심 수정] Equity가 아니라 BuyingPower를 가져와야 함!
+            availableMargin = FutureChartRenderer.Instance.GetBuyingPower();
+        }
+
+        if (availableMarginText != null)
+            availableMarginText.text = $"${Math.Max(0, availableMargin):N2}";
+
+        // ---------------------------------------------------------------
+
+        // 미실현 손익 UI
         if (unrealizedPNLText != null) {
             unrealizedPNLText.text = (pnlUsd >= 0) ? $"+${pnlUsd:N2}" : $"-${Math.Abs(pnlUsd):N2}";
             unrealizedPNLText.color = (pnlUsd > 0) ? new Color32(50, 214, 149, 255) : (pnlUsd < 0 ? new Color32(230, 60, 60, 255) : Color.white);

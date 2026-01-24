@@ -60,7 +60,7 @@ public class FuturePositionUI : MonoBehaviour {
         }
 
         if (marginText != null) marginText.text = FormatValue(data.MarginUSD);
-        if (breakEvenText != null) breakEvenText.text = FormatValue(data.EntryPriceUSD);
+        if (breakEvenText != null) breakEvenText.text = manager.FormatPriceUSD(data.EntryPriceUSD);
 
         // [진입가 / 청산가] -> 원문 달러 포맷 ($12,345.67)
         if (entryPriceText != null) entryPriceText.text = manager.FormatPriceUSD(data.EntryPriceUSD);

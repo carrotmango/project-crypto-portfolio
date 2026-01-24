@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.Linq;
 using System.Collections;
 using UnityEngine.EventSystems;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// 선물 거래소용 차트 렌더러 (다중 포지션, 달러 표시, 청산 로직 통합)
@@ -60,11 +61,21 @@ public class FutureChartRenderer : LiveChartRenderer {
     [Header("Position Controls")]
     public Button btnLong;
     public Button btnShort;
+    public Button btnCloseAll;
 
     [Header("Liquidation And Lines")]
     public GameObject liqLinePrefab;
     private GameObject activeLiqLine;
     private GameObject activeEntryLine;
+
+    [Header("Leverage UI System")]
+    public GameObject leveragePanelObj;
+    public Button openLeveragePanelButton;      // 메인 화면의 [ 5x ] 버튼
+    public TextMeshProUGUI mainLeverageText;    // 버튼 안의 텍스트 ("5x")
+    public LeverageSelectorUI leveragePanelScript; // 방금 만든 패널 스크립트 연결
+
+    [Header("Chart Info Header")]
+    public TextMeshProUGUI headerCurrentPriceText;
 
     // [핵심] 다중 포지션 관리
     private List<FuturePosition> activePositions = new List<FuturePosition>();
@@ -83,11 +94,36 @@ public class FutureChartRenderer : LiveChartRenderer {
 
     private void Awake() {
         Instance = this;
+
+        // 1. 롱/숏 버튼 연결
         if (btnLong != null) btnLong.onClick.AddListener(() => OpenPosition(true));
         if (btnShort != null) btnShort.onClick.AddListener(() => OpenPosition(false));
 
-        // [신규] 모드 전환 버튼 리스너
+        // 2. 모드 전환 버튼
         if (modeButton != null) modeButton.onClick.AddListener(OnClickToggleMode);
+
+        // [중요 수정] 부모의 Awake가 가려져서 실행되지 않으므로, 여기서 차트 버튼을 직접 연결해야 합니다.
+        // LiveChartRenderer에 정의된 btn4H, btn1D를 사용합니다.
+        if (btn4H != null) {
+            btn4H.onClick.RemoveAllListeners();
+            btn4H.onClick.AddListener(() => SwitchInterval(ChartInterval._4H));
+        }
+        if (btn1D != null) {
+            btn1D.onClick.RemoveAllListeners();
+            btn1D.onClick.AddListener(() => SwitchInterval(ChartInterval._1D));
+        }
+        // 줌 버튼 등 부모 기능도 여기서 연결
+        if (btnZoomIn != null) btnZoomIn.onClick.AddListener(OnZoomInBtn);
+        if (btnZoomOut != null) btnZoomOut.onClick.AddListener(OnZoomOutBtn);
+        if (btnHLine != null) btnHLine.onClick.AddListener(ToggleHLineMode);
+        if (btnMeasure != null) btnMeasure.onClick.AddListener(ToggleMeasurementMode);
+
+
+
+        if (leveragePanelObj != null) leveragePanelObj.SetActive(false);
+        if (btnCloseAll != null) {
+            btnCloseAll.onClick.AddListener(OnClickCloseAll);
+        }
     }
 
     private void OnEnable() {
@@ -103,6 +139,7 @@ public class FutureChartRenderer : LiveChartRenderer {
             orderPercentageSlider.onValueChanged.AddListener(OnSliderValueChanged);
         }
         UpdateModeUI(); // 초기 UI 설정
+        UpdateLeverageButtonText();
     }
 
     public void OnClickToggleMode() {
@@ -111,6 +148,39 @@ public class FutureChartRenderer : LiveChartRenderer {
 
         currentMarginMode = (currentMarginMode == MarginMode.Cross) ? MarginMode.Isolated : MarginMode.Cross;
         UpdateModeUI();
+    }
+
+    // [신규] 레버리지 패널 열기
+    public void OpenLeveragePanel() {
+        if (activePositions.Count > 0) {
+            Debug.LogWarning("포지션 보유 중에는 레버리지를 변경할 수 없습니다.");
+            return;
+        }
+
+        // 1. 패널 오브젝트를 강제로 켭니다.
+        if (leveragePanelObj != null) {
+            leveragePanelObj.SetActive(true);
+        }
+
+        // 2. 그 다음 스크립트 초기화 함수를 부릅니다.
+        if (leveragePanelScript != null) {
+            leveragePanelScript.Show(this, currentLeverage);
+        }
+    }
+
+    // [신규] 패널에서 호출할 함수 (값 적용)
+    public void SetLeverage(float newLev) {
+        currentLeverage = newLev;
+        UpdateLeverageButtonText();
+
+        // 완료 누르면 패널 끄기 (혹시 LeverageSelectorUI에서 안 끌까봐 여기서도 처리)
+        if (leveragePanelObj != null) leveragePanelObj.SetActive(false);
+    }
+
+    private void UpdateLeverageButtonText() {
+        if (mainLeverageText != null) {
+            mainLeverageText.text = $"{currentLeverage:F0}x";
+        }
     }
 
     // [신규] 모드 UI 갱신
@@ -175,13 +245,14 @@ public class FutureChartRenderer : LiveChartRenderer {
 
     public void SelectCoin(CoinData coin) {
         if (coin == null) return;
-        if (selectedCoinNameText != null) selectedCoinNameText.text = $"{coin.Name} ({coin.Symbol})";
+        if (selectedCoinNameText != null) selectedCoinNameText.text = $"{coin.Symbol}USD";
         if (selectedCoinIcon != null) {
             Sprite s = Resources.Load<Sprite>($"Coins/{coin.Symbol}");
             if (s != null) selectedCoinIcon.sprite = s;
         }
         StopAllCoroutines();
         base.Initialize(coin);
+        UpdateHeaderPriceText();
         if (orderPercentageSlider != null) orderPercentageSlider.value = 0;
         OnSliderValueChanged(0);
         if (coinListPanel != null) coinListPanel.SetActive(false);
@@ -195,12 +266,44 @@ public class FutureChartRenderer : LiveChartRenderer {
         if (isActive) StartCoroutine(SafeRefreshList());
     }
 
+    public double GetCrossMarginEquity() {
+        // 1. 남은 현금 (Free Cash)
+        double equity = PlayerManager.Instance.fournanceCash;
+
+        foreach (var pos in activePositions) {
+            if (pos.Mode == MarginMode.Cross) {
+                // [핵심 수정] 증거금도 내 돈이다! (이거 안 더하면 풀배팅 시 0원으로 인식됨)
+                equity += pos.MarginUSD;
+
+                // PnL 더하기
+                double currentPrice = GetCurrentTargetPriceUSD(pos.Symbol);
+                if (currentPrice > 0) {
+                    double priceDiff = pos.IsLong ? (currentPrice - pos.EntryPriceUSD) : (pos.EntryPriceUSD - currentPrice);
+                    double pnl = priceDiff * pos.Quantity;
+                    equity += pnl;
+                }
+            }
+        }
+
+        return equity > 0 ? equity : 0;
+    }
+
     public void OnSliderValueChanged(float value) {
         if (targetCoin == null || PlayerManager.Instance == null) return;
         if (orderAmountInput != null) orderAmountInput.text = value.ToString("F0");
 
-        double walletBalanceUsd = PlayerManager.Instance.fournanceCash;
-        double inputMarginUsd = walletBalanceUsd * (value / 100.0);
+        // [수정] Buying Power(구매력) 기준으로 계산
+        double buyingPower = GetBuyingPower();
+
+        // 주문하려는 증거금
+        double inputMarginUsd = buyingPower * (value / 100.0);
+
+        // 안전장치 if문 제거! (이제 수익금으로도 주문 가능)
+        /* if (inputMarginUsd > PlayerManager.Instance.fournanceCash) {
+            inputMarginUsd = PlayerManager.Instance.fournanceCash;
+        }
+        */
+
         double totalOrderValueUsd = inputMarginUsd * currentLeverage;
         double currentPriceUsd = targetCoin.CurrentPrice / GlobalEconomyManager.UsdToKrw;
         double orderQty = (currentPriceUsd > 0) ? (totalOrderValueUsd / currentPriceUsd) : 0;
@@ -209,12 +312,25 @@ public class FutureChartRenderer : LiveChartRenderer {
         if (maxQtyText != null) maxQtyText.text = $"Size: {orderQty:F4} {targetCoin.Symbol}";
     }
 
-    public void OpenPosition(bool isLong) {
+public void OpenPosition(bool isLong) {
         if (targetCoin == null || orderPercentageSlider.value <= 0) return;
 
-        double walletBalanceUsd = PlayerManager.Instance.fournanceCash;
-        double marginUsd = walletBalanceUsd * (orderPercentageSlider.value / 100.0);
-        if (marginUsd <= 0) return;
+        // [수정] Buying Power 기준
+        double buyingPower = GetBuyingPower();
+        double marginUsd = buyingPower * (orderPercentageSlider.value / 100.0);
+
+        // [삭제됨] 안전장치 if문 제거! 
+        // 이제 지갑에 현금이 없어도(심지어 마이너스여도) PnL이 빵빵하면 주문 들어감
+        /*
+        if (marginUsd > PlayerManager.Instance.fournanceCash) {
+            marginUsd = PlayerManager.Instance.fournanceCash;
+        }
+        */
+
+        if (marginUsd <= 0.0001) {
+            Debug.LogWarning("주문 가능 잔액(Buying Power)이 부족합니다.");
+            return;
+        }
 
         double currentEntryPrice = targetCoin.CurrentPrice / GlobalEconomyManager.UsdToKrw;
         double totalValueUsd = marginUsd * currentLeverage;
@@ -237,34 +353,23 @@ public class FutureChartRenderer : LiveChartRenderer {
 
             existingPos.EntryPriceUSD = newAvgEntry;
             existingPos.Quantity += quantity;
-            existingPos.MarginUSD += marginUsd; // 마진 합산
+            existingPos.MarginUSD += marginUsd;
 
-            // [수정] 청산가 재계산 시 '총 마진(existingPos.MarginUSD)'을 전달
+            // 청산가 로직 (기존 유지)
             double remainingBalance = PlayerManager.Instance.fournanceCash;
             existingPos.LiquidationPriceUSD = CalculateLiquidationPrice(
-                newAvgEntry,
-                existingPos.Quantity,
-                remainingBalance,
-                existingPos.MarginUSD, // <--- 여기 추가!
-                isLong,
-                currentMarginMode
+                newAvgEntry, existingPos.Quantity, remainingBalance, existingPos.MarginUSD, isLong, currentMarginMode
             );
 
             if (uiMap.TryGetValue(existingPos, out var ui)) ui.UpdateRealtime();
-            Debug.Log($"[{existingPos.Symbol}] Merged: Avg ${newAvgEntry:N2}");
         } else {
             // [신규 진입]
             PlayerManager.Instance.fournanceCash -= marginUsd;
-            double remainingBalance = PlayerManager.Instance.fournanceCash; // 100% 진입 시 0원이 됨
+            double remainingBalance = PlayerManager.Instance.fournanceCash;
 
-            // [수정] 여기서 remainingBalance가 0이어도 marginUsd를 더해서 계산하므로 안전함
+            // 청산가 로직 (기존 유지)
             double liqPriceUsd = CalculateLiquidationPrice(
-                currentEntryPrice,
-                quantity,
-                remainingBalance,
-                marginUsd, // <--- 여기 추가!
-                isLong,
-                currentMarginMode
+                currentEntryPrice, quantity, remainingBalance, marginUsd, isLong, currentMarginMode
             );
 
             FuturePosition newPos = new FuturePosition {
@@ -279,13 +384,10 @@ public class FutureChartRenderer : LiveChartRenderer {
             };
 
             activePositions.Add(newPos);
-            // ... (프리팹 생성 등 기존 코드 동일)
             GameObject go = Instantiate(positionPrefab, positionListParent);
             FuturePositionUI ui = go.GetComponent<FuturePositionUI>();
             ui.Setup(newPos, this);
             uiMap[newPos] = ui;
-
-            Debug.Log($"[{newPos.Symbol}] Open {newPos.Mode}: Liq ${liqPriceUsd:F2}");
         }
 
         RefreshPositionLines();
@@ -299,20 +401,57 @@ public class FutureChartRenderer : LiveChartRenderer {
         double priceDiff = pos.IsLong ? (currentPriceUsd - pos.EntryPriceUSD) : (pos.EntryPriceUSD - currentPriceUsd);
         double pnlUsd = priceDiff * pos.Quantity;
 
+        // [수정 1] 청산 전, 현재 지갑 잔고 백업 (Cross 계산용)
+        double currentCash = PlayerManager.Instance.fournanceCash;
+        double actualLoss = 0; // 실제 확정 손실액
+
         if (isLiquidated) {
             // [강제 청산]
             if (pos.Mode == MarginMode.Cross) {
-                // Cross: 잔고 0원 파산 (끝까지 버티다 죽음)
+                // Cross: 진입한 증거금 + 남은 지갑 잔고 전부 몰수
+                actualLoss = pos.MarginUSD + currentCash;
+
+                // 잔고 0원 파산 처리
                 PlayerManager.Instance.fournanceCash = 0;
-                Debug.LogError($"[Cross 청산] {pos.Symbol} 파산! 잔고 소멸.");
+                Debug.LogError($"[Cross 청산] {pos.Symbol} 파산! 총 손실: -${actualLoss:N2}");
             } else {
-                // Isolated: 90% 손실 시점에 청산되지만, 남은 10%는 돌려주지 않음 (몰수)
-                // 지갑 잔고(fournanceCash)는 건드리지 않음
-                Debug.LogError($"[Isolated 청산] {pos.Symbol} 증거금 ${pos.MarginUSD:N2} 전액 소멸 (잔고 생존).");
+                // Isolated: 진입한 증거금만 몰수 (지갑 잔고는 안전)
+                actualLoss = pos.MarginUSD;
+
+                Debug.LogError($"[Isolated 청산] {pos.Symbol} 증거금 -${actualLoss:N2} 전액 소멸.");
             }
+
+            if (GlobalNotificationManager.Instance != null) {
+                string sender = "Fournance Risk Team";
+                string shortMsg = $"[알림] {pos.Symbol}USD 포지션이 강제 청산되었습니다.";
+
+                // [수정] 3줄 요약 버전
+                // 1줄: 종목 + 포지션 (L/S)
+                string fullBody = $"[청산] {pos.Symbol}USD ({(pos.IsLong ? "Long" : "Short")})\n";
+
+                // 2줄: 진입가 / 청산가 (가로로 배치)
+                fullBody += $"진입 ${pos.EntryPriceUSD:N4} / 청산 ${pos.LiquidationPriceUSD:N4}\n";
+
+                // [수정 2] 3줄: 실제 손실액(actualLoss) 표기 + (0원이 된) 잔고 표기
+                fullBody += $"손실 -${actualLoss:N2} (잔고 ${PlayerManager.Instance.fournanceCash:N2})";
+
+                // "Bullbit" 타입 (아이콘) 사용
+                GlobalNotificationManager.Instance.ShowNotification(
+                    "Bullbit",
+                    sender,
+                    shortMsg,
+                    () => {
+                        if (UIManager.Instance != null) {
+                            UIManager.Instance.ShowSMSResult(
+                                $"발신인: {sender}\n\n{fullBody}"
+                            );
+                        }
+                    }
+                );
+            }
+
         } else {
             // [정상 종료] (익절/손절)
-            // 원금 + PnL을 지갑에 반환
             double returnAmount = pos.MarginUSD + pnlUsd;
             PlayerManager.Instance.fournanceCash += returnAmount;
             Debug.Log($"[종료] 정산금: ${returnAmount:F2}");
@@ -388,25 +527,39 @@ public class FutureChartRenderer : LiveChartRenderer {
     //    if (myPos != null) CreateLiquidationLine(myPos.LiquidationPriceUSD);
     //}
 
-    private void CreateLiquidationLine(double priceUsd) {
-        if (activeLiqLine != null) Destroy(activeLiqLine);
-        if (hLinePrefab != null && crosshairV != null) {
-            GameObject go = Instantiate(hLinePrefab, crosshairV.parent);
-            HorizontalLineView view = go.GetComponent<HorizontalLineView>();
-            if (view != null) {
-                double priceKrw = priceUsd * GlobalEconomyManager.UsdToKrw;
-                view.Setup(this, priceKrw, Color.red);
-                activeLiqLine = go;
-            }
-        }
-    }
+    //private void CreateLiquidationLine(double priceUsd) {
+    //    if (activeLiqLine != null) Destroy(activeLiqLine);
+    //    if (hLinePrefab != null && crosshairV != null) {
+    //        GameObject go = Instantiate(hLinePrefab, crosshairV.parent);
+    //        HorizontalLineView view = go.GetComponent<HorizontalLineView>();
+    //        if (view != null) {
+    //            double priceKrw = priceUsd * GlobalEconomyManager.UsdToKrw;
+    //            view.Setup(this, priceKrw, Color.red);
+    //            activeLiqLine = go;
+    //        }
+    //    }
+    //}
     protected override void Update() {
+        if (leveragePanelObj != null && leveragePanelObj.activeSelf) return;
+
         if (coinListPanel != null && coinListPanel.activeSelf) {
             HandleExternalClick();
             if (EventSystem.current.IsPointerOverGameObject()) UpdateListOnly();
         }
 
         base.Update();
+        UpdateHeaderPriceText();
+
+        // ------------------------------------------------------------------
+        // [핵심] 현재 내 '찐' 전재산(Equity) 계산
+        // 현금이 마이너스여도 PnL이 플러스면 Equity는 플러스임.
+        // ------------------------------------------------------------------
+        double currentEquity = 0;
+        if (activePositions.Count > 0) {
+            currentEquity = GetCrossMarginEquity();
+        } else {
+            currentEquity = PlayerManager.Instance.fournanceCash;
+        }
 
         for (int i = activePositions.Count - 1; i >= 0; i--) {
             var pos = activePositions[i];
@@ -415,8 +568,41 @@ public class FutureChartRenderer : LiveChartRenderer {
             double currentPriceUsd = GetCurrentTargetPriceUSD(pos.Symbol);
             if (currentPriceUsd <= 0) continue;
 
-            bool isLiq = pos.IsLong ? (currentPriceUsd <= pos.LiquidationPriceUSD) : (currentPriceUsd >= pos.LiquidationPriceUSD);
-            if (isLiq) ClosePositionMarket(pos, isLiquidated: true);
+            double realTimeLiqPrice = pos.LiquidationPriceUSD;
+
+            if (pos.Mode == MarginMode.Cross) {
+                // [수정됨] PlayerManager.fournanceCash 대신 currentEquity 사용
+                // 공식: 전재산(Equity)이 0이 되는 가격을 찾음
+                // Equity가 곧 나의 총알(Total Collateral)임
+
+                // 내 전재산(Equity)을 포지션 수량으로 나누면 -> "가격이 얼마나 변해야 내 돈 다 잃나?"가 나옴
+                double priceRoom = currentEquity / pos.Quantity;
+
+                if (pos.IsLong) {
+                    // 롱: 현재가에서 여유분만큼 떨어진 곳이 청산가
+                    // (주의: EntryPrice가 아니라 CurrentPrice 기준이어야 실시간 Equity 반영이 정확함)
+                    realTimeLiqPrice = currentPriceUsd - priceRoom;
+                    if (realTimeLiqPrice < 0) realTimeLiqPrice = 0;
+                } else {
+                    // 숏: 현재가에서 여유분만큼 오른 곳이 청산가
+                    realTimeLiqPrice = currentPriceUsd + priceRoom;
+                }
+
+                // UI 표기용 업데이트
+                pos.LiquidationPriceUSD = realTimeLiqPrice;
+            }
+
+            // 청산 체크
+            bool isLiq = pos.IsLong ? (currentPriceUsd <= realTimeLiqPrice) : (currentPriceUsd >= realTimeLiqPrice);
+
+            // [추가 안전장치] Equity가 0 이하면 가격 상관없이 즉시 청산 (파산)
+            if (pos.Mode == MarginMode.Cross && currentEquity <= 0.0001) {
+                isLiq = true;
+            }
+
+            if (isLiq) {
+                ClosePositionMarket(pos, isLiquidated: true);
+            }
         }
 
         UpdateListOnly();
@@ -600,5 +786,49 @@ public class FutureChartRenderer : LiveChartRenderer {
         }
         SetupFutureIndicator(highPriceText, highIndex, highPriceKrw, true);
         SetupFutureIndicator(lowPriceText, lowIndex, lowPriceKrw, false);
+    }
+
+    // 상단 텍스트 갱신 함수
+    private void UpdateHeaderPriceText() {
+        if (headerCurrentPriceText != null && targetCoin != null) {
+            double currentPriceUsd = targetCoin.CurrentPrice / GlobalEconomyManager.UsdToKrw;
+            headerCurrentPriceText.text = FormatPriceUSD(currentPriceUsd);
+        }
+    }
+
+    public double GetBuyingPower() {
+        double equity = GetCrossMarginEquity(); // (현금 + PnL)
+        double usedMargin = CalculateTotalUsedMargin(); // (이미 포지션 잡느라 쓴 돈)
+
+        double buyingPower = equity - usedMargin;
+        return buyingPower > 0 ? buyingPower : 0;
+    }
+
+    public void OnClickCloseAll() {
+        if (activePositions.Count == 0) return;
+
+        // [중요] 리스트 요소를 삭제하는 로직이므로, 반드시 '역순(뒤에서부터)'으로 돌려야 함
+        // 앞에서부터(0부터) 지우면 인덱스가 밀려서 에러 나거나 건너뜀
+        int count = activePositions.Count;
+
+        for (int i = count - 1; i >= 0; i--) {
+            var pos = activePositions[i];
+
+            // 기존에 잘 만들어둔 'ClosePositionMarket' 함수 재활용
+            // isLiquidated = false (정상 종료)
+            ClosePositionMarket(pos, isLiquidated: false);
+        }
+
+        Debug.Log($"[시스템] 포지션 {count}개 일괄 종료 완료");
+
+        // (선택사항) "모든 포지션이 정리되었습니다" 알림 띄우기
+        if (GlobalNotificationManager.Instance != null) {
+            GlobalNotificationManager.Instance.ShowNotification(
+                "Bullbit",
+                "Fournance",
+                "모든 포지션을 시장가로 종료했습니다.",
+                null
+            );
+        }
     }
 }

@@ -22,7 +22,7 @@ public class FourNanceWithdrawManager : MonoBehaviour {
     public TMP_Dropdown networkDropdown;  // 자동 설정
     public TMP_InputField addressInput;   // 자동 입력 (수정 불가)
 
-    private double currentFee = 0; // 내부 이체라 수수료 0원 (필요시 변경)
+    private double currentFee = 1; // 내부 이체라 수수료 0원 (필요시 변경)
     private double minWithdraw = 10; // 최소 출금 $10
 
     void Start() {
@@ -83,12 +83,14 @@ public class FourNanceWithdrawManager : MonoBehaviour {
 
         double myDollar = PlayerManager.Instance.fournanceCash;
         if (availableBalanceText != null) {
-            availableBalanceText.text = $"출금 가능: ${myDollar:N2}";
+            double withdrawable = Math.Max(0, myDollar - currentFee);
+            availableBalanceText.text = $"출금 가능: ${withdrawable:N2}";
+
         }
 
         // 수수료 안내
         if (noticeText != null) {
-            noticeText.text = $"불비트 내부 이체 수수료: ${currentFee} (무료)";
+            noticeText.text = $"최소 출금 ${minWithdraw} 이상, 출금 수수료: ${currentFee} 차감됩니다";
         }
     }
 
@@ -96,20 +98,30 @@ public class FourNanceWithdrawManager : MonoBehaviour {
     void OnClickAll() {
         double myDollar = PlayerManager.Instance.fournanceCash;
         double maxAmt = Math.Max(0, myDollar - currentFee);
-        amountInput.text = maxAmt.ToString("F2"); // 소수점 2자리
+        amountInput.text = maxAmt.ToString("F2");
     }
+
 
     // 5. 금액 입력 감지 (유효성 검사)
     void OnAmountChanged(string val) {
-        if (double.TryParse(val, out double amount)) {
-            double myDollar = PlayerManager.Instance.fournanceCash;
-            // 최소 금액 이상 && 잔고 충분
-            bool isValid = (amount >= minWithdraw) && (amount + currentFee <= myDollar);
-            withdrawButton.interactable = isValid;
-        } else {
+        if (!double.TryParse(val, out double amount)) {
             withdrawButton.interactable = false;
+            return;
         }
+
+        double myDollar = PlayerManager.Instance.fournanceCash;
+
+        amount = Math.Round(amount, 2);
+        double totalCost = Math.Round(amount + currentFee, 2);
+        myDollar = Math.Round(myDollar, 2);
+
+        bool isValid =
+            amount >= minWithdraw &&
+            totalCost <= myDollar;
+
+        withdrawButton.interactable = isValid;
     }
+
 
     // 6. [핵심] 출금 실행 로직
     void OnClickWithdraw() {

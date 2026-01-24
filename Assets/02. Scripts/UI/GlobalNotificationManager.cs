@@ -10,19 +10,21 @@ public class GlobalNotificationManager : MonoBehaviour {
     public GameObject notificationPrefab;
 
     // [신규] 메시지 최대 길이 설정 (이 길이를 넘으면 ... 처리)
-    public int maxMessageLength = 25;
+    public int maxMessageLength = 20;
 
     [Header("아이콘 리소스")]
     public Sprite iconBullbit;
     public Sprite iconXbird;
     public Sprite iconBank;
     public Sprite iconRealEstate;
+    public Sprite iconFournance;
 
     [Header("배경 색상 설정")]
     public Color colBullbit = new Color32(40, 40, 40, 240);
     public Color colXbird = new Color32(0, 0, 0, 240);
     public Color colBank = new Color32(0, 50, 120, 240);
     public Color colRealEstate = new Color32(0, 100, 50, 240);
+    public Color colFournance = new Color32(0, 243, 219, 1);
 
     private void Awake() {
         if (Instance == null) Instance = this;
@@ -60,6 +62,10 @@ public class GlobalNotificationManager : MonoBehaviour {
                 break;
             case "RealEstate":
                 icon = iconRealEstate;
+                bgCol = colRealEstate;
+                break;
+            case "Fournance":
+                icon = iconFournance;
                 bgCol = colRealEstate;
                 break;
         }
