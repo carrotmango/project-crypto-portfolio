@@ -33,7 +33,7 @@ public class RealEstateCard : MonoBehaviour {
 
         nameText.text = data.name;
         priceText.text = $"{data.price:N0}원";
-        yieldText.text = $"월세 수익: {data.monthlyYield * 100f:F1}%";
+        yieldText.text = $"건물 수익: {data.monthlyYield * 100f:F1}%";
 
         if (estateImage != null) {
             estateImage.sprite = data.image;

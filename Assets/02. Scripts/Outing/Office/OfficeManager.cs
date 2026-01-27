@@ -9,8 +9,8 @@ public class OfficeManager : MonoBehaviour {
     // 회사 자본 (납입금, 출금 불가)
     public long companyCapital = 0;
     // 대표 기본 급여
-    public int baseSalary = 500_000;
-    public int currentMonthlySalary = 0;
+    public long baseSalary = 500_000;
+    public long currentMonthlySalary = 0;
 
     [Header("Capital Milestones")]
     public int capitalMilestoneIndex = 0;
@@ -22,7 +22,7 @@ public class OfficeManager : MonoBehaviour {
 
     [Header("Time Settings")]
     // 마지막 급여 지급일 (게임 시간 기준)
-    public DateTime lastSalaryPaidDate;
+    public DateTime nextSalaryDate;
 
     // =========================
     // 업무 효율 (급여 스킬)
@@ -43,8 +43,9 @@ public class OfficeManager : MonoBehaviour {
         }
         Instance = this;
 
-        if (CoinManager.Instance != null && lastSalaryPaidDate == default) {
-            lastSalaryPaidDate = CoinManager.Instance.CurrentDateTime;
+        // 만약 바로 주고 싶으면 AddDays(7) 삭제
+        if (CoinManager.Instance != null && nextSalaryDate == default) {
+            nextSalaryDate = CoinManager.Instance.CurrentDateTime.AddDays(7);
         }
 
         RecalculateSalary();
@@ -64,16 +65,16 @@ public class OfficeManager : MonoBehaviour {
     // =========================
     // 급여 계산 로직
     // =========================
-    public int CalculateMonthlySalary() {
+    public long CalculateMonthlySalary() {
         // 자본금의 0.1%를 보너스로 추가
-        float capitalBonus = companyCapital * 0.001f;
+        double capitalBonus = companyCapital * 0.001f;
 
         // 업무 효율 퍼센트 적용 (1.0 + 효율%)
         float efficiencyMultiplier = 1f + (GetSalaryEfficiencyPercent() / 100f);
 
-        float total = (baseSalary + capitalBonus) * efficiencyMultiplier;
+        double total = (baseSalary + capitalBonus) * efficiencyMultiplier;
 
-        return Mathf.FloorToInt(total);
+        return (long)total;
     }
 
     public void RecalculateSalary() {
@@ -146,34 +147,40 @@ public class OfficeManager : MonoBehaviour {
     // 급여 지급 시스템
     // =========================
     public float GetSalaryCycleDays() {
-        return 2f; // 2일 주기
+        return 7f; // 7일 주기
     }
 
     public float GetDaysUntilNextSalary() {
         if (CoinManager.Instance == null) return 0f;
 
         DateTime now = CoinManager.Instance.CurrentDateTime;
-        DateTime nextPayTime = lastSalaryPaidDate.AddDays(GetSalaryCycleDays());
 
-        double remainDays = (nextPayTime - now).TotalDays;
+        // 현재 시간과 예정일의 차이를 계산
+        double remainDays = (nextSalaryDate - now).TotalDays;
+
+        // 음수가 나오면(지급 시간 지남) 0으로 표시
         return Mathf.Max(0f, (float)remainDays);
     }
 
     public void TryPaySalary() {
         if (CoinManager.Instance == null) return;
-        if (GetDaysUntilNextSalary() > 0f) return;
-        if (currentMonthlySalary <= 0) return;
 
-        PlayerManager.Instance.satoshiBankCash += currentMonthlySalary;
+        DateTime now = CoinManager.Instance.CurrentDateTime;
 
-        DailyIncomeManager.Instance.AddSalary(
-            currentMonthlySalary,
-            "대표 급여"
-        );
+        // 예정일이 지났는지 체크 (Date끼리 비교하거나 TotalDays로 체크)
+        if (now >= nextSalaryDate) {
 
-        lastSalaryPaidDate = CoinManager.Instance.CurrentDateTime;
+            if (currentMonthlySalary > 0) {
+                PlayerManager.Instance.satoshiBankCash += currentMonthlySalary;
+                DailyIncomeManager.Instance.AddSalary(currentMonthlySalary, "대표 급여");
 
-        Debug.Log($"[회사] 대표 급여 지급 완료: +{currentMonthlySalary:N0}원");
+                Debug.Log($"[회사] 대표 급여 지급 완료: +{currentMonthlySalary:N0}원");
+            }
+
+            // 지급된 시간 기준이 아니라 '예정일' 기준으로 7일을 더함
+            // 이렇게 해야 밀리지 않고 부동산과 주기가 똑같이 돌아감
+            nextSalaryDate = nextSalaryDate.AddDays(7);
+        }
     }
 
     // =========================

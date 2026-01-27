@@ -229,7 +229,7 @@ public class RealEstatePanelController : MonoBehaviour {
         data.owned = true;
         data.ownedText = "보유중";
         data.buyDate = Now;
-        data.nextIncomeDate = Now.AddDays(2);
+        data.nextIncomeDate = Now.AddDays(7);
 
         RefreshPage();
     }
@@ -328,16 +328,16 @@ public class RealEstatePanelController : MonoBehaviour {
         }
     }
     public void ProcessDailyEstateIncome(DateTime now) {
-        int totalIncome = 0;
+        long totalIncome = 0;
 
         foreach (var estate in dataList) {
             if (!estate.owned) continue;
 
             if (now.Date >= estate.nextIncomeDate.Date) {
-                int income = Mathf.RoundToInt(estate.price * estate.monthlyYield);
+                long income = (long)(estate.price * estate.monthlyYield);
                 PlayerManager.Instance.satoshiBankCash += income;
                 DailyIncomeManager.Instance.AddEstateIncome(estate.name, income);
-                estate.nextIncomeDate = estate.nextIncomeDate.AddDays(2);
+                estate.nextIncomeDate = estate.nextIncomeDate.AddDays(7);
 
                 totalIncome += income;
             }
@@ -349,11 +349,11 @@ public class RealEstatePanelController : MonoBehaviour {
             if (GlobalNotificationManager.Instance != null) {
 
                 string message = $"{totalIncome:N0}원이 입금되었습니다.";
-                string fullDetail = $"[부동산 월세 입금]\n\n보유하신 부동산에서 월세 수익이 발생하여 계좌로 입금되었습니다.\n\n입금액: +{totalIncome:N0}원";
+                string fullDetail = $"[부동산 수익 입금]\n\n보유하신 부동산에서 수익이 발생하여 계좌로 입금되었습니다.\n\n입금액: +{totalIncome:N0}원";
 
                 GlobalNotificationManager.Instance.ShowNotification(
                     "RealEstate",   // 타입 (초록색 or 파란색)
-                    "월세 입금",     // 제목
+                    "수익 입금",     // 제목
                     message,        // 내용
                     () => {         // [클릭 이벤트]
                         if (UIManager.Instance != null) {
@@ -364,7 +364,7 @@ public class RealEstatePanelController : MonoBehaviour {
                     }
                 );
             }
-            Debug.Log($"[부동산] 월세 총 정산 +{totalIncome}");
+            Debug.Log($"[부동산] 수익 총 정산 +{totalIncome}");
         }
     }
     public List<RealEstateData> GetAllEstates() {

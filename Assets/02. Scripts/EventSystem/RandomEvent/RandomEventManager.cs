@@ -18,7 +18,7 @@ public class RandomEventManager : MonoBehaviour {
 
 
     [Header("Game Date")]
-    public DateTime gameStartDate = new DateTime(2016, 1, 1);
+    public DateTime gameStartDate = new DateTime(2020, 1, 1);
 
 
     void Awake() {

@@ -198,7 +198,7 @@ public class OfficePanelController : MonoBehaviour {
     void RefreshSalaryInfo() {
         if (OfficeManager.Instance == null || salaryInfoLabel == null || nextSalaryLabel == null) return;
         OfficeManager office = OfficeManager.Instance;
-        int salary = office.currentMonthlySalary;
+        long salary = office.currentMonthlySalary;
         float cycleDays = office.GetSalaryCycleDays();
         float remainDaysRaw = office.GetDaysUntilNextSalary();
         int remainDaysInt = Mathf.CeilToInt(remainDaysRaw);

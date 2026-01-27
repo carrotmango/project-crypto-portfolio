@@ -225,7 +225,7 @@ public class LotteryCard : MonoBehaviour {
     }
 
     void AddHistoryLog(string resultStr) {
-        // ★ CoinManager에서 현재 게임 날짜 가져오기
+        // CoinManager에서 현재 게임 날짜 가져오기
         string dateStr = CoinManager.Instance.GetCurrentDateString();
 
         // 프리팹 생성
@@ -234,7 +234,6 @@ public class LotteryCard : MonoBehaviour {
         // 텍스트 설정
         TextMeshProUGUI itemText = newItem.GetComponentInChildren<TextMeshProUGUI>();
         if (itemText != null) {
-            // 예: "2016/01/01 09:00 : 5,000원 당첨!"
             itemText.text = $"{dateStr} : {resultStr}";
         }
 

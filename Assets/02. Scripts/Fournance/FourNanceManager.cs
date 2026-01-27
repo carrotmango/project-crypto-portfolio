@@ -8,6 +8,12 @@ public class FourNanceManager : MonoBehaviour {
     public TextMeshProUGUI availableMarginText;   // 주문 가능 금액 (Free Margin)
     public TextMeshProUGUI unrealizedPNLText;     // 미실현 손익
 
+    public static FourNanceManager Instance;
+
+    private void Awake() {
+        Instance = this;
+    }
+
     private void Update() {
         RefreshUI();
     }

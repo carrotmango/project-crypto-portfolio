@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 
 public class FourNanceWithdrawManager : MonoBehaviour {
+    // ... (기존 UI 변수들 동일) ...
+
     [Header("패널 제어")]
     public GameObject withdrawPanel; // 출금 팝업 본체
     public Button closeButton;
@@ -36,9 +38,10 @@ public class FourNanceWithdrawManager : MonoBehaviour {
         SetupDropdowns();
     }
 
+    // ... (OpenPanel, ClosePanel, SetupDropdowns 등 기존 코드 동일) ...
     public void OpenPanel() {
         withdrawPanel.SetActive(true);
-        SetupDropdowns(); // 초기화
+        SetupDropdowns();
         RefreshUI();
     }
 
@@ -46,49 +49,64 @@ public class FourNanceWithdrawManager : MonoBehaviour {
         withdrawPanel.SetActive(false);
     }
 
-    // 1. 드롭다운 초기화 (USDT, USDC / 불비트 고정)
     void SetupDropdowns() {
-        // 코인 설정
         coinDropdown.ClearOptions();
         coinDropdown.AddOptions(new List<string> { "USDT", "USDC" });
 
-        // 플랫폼 설정 (불비트 고정)
         platformDropdown.ClearOptions();
         platformDropdown.AddOptions(new List<string> { "불비트 거래소 (현물지갑)" });
-        platformDropdown.interactable = false; // 변경 불가
+        platformDropdown.interactable = false;
 
         RefreshOptions();
     }
 
-    // 2. 코인 선택에 따른 네트워크/주소 자동 설정
     void RefreshOptions() {
         string selectedCoin = coinDropdown.options[coinDropdown.value].text;
         networkDropdown.ClearOptions();
 
         if (selectedCoin == "USDT") {
             networkDropdown.AddOptions(new List<string> { "TRON (TRC-20)" });
-            addressInput.text = "T-Bullbit-HotWallet-Deposit"; // 불비트 수신 주소
+            addressInput.text = "T-Bullbit-HotWallet-Deposit";
         } else if (selectedCoin == "USDC") {
             networkDropdown.AddOptions(new List<string> { "Arbitrum One" });
-            addressInput.text = "0x-Bullbit-HotWallet-Deposit"; // 불비트 수신 주소
+            addressInput.text = "0x-Bullbit-HotWallet-Deposit";
         }
 
-        addressInput.interactable = false; // 주소 수정 금지
+        addressInput.interactable = false;
         RefreshUI();
+    }
+
+    // --------------------------------------------------------------------------
+    // [핵심 함수 1] 실제 출금 가능한 금액 계산 (Buying Power 기준)
+    // --------------------------------------------------------------------------
+    private double GetWithdrawableAmount() {
+        double buyingPower = 0;
+
+        if (FutureChartRenderer.Instance != null) {
+            // 차트 씬이면: 손실분 등을 제외한 '진짜 뺄 수 있는 돈'을 가져옴
+            buyingPower = FutureChartRenderer.Instance.GetBuyingPower();
+        } else {
+            // 로비 등 다른 곳이면 그냥 현금 잔고
+            if (PlayerManager.Instance != null)
+                buyingPower = PlayerManager.Instance.fournanceCash;
+        }
+
+        return buyingPower;
     }
 
     // 3. UI 갱신 (잔고 표시 등)
     void RefreshUI() {
         if (PlayerManager.Instance == null) return;
 
-        double myDollar = PlayerManager.Instance.fournanceCash;
-        if (availableBalanceText != null) {
-            double withdrawable = Math.Max(0, myDollar - currentFee);
-            availableBalanceText.text = $"출금 가능: ${withdrawable:N2}";
+        // [수정] 현금 잔고가 아니라 '출금 가능액(Buying Power)'을 가져옵니다.
+        double withdrawableAmount = GetWithdrawableAmount();
 
+        if (availableBalanceText != null) {
+            // 수수료를 뺀 실질적 출금 가능액
+            double finalWithdrawable = Math.Max(0, withdrawableAmount - currentFee);
+            availableBalanceText.text = $"출금 가능: ${finalWithdrawable:N2}";
         }
 
-        // 수수료 안내
         if (noticeText != null) {
             noticeText.text = $"최소 출금 ${minWithdraw} 이상, 출금 수수료: ${currentFee} 차감됩니다";
         }
@@ -96,49 +114,60 @@ public class FourNanceWithdrawManager : MonoBehaviour {
 
     // 4. 전액 버튼 로직
     void OnClickAll() {
-        double myDollar = PlayerManager.Instance.fournanceCash;
-        double maxAmt = Math.Max(0, myDollar - currentFee);
+        double withdrawableAmount = GetWithdrawableAmount();
+
+        // 수수료 제외
+        double maxAmt = Math.Max(0, withdrawableAmount - currentFee);
         amountInput.text = maxAmt.ToString("F2");
     }
 
-
     // 5. 금액 입력 감지 (유효성 검사)
     void OnAmountChanged(string val) {
-        if (!double.TryParse(val, out double amount)) {
+        if (!double.TryParse(val, out double inputAmount)) {
             withdrawButton.interactable = false;
             return;
         }
 
-        double myDollar = PlayerManager.Instance.fournanceCash;
+        // [수정] Buying Power 기준으로 검사
+        double withdrawableAmount = GetWithdrawableAmount();
 
-        amount = Math.Round(amount, 2);
-        double totalCost = Math.Round(amount + currentFee, 2);
-        myDollar = Math.Round(myDollar, 2);
+        inputAmount = Math.Round(inputAmount, 2);
+        double totalCost = Math.Round(inputAmount + currentFee, 2);
+        withdrawableAmount = Math.Round(withdrawableAmount, 2);
 
         bool isValid =
-            amount >= minWithdraw &&
-            totalCost <= myDollar;
+            inputAmount >= minWithdraw &&
+            totalCost <= withdrawableAmount; // 내 Buying Power보다 작아야 출금 가능
 
         withdrawButton.interactable = isValid;
     }
-
 
     // 6. [핵심] 출금 실행 로직
     void OnClickWithdraw() {
         if (!double.TryParse(amountInput.text, out double amount)) return;
 
+        // [최종 검증] 한 번 더 Buying Power 체크 (해킹 방지)
+        double withdrawableAmount = GetWithdrawableAmount();
+        double totalCost = amount + currentFee;
+
+        if (totalCost > withdrawableAmount) {
+            Debug.LogError("출금 가능 금액 부족!");
+            // 여기에 알림 팝업 띄우기
+            return;
+        }
+
         // A. 선물 지갑($)에서 차감
-        PlayerManager.Instance.fournanceCash -= (amount + currentFee);
+        PlayerManager.Instance.fournanceCash -= totalCost;
 
         // B. 현물 지갑(Coin)에 추가 (1:1 비율)
-        string coinSymbol = coinDropdown.options[coinDropdown.value].text; // USDT or USDC
+        string coinSymbol = coinDropdown.options[coinDropdown.value].text;
         PlayerManager.Instance.ChangeCoin(coinSymbol, amount);
 
         Debug.Log($"[Transfer] FourNance($) -> Bullbit({coinSymbol}): {amount}");
 
         // C. UI 갱신
-        if (FutureChartRenderer.Instance != null) {
-            // 차트 쪽 잔고 UI 등 갱신 유도 (필요시)
+        if (FourNanceManager.Instance != null) {
+            FourNanceManager.Instance.RefreshUI();
         }
 
         ClosePanel();

@@ -98,7 +98,7 @@ public class XNotificationManager : MonoBehaviour {
             nextBillingDate = coinManager.CurrentDateTime.AddDays(30);
         } else {
             // 혹시 CoinManager가 아직 준비 안 됐을 경우 대비 (기본값)
-            nextBillingDate = new DateTime(2016, 1, 1).AddDays(30);
+            nextBillingDate = new DateTime(2020, 1, 1).AddDays(30);
         }
 
         Debug.Log($"[무료 체험 시작] 30일간 무료! 다음 청구일: {nextBillingDate}, 자동 해지예정");

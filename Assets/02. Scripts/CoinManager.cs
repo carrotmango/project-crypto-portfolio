@@ -23,7 +23,7 @@ public class CoinManager : MonoBehaviour
     public StatusPanelController statusPanelController;
 
     private int tickCount = 0;
-    private DateTime currentDateTime = new DateTime(2016, 1, 1, 9, 0, 0);
+    private DateTime currentDateTime = new DateTime(2020, 1, 1, 9, 0, 0);
     public int survivalDays = 1;
 
     [Header("UI 연결")]

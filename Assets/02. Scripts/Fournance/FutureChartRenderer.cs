@@ -267,15 +267,18 @@ public class FutureChartRenderer : LiveChartRenderer {
     }
 
     public double GetCrossMarginEquity() {
-        // 1. 남은 현금 (Free Cash)
+        // 1. 현재 지갑에 있는 쌩 현금 (이미 Isolated 증거금 등은 차감된 상태)
         double equity = PlayerManager.Instance.fournanceCash;
 
         foreach (var pos in activePositions) {
+            // [핵심 수정] 교차(Cross) 모드인 포지션만 자산 계산에 포함!
+            // Isolated 포지션은 자기 혼자 알아서 살거나 죽거나(청산) 하므로, 내 "공용 지갑" 계산에는 끼어들면 안 됨.
             if (pos.Mode == MarginMode.Cross) {
-                // [핵심 수정] 증거금도 내 돈이다! (이거 안 더하면 풀배팅 시 0원으로 인식됨)
+
+                // 증거금 재합산 (OpenPosition 때 뺐던 거 다시 더해서 '총알' 계산)
                 equity += pos.MarginUSD;
 
-                // PnL 더하기
+                // 실시간 PnL 합산
                 double currentPrice = GetCurrentTargetPriceUSD(pos.Symbol);
                 if (currentPrice > 0) {
                     double priceDiff = pos.IsLong ? (currentPrice - pos.EntryPriceUSD) : (pos.EntryPriceUSD - currentPrice);
@@ -285,7 +288,7 @@ public class FutureChartRenderer : LiveChartRenderer {
             }
         }
 
-        return equity > 0 ? equity : 0;
+        return equity;
     }
 
     public void OnSliderValueChanged(float value) {
@@ -312,64 +315,64 @@ public class FutureChartRenderer : LiveChartRenderer {
         if (maxQtyText != null) maxQtyText.text = $"Size: {orderQty:F4} {targetCoin.Symbol}";
     }
 
-public void OpenPosition(bool isLong) {
+    public void OpenPosition(bool isLong) {
         if (targetCoin == null || orderPercentageSlider.value <= 0) return;
 
-        // [수정] Buying Power 기준
+        // 1. [핵심] 최신 Buying Power 계산 (여기에 추가 입금액 + 현재 PnL + 증거금이 모두 녹아있음)
         double buyingPower = GetBuyingPower();
+
+        // 슬라이더 비중에 따른 이번 주문 증거금 설정
         double marginUsd = buyingPower * (orderPercentageSlider.value / 100.0);
 
-        // [삭제됨] 안전장치 if문 제거! 
-        // 이제 지갑에 현금이 없어도(심지어 마이너스여도) PnL이 빵빵하면 주문 들어감
-        /*
-        if (marginUsd > PlayerManager.Instance.fournanceCash) {
-            marginUsd = PlayerManager.Instance.fournanceCash;
-        }
-        */
-
+        // 최소 주문 가능 여부 체크 (구매력이 0 이하면 진입 불가)
         if (marginUsd <= 0.0001) {
-            Debug.LogWarning("주문 가능 잔액(Buying Power)이 부족합니다.");
+            Debug.LogWarning("주문 가능 잔액(Buying Power)이 부족하여 진입할 수 없습니다. 입금을 확인하거나 포지션을 정리하세요.");
             return;
         }
 
-        double currentEntryPrice = targetCoin.CurrentPrice / GlobalEconomyManager.UsdToKrw;
+        // 현재 진입가 (달러)
+        double currentEntryPrice = GetCurrentTargetPriceUSD(targetCoin.Symbol);
+        if (currentEntryPrice <= 0) return;
+
         double totalValueUsd = marginUsd * currentLeverage;
         double quantity = totalValueUsd / currentEntryPrice;
+
+        // [중요 수정] 지갑 잔고 차감
+        // 교차 모드에서는 '구매력'이 있다면 fornanceCash가 마이너스가 되어도 주문이 실행되어야 합니다.
+        // 기존의 안전장치(cash보다 큰지 체크)를 제거하고 바로 차감합니다.
+        PlayerManager.Instance.fournanceCash -= marginUsd;
 
         FuturePosition existingPos = activePositions.Find(p => p.Symbol == targetCoin.Symbol);
 
         if (existingPos != null) {
-            // [One-Way: 합산 로직]
+            // [One-Way: 동일 방향 합산 로직]
             if (existingPos.IsLong != isLong) {
-                Debug.LogError($"[One-Way] 반대 포지션 보유 중. 진입 불가.");
+                Debug.LogError($"[One-Way] 이미 반대 포지션을 보유 중입니다. 진입 불가.");
+                // 주문 실패 시 차감했던 현금 복구
+                PlayerManager.Instance.fournanceCash += marginUsd;
                 return;
             }
 
-            PlayerManager.Instance.fournanceCash -= marginUsd;
-
+            // 평단가(Average Entry Price) 계산
             double oldTotalValue = existingPos.Quantity * existingPos.EntryPriceUSD;
             double addTotalValue = quantity * currentEntryPrice;
             double newAvgEntry = (oldTotalValue + addTotalValue) / (existingPos.Quantity + quantity);
 
+            // 기존 포지션 데이터 갱신
             existingPos.EntryPriceUSD = newAvgEntry;
             existingPos.Quantity += quantity;
             existingPos.MarginUSD += marginUsd;
 
-            // 청산가 로직 (기존 유지)
-            double remainingBalance = PlayerManager.Instance.fournanceCash;
+            // 초기 청산가 계산 (참고용이며, Update 루프에서 전체 Equity 기준으로 매 프레임 정교하게 갱신됨)
             existingPos.LiquidationPriceUSD = CalculateLiquidationPrice(
-                newAvgEntry, existingPos.Quantity, remainingBalance, existingPos.MarginUSD, isLong, currentMarginMode
+                newAvgEntry, existingPos.Quantity, PlayerManager.Instance.fournanceCash, existingPos.MarginUSD, isLong, currentMarginMode
             );
 
             if (uiMap.TryGetValue(existingPos, out var ui)) ui.UpdateRealtime();
         } else {
             // [신규 진입]
-            PlayerManager.Instance.fournanceCash -= marginUsd;
-            double remainingBalance = PlayerManager.Instance.fournanceCash;
-
-            // 청산가 로직 (기존 유지)
             double liqPriceUsd = CalculateLiquidationPrice(
-                currentEntryPrice, quantity, remainingBalance, marginUsd, isLong, currentMarginMode
+                currentEntryPrice, quantity, PlayerManager.Instance.fournanceCash, marginUsd, isLong, currentMarginMode
             );
 
             FuturePosition newPos = new FuturePosition {
@@ -384,14 +387,19 @@ public void OpenPosition(bool isLong) {
             };
 
             activePositions.Add(newPos);
+
+            // UI 프리팹 생성 및 연결
             GameObject go = Instantiate(positionPrefab, positionListParent);
             FuturePositionUI ui = go.GetComponent<FuturePositionUI>();
             ui.Setup(newPos, this);
             uiMap[newPos] = ui;
         }
 
+        // 차트 선 및 UI 업데이트
         RefreshPositionLines();
         UpdateModeUI();
+
+        Debug.Log($"[주문 완료] {targetCoin.Symbol} {(isLong ? "Long" : "Short")} 진입. 증거금: ${marginUsd:F2}");
     }
 
     public void ClosePositionMarket(FuturePosition pos, bool isLiquidated = false) {
@@ -797,10 +805,25 @@ public void OpenPosition(bool isLong) {
     }
 
     public double GetBuyingPower() {
-        double equity = GetCrossMarginEquity(); // (현금 + PnL)
-        double usedMargin = CalculateTotalUsedMargin(); // (이미 포지션 잡느라 쓴 돈)
+        // 1. 교차 모드 기준 총 담보 가치 (Cash + Cross Margin + Cross PnL)
+        // 여기에는 Isolated 포지션의 PnL이 포함되지 않음 (위에서 수정했으므로)
+        double totalCrossEquity = GetCrossMarginEquity();
 
-        double buyingPower = equity - usedMargin;
+        // 2. [핵심 수정] 이미 사용 중인 증거금을 뺄 때도 "Cross 포지션" 것만 빼야 함.
+        // 왜냐? Isolated 증거금은 이미 fournanceCash에서 영구 차감되었고, 
+        // totalCrossEquity 계산할 때 더해주지도 않았으니, 여기서 또 빼면 이중 차감이 됨.
+
+        double usedCrossMargin = 0;
+        foreach (var pos in activePositions) {
+            if (pos.Mode == MarginMode.Cross) {
+                usedCrossMargin += pos.MarginUSD;
+            }
+        }
+
+        // 3. 구매력 = (Cash + Cross PnL)
+        // 수식: (Cash + CrossMargin + CrossPnL) - CrossMargin
+        double buyingPower = totalCrossEquity - usedCrossMargin;
+
         return buyingPower > 0 ? buyingPower : 0;
     }
 

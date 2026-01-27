@@ -4,7 +4,7 @@ using UnityEngine;
 public class DailyIncomeManager : MonoBehaviour {
     public static DailyIncomeManager Instance;
 
-    private int salaryIncome = 0;
+    private long salaryIncome = 0;
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -14,11 +14,11 @@ public class DailyIncomeManager : MonoBehaviour {
         Instance = this;
     }
 
-    public void AddSalary(int amount, string label) {
+    public void AddSalary(long amount, string label) {
         if (amount <= 0) return;
         salaryIncome += amount;
     }
-    public void AddEstateIncome(string estateName, int amount) {
+    public void AddEstateIncome(string estateName, long amount) {
         // RealEstatePanelController가 직접 알림을 보내므로 여기선 집계하지 않음
     }
 
@@ -27,7 +27,7 @@ public class DailyIncomeManager : MonoBehaviour {
         // 급여가 없으면 알림 안 보냄
         if (salaryIncome <= 0) return;
 
-        int total = salaryIncome;
+        long total = salaryIncome;
 
         // 1. 알림창 제목/내용 (심플하게)
         string notiTitle = "급여 입금";
