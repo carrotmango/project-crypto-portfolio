@@ -75,23 +75,27 @@ public class FourNanceWithdrawManager : MonoBehaviour {
         addressInput.interactable = false;
         RefreshUI();
     }
-
-    // --------------------------------------------------------------------------
-    // [핵심 함수 1] 실제 출금 가능한 금액 계산 (Buying Power 기준)
-    // --------------------------------------------------------------------------
     private double GetWithdrawableAmount() {
-        double buyingPower = 0;
+        // 1. 현재 보유한 순수 현금
+        double safeCash = PlayerManager.Instance.fournanceCash;
 
+        // 2. 현재 포지션들의 미실현 손익(PnL) 합계 가져오기
+        // (주의: FutureChartRenderer가 켜져 있어야 계산 가능)
         if (FutureChartRenderer.Instance != null) {
-            // 차트 씬이면: 손실분 등을 제외한 '진짜 뺄 수 있는 돈'을 가져옴
-            buyingPower = FutureChartRenderer.Instance.GetBuyingPower();
-        } else {
-            // 로비 등 다른 곳이면 그냥 현금 잔고
-            if (PlayerManager.Instance != null)
-                buyingPower = PlayerManager.Instance.fournanceCash;
+
+            // 수수료까지 감안한 순수 PnL 합계 (Net PnL)
+            double totalPnL = FutureChartRenderer.Instance.CalculateTotalUnrealizedPnL();
+
+            // [핵심] PnL이 '마이너스(손실)'일 때만 현금을 깎아먹음
+            // 수익(양수)일 때는 담보가 늘어난 것일 뿐, 현금화 전까진 출금 불가하므로 무시(0으로 처리)
+            double floatingLoss = Math.Min(0, totalPnL);
+
+            // 최종 출금 가능액 = 현금 - 손실분
+            return Math.Max(0, safeCash + floatingLoss);
         }
 
-        return buyingPower;
+        // 차트가 안 켜져있다면(로비 등) 일단 현금만 리턴 (혹은 0 리턴하여 안전하게 처리)
+        return safeCash;
     }
 
     // 3. UI 갱신 (잔고 표시 등)

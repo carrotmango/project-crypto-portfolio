@@ -6,7 +6,7 @@ public class FourNanceManager : MonoBehaviour {
     [Header("포넨스 핵심 UI")]
     public TextMeshProUGUI totalBalanceText;      // 총 자산 (Equity: 원금 + PnL)
     public TextMeshProUGUI availableMarginText;   // 주문 가능 금액 (Free Margin)
-    public TextMeshProUGUI unrealizedPNLText;     // 미실현 손익
+    public TextMeshProUGUI netPnlText;     // 미실현 손익
 
     public static FourNanceManager Instance;
 
@@ -55,9 +55,9 @@ public class FourNanceManager : MonoBehaviour {
         // ---------------------------------------------------------------
 
         // 미실현 손익 UI
-        if (unrealizedPNLText != null) {
-            unrealizedPNLText.text = (pnlUsd >= 0) ? $"+${pnlUsd:N2}" : $"-${Math.Abs(pnlUsd):N2}";
-            unrealizedPNLText.color = (pnlUsd > 0) ? new Color32(50, 214, 149, 255) : (pnlUsd < 0 ? new Color32(230, 60, 60, 255) : Color.white);
+        if (netPnlText != null) {
+            netPnlText.text = (pnlUsd >= 0) ? $"+${pnlUsd:N2}" : $"-${Math.Abs(pnlUsd):N2}";
+            netPnlText.color = (pnlUsd > 0) ? new Color32(50, 214, 149, 255) : (pnlUsd < 0 ? new Color32(230, 60, 60, 255) : Color.white);
         }
     }
 

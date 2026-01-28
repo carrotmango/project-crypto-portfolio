@@ -66,17 +66,31 @@ public class FuturePositionUI : MonoBehaviour {
         if (entryPriceText != null) entryPriceText.text = manager.FormatPriceUSD(data.EntryPriceUSD);
         if (liqPriceText != null) liqPriceText.text = manager.FormatPriceUSD(data.LiquidationPriceUSD);
 
-        // [PNL] -> 색상 및 단위 변환
+        // ------------------------------------------------------------------
+        // [수정] PNL 계산 시 수수료 차감 (Net PnL)
+        // ------------------------------------------------------------------
         if (pnlText != null) {
-            double priceDiff = data.IsLong ? (currentPriceUsd - data.EntryPriceUSD) : (data.EntryPriceUSD - currentPriceUsd);
-            double pnlAmount = priceDiff * data.Quantity;
-            double pnlPct = (data.MarginUSD > 0) ? (pnlAmount / data.MarginUSD) * 100.0 : 0;
+            // 1. 차트상 순수 손익 (Gross)
+            double priceDiff = data.IsLong
+                ? (currentPriceUsd - data.EntryPriceUSD)
+                : (data.EntryPriceUSD - currentPriceUsd);
+            double grossPnL = priceDiff * data.Quantity;
 
-            string color = pnlAmount >= 0 ? "#32D695" : "#E63C3C";
-            string sign = pnlAmount >= 0 ? "+" : "";
+            // 2. [핵심] 예상 종료 수수료 (0.036%)
+            // 현재 포지션 가치 기준 (currentPriceUsd * Qty)
+            double estimatedExitFee = (currentPriceUsd * data.Quantity) * 0.00036;
+
+            // 3. 최종 보여줄 PnL (Net)
+            double netPnL = grossPnL - estimatedExitFee;
+
+            // 수익률 계산 (내 증거금 대비 찐 수익률)
+            double pnlPct = (data.MarginUSD > 0) ? (netPnL / data.MarginUSD) * 100.0 : 0;
+
+            string color = netPnL >= 0 ? "#32D695" : "#E63C3C";
+            string sign = netPnL >= 0 ? "+" : "";
 
             // 예: +5.4k (+12.50%)
-            pnlText.text = $"<color={color}>{sign}{FormatValue(pnlAmount)}\n({sign}{pnlPct:F2}%)</color>";
+            pnlText.text = $"<color={color}>{sign}{FormatValue(netPnL)}\n({sign}{pnlPct:F2}%)</color>";
         }
     }
 
