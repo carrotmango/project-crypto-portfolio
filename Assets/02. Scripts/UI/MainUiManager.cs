@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Linq;
+using System;
 
 public enum SortType { None, Symbol, Name, Price, Change }
 public enum SortOrder { Normal, Ascending, Descending }
@@ -43,13 +44,16 @@ public class MainUIManager : MonoBehaviour {
     [Header("Filter UI")]
     public Toggle ownedOnlyToggle;
     public Toggle wishlistToggle;
+    public TMP_Dropdown themeDropdown;
 
     private HashSet<string> wishlistedSymbols = new HashSet<string>();
     private Color32 starActiveColor = new Color32(255, 200, 0, 255); // 노란색
     private Color32 starInactiveColor = new Color32(200, 200, 200, 255); // 회색/흰색
+    private List<CoinTheme> sortedThemeMap = new List<CoinTheme>();
 
     void Start() {
         LoadWishlist();
+        SetupThemeDropdown();
 
         AddButtonListener(symbolButton, SortType.Symbol);
         AddButtonListener(nameButton, SortType.Name);
@@ -76,6 +80,51 @@ public class MainUIManager : MonoBehaviour {
     void OnDisable() {
         if (CoinManager.Instance != null) {
             CoinManager.Instance.OnMarketUpdated -= HandleMarketUpdated;
+        }
+    }
+
+    private void SetupThemeDropdown() {
+        if (themeDropdown == null) return;
+
+        themeDropdown.ClearOptions();
+        sortedThemeMap.Clear(); // 맵 초기화
+
+        // 1. 임시 리스트에 (한글이름, 테마) 쌍을 담습니다.
+        List<(string Name, CoinTheme Theme)> tempThemes = new List<(string, CoinTheme)>();
+
+        foreach (CoinTheme theme in Enum.GetValues(typeof(CoinTheme))) {
+            tempThemes.Add((GetThemeNameKR(theme), theme));
+        }
+
+        // 2. [핵심] 한글 이름 기준으로 오름차순 정렬 (가나다 순)
+        tempThemes.Sort((a, b) => a.Name.CompareTo(b.Name));
+
+        // 3. 드롭다운 옵션 구성 (맨 위는 '전체보기')
+        List<string> displayOptions = new List<string> { "전체보기" };
+
+        foreach (var item in tempThemes) {
+            displayOptions.Add(item.Name);
+            sortedThemeMap.Add(item.Theme); // 정렬된 순서대로 맵에 저장
+        }
+
+        themeDropdown.AddOptions(displayOptions);
+
+        // 값 변경 시 리프레시 호출 (람다 대신 명확하게 연결)
+        themeDropdown.onValueChanged.RemoveAllListeners();
+        themeDropdown.onValueChanged.AddListener((idx) => RefreshCoinRows());
+    }
+
+    private string GetThemeNameKR(CoinTheme theme) {
+        switch (theme) {
+            case CoinTheme.Layer1: return "레이어 1";
+            case CoinTheme.Layer2: return "레이어 2";
+            case CoinTheme.Meme: return "밈";
+            case CoinTheme.AI: return "AI / 인공지능";
+            case CoinTheme.RWA: return "RWA";
+            case CoinTheme.ZK: return "ZK";
+            case CoinTheme.DeFi: return "디파이";
+            case CoinTheme.Stable: return "스테이블";
+            default: return theme.ToString();
         }
     }
 
@@ -182,19 +231,37 @@ public class MainUIManager : MonoBehaviour {
     }
 
     public void RefreshCoinRows() {
-        // 1. 데이터 리스트 가져오기 (필터링 및 정렬)
+        // 1. 기본 리스트 가져오기
         List<CoinData> list = CoinManager.Instance.coins
             .Where(c => !c.IsDelisted)
             .ToList();
 
+        // 2. [필터] 보유 코인
         if (filterOwnedOnly) {
             list = list.Where(c => c.OwnedAmount > 0).ToList();
         }
 
+        // 3. [필터] 위시리스트
         if (filterWishlistOnly) {
             list = list.Where(c => wishlistedSymbols.Contains(c.Symbol)).ToList();
         }
 
+        // 4. [필터] 테마 (드롭다운) - 수정된 로직 적용
+        if (themeDropdown != null && themeDropdown.value > 0) {
+
+            int themeIndex = themeDropdown.value - 1;
+
+            if (themeIndex >= 0 && themeIndex < sortedThemeMap.Count) {
+                CoinTheme selectedTheme = sortedThemeMap[themeIndex];
+
+                list = list.Where(c => {
+                    var meta = CoinMetaDatabase.AllCoins.FirstOrDefault(m => m.Symbol == c.Symbol);
+                    return meta != null && meta.Theme == selectedTheme;
+                }).ToList();
+            }
+        }
+
+        // 5. 정렬 로직 (기존 유지)
         if (currentSortOrder != SortOrder.Normal) {
             bool highFirst = (currentSortOrder == SortOrder.Ascending);
             switch (currentSortType) {
@@ -209,38 +276,34 @@ public class MainUIManager : MonoBehaviour {
                     break;
                 case SortType.Change:
                     list = highFirst ? list.OrderByDescending(c => c.InitialPrice > 0 ? (c.CurrentPrice - c.InitialPrice) / c.InitialPrice : 0).ToList() :
-                                       list.OrderBy(c => c.InitialPrice > 0 ? (c.CurrentPrice - c.InitialPrice) / c.InitialPrice : 0).ToList();
+                                     list.OrderBy(c => c.InitialPrice > 0 ? (c.CurrentPrice - c.InitialPrice) / c.InitialPrice : 0).ToList();
                     break;
             }
         }
 
-        // 2. 핵심: 파괴하지 않고 순서만 변경 (Object Pooling 개념)
+        // 6. Row 생성 및 관리
         for (int i = 0; i < list.Count; i++) {
             var coin = list[i];
-
-            // 해당 코인 데이터를 가진 GameObject 찾기
             GameObject row = rowDataMap.FirstOrDefault(x => x.Value == coin).Key;
 
             if (row != null) {
-                // 이미 존재한다면 순서만 맨 아래로 보냄 (결과적으로 리스트 순서대로 정렬됨)
                 row.transform.SetAsLastSibling();
             } else {
-                // 새로 상장된 코인이라면 이때만 생성
                 AddCoinRow(coin);
             }
         }
 
-        // 3. 상폐된 코인 등이 map에 남아있다면 제거
+        // 7. 필터링된 Row 숨기기
+        foreach (var kvp in rowDataMap) {
+            bool shouldBeVisible = list.Contains(kvp.Value);
+            kvp.Key.SetActive(shouldBeVisible);
+        }
+
         var rowsToRemove = rowDataMap.Where(kvp => kvp.Value.IsDelisted).ToList();
         foreach (var kvp in rowsToRemove) {
             Destroy(kvp.Key);
             rowDataMap.Remove(kvp.Key);
             coinRows.Remove(kvp.Key);
-        }
-
-        foreach (var kvp in rowDataMap) {
-            bool shouldBeVisible = list.Contains(kvp.Value);
-            kvp.Key.SetActive(shouldBeVisible);
         }
     }
 

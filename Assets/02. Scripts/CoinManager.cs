@@ -498,8 +498,8 @@ public class CoinManager : MonoBehaviour
 
         foreach (var meta in CoinMetaDatabase.AllCoins) {
             if (meta.BullbitListed) {
-                // Theme가 RealWorldAsset이면 Stable 타입으로 생성
-                CoinType type = (meta.Theme == CoinTheme.RealWorldAsset) ? CoinType.Stable : CoinType.Normal;
+                // Theme Stable 타입으로 생성
+                CoinType type = (meta.Theme == CoinTheme.Stable) ? CoinType.Stable : CoinType.Normal;
 
                 // CoinData 생성자 파라미터에 type 추가 (CoinData 생성자 수정 필요)
                 var coin = new CoinData(meta.Name, meta.Symbol, meta.InitialPrice, meta.MaxSupply, type);
