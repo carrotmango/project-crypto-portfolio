@@ -7,6 +7,7 @@ public class FourNanceManager : MonoBehaviour {
     public TextMeshProUGUI totalBalanceText;      // 총 자산 (Equity: 원금 + PnL)
     public TextMeshProUGUI availableMarginText;   // 주문 가능 금액 (Free Margin)
     public TextMeshProUGUI netPnlText;     // 미실현 손익
+    public TextMeshProUGUI feeText;
 
     public static FourNanceManager Instance;
 
@@ -14,8 +15,20 @@ public class FourNanceManager : MonoBehaviour {
         Instance = this;
     }
 
+    private void Start() {
+        ShowFeeRate();
+    }
+
     private void Update() {
         RefreshUI();
+ 
+    }
+    void ShowFeeRate() {
+        if (FutureChartRenderer.Instance != null) {
+            double rate = FutureChartRenderer.Instance.TradingFeeRate;
+            // 예: "현재 수수료: 0.036%" 표시용
+            feeText.text = $"수수료 : {rate * 100:F3}%";
+        }
     }
 
     public void RefreshUI() {

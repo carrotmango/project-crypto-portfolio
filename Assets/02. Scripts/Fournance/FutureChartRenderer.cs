@@ -85,7 +85,9 @@ public class FutureChartRenderer : LiveChartRenderer {
     private Dictionary<GameObject, CoinData> rowDataMap = new();
     private List<GameObject> rowPool = new List<GameObject>();
     private bool isRefreshing = false;
+    private double lastHeaderPrice = 0;
     private const double TRADING_FEE_RATE = 0.00036;
+    public double TradingFeeRate => TRADING_FEE_RATE;
 
     private class FutureRowRef {
         public TextMeshProUGUI priceText;
@@ -252,6 +254,8 @@ public class FutureChartRenderer : LiveChartRenderer {
             if (s != null) selectedCoinIcon.sprite = s;
         }
         StopAllCoroutines();
+        lastHeaderPrice = 0;
+        if (headerCurrentPriceText != null) headerCurrentPriceText.color = Color.white;
         base.Initialize(coin);
         UpdateHeaderPriceText();
         if (orderPercentageSlider != null) orderPercentageSlider.value = 0;
@@ -291,7 +295,7 @@ public class FutureChartRenderer : LiveChartRenderer {
 
     public void OnSliderValueChanged(float value) {
         if (targetCoin == null || PlayerManager.Instance == null) return;
-        if (orderAmountInput != null) orderAmountInput.text = value.ToString("F0");
+        if (orderAmountInput != null) orderAmountInput.text = $"{value:F0}%";
 
         double buyingPower = GetBuyingPower();
 
@@ -311,7 +315,7 @@ public class FutureChartRenderer : LiveChartRenderer {
 
         // 비용과 수수료를 같이 보여줌
         if (costText != null)
-            costText.text = $"COST: ${inputTotalUsd:N2} (Fee: ${estimatedEntryFee:N2})";
+            costText.text = $"COST: ${inputTotalUsd:N2} (수수료: ${estimatedEntryFee:N2})";
 
         if (maxQtyText != null)
             maxQtyText.text = $"Size: {orderQty:F4} {targetCoin.Symbol}";
@@ -803,7 +807,28 @@ public class FutureChartRenderer : LiveChartRenderer {
     private void UpdateHeaderPriceText() {
         if (headerCurrentPriceText != null && targetCoin != null) {
             double currentPriceUsd = targetCoin.CurrentPrice / GlobalEconomyManager.UsdToKrw;
+
+            // 가격 변화가 없으면 굳이 텍스트/색상 갱신 안 함 (최적화)
+            if (System.Math.Abs(currentPriceUsd - lastHeaderPrice) < 0.0000001) return;
+
             headerCurrentPriceText.text = FormatPriceUSD(currentPriceUsd);
+
+            // 이전 가격이 0이 아닐 때만 비교 (처음 켜질 땐 흰색 유지)
+            if (lastHeaderPrice > 0) {
+                if (currentPriceUsd > lastHeaderPrice) {
+                    // 상승: 초록 (#32D695) -> RGB(50, 214, 149)
+                    headerCurrentPriceText.color = new Color32(50, 214, 149, 255);
+                } else if (currentPriceUsd < lastHeaderPrice) {
+                    // 하락: 빨강 (#E63C3C) -> RGB(230, 60, 60)
+                    headerCurrentPriceText.color = new Color32(230, 60, 60, 255);
+                }
+            } else {
+                // 처음엔 흰색
+                headerCurrentPriceText.color = Color.white;
+            }
+
+            // 현재 가격 저장
+            lastHeaderPrice = currentPriceUsd;
         }
     }
 

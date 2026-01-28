@@ -38,11 +38,19 @@ public class MainUIManager : MonoBehaviour {
     // 핵심 플래그
     private bool suppressRowUpdateThisFrame = false;
     private bool filterOwnedOnly = false;
+    private bool filterWishlistOnly = false; 
 
     [Header("Filter UI")]
     public Toggle ownedOnlyToggle;
+    public Toggle wishlistToggle;
+
+    private HashSet<string> wishlistedSymbols = new HashSet<string>();
+    private Color32 starActiveColor = new Color32(255, 200, 0, 255); // 노란색
+    private Color32 starInactiveColor = new Color32(200, 200, 200, 255); // 회색/흰색
 
     void Start() {
+        LoadWishlist();
+
         AddButtonListener(symbolButton, SortType.Symbol);
         AddButtonListener(nameButton, SortType.Name);
         AddButtonListener(priceButton, SortType.Price);
@@ -50,6 +58,10 @@ public class MainUIManager : MonoBehaviour {
 
         if (ownedOnlyToggle != null) {
             ownedOnlyToggle.onValueChanged.AddListener(ToggleOwnedFilter);
+        }
+
+        if (wishlistToggle != null) {
+            wishlistToggle.onValueChanged.AddListener(ToggleWishlistFilter);
         }
 
         RefreshCoinRows();
@@ -164,6 +176,10 @@ public class MainUIManager : MonoBehaviour {
         RefreshCoinRows();
     }
 
+    public void ToggleWishlistFilter(bool enabled) {
+        filterWishlistOnly = enabled;
+        RefreshCoinRows();
+    }
 
     public void RefreshCoinRows() {
         // 1. 데이터 리스트 가져오기 (필터링 및 정렬)
@@ -173,6 +189,10 @@ public class MainUIManager : MonoBehaviour {
 
         if (filterOwnedOnly) {
             list = list.Where(c => c.OwnedAmount > 0).ToList();
+        }
+
+        if (filterWishlistOnly) {
+            list = list.Where(c => wishlistedSymbols.Contains(c.Symbol)).ToList();
         }
 
         if (currentSortOrder != SortOrder.Normal) {
@@ -241,6 +261,20 @@ public class MainUIManager : MonoBehaviour {
             if (sprite != null) icon.sprite = sprite;
         }
 
+        Transform starTr = row.transform.Find("WishlistBtn");
+        if (starTr != null) {
+            Button starBtn = starTr.GetComponent<Button>();
+            Image starImg = starTr.GetComponent<Image>();
+
+            // 초기 색상 설정
+            bool isWish = wishlistedSymbols.Contains(coin.Symbol);
+            starImg.color = isWish ? starActiveColor : starInactiveColor;
+
+            // 클릭 이벤트
+            starBtn.onClick.RemoveAllListeners();
+            starBtn.onClick.AddListener(() => OnStarClicked(coin, starImg));
+        }
+
         row.transform.Find("ChartBtn")
             .GetComponent<Button>()
             .onClick.AddListener(() => chartPanelController?.ShowChartPanel(coin));
@@ -256,5 +290,43 @@ public class MainUIManager : MonoBehaviour {
         row.transform.Find("SellBtn")
             .GetComponent<Button>()
             .onClick.AddListener(() => sellPanelController?.OpenPanel(coin));
+    }
+
+    private void OnStarClicked(CoinData coin, Image starImg) {
+        if (wishlistedSymbols.Contains(coin.Symbol)) {
+            // 이미 있으면 제거
+            wishlistedSymbols.Remove(coin.Symbol);
+            starImg.color = starInactiveColor;
+        } else {
+            // 없으면 추가
+            wishlistedSymbols.Add(coin.Symbol);
+            starImg.color = starActiveColor;
+        }
+
+        // 저장
+        SaveWishlist();
+
+        // 만약 '관심 종목만 보기' 필터가 켜져 있는 상태라면, 
+        // 별을 끄는 순간 목록에서 사라지게 갱신해야 자연스러움
+        if (filterWishlistOnly) {
+            RefreshCoinRows();
+        }
+    }
+
+    private void SaveWishlist() {
+        string data = string.Join(",", wishlistedSymbols);
+        PlayerPrefs.SetString("UserWishlist", data);
+        PlayerPrefs.Save();
+    }
+
+    // [추가] 불러오기 기능
+    private void LoadWishlist() {
+        string data = PlayerPrefs.GetString("UserWishlist", "");
+        if (!string.IsNullOrEmpty(data)) {
+            string[] symbols = data.Split(',');
+            foreach (var s in symbols) {
+                if (!string.IsNullOrEmpty(s)) wishlistedSymbols.Add(s);
+            }
+        }
     }
 }

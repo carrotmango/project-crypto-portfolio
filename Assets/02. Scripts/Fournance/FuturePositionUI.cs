@@ -60,7 +60,22 @@ public class FuturePositionUI : MonoBehaviour {
         }
 
         if (marginText != null) marginText.text = FormatValue(data.MarginUSD);
-        if (breakEvenText != null) breakEvenText.text = manager.FormatPriceUSD(data.EntryPriceUSD);
+        if (breakEvenText != null) {
+            // 수수료율 (하드코딩 혹은 manager에서 가져오기)
+            double feeRate = FutureChartRenderer.Instance.TradingFeeRate;
+
+            double bePrice = 0;
+
+            if (data.IsLong) {
+                // 롱: (1 + R) / (1 - R) 만큼 올라야 본전
+                bePrice = data.EntryPriceUSD * (1.0 + feeRate) / (1.0 - feeRate);
+            } else {
+                // 숏: (1 - R) / (1 + R) 만큼 내려야 본전
+                bePrice = data.EntryPriceUSD * (1.0 - feeRate) / (1.0 + feeRate);
+            }
+
+            breakEvenText.text = manager.FormatPriceUSD(bePrice);
+        }
 
         // [진입가 / 청산가] -> 원문 달러 포맷 ($12,345.67)
         if (entryPriceText != null) entryPriceText.text = manager.FormatPriceUSD(data.EntryPriceUSD);
