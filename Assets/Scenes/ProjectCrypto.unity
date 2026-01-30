@@ -7164,7 +7164,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -60}
+  m_AnchoredPosition: {x: 0, y: -90}
   m_SizeDelta: {x: 80, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &92621764
@@ -7210,7 +7210,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 92621765}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1574688663}
+        m_TargetAssemblyTypeName: NewsPanel, Assembly-CSharp
+        m_MethodName: OnClickTab
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 3
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &92621765
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11950,8 +11962,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 447728648}
   m_HandleRect: {fileID: 447728647}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 0.81333333
+  m_Value: 1
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -14868,7 +14880,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 204029191}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1574688663}
+        m_TargetAssemblyTypeName: NewsPanel, Assembly-CSharp
+        m_MethodName: OnClickTab
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &204029191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21356,7 +21380,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -90}
+  m_AnchoredPosition: {x: 0, y: -120}
   m_SizeDelta: {x: 80, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &310861019
@@ -21402,7 +21426,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 310861020}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1574688663}
+        m_TargetAssemblyTypeName: NewsPanel, Assembly-CSharp
+        m_MethodName: OnClickTab
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 4
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &310861020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33220,14 +33256,13 @@ GameObject:
   - component: {fileID: 474717031}
   - component: {fileID: 474717034}
   - component: {fileID: 474717033}
-  - component: {fileID: 474717032}
   m_Layer: 5
   m_Name: XbirdPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &474717031
 RectTransform:
   m_ObjectHideFlags: 0
@@ -33255,43 +33290,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -1.2000732}
   m_SizeDelta: {x: 0, y: -73.6}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &474717032
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 474717030}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e37eef306cd7434f88a0ec856fd2d62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  platformRowPrefab: {fileID: 1593822303168323005, guid: fe9f2a91b2a9ab64eb0d8dd688ca8208, type: 3}
-  contentParent: {fileID: 0}
-  totalAssetPanel: {fileID: 474717030}
-  bullbitPortfolioPanel: {fileID: 1858345541}
-  satoshiPortfolioPanel: {fileID: 871169654}
-  platformInfos:
-  - id: bullbit
-    displayName: BullBit
-    logo: {fileID: 21300000, guid: c377236df272764408002c74a9feadae, type: 3}
-    type: "\uAC70\uB798\uC18C"
-  - id: satoshi_bank
-    displayName: SATOSHI BANK
-    logo: {fileID: 21300000, guid: ab653eccb1abebc41a823e2a0c888840, type: 3}
-    type: "\uC740\uD589"
-  - id: real_estate
-    displayName: Real Estate
-    logo: {fileID: 21300000, guid: 1033fd9088ffd3848a758badc042bf89, type: 3}
-    type: "\uBD80\uB3D9\uC0B0"
-  userAssets:
-  - platformId: bullbit
-    cashAsset: 0
-  - platformId: satoshi_bank
-    cashAsset: 0
-  - platformId: real_estate
-    cashAsset: 0
 --- !u!114 &474717033
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35177,9 +35175,9 @@ RectTransform:
   m_Father: {fileID: 1969366765}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 3, y: 3}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &497322396
 MonoBehaviour:
@@ -40372,7 +40370,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -150}
+  m_AnchoredPosition: {x: 0, y: -30}
   m_SizeDelta: {x: 80, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &574522536
@@ -40418,7 +40416,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 574522537}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1574688663}
+        m_TargetAssemblyTypeName: NewsPanel, Assembly-CSharp
+        m_MethodName: OnClickTab
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &574522537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56255,11 +56265,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 204029189}
+  - {fileID: 574522535}
   - {fileID: 1045383111}
   - {fileID: 92621763}
   - {fileID: 310861018}
   - {fileID: 1984319382}
-  - {fileID: 574522535}
   m_Father: {fileID: 474717031}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -73059,9 +73069,9 @@ RectTransform:
   m_Father: {fileID: 1969366765}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 3, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &999967559
 MonoBehaviour:
@@ -76337,7 +76347,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -30}
+  m_AnchoredPosition: {x: 0, y: -60}
   m_SizeDelta: {x: 80, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1045383112
@@ -76383,7 +76393,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1045383113}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1574688663}
+        m_TargetAssemblyTypeName: NewsPanel, Assembly-CSharp
+        m_MethodName: OnClickTab
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1045383113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86298,7 +86320,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1162268363}
   m_TextViewport: {fileID: 1290739916}
   m_TextComponent: {fileID: 1131703621}
@@ -93214,7 +93236,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1252161382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102387,7 +102409,7 @@ RectTransform:
   m_Father: {fileID: 205292097}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -115385,6 +115407,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NewsPanel
   contentParent: {fileID: 57756207}
   newsItemPrefab: {fileID: 6180576156868828065, guid: 04ca97c5f43d54341830bee9db720f49, type: 3}
+  newsRepo: {fileID: 664095366}
+  tabTexts:
+  - {fileID: 593345016}
+  - {fileID: 1079925773}
+  - {fileID: 377925725}
+  - {fileID: 1098620577}
+  - {fileID: 1154149204}
+  - {fileID: 1452324843}
+  activeTextColor: {r: 0, g: 0.7490196, b: 1, a: 1}
+  inactiveTextColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1574817373
 GameObject:
   m_ObjectHideFlags: 0
@@ -133803,7 +133835,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0000038146973}
+  m_AnchoredPosition: {x: 0, y: -0.0000076293945}
   m_SizeDelta: {x: 0, y: 28}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &1781011176
@@ -140834,7 +140866,7 @@ RectTransform:
   m_Father: {fileID: 1268744668}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -145275,9 +145307,9 @@ RectTransform:
   m_Father: {fileID: 1969366765}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 3}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1907965263
 MonoBehaviour:
@@ -149844,7 +149876,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -120}
+  m_AnchoredPosition: {x: 0, y: -150}
   m_SizeDelta: {x: 80, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1984319383
@@ -149890,7 +149922,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1984319384}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1574688663}
+        m_TargetAssemblyTypeName: NewsPanel, Assembly-CSharp
+        m_MethodName: OnClickTab
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 5
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1984319384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157945,7 +157989,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2122309779
 RectTransform:
   m_ObjectHideFlags: 0

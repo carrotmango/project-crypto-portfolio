@@ -165,17 +165,17 @@ public class EventOrchestrator : MonoBehaviour {
         var uiData = newsRepo.Get(uiKey);
         if (uiData == null) return;
 
-        // UI 출력
+        // 1. 화면에 즉시 표시
         EventUIManager.Instance.Show(uiData);
 
+        // 2. [추가] 뉴스 히스토리에 기록 (중요: 여기서 기록해야 나중에 탭 갈아탈 때 보임)
         if (uiData.type == UIEventType.News) {
+            newsRepo.AddToHistory(uiData, coinManager.CurrentDateTime);
+
             XNotificationManager.Instance?.Show(
                 uiData.authorName,
                 uiData.key
             );
         }
     }
-
-
-
 }
