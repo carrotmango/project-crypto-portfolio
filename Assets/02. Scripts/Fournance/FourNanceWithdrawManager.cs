@@ -120,9 +120,17 @@ public class FourNanceWithdrawManager : MonoBehaviour {
     void OnClickAll() {
         double withdrawableAmount = GetWithdrawableAmount();
 
-        // 수수료 제외
-        double maxAmt = Math.Max(0, withdrawableAmount - currentFee);
-        amountInput.text = maxAmt.ToString("F2");
+        // 1. 수수료 먼저 뺌
+        double rawMax = withdrawableAmount - currentFee;
+
+        // 2. [핵심] 소수점 2자리 밑으로 무조건 내림 (버림) 처리
+        // 예: 계산 결과가 99.999달러여도 99.99달러만 입력시킴 (안전빵)
+        double safeMax = FloorToTwoDecimal(rawMax);
+
+        // 0보다 작으면 0
+        safeMax = Math.Max(0, safeMax);
+
+        amountInput.text = safeMax.ToString("F2");
     }
 
     // 5. 금액 입력 감지 (유효성 검사)
@@ -150,30 +158,41 @@ public class FourNanceWithdrawManager : MonoBehaviour {
     void OnClickWithdraw() {
         if (!double.TryParse(amountInput.text, out double amount)) return;
 
-        // [최종 검증] 한 번 더 Buying Power 체크 (해킹 방지)
         double withdrawableAmount = GetWithdrawableAmount();
         double totalCost = amount + currentFee;
 
-        if (totalCost > withdrawableAmount) {
-            Debug.LogError("출금 가능 금액 부족!");
-            // 여기에 알림 팝업 띄우기
+        // [핵심 수정] 부동소수점 오차 무시 (Epsilon 비교)
+        // "청구 금액이 내 잔고보다 0.00001 이상 클 때만 막는다"
+        if (totalCost > withdrawableAmount + 0.00001) {
+            Debug.LogError($"잔액 부족! 보유: {withdrawableAmount}, 필요: {totalCost}");
+            // 알림 팝업...
             return;
         }
 
-        // A. 선물 지갑($)에서 차감
+        // --- 실제 차감 로직 ---
+
+        // 잔고에서 뺄 때, 혹시나 0.000001 같은 찌꺼기가 남지 않게 처리
+        // 만약 전액 출금이라면 잔고를 0으로 맞추거나, 계산된 totalCost만큼 뺌
+        if (totalCost > withdrawableAmount) {
+            // 오차 범위 내에서 totalCost가 아주 살짝 더 크다면, 그냥 보유 전액을 차감한다고 봄
+            totalCost = withdrawableAmount;
+        }
+
         PlayerManager.Instance.fournanceCash -= totalCost;
 
-        // B. 현물 지갑(Coin)에 추가 (1:1 비율)
+        // (잔고가 -0.00000...이 되는걸 방지하기 위해 0 이하 보정)
+        if (PlayerManager.Instance.fournanceCash < 0) PlayerManager.Instance.fournanceCash = 0;
+
+        // ... (나머지 코인 지급 및 UI 갱신 로직 동일) ...
+
         string coinSymbol = coinDropdown.options[coinDropdown.value].text;
         PlayerManager.Instance.ChangeCoin(coinSymbol, amount);
 
-        Debug.Log($"[Transfer] FourNance($) -> Bullbit({coinSymbol}): {amount}");
-
-        // C. UI 갱신
-        if (FourNanceManager.Instance != null) {
-            FourNanceManager.Instance.RefreshUI();
-        }
+        // ...
 
         ClosePanel();
+    }
+    private double FloorToTwoDecimal(double value) {
+        return Math.Floor(value * 100.0) / 100.0;
     }
 }

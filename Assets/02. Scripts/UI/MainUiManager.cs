@@ -174,9 +174,9 @@ public class MainUIManager : MonoBehaviour {
                 changeText.text = $"{change:+0.##;-0.##}%";
 
                 if (change > 0)
-                    changeText.color = new Color32(37, 167, 80, 255);
+                    changeText.color = new Color32(50, 214, 149, 255);
                 else if (change < 0)
-                    changeText.color = new Color32(255, 77, 77, 255);
+                    changeText.color = new Color32(230, 60, 60, 255);
                 else
                     changeText.color = Color.white;
             }
@@ -202,8 +202,8 @@ public class MainUIManager : MonoBehaviour {
 
     private void UpdateLabelColors() {
         Color32 normal = Color.white;
-        Color32 asc = new Color32(37, 167, 80, 255);
-        Color32 desc = new Color32(255, 77, 77, 255);
+        Color32 asc = new Color32(50, 214, 149, 255);
+        Color32 desc = new Color32(230, 60, 60, 255);
 
         symbolLabel.color = nameLabel.color =
             priceLabel.color = changeLabel.color = normal;

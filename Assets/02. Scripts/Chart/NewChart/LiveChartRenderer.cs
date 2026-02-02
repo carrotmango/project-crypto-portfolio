@@ -146,6 +146,13 @@ public class LiveChartRenderer : MonoBehaviour {
     public float zoomSensitivity = 2f;
     public float buttonZoomStep = 5f;
 
+    [Header("Procedural Grid")]
+    public RawImage gridBackground; // 여기에 빈 RawImage
+    public Color gridColor = new Color(0.02f, 0.02f, 0.02f, 0.05f);
+    protected float gridTextureWidth;
+    public int gridWidth = 60;  
+    public int gridHeight = 30;
+
     private void Awake() {
         if (btn4H != null) btn4H.onClick.AddListener(() => SwitchInterval(ChartInterval._4H));
         if (btn1D != null) btn1D.onClick.AddListener(() => SwitchInterval(ChartInterval._1D));
@@ -183,6 +190,8 @@ public class LiveChartRenderer : MonoBehaviour {
         initialized = true;
 
         StartCoroutine(SnapInitialNextFrame());
+        CreateProceduralGridTexture();
+        
     }
 
     // [수정됨] 외부에서 호출 시 코인 데이터를 명확히 지정하는 버전 (권장)
@@ -397,7 +406,7 @@ public class LiveChartRenderer : MonoBehaviour {
             GameObject go = Instantiate(gridLabelPrefab, yAxisGridContainer);
             TextMeshProUGUI tmp = go.GetComponent<TextMeshProUGUI>();
             tmp.alignment = TextAlignmentOptions.Right;
-            tmp.enableWordWrapping = false;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
             go.SetActive(true);
             gridLabels.Add(tmp);
         }
@@ -442,6 +451,7 @@ public class LiveChartRenderer : MonoBehaviour {
         UpdateAveragePriceLine();
 
         UpdateTradeMarkers();
+        UpdateGridBackgroundUV();
     }
     private void HandleMeasurementInput() {
         Camera cam = (parentCanvas.renderMode == RenderMode.ScreenSpaceOverlay) ? null : parentCanvas.worldCamera;
@@ -754,7 +764,7 @@ public class LiveChartRenderer : MonoBehaviour {
             GameObject go = Instantiate(tradeMarkerPrefab, tradeMarkerContainer);
             TextMeshProUGUI tmp = go.GetComponent<TextMeshProUGUI>();
             tmp.alignment = TextAlignmentOptions.Center;
-            tmp.enableWordWrapping = false;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
             tradeMarkerPool.Add(tmp);
         }
         return tradeMarkerPool[index];
@@ -807,7 +817,7 @@ public class LiveChartRenderer : MonoBehaviour {
                 tmp.text = FormatPrice(price);
                 tmp.color = isHigh ? colorHigh : colorLow;
                 tmp.alignment = TextAlignmentOptions.Center;
-                tmp.enableWordWrapping = false;
+                tmp.textWrappingMode = TextWrappingModes.NoWrap;
 
                 var rt = tmp.rectTransform;
                 rt.anchorMin = new Vector2(0, 0.5f);
@@ -931,5 +941,60 @@ public class LiveChartRenderer : MonoBehaviour {
         }
         float contentWidth = (candles.Count + futureEmptyCandles) * candleSpacing;
         chartContent.sizeDelta = new Vector2(contentWidth, chartContent.sizeDelta.y);
+    }
+    private void CreateProceduralGridTexture() {
+        if (gridBackground == null) return;
+
+        // 1. 텍스처 생성
+        Texture2D texture = new Texture2D(gridWidth, gridHeight, TextureFormat.ARGB32, false);
+        texture.filterMode = FilterMode.Point;
+        texture.wrapMode = TextureWrapMode.Repeat;
+
+        // 2. 초기화 (투명하게)
+        Color[] cols = new Color[gridWidth * gridHeight];
+        for (int i = 0; i < cols.Length; i++) {
+            cols[i] = Color.clear;
+        }
+
+        // 3. 실선 그리기 (조건문 삭제)
+
+        // [가로선 그리기] 맨 아래 (y=0) 라인 싹 다 칠하기
+        for (int x = 0; x < gridWidth; x++) {
+            cols[x] = gridColor;
+        }
+
+        // [세로선 그리기] 맨 왼쪽 (x=0) 라인 싹 다 칠하기
+        for (int y = 0; y < gridHeight; y++) {
+            // 인덱스 = y * 가로길이
+            cols[y * gridWidth] = gridColor;
+        }
+
+        // 4. 적용
+        texture.SetPixels(cols);
+        texture.Apply();
+
+        gridBackground.texture = texture;
+
+        // 5. UV 세팅
+        float repeatX = viewport.rect.width / gridWidth;
+        float repeatY = viewport.rect.height / gridHeight;
+        gridBackground.uvRect = new Rect(0, 0, repeatX, repeatY);
+
+        // *중요* 스크롤 동기화 변수 업데이트
+        gridTextureWidth = gridWidth;
+    }
+
+    private void UpdateGridBackgroundUV() {
+        if (gridBackground == null || gridTextureWidth <= 0) return;
+
+        // 1. 차트의 현재 스크롤 위치(X)를 격자 너비로 나눠서 이동량 계산
+        float uvX = -(chartContent.anchoredPosition.x / gridTextureWidth);
+
+        // 2. 화면(Viewport) 너비 대비 반복 횟수 계산
+        float uvWidth = viewport.rect.width / gridTextureWidth;
+        float uvHeight = viewport.rect.height / gridHeight; // 높이도 계산
+
+        // 3. RawImage의 UV 사각형 갱신 (배경 이동)
+        gridBackground.uvRect = new Rect(uvX, 0f, uvWidth, uvHeight);
     }
 }

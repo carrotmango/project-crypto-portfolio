@@ -262,6 +262,7 @@ public class FutureChartRenderer : LiveChartRenderer {
         OnSliderValueChanged(0);
         if (coinListPanel != null) coinListPanel.SetActive(false);
         RefreshPositionLines();
+        CreateProceduralGridTexture();
     }
 
     public void ToggleCoinList() {
@@ -565,6 +566,7 @@ public class FutureChartRenderer : LiveChartRenderer {
         base.Update();
         UpdateHeaderPriceText();
 
+
         // ------------------------------------------------------------------
         // [핵심] 현재 내 '찐' 전재산(Equity) 계산
         // 현금이 마이너스여도 PnL이 플러스면 Equity는 플러스임.
@@ -624,6 +626,7 @@ public class FutureChartRenderer : LiveChartRenderer {
         if (targetCoin != null && orderPercentageSlider != null && orderPercentageSlider.value > 0) {
             OnSliderValueChanged(orderPercentageSlider.value);
         }
+        UpdateGridBackgroundUV();
     }
 
     protected override void UpdateHorizontalLines() {
@@ -881,5 +884,60 @@ public class FutureChartRenderer : LiveChartRenderer {
                 null
             );
         }
+    }
+    private void CreateProceduralGridTexture() {
+        if (gridBackground == null) return;
+
+        // 1. 텍스처 생성
+        Texture2D texture = new Texture2D(gridWidth, gridHeight, TextureFormat.ARGB32, false);
+        texture.filterMode = FilterMode.Point;
+        texture.wrapMode = TextureWrapMode.Repeat;
+
+        // 2. 초기화 (투명하게)
+        Color[] cols = new Color[gridWidth * gridHeight];
+        for (int i = 0; i < cols.Length; i++) {
+            cols[i] = Color.clear;
+        }
+
+        // 3. 실선 그리기 (조건문 삭제)
+
+        // [가로선 그리기] 맨 아래 (y=0) 라인 싹 다 칠하기
+        for (int x = 0; x < gridWidth; x++) {
+            cols[x] = gridColor;
+        }
+
+        // [세로선 그리기] 맨 왼쪽 (x=0) 라인 싹 다 칠하기
+        for (int y = 0; y < gridHeight; y++) {
+            // 인덱스 = y * 가로길이
+            cols[y * gridWidth] = gridColor;
+        }
+
+        // 4. 적용
+        texture.SetPixels(cols);
+        texture.Apply();
+
+        gridBackground.texture = texture;
+
+        // 5. UV 세팅
+        float repeatX = viewport.rect.width / gridWidth;
+        float repeatY = viewport.rect.height / gridHeight;
+        gridBackground.uvRect = new Rect(0, 0, repeatX, repeatY);
+
+        // *중요* 스크롤 동기화 변수 업데이트
+        gridTextureWidth = gridWidth;
+    }
+
+    private void UpdateGridBackgroundUV() {
+        if (gridBackground == null || gridTextureWidth <= 0) return;
+
+        // 1. 차트의 현재 스크롤 위치(X)를 격자 너비로 나눠서 이동량 계산
+        float uvX = -(chartContent.anchoredPosition.x / gridTextureWidth);
+
+        // 2. 화면(Viewport) 너비 대비 반복 횟수 계산
+        float uvWidth = viewport.rect.width / gridTextureWidth;
+        float uvHeight = viewport.rect.height / gridHeight; // 높이도 계산
+
+        // 3. RawImage의 UV 사각형 갱신 (배경 이동)
+        gridBackground.uvRect = new Rect(uvX, 0f, uvWidth, uvHeight);
     }
 }
