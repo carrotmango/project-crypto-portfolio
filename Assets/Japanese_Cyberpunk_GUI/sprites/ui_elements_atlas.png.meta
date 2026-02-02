@@ -1,9 +1,16 @@
 fileFormatVersion: 2
 guid: 691e7c7c1abb14848a5ce1754a123d7a
+AssetOrigin:
+  serializedVersion: 1
+  productId: 241775
+  packageName: Japanese Cyberpunk UI
+  packageVersion: 1.0.0
+  assetPath: Assets/Japanese_Cyberpunk_GUI/sprites/ui_elements_atlas.png
+  uploadId: 560991
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 13
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -20,11 +27,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMasterTextureLimit: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -63,8 +71,10 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -74,9 +84,10 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -86,9 +97,10 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: Server
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -98,6 +110,20 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
@@ -114,6 +140,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 27, y: 38, z: 38, w: 23}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -135,6 +162,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 27, y: 38, z: 38, w: 23}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -156,6 +184,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -177,6 +206,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -198,6 +228,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -219,6 +250,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 429, y: 0, z: 429, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -240,6 +272,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 62, y: 0, z: 59, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -261,6 +294,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 62, y: 0, z: 59, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -282,6 +316,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -303,6 +338,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 429, y: 0, z: 429, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -324,6 +360,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 45, y: 5, z: 45, w: 5}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -345,6 +382,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -366,6 +404,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 101, y: 0, z: 101, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -387,6 +426,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -408,6 +448,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -429,6 +470,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -450,6 +492,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 429, y: 0, z: 429, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -471,6 +514,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 10, y: 10, z: 10, w: 10}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -492,6 +536,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -513,6 +558,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 66, y: 0, z: 66, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -534,6 +580,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -555,6 +602,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -576,6 +624,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -597,6 +646,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -618,6 +668,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -639,6 +690,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -660,6 +712,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -681,6 +734,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -702,6 +756,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -723,6 +778,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 194, y: 0, z: 194, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -744,6 +800,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 16, y: 0, z: 16, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -765,6 +822,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -786,6 +844,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -807,6 +866,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -828,6 +888,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -849,6 +910,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -870,6 +932,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 106, y: 0, z: 182, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -891,6 +954,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 106, y: 0, z: 182, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -912,6 +976,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 106, y: 0, z: 182, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -933,6 +998,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 106, y: 0, z: 182, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -954,6 +1020,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 87, y: 0, z: 87, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -975,6 +1042,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 87, y: 0, z: 87, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -996,6 +1064,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 55, y: 0, z: 55, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1017,6 +1086,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 87, y: 0, z: 87, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1038,6 +1108,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 87, y: 0, z: 86, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1059,6 +1130,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 86, y: 0, z: 86, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1080,6 +1152,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 86, y: 0, z: 86, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1101,6 +1174,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 86, y: 0, z: 86, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1122,6 +1196,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 81, y: 0, z: 81, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1143,6 +1218,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 81, y: 0, z: 81, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1164,6 +1240,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 81, y: 0, z: 81, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1185,6 +1262,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 81, y: 0, z: 81, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1206,6 +1284,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 82, y: 0, z: 82, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1227,6 +1306,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 79, y: 0, z: 79, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1248,6 +1328,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 79, y: 0, z: 79, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1269,6 +1350,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 79, y: 0, z: 79, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1290,6 +1372,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 76, y: 0, z: 76, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1311,6 +1394,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 76, y: 0, z: 76, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1332,6 +1416,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 76, y: 0, z: 76, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1353,6 +1438,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 76, y: 0, z: 76, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1374,6 +1460,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 80, y: 0, z: 80, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1395,6 +1482,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 80, y: 0, z: 80, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1416,6 +1504,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 80, y: 0, z: 80, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1437,6 +1526,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 80, y: 0, z: 80, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1458,6 +1548,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 80, y: 0, z: 80, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1479,6 +1570,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 80, y: 0, z: 80, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1500,6 +1592,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 80, y: 0, z: 80, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1521,6 +1614,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 80, y: 0, z: 80, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1542,6 +1636,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 123, y: 129, z: 122, w: 136}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1563,6 +1658,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 128, y: 0, z: 128, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1584,6 +1680,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1605,6 +1702,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1626,6 +1724,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 27, z: 0, w: 27}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1647,6 +1746,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1668,6 +1768,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1689,6 +1790,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 12, z: 0, w: 12}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1710,6 +1812,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1721,6 +1824,7 @@ TextureImporter:
       edges: []
       weights: []
     outline: []
+    customData: 
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
@@ -1730,164 +1834,158 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
     nameFileIdTable:
-      Disabled_Microphone_Icon: 917583588
-      Disabled_Danger_Icon: -13803583
-      Logo: -2067656797
-      Search_Icon: 1385337226
-      Title_pink: -1677100842
-      Locked_Item_Container: 1471192515
-      Microphone_Icon: 1308745842
-      popup_decoration_down_right: -1260786482
-      Cian_Cloud_Style_Button_1: 1902284894
-      Disabled_pause_icon: 1481576447
-      Arrow_Right_Icon: -1668786636
-      Check_Empty_Box: -450461121
-      popup_decoration_up_right: 1024336454
-      Scrollbar_Knob: 1764282430
-      Blue_Triangles_Button: 466558284
-      Locked_Icon: -306894725
-      Blue_Cloud_Style_Button_1: -1786220650
-      Pink_Box_Down_White_button: -921055557
-      Blue_Paper_Bird: -1559205432
-      Disabled_Shield_Icon: -1091283193
-      Disabled_Search_Icon: 703998989
-      Remove_Icon: -357278316
-      Blue_Subtitle_Button: -1948296847
-      ScrollBar_BG_Hor: -1614595620
-      Disabled_List_Icon: 271829821
-      Box_Small_Purple_cont: 569049846
-      Box_Purple_Info_Text: 1437875264
-      Kunai_Silhouette: -1482065376
-      Pink_Paper_Bird: 1321977369
-      Box_Dark_Purple_Item: 1528375459
-      Shop_Icon: -887711660
-      Box_Dark_Purple_cont: 1437875264
-      Sake_Asset: 1223064492
-      Blue_Container_Highlighter: 1059737475
-      Star_Icon: 1640266708
-      Disabled_Combat_Icon: 1258419576
-      Sound_Icon: -72357632
-      Cian_Triangles_Button: -840566911
-      Green_Subtitle_Button: 1061765960
-      Question_Mark_Icon: -1906454866
-      Blue_neon_style_button: -1740595074
-      List_Icon: -940010823
-      Arrow_Up_Icon: 779248457
-      Purple_neon_style_button: -1812678180
-      Atlas_1_83: 624342077
-      Green_Container_Highlighter: 1004196549
-      Green_Box_White_button: -1595405493
+      Alert_Icon: 759790192
+      Arrow: 1029730757
+      Arrow_Down_Icon: -361717805
       Arrow_Left_Icon: -310060568
-      Pink_Subtitle_Button: 1937868179
-      Pink_Triangles_Button: -673587291
-      Axe_Silhouette: 1902219850
-      Shuriken_Silhouette: -379458094
-      Blue_Box_White_button: 2068067779
-      Green_Triangles_Button: -922475408
+      Arrow_Next_dialogue: 484349321
+      Arrow_Right_Icon: -1668786636
+      Arrow_Up_Icon: 779248457
+      Atlas_1_44: 264045854
+      Atlas_1_70: 1528486870
       Atlas_1_73: -1583533330
+      Atlas_1_83: 624342077
+      Atlas_1_85: 1695339040
+      Axe_Silhouette: 1902219850
+      Blue_Box_Down_White_button: -1072566523
+      Blue_Box_White_button: 2068067779
+      Blue_Cloud_Style_Button_1: -1786220650
+      Blue_Cloud_Style_Button_2: 346937221
+      Blue_Container_Highlighter: 1059737475
+      Blue_Paper_Bird: -1559205432
+      Blue_Subtitle_Button: -1948296847
+      Blue_Triangles_Button: 466558284
+      Blue_neon_style_button: -1740595074
+      Box_Dark_Purple_Item: 1528375459
+      Box_Dark_Purple_cont: 1437875264
+      Box_Magenta_Item: -1482065376
+      Box_Purple_Info_Text: 1437875264
+      Box_Purple_Item: -750080562
+      Box_Small_Dark_Purple: -940010823
+      Box_Small_Purple_cont: 569049846
+      Check_Box: -1604213032
+      Check_Empty_Box: -450461121
+      Cian_Box_Down_White_button: 87886273
+      Cian_Box_White_button: -750080562
+      Cian_Cloud_Style_Button_1: 1902284894
+      Cian_Cloud_Style_Button_2: -1585804622
+      Cian_Subtitle_Button: 873824887
+      Cian_Triangles_Button: -840566911
+      Cloud: -234037891
+      Combat_Icon: -120538015
+      Currency_icon: -1921335476
+      Danger_Icon: 2005285735
+      Disabled_Alert_Icon: 1333462247
+      Disabled_Arrow_Down_Icon: -1398804199
+      Disabled_Arrow_Left_Icon: -734211976
+      Disabled_Arrow_Right_Icon: 926886604
+      Disabled_Arrow_Up_Icon: 1528375459
+      Disabled_Combat_Icon: 1258419576
+      Disabled_Danger_Icon: -13803583
+      Disabled_Heart_Icon: 1408880725
+      Disabled_List_Icon: 271829821
+      Disabled_Main_menu_Icon: -704537660
+      Disabled_Microphone_Icon: 917583588
+      Disabled_Mission_Icon: -1764293152
+      Disabled_Music_Icon: -88824097
+      Disabled_Off_On_Icon: 1992027629
+      Disabled_Play_Icon: 751546731
+      Disabled_Plus_Icon: -940010823
+      Disabled_Power_Icon: -2128806438
+      Disabled_Question_Mark_Icon: -517687775
+      Disabled_Remove_Icon: -704833518
+      Disabled_Search_Icon: 703998989
+      Disabled_Settings_Icon: 110071255
+      Disabled_Shield_Icon: -1091283193
+      Disabled_Shop_Icon: 1948227962
+      Disabled_Sound_Icon: -158007368
       Disabled_Star_Icon: -1082441729
       Disabled_Update_Icon: -379599364
-      Scroll_bg_vert: -1811090132
-      Power_Icon: 526870858
-      Box_Magenta_Item: -1482065376
-      Text_Picker_1: -1363353814
-      Cian_Cloud_Style_Button_2: -1585804622
-      Atlas_1_44: 264045854
-      Main_menu_Icon: 2100835008
-      Disabled_Mission_Icon: -1764293152
-      white_Pink_neon_style_button: 1453817750
-      ScrollBar_vert: -1710764640
-      Cian_Box_White_button: -750080562
-      Arrow_Next_dialogue: 484349321
-      Empty_Button: 1764282430
-      Pink_Cloud_Style_Button_2: 1084079658
-      Alert_Icon: 759790192
-      Disabled_Alert_Icon: 1333462247
-      Disabled_Play_Icon: 751546731
-      Green_Cloud_Style_Button_1: 1711498541
-      Danger_Icon: 2005285735
+      Disabled_locked_Icon: 1377131758
+      Disabled_pause_icon: 1481576447
       Dragon_Fruit_Asset: 645650334
-      Box_Small_Dark_Purple: -940010823
-      Disabled_Arrow_Right_Icon: 926886604
-      popup_decoration_all: 851952380
-      Shield_Icon: -385812830
-      Text_Picker_2: -427773973
-      Disabled_Arrow_Down_Icon: -1398804199
-      slider_top: -633490601
-      Title_green: -478248931
-      Disabled_Shop_Icon: 1948227962
-      Disabled_Question_Mark_Icon: -517687775
-      Pink_Container_Highlighter: 810385377
-      Life_Bar: 754788137
-      Green_Paper_Bird: 1826049645
-      Mission_Icon: -258478861
-      Currency_icon: -1921335476
-      Settings_Icon: -1321727512
-      Green_neon_style_button: 936016457
-      Blue_Cloud_Style_Button_2: 346937221
-      popup_decoration_up_left: 1360290429
-      Plus_Icon: -1614595620
-      ScrollBar_hor: -856891011
-      mask_sprite: -1212551300
-      Heart_Icon: 1437875264
-      slider_left: -1753313268
-      Pink_Box_White_button: 723935373
-      Disabled_Settings_Icon: 110071255
+      Empty_Button: 1764282430
       Green_Box_Down_White_button: 344498833
-      Combat_Icon: -120538015
+      Green_Box_White_button: -1595405493
+      Green_Cloud_Style_Button_1: 1711498541
+      Green_Cloud_Style_Button_2: -1905775684
+      Green_Container_Highlighter: 1004196549
+      Green_Paper_Bird: 1826049645
+      Green_Paper_Bird_Flying: 1754259015
+      Green_Subtitle_Button: 1061765960
+      Green_Triangles_Button: -922475408
+      Green_neon_style_button: 936016457
+      Heart_Icon: 1437875264
       Input_Text_01: -840566911
-      White_Purple_neon_style_button: 906488177
-      Atlas_1_70: 1528486870
+      Kunai_Silhouette: -1482065376
+      Life_Bar: 754788137
+      Life_Bar_Container: 2090684586
+      List_Icon: -940010823
+      Locked_Icon: -306894725
+      Locked_Item_Container: 1471192515
+      Logo: -2067656797
+      Main_menu_Icon: 2100835008
+      Microphone_Icon: 1308745842
+      Mission_Icon: -258478861
+      Music_Icon: 433591714
       Off_On_Icon: -459034017
+      Pink_Box_Down_White_button: -921055557
+      Pink_Box_White_button: 723935373
+      Pink_Cloud_Style_Button_1: 987289542
+      Pink_Cloud_Style_Button_2: 1084079658
+      Pink_Container_Highlighter: 810385377
+      Pink_Paper_Bird: 1321977369
+      Pink_Subtitle_Button: 1937868179
+      Pink_Triangles_Button: -673587291
+      Play_Icon: -1931217624
+      Plus_Icon: -1614595620
+      Potion_life_Asset: 786943658
+      Power_Icon: 526870858
+      Purple_neon_style_button: -1812678180
+      Question_Mark_Icon: -1906454866
+      Remove_Icon: -357278316
+      Sake_Asset: 1223064492
+      ScrollBar_BG_Hor: -1614595620
+      ScrollBar_hor: -856891011
+      ScrollBar_vert: -1710764640
+      Scroll_bg_vert: -1811090132
+      Scrollbar_Knob: 1764282430
+      Search_Icon: 1385337226
+      Settings_Icon: -1321727512
+      Shield_Icon: -385812830
+      Shop_Icon: -887711660
+      Shuriken_Silhouette: -379458094
+      Sound_Icon: -72357632
+      Star_Icon: 1640266708
+      Text_Picker_1: -1363353814
+      Text_Picker_2: -427773973
+      Title_blue: -1592904948
+      Title_green: -478248931
+      Title_pink: -1677100842
       Update_Icon: 1453817750
+      White_Green_neon_style_button: 1902284894
+      White_Purple_neon_style_button: 906488177
+      White_neon_style_button: -120538015
+      icon_Settings: -1673094359
+      icon_X: 1805570843
+      mask_sprite: -1212551300
       pause_icon: 2090684586
       pink_neon_style_button: 484349321
-      Arrow: 1029730757
-      slider_bot: -817542608
-      Disabled_Arrow_Left_Icon: -734211976
-      Cloud: -234037891
-      Life_Bar_Container: 2090684586
-      Disabled_locked_Icon: 1377131758
-      Disabled_Arrow_Up_Icon: 1528375459
-      Blue_Box_Down_White_button: -1072566523
-      Atlas_1_85: 1695339040
-      Disabled_Music_Icon: -88824097
-      Potion_life_Asset: 786943658
-      White_neon_style_button: -120538015
-      Disabled_Heart_Icon: 1408880725
-      icon_Settings: -1673094359
-      Title_blue: -1592904948
-      Disabled_Main_menu_Icon: -704537660
-      Arrow_Down_Icon: -361717805
+      popup_decoration_all: 851952380
       popup_decoration_down_left: 1608402064
-      Cian_Subtitle_Button: 873824887
-      Disabled_Off_On_Icon: 1992027629
-      Check_Box: -1604213032
-      Cian_Box_Down_White_button: 87886273
-      Disabled_Sound_Icon: -158007368
-      White_Green_neon_style_button: 1902284894
-      Green_Cloud_Style_Button_2: -1905775684
-      Green_Paper_Bird_Flying: 1754259015
-      Music_Icon: 433591714
-      icon_X: 1805570843
-      Pink_Cloud_Style_Button_1: 987289542
-      Play_Icon: -1931217624
+      popup_decoration_down_right: -1260786482
+      popup_decoration_up_left: 1360290429
+      popup_decoration_up_right: 1024336454
+      slider_bot: -817542608
+      slider_left: -1753313268
       slider_right: 1700215721
-      Disabled_Power_Icon: -2128806438
-      Box_Purple_Item: -750080562
-      Disabled_Remove_Icon: -704833518
-      Disabled_Plus_Icon: -940010823
-  spritePackingTag: 
+      slider_top: -633490601
+      white_Pink_neon_style_button: 1453817750
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 241775
-  packageName: Japanese Cyberpunk UI
-  packageVersion: 1.0.0
-  assetPath: Assets/Japanese_Cyberpunk_GUI/sprites/ui_elements_atlas.png
-  uploadId: 560991

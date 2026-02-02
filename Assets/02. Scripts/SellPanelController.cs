@@ -100,6 +100,7 @@ public class SellPanelController : MonoBehaviour {
     }
 
     public void OnConfirmClicked() {
+        // 1. 수량 입력값 검증
         if (!double.TryParse(orderAmountInput.text, out double amount)) {
             Debug.LogWarning("잘못된 수량을 입력했습니다.");
             return;
@@ -107,29 +108,38 @@ public class SellPanelController : MonoBehaviour {
 
         if (amount <= 0) return;
 
-        // UI상의 보유량 체크
+        // 2. 보유량 체크 (오차 범위 허용)
         if (amount > owned + 0.00001) {
             Debug.LogWarning("보유 수량을 초과하여 매도할 수 없습니다.");
             return;
         }
 
+        // 3. 최소 주문 금액 체크 (5000원)
         double rawPrice = price * amount;
         if (rawPrice < 5000) {
             Debug.LogWarning("최소 주문 금액은 5,000원 이상이어야 합니다.");
             return;
         }
 
-        // PlayerManager의 RegisterSell을 호출하여 실제 매도 처리 시도
-        if (PlayerManager.Instance.RegisterSell(lastSelectedSymbol, price, ref amount)) {
-            double raw = price * amount;
-            double fee = raw * feeRate;
-            double net = raw - fee;
+        // 4. 수수료 및 정산 금액 계산
+        double raw = price * amount;   // 총 매도액
+        double fee = raw * feeRate;    // 수수료 (0.05%)
+        double net = raw - fee;        // 내 지갑에 들어올 돈 (정산액)
 
+        // 5. 매도 실행
+        // ref 변수라 별도로 선언
+        double sellQty = amount;
+
+        // [핵심 변경점] 수수료(fee)를 같이 넘겨줘서 순수익 계산 시 차감하도록 합니다.
+        if (PlayerManager.Instance.RegisterSell(lastSelectedSymbol, price, ref sellQty, fee)) {
+
+            // [중요 변경점] 현금 입금은 수수료 뗀 금액(net)으로 합니다.
+            // ※ ChangeBullbitCash() 대신 변수에 직접 더해야 원금으로 안 잡힙니다.
             PlayerManager.Instance.bullbitCash += net;
 
-            Debug.Log($"[매도 체결] {lastSelectedSymbol} {price} x {amount} = {FormatKRW(raw)} - 수수료 {FormatKRW(fee)} → {FormatKRW(net)}");
+            Debug.Log($"[매도 체결] {lastSelectedSymbol} | 수수료: {fee:N0} | 입금액: {net:N0}");
 
-            // [추가] 차트에 매도(S) 마크 찍기 (false = Sell)
+            // 차트에 매도(S) 마크 찍기
             if (chartRenderer != null) {
                 chartRenderer.RegisterTrade(currentCoinData, false);
             }

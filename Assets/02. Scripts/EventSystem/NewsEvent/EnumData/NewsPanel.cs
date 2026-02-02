@@ -8,6 +8,7 @@ public class NewsPanel : MonoBehaviour {
     public Transform contentParent;
     public GameObject newsItemPrefab;
     public NewsRepository newsRepo;
+    private NewsCategory currentCategory = NewsCategory.All;
 
     [Header("탭 텍스트 설정")]
     // 이제 이미지 대신 텍스트 컴포넌트를 직접 넣습니다.
@@ -21,6 +22,9 @@ public class NewsPanel : MonoBehaviour {
     }
 
     public void RefreshXbird(NewsCategory category) {
+
+        currentCategory = category;
+
         // 1. 글자 색상 하이라이트 연출
         UpdateTabVisuals((int)category);
 
@@ -50,6 +54,11 @@ public class NewsPanel : MonoBehaviour {
 
     public void Show(UIEventData data, DateTime gameTime) {
         if (newsItemPrefab == null || contentParent == null) return;
+
+        if (currentCategory != NewsCategory.All && data.category != currentCategory) {
+            return;
+        }
+
         var go = Instantiate(newsItemPrefab, contentParent);
         go.transform.SetAsFirstSibling();
         ApplySize(go, data);

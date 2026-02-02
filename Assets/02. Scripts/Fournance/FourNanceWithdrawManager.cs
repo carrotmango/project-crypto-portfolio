@@ -155,6 +155,7 @@ public class FourNanceWithdrawManager : MonoBehaviour {
     }
 
     // 6. [핵심] 출금 실행 로직
+    // 6. [핵심] 출금 실행 로직
     void OnClickWithdraw() {
         if (!double.TryParse(amountInput.text, out double amount)) return;
 
@@ -162,33 +163,39 @@ public class FourNanceWithdrawManager : MonoBehaviour {
         double totalCost = amount + currentFee;
 
         // [핵심 수정] 부동소수점 오차 무시 (Epsilon 비교)
-        // "청구 금액이 내 잔고보다 0.00001 이상 클 때만 막는다"
         if (totalCost > withdrawableAmount + 0.00001) {
             Debug.LogError($"잔액 부족! 보유: {withdrawableAmount}, 필요: {totalCost}");
-            // 알림 팝업...
             return;
         }
 
         // --- 실제 차감 로직 ---
-
-        // 잔고에서 뺄 때, 혹시나 0.000001 같은 찌꺼기가 남지 않게 처리
-        // 만약 전액 출금이라면 잔고를 0으로 맞추거나, 계산된 totalCost만큼 뺌
         if (totalCost > withdrawableAmount) {
-            // 오차 범위 내에서 totalCost가 아주 살짝 더 크다면, 그냥 보유 전액을 차감한다고 봄
             totalCost = withdrawableAmount;
         }
 
         PlayerManager.Instance.fournanceCash -= totalCost;
 
-        // (잔고가 -0.00000...이 되는걸 방지하기 위해 0 이하 보정)
         if (PlayerManager.Instance.fournanceCash < 0) PlayerManager.Instance.fournanceCash = 0;
 
-        // ... (나머지 코인 지급 및 UI 갱신 로직 동일) ...
-
+        // ------------------------------------------------------------------
+        // [수정] 단순 ChangeCoin 대신, 현재가 기준으로 '매수' 처리하여 평단가 유지
+        // ------------------------------------------------------------------
         string coinSymbol = coinDropdown.options[coinDropdown.value].text;
-        PlayerManager.Instance.ChangeCoin(coinSymbol, amount);
 
-        // ...
+        // 1. 현재 코인의 KRW 가격 가져오기 (불비트 시세 기준)
+        CoinData coinData = CoinManager.Instance.coins.Find(c => c.Symbol == coinSymbol);
+        double currentPriceKrw = 0;
+
+        if (coinData != null) {
+            currentPriceKrw = coinData.CurrentPrice;
+        } else {
+            currentPriceKrw = GlobalEconomyManager.UsdToKrw;
+        }
+
+        // 2. 입금 전용 함수 호출 (거래량 증가 안 함)
+        PlayerManager.Instance.RegisterTransferIn(coinSymbol, currentPriceKrw, amount);
+
+        // ------------------------------------------------------------------
 
         ClosePanel();
     }

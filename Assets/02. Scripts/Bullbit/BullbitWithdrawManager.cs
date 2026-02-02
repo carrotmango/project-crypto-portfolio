@@ -222,8 +222,12 @@ public class BullbitWithdrawManager : MonoBehaviour {
         if (!double.TryParse(raw, out double amount)) return;
 
         if (currentMode == WithdrawMode.Bank) {
-            // ... 은행 이체 로직 ...
-            PlayerManager.Instance.bullbitCash -= (amount + currentFee);
+            // [수정] 은행으로 출금
+            double totalDeduct = amount + currentFee;
+
+            // 마이너스 금액을 넣어서 출금 처리 (원금도 같이 차감됨)
+            PlayerManager.Instance.ChangeBullbitCash(-totalDeduct);
+
             PlayerManager.Instance.satoshiBankCash += amount;
         } else {
             string symbol = coinDropdown.options[coinDropdown.value].text.Trim().ToUpper();

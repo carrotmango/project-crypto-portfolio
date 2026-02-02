@@ -156,7 +156,7 @@ public class BuyPanelController : MonoBehaviour {
         }
 
         PlayerManager.Instance.bullbitCash -= totalCost;
-        PlayerManager.Instance.RegisterBuy(lastSelectedSymbol, price, amount);
+        PlayerManager.Instance.RegisterBuy(lastSelectedSymbol, price, amount, fee);
 
         Debug.Log($"[매수 체결] {lastSelectedSymbol} {price} x {amount} = {FormatKRW(baseCost)} + 수수료 {FormatKRW(fee)} → 총 {FormatKRW(totalCost)} (잔액: {FormatKRW(PlayerManager.Instance.bullbitCash)})");
 

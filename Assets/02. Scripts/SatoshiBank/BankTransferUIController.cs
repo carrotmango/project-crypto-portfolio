@@ -46,7 +46,7 @@ public class BankTransferUIController : MonoBehaviour {
 
         if (platform == "불비트") {
             PlayerManager.Instance.satoshiBankCash -= amount;
-            PlayerManager.Instance.bullbitCash += amount;
+            PlayerManager.Instance.ChangeBullbitCash(amount);
             Debug.Log($"사토시 → 불비트 {amount}원 이체 완료");
         }
         //else if (platform == "망고카지노") {

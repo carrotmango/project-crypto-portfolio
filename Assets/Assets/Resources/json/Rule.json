@@ -5,7 +5,7 @@
       "authorId": "system",
       "executionMode": 1,
       "startDate": "2020-01-01 09:10",
-      "endDate": "2020-01-01 10:00",
+      "endDate": "2020-01-01 09:40",
       "timeRule": { "type": 0 },
       "probability": 1.0,
       "repeatType": 1,

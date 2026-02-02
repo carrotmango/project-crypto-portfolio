@@ -25,6 +25,7 @@ public class TabPanelController : MonoBehaviour {
     public GameObject skillUpgrade;
 
 
+
     [Header("Controllers")]
     public WithdrawPanelController withdrawPanelController;
     public TotalAssetPanelController assetPanelController;
