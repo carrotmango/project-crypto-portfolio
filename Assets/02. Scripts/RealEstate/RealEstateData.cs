@@ -6,7 +6,9 @@ public class RealEstateData {
     public string id;
     public string name;
 
-    public long price; 
+    public long price;
+
+    public long purchasePrice;
 
     public float monthlyYield;
     public string ownedText;

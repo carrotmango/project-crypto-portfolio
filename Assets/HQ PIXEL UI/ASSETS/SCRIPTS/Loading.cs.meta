@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 157d7982753bef74fbd1cd2b39c0bba5
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 169751
+  packageName: Low Poly Pixel UI
+  packageVersion: 1.0
+  assetPath: Assets/HQ PIXEL UI/ASSETS/SCRIPTS/Loading.cs
+  uploadId: 371007

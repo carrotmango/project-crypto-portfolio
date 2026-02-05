@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 0a9591367eefca049961341e5a91537b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 169751
+  packageName: Low Poly Pixel UI
+  packageVersion: 1.0
+  assetPath: Assets/HQ PIXEL UI/ASSETS/SCRIPTS/PositionLerpAnimation.cs
+  uploadId: 371007

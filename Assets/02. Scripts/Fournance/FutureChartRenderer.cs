@@ -391,6 +391,10 @@ public class FutureChartRenderer : LiveChartRenderer {
             };
 
             activePositions.Add(newPos);
+            double tradeVolume = totalValueUsd; // 레버리지 포함 총 진입 가치
+            PlayerManager.Instance.fournanceTotalVolume += tradeVolume;
+            PlayerManager.Instance.fournanceTotalFee += entryFee;
+
 
             GameObject go = Instantiate(positionPrefab, positionListParent);
             FuturePositionUI ui = go.GetComponent<FuturePositionUI>();
@@ -458,12 +462,39 @@ public class FutureChartRenderer : LiveChartRenderer {
                 );
             }
 
+            // =========================================================
+            // [추가] 통계 데이터 기록
+            // =========================================================
+
+            // 1. 거래량 누적 (종료 시점의 총 가치)
+            double exitVol = pos.Quantity * currentPriceUsd;
+            PlayerManager.Instance.fournanceTotalVolume += exitVol;
+
+            // 2. 실현 손익 & 수수료 누적
+            if (isLiquidated) {
+                // [강제 청산]
+                // Cross면 (증거금 + 남은잔고), Isolated면 (증거금) 만큼 손실 확정
+                double lossAmount = (pos.Mode == MarginMode.Cross) ? (pos.MarginUSD + PlayerManager.Instance.fournanceCash) : pos.MarginUSD;
+
+                // 실현 손익 깎기
+                PlayerManager.Instance.fournanceRealizedPnL -= lossAmount;
+
+                // 청산은 보통 수수료보다는 보험기금으로 가지만, 통계상 수수료에 포함시킬지 여부는 선택 (여기선 패스)
+            }
+
+
         } else {
             // [정상 종료] (익절/손절)
             // 공식: 돌려받을 돈 = 내 원금(증거금) + 차트수익(GrossPnL) - 종료수수료(ExitFee)
             double returnAmount = pos.MarginUSD + grossPnL - exitFee;
 
             PlayerManager.Instance.fournanceCash += returnAmount;
+
+            double netPnL = grossPnL - exitFee; // 순수익 (수수료 뺀거)
+            PlayerManager.Instance.fournanceRealizedPnL += netPnL; // 누적!
+
+            // 수수료도 누적
+            PlayerManager.Instance.fournanceTotalFee += exitFee;
 
             Debug.Log($"[종료] 차트손익: ${grossPnL:F2} | 수수료: -${exitFee:F2} | 최종정산금: ${returnAmount:F2}");
         }

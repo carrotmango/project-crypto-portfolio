@@ -17,6 +17,8 @@ public class GambleManager_renewal : MonoBehaviour {
     public TextMeshProUGUI bankCashText;
     public TextMeshProUGUI payoutText;
 
+    public TextMeshProUGUI limitText;
+
     // 외부 게임 매니저
     public GambleMonster gambleMonster;
     public CoinFlip coinFlip;
@@ -75,7 +77,7 @@ public class GambleManager_renewal : MonoBehaviour {
         betSlider.wholeNumbers = true;
         betSlider.value = 0;
 
-        betSlider.interactable = PlayerManager.Instance.satoshiBankCash > 0;
+       betSlider.interactable = PlayerManager.Instance.satoshiBankCash > 0;
 
         betSlider.onValueChanged.AddListener(_ => UpdateBetTexts());
         UpdateBetTexts();
@@ -83,20 +85,44 @@ public class GambleManager_renewal : MonoBehaviour {
 
     long GetBetAmount() {
         double bankCash = PlayerManager.Instance.satoshiBankCash;
-        int percent = (int)betSlider.value; // 0 ~ 100
+        int percent = (int)betSlider.value;
 
-        // 반올림 기준을 명확히
-        return (long)Math.Floor(bankCash * percent / 100.0);
+        long calculatedBet = (long)Math.Floor(bankCash * percent / 100.0);
+
+        // 직급별 한도 적용
+        long limit = OfficeManager.Instance.GetGambleLimit();
+
+        if (calculatedBet > limit) {
+            return limit;
+        }
+
+        return calculatedBet;
     }
-
 
     // 베팅 관련 텍스트 갱신
     void UpdateBetTexts() {
         long betAmount = GetBetAmount();
         double bankCash = PlayerManager.Instance.satoshiBankCash;
+        long limit = OfficeManager.Instance.GetGambleLimit();
 
-        betAmountText.text = $"배팅 금액: {betAmount:N0}";
+        // 1. 배팅 금액 텍스트
+        bool isLimited = (betAmount >= limit) && (bankCash > limit);
+        if (isLimited) {
+            betAmountText.text = $"배팅 금액: {betAmount:N0} (MAX)";
+            betAmountText.color = Color.red; // 한도 도달 시 빨간색 강조
+        } else {
+            betAmountText.text = $"배팅 금액: {betAmount:N0}";
+            betAmountText.color = Color.white;
+        }
+
+        // 2. 은행 잔고 텍스트
         bankCashText.text = $"은행 잔고: {bankCash:N0}";
+
+        // 3. [추가] 배팅 한도 텍스트 갱신
+        if (limitText != null) {
+            // 예: "한도: 1,000만"
+            limitText.text = $"최대 배팅 한도: {limit:N0}원";
+        }
 
         UpdatePayoutText(betAmount);
     }

@@ -87,4 +87,18 @@ public class FourNanceManager : MonoBehaviour {
         }
         return 0;
     }
+
+    public double GetTotalEquity() {
+        if (PlayerManager.Instance == null) return 0;
+
+        // 1. 현금
+        double currentCash = PlayerManager.Instance.fournanceCash;
+        // 2. 증거금
+        double usedMargin = GetUsedMargin();
+        // 3. 미실현 손익
+        double pnlUsd = GetCurrentPnL();
+
+        // 합산 (Equity)
+        return currentCash + usedMargin + pnlUsd;
+    }
 }

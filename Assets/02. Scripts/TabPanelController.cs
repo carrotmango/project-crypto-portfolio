@@ -23,7 +23,7 @@ public class TabPanelController : MonoBehaviour {
     public GameObject glossaries;       // Hierarchy의 'Glossaries' (에어드랍 상세 등 부모)
     public GameObject capitalDeposit;
     public GameObject skillUpgrade;
-
+    public OfficePanelController officeController;
 
 
     [Header("Controllers")]
@@ -112,18 +112,25 @@ public class TabPanelController : MonoBehaviour {
         if (perpPanel !=null) perpPanel.SetActive(false);
     }
 
+
     public void ToggleStatusPanel() {
-        CloseSubPanelsIfOpen(); // 모든 오피스 하위 패널이 여기서 꺼짐
+        CloseSubPanelsIfOpen();
 
         if (officePanel != null) {
             officePanel.SetActive(true);
-            // 사무실에 들어올 때만 'Buttons'를 켜서 초기 상태 유지
-            if (officeButtons != null) officeButtons.SetActive(true);
 
-            // 데이터 갱신이 필요하다면 호출
-            officePanel.GetComponent<OfficePanelController>()?.RefreshAll();
+            if (officeButtons != null)
+                officeButtons.SetActive(true);
+
+            // GetComponent를 쓰지 않고, 직접 연결된 변수를 사용합니다.
+            if (officeController != null) {
+                // 이제 무조건 실행됩니다.
+                officeController.EnterOffice();
+            } else {
+            }
         }
     }
+
 
     public void ShowOutingPanel() {
         CloseSubPanelsIfOpen();

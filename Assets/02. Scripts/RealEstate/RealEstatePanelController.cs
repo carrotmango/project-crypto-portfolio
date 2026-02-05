@@ -18,6 +18,8 @@ public class RealEstatePanelController : MonoBehaviour {
     public CanvasGroup pageCanvasGroup;
     public float fadeDuration = 0.25f;
 
+    public event Action OnRealEstateChanged;
+
     private bool isTransitioning = false;
     DateTime Now => CoinManager.Instance.CurrentDateTime;
     DateTime lastUIRefreshDate;
@@ -229,9 +231,11 @@ public class RealEstatePanelController : MonoBehaviour {
         data.owned = true;
         data.ownedText = "보유중";
         data.buyDate = Now;
+        data.purchasePrice = data.price;
         data.nextIncomeDate = Now.AddDays(7);
 
         RefreshPage();
+        OnRealEstateChanged?.Invoke();
     }
     public void SellEstate(RealEstateData data) {
         if (!data.owned)
@@ -243,6 +247,7 @@ public class RealEstatePanelController : MonoBehaviour {
         data.ownedText = "미보유";
 
         RefreshPage();
+        OnRealEstateChanged?.Invoke();
     }
 
     //void CheckEstateIncome() {
@@ -312,7 +317,7 @@ public class RealEstatePanelController : MonoBehaviour {
                 }
 
                 data.lastPriceUpdateDate = Now;
-
+                OnRealEstateChanged?.Invoke();
                 // 디버그용: 가격 변동 로그
                 // Debug.Log($"[시세변동] {data.name}: {change*100:F2}% 변동 -> {data.price:N0}원");
             }

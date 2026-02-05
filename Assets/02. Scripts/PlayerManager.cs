@@ -20,6 +20,21 @@ public class PlayerManager : MonoBehaviour {
     public double realizedProfit = 0;
     public double totalBullbitDeposit = 0;
     public double totalFeePaid = 0;
+    public long totalSalaryReceived = 0;      // 누적 수령 급여
+    public int totalPartTimeJobCount = 0;     // 누적 알바 횟수
+    public long totalPartTimeJobIncome = 0;   // 누적 알바 수입
+    public int totalLotteryTicketCount = 0;   // 누적 복권 구매 수
+    public long totalLotterySpentAmount = 0;  // 누적 복권 구매 금액
+    public long totalLotteryWonAmount = 0;    // 누적 복권 당첨 금액
+    public long totalRealEstateIncome = 0;
+
+    [Header("Fournance (선물) 전용 누적 통계")]
+    public double fournanceTotalVolume = 0;   // 누적 거래량 (레버리지 포함 금액)
+    public double fournanceTotalFee = 0;      // 누적 수수료 (진입+종료)
+    public double fournanceRealizedPnL = 0;   // 누적 실현 손익 (확정된 수익/손실)
+
+    public event Action OnStatsChanged;
+ 
 
     public Dictionary<string, double> holdings = new();
     public Dictionary<string, double> totalBuyAmount = new();
@@ -35,6 +50,32 @@ public class PlayerManager : MonoBehaviour {
         if (bullbitCash > 0) {
             totalBullbitDeposit += bullbitCash;
         }
+    }
+
+    // 알바
+    public void AddPartTimeJob(long income) {
+        totalPartTimeJobCount++;
+        totalPartTimeJobIncome += income;
+        OnStatsChanged?.Invoke();
+    }
+
+    // 급여
+    public void AddSalary(long amount) {
+        totalSalaryReceived += amount;
+        OnStatsChanged?.Invoke();
+    }
+
+    // 복권 구매
+    public void AddLotteryBuy(long price) {
+        totalLotteryTicketCount++;
+        totalLotterySpentAmount += price;
+        OnStatsChanged?.Invoke();
+    }
+
+    // 복권 당첨
+    public void AddLotteryWin(long amount) {
+        totalLotteryWonAmount += amount;
+        OnStatsChanged?.Invoke();
     }
 
     public void SetPlayerName(string name) {
@@ -247,4 +288,23 @@ public class PlayerManager : MonoBehaviour {
 
         // ddTradeVolume(거래대금 누적)을 호출하지 않음
     }
+
+    public string PlayerTitle {
+        get {
+            if (OfficeManager.Instance != null) {
+                return OfficeManager.Instance.GetCurrentTitle();
+            }
+            return "무직";
+        }
+    }
+
+    // 직급 인덱스도 OfficeManager의 새 변수를 참조
+    public int PlayerTitleIndex {
+        get {
+            if (OfficeManager.Instance == null) return 0;
+            return OfficeManager.Instance.currentRankIndex;
+        }
+    }
+
+
 }

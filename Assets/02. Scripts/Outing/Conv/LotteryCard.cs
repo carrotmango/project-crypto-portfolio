@@ -51,6 +51,9 @@ public class LotteryCard : MonoBehaviour {
     public void OnClick_Buy() {
         if (playerManager.satoshiBankCash >= ticketPrice) {
             playerManager.satoshiBankCash -= ticketPrice;
+
+            PlayerManager.Instance.AddLotteryBuy(ticketPrice);
+
             Debug.Log($"복권 구매 완료! 잔액: {playerManager.satoshiBankCash}원");
 
             lotteryPanel.SetActive(true);
@@ -211,6 +214,8 @@ public class LotteryCard : MonoBehaviour {
 
         if (currentWinningAmount > 0) {
             playerManager.satoshiBankCash += currentWinningAmount;
+            PlayerManager.Instance.AddLotteryWin(currentWinningAmount);
+
             resultString = NumberToKorean(currentWinningAmount);
             Debug.Log($"★ {currentWinningAmount}원 입금 완료!");
         } else {

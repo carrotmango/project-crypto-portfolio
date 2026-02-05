@@ -132,15 +132,18 @@ public class StatusPanelController : MonoBehaviour {
         double crypto = CoinManager.Instance.GetBullbitAsset();
         double bank = CoinManager.Instance.GetSatoshiBankAsset();
         double estate = GetEstateAsset();
-        double fCashUsd = PlayerManager.Instance.fournanceCash;
-        double fCashKrw = fCashUsd * GlobalEconomyManager.UsdToKrw;
+
+        // [수정] 단순 현금이 아니라 '총 자산(Equity)'을 가져옵니다.
+        double fTotalKrw = GetFournanceTotalAssetKRW();
+        double fTotalUsd = fTotalKrw / GlobalEconomyManager.UsdToKrw; // USD 표시용 역산
 
         CryptoAsset.text = $"불비트 ({(crypto / safeTotal) * 100:F0}%): {crypto:N0} KRW";
         CashAsset.text = $"은행 ({(bank / safeTotal) * 100:F0}%): {bank:N0} KRW";
         estateAsset.text = $"부동산 ({(estate / safeTotal) * 100:F0}%): {estate:N0} KRW";
 
         if (fournanceAsset != null) {
-            fournanceAsset.text = $"포넨스 ({(fCashKrw / safeTotal) * 100:F0}%): ${fCashUsd:N2} USD";
+            // [수정] fTotalUsd는 (현금 + 증거금 + PnL)이 다 합쳐진 금액입니다.
+            fournanceAsset.text = $"포넨스 ({(fTotalKrw / safeTotal) * 100:F0}%): ${fTotalUsd:N2} USD";
         }
 
         totalAsset.text = $"총자산: \n {total:N0} KRW";
@@ -150,10 +153,24 @@ public class StatusPanelController : MonoBehaviour {
         double crypto = CoinManager.Instance.GetBullbitAsset();
         double cash = CoinManager.Instance.GetSatoshiBankAsset();
         double estate = GetEstateAsset();
-        double fCashKrw = PlayerManager.Instance.fournanceCash * GlobalEconomyManager.UsdToKrw;
 
-        return crypto + cash + estate + fCashKrw;
+        // [수정] 포넨스 자산도 Equity(KRW)로 계산
+        double fTotalKrw = GetFournanceTotalAssetKRW();
+
+        return crypto + cash + estate + fTotalKrw;
     }
+    private double GetFournanceTotalAssetKRW() {
+        // 1. 포넨스 매니저가 있으면 거기서 계산된 총액(USD)을 받아옵니다.
+        if (FourNanceManager.Instance != null) {
+            double equityUsd = FourNanceManager.Instance.GetTotalEquity();
+            return equityUsd * GlobalEconomyManager.UsdToKrw;
+        }
 
+        // 2. 매니저도 없다면 최소한 플레이어 현금이라도 가져옴 (비상용)
+        if (PlayerManager.Instance != null) {
+            return PlayerManager.Instance.fournanceCash * GlobalEconomyManager.UsdToKrw;
+        }
+        return 0;
+    }
 
 }

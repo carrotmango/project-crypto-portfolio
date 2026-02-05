@@ -230,20 +230,30 @@ public class LiveChartRenderer : MonoBehaviour {
     }
 
     // [수정됨] tradeHistory.Clear()를 제거하여 기록 유지
+    // [수정됨] 버튼 클릭용 (기존과 동일하게 동작)
     public void SwitchInterval(ChartInterval interval) {
+        SwitchInterval(interval, true); // 무조건 초기화
+    }
+
+    // [신규] 내부 로직용 (위치 유지 옵션 추가)
+    public void SwitchInterval(ChartInterval interval, bool resetView) {
+        // 1. 현재 상태 저장 (9시 갱신일 때 사용)
+        float oldX = chartContent.anchoredPosition.x;
+        bool wasFollowing = followLatest;
+
         currentInterval = interval;
-        ClearChart(); // 시각적 캔들 객체만 초기화
+        ClearChart(); // 기존 뷰 삭제
 
-        // [중요] tradeHistory.Clear(); <-- 이 줄을 삭제했기 때문에 기록이 유지됩니다.
-        // 단, 4H와 1D의 인덱스는 다르므로 1D로 바꾸면 마커 위치가 안 맞을 수 있습니다.
-        // (완벽한 해결을 위해선 Timestamp가 필요하지만, 현재 요청하신 '유지' 기능은 이것으로 충분합니다)
-
-        isDragging = false;
-        followLatest = true;
-        currentCandle = null;
+        // 2. 버튼으로 눌렀거나 강제 리셋이면 상태 초기화
+        if (resetView) {
+            isDragging = false;
+            followLatest = true;
+            wasFollowing = true;
+        }
 
         UpdateIntervalButtonUI();
 
+        // --- 데이터 렌더링 로직 (기존과 동일) ---
         List<RuntimeCandle> dataToRender = new List<RuntimeCandle>();
         var history = targetCoin.CandleHistory;
 
@@ -253,6 +263,7 @@ public class LiveChartRenderer : MonoBehaviour {
             }
             SetupCurrentCandleFor4H();
         } else {
+            // 1D Aggregation Logic
             int totalCount = history.Count;
             int remainder = totalCount % 6;
             int fullDayCount = totalCount - remainder;
@@ -273,12 +284,28 @@ public class LiveChartRenderer : MonoBehaviour {
         foreach (var c in dataToRender) {
             CreateCandleVisual(c);
         }
+        // ----------------------------------------
 
         initialized = true;
         RefreshAllCandlePositions();
         Canvas.ForceUpdateCanvases();
-        SnapToLatest();
-        StartCoroutine(SnapInitialNextFrame());
+
+        // 3. [핵심 Fix] 위치 복구 로직
+        if (resetView) {
+            // 버튼 클릭 등 리셋이 필요하면 강제로 최신으로 이동 및 코루틴 실행
+            SnapToLatest();
+            StartCoroutine(SnapInitialNextFrame());
+        } else {
+            // 9시 갱신인 경우: 코루틴(SnapInitialNextFrame)을 실행하지 않음!
+            if (wasFollowing) {
+                // 최신을 보고 있었다면 자연스럽게 최신 위치로 스냅
+                SnapToLatest();
+            } else {
+                // 과거를 보고 있었다면 위치(X좌표)를 그대로 유지
+                chartContent.anchoredPosition = new Vector2(oldX, 0f);
+                followLatest = false;
+            }
+        }
     }
 
     private List<RuntimeCandle> AggregateFullDaysOnly(List<ChartRenderer.CandleData> history, int limitCount) {
@@ -860,15 +887,25 @@ public class LiveChartRenderer : MonoBehaviour {
     }
     void HandleCandleBoundary(DateTime time) {
         if (currentInterval == ChartInterval._1D) {
-            if (time.Hour == 9 && time.Minute == 0) SwitchInterval(ChartInterval._1D);
+            if (time.Hour == 9 && time.Minute == 0) {
+                // false를 넘겨서 "위치 초기화 하지 마!"라고 명령
+                SwitchInterval(ChartInterval._1D, false);
+            }
             return;
         }
+
+        // 4H 로직 유지
         var realRuntime = targetCoin.CurrentRuntimeCandle;
         if (realRuntime == null) return;
         currentCandle = new RuntimeCandle();
         currentCandle.Start(realRuntime.Open);
         CreateCandleVisual(currentCandle);
+
+        // 4H에서도 최신을 보고 있을 때만 스냅
+        if (followLatest) SnapToLatest();
     }
+
+
     void TickPrice() {
         priceDriver.SetTargetPrice(targetCoin.CurrentPrice);
         priceDriver.Tick(Time.deltaTime);
@@ -894,44 +931,43 @@ public class LiveChartRenderer : MonoBehaviour {
         Camera cam = (parentCanvas.renderMode == RenderMode.ScreenSpaceOverlay) ? null : parentCanvas.worldCamera;
         Vector2 localMousePos;
 
-        // 1. 뷰포트 내부에서의 마우스 위치를 구함
+        // 1. 뷰포트 내 마우스 위치 구하기
         if (RectTransformUtility.ScreenPointToLocalPointInRectangle(viewport, Input.mousePosition, cam, out localMousePos)) {
 
-            // [핵심 1] 줌 하기 전, "컨텐츠 시작점(0)"에서 "마우스"까지의 거리 계산
-            float oldContentX = chartContent.anchoredPosition.x;
-            float mouseOffsetFromOrigin = localMousePos.x - oldContentX;
+            // [핵심 로직 변경]
+            // 기존: 좌표 오프셋 비율 방식 -> 수정: "몇 번째 캔들(Index) 위인가"를 기준으로 계산
 
-            // [핵심 2] 줌 실행 (spacing 변경)
-            float oldSpacing = candleSpacing;
+            // 2. 현재 마우스가 차트 컨텐츠의 시작점(x=0)으로부터 얼마나 떨어져 있는지 계산
+            // (뷰포트 기준 마우스 X - 컨텐츠 현재 X)
+            float mousePosOnContent = localMousePos.x - chartContent.anchoredPosition.x;
+
+            // 3. 마우스가 가리키고 있는 '논리적 위치(Index)' 계산 (예: 50.5번째 캔들)
+            // 이 값은 줌을 해도 변하지 않아야 하는 기준점입니다.
+            float pivotIndex = mousePosOnContent / candleSpacing;
+
+            // 4. 줌 실행 (Spacing 변경)
             ApplyZoom(scroll * zoomSensitivity);
-            float newSpacing = candleSpacing;
 
-            // 간격이 실제로 변했을 때만 위치 보정 수행
-            if (Mathf.Abs(newSpacing - oldSpacing) > 0.001f) {
-                // [핵심 3] 확대/축소 비율 계산 (예: 10 -> 20이면 2배)
-                float zoomRatio = newSpacing / oldSpacing;
+            // 5. 변경된 Spacing을 기준으로, 아까 그 Index가 새로운 픽셀 위치로 어디가 되어야 하는지 계산
+            float newMousePosOnContent = pivotIndex * candleSpacing;
 
-                // [핵심 4] 비율에 맞춰 새로운 거리 계산
-                // 예: 거리가 100이었는데 2배 줌되면 200이 되어야 함
-                float newMouseOffset = mouseOffsetFromOrigin * zoomRatio;
+            // 6. 마우스 커서 위치(localMousePos.x)에 해당 캔들이 오도록 컨텐츠 위치(anchoredPosition) 보정
+            // 식: (마우스 위치) - (새로운 컨텐츠상 마우스 위치) = (새로운 컨텐츠 시작점)
+            float newContentX = localMousePos.x - newMousePosOnContent;
 
-                // [핵심 5] 마우스 커서 위치는 화면에 고정되어야 하므로,
-                // 늘어난 거리만큼 컨텐츠 시작점(X)을 뒤로 밀어줌
-                float newContentX = localMousePos.x - newMouseOffset;
+            // 7. 스크롤 범위 제한
+            float maxScrollX = maxPastScrollCandles * candleSpacing;
+            float minScrollX = GetMaxFutureScrollX();
+            newContentX = Mathf.Clamp(newContentX, minScrollX, maxScrollX);
 
-                // 범위 제한 (너무 멀리 스크롤되지 않게)
-                float maxScrollX = maxPastScrollCandles * candleSpacing;
-                float minScrollX = GetMaxFutureScrollX();
-                newContentX = Mathf.Clamp(newContentX, minScrollX, maxScrollX);
+            // 8. 적용
+            chartContent.anchoredPosition = new Vector2(newContentX, 0f);
 
-                // 위치 적용
-                chartContent.anchoredPosition = new Vector2(newContentX, 0f);
-
-                // 마우스로 줌을 당겼다는 건 특정 지점을 보고 싶다는 뜻이므로 '최신 따라가기' 해제
-                followLatest = false;
-            }
+            // 줌을 했다는 건 특정 위치를 보겠다는 의도이므로 '최신 따라가기' 해제
+            followLatest = false;
         }
     }
+
     void RefreshAllCandlePositions() {
         if (candles.Count == 0) return;
         for (int i = 0; i < candleViews.Count; i++) {
