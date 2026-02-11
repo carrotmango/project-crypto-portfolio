@@ -14,6 +14,10 @@ public class CoinData {
     public CoinType Type = CoinType.Normal;
     public double FixedDollarValue = 1.0;
     public bool IsDelisted = false;
+    public string Theme;          // 테마 (문자열로 저장)
+    public int Volatility;        // 변동성 레벨
+    public string Description;    // 설명
+    public bool IsListed;         // 현재 상장 여부
 
     // ===== 기존 구조 유지 =====
     public const int MaxCandleHistory = 35;

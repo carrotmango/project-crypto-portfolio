@@ -120,21 +120,6 @@ public class CoinManager : MonoBehaviour
 
     void Start()
     {
-        //foreach (var meta in CoinMetaDatabase.AllCoins)
-        //{
-        //    if (meta.BullbitListed)
-        //    {
-        //        var coin = new CoinData(meta.Name, meta.Symbol, meta.InitialPrice, meta.MaxSupply);
-        //        coins.Add(coin);
-        //    }
-        //}
-
-        //UpdateCashText();
-        //UpdateDateText();
-        //UpdateSpeedButtonVisuals();
-        //assetPanelController.RenderPlatformRows();
-
-        //StartCoroutine(GameTickRoutine());
         StartCoroutine(InitializeRoutine());
         StartCoroutine(RealtimeUIUpdateRoutine());
     }
@@ -498,11 +483,26 @@ public class CoinManager : MonoBehaviour
 
         foreach (var meta in CoinMetaDatabase.AllCoins) {
             if (meta.BullbitListed) {
+                if (!meta.IsDefaultListed) {
+                    // 기본 상장이 아닌 놈(랜덤 상장 후보)은 50% 확률로 탈락시킴
+                    if (UnityEngine.Random.value < 0.5f) {
+                        continue; // 이번 판엔 상장 안 함 (Skip)
+                    }
+                }
                 // Theme Stable 타입으로 생성
                 CoinType type = (meta.Theme == CoinTheme.Stable) ? CoinType.Stable : CoinType.Normal;
 
                 // CoinData 생성자 파라미터에 type 추가 (CoinData 생성자 수정 필요)
                 var coin = new CoinData(meta.Name, meta.Symbol, meta.InitialPrice, meta.MaxSupply, type);
+
+                coin.IsListed = true;   // <--- 이게 있어야 "상장됨"으로 인식
+                coin.IsDelisted = false;
+
+                // 메타 데이터 정보 주입 (CoinData에 새로 추가하신 변수들)
+                coin.Theme = meta.Theme.ToString();
+                coin.Volatility = meta.VolatilityLevel;
+                coin.Description = meta.Description;
+
                 coins.Add(coin);
             }
         }
@@ -561,6 +561,41 @@ public class CoinManager : MonoBehaviour
     public string GetCurrentDateString() {
 
         return currentDateTime.ToString("yyyy/MM/dd");
+    }
+
+    // [추가] 이벤트 매니저가 호출할 신규 상장 함수
+    public void ListNewCoinFromMeta(string symbol) {
+        // 1. 중복 체크
+        if (coins.Exists(c => c.Symbol == symbol)) return;
+
+        // 2. 메타 데이터 찾기
+        var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
+        if (meta == null) {
+            Debug.LogError($"[CoinManager] 메타 데이터 없음: {symbol}");
+            return;
+        }
+
+        // 3. 코인 생성 (InitializeRoutine과 똑같은 방식 사용)
+        CoinType type = (meta.Theme == CoinTheme.Stable) ? CoinType.Stable : CoinType.Normal;
+        var newCoin = new CoinData(meta.Name, meta.Symbol, meta.InitialPrice, meta.MaxSupply, type);
+
+        // 추가 속성 할당 (CoinData에 해당 필드가 있다면 주석 해제)
+        // newCoin.Theme = meta.Theme.ToString();
+        // newCoin.Volatility = meta.VolatilityLevel;
+        newCoin.IsListed = true;
+        newCoin.IsDelisted = false;
+
+        // 4. 리스트 추가
+        coins.Add(newCoin);
+
+        // 5. UI 갱신
+        var uiManager = FindAnyObjectByType<MainUIManager>();
+        if (uiManager != null) {
+            uiManager.AddCoinRow(newCoin);
+        }
+        assetPanelController?.RenderPlatformRows();
+
+        Debug.Log($"[이벤트 상장] {meta.Name}({meta.Symbol}) 거래 개시!");
     }
 
 }

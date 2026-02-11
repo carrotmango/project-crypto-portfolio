@@ -101,6 +101,25 @@ public class EventManager : MonoBehaviour {
         var rule = s.rule;
         DateTime now = coinManager.CurrentDateTime;
 
+        // 1. 목록이 채워져 있는지 확인 (비어있으면 검사 패스 -> 무조건 실행)
+        if (rule.prerequisitesSymbols != null && rule.prerequisitesSymbols.Length > 0) {
+
+            foreach (var sym in rule.prerequisitesSymbols) {
+                // 코인 매니저의 현재 활성 코인 리스트에서 해당 심볼 찾기
+                var coin = coinManager.coins.Find(c => c.Symbol == sym);
+
+                // 2. 코인이 아예 없거나(null), 있더라도 상장 해제(IsListed == false) 상태라면?
+                if (coin == null || !coin.IsListed) {
+                    // 로그 하나 남겨두면 나중에 "이거 왜 실행 안 됐지?" 할 때 좋습니다.
+                    Debug.Log($"[Event] '{rule.key}' 실행 취소됨. (필수 코인 '{sym}' 미상장 상태)");
+
+                    // ★ 핵심: 여기서 함수를 강제 종료(return)해서 이벤트를 증발시킵니다.
+                    return;
+                }
+            }
+        }
+
+
         if (string.IsNullOrEmpty(rule.authorId)) {
             //Debug.LogWarning($"[Event] authorId 없음: {rule.key}");
             return;

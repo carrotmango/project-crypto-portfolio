@@ -1,0 +1,64 @@
+{
+  "templates": [
+    {
+      "//": "도지/페페 떡상 (40% 이상)",
+      "content": "와 {0} 무빙 뭐냐? ㅋㅋ?",
+      "targetSymbols": ["DOGE", "PEPE"],
+      "minChange": 40,
+      "width": 550,
+      "height": 300
+    },
+    {
+      "//": "도지 전용 (일론 언급)",
+      "content": "일론 형 믿고 있었다구!!! 도지 1달러 가즈아ㅏㅏ",
+      "targetSymbols": ["DOGE"],
+      "fixedName": "도지아빠",
+      "minChange": 40,
+      "width": 550,
+      "height": 300
+    },
+    {
+      "//": "도지/페페 홀딩 독려",
+      "content": "도지 페페 홀딩들 하십시오,,, 사이버펑크 시대를 맞이하라,,,,",
+      "targetSymbols": ["DOGE", "PEPE"],
+      "minChange": 40,
+      "width": 550,
+      "height": 300
+    },
+    {
+      "//": "숏은안돼요",
+      "content": "도지 페페 숏잡으면 혼납니다",
+      "targetSymbols": ["DOGE", "PEPE"],
+      "minChange": 40,
+      "width": 550,
+      "height": 300
+    },
+    {
+      "//": "페페 전용 (1회성)",
+      "content": "묻지마라... {0} 풀매수 완료",
+      "targetSymbols": ["PEPE"],
+      "fixedName": "페페러버",
+      "width": 550,
+      "height": 300,
+      "isOneTime": true
+    },
+    {
+      "//": "떡락 절규",
+      "content": "{0} 이거 스캠이었나요..? 내 돈 환불 안되나요...;;",
+      "targetSymbols": ["DOGE", "PEPE"],
+      "maxChange": -5,
+      "width": 550,
+      "height": 300
+    },
+    {
+      "//": "횡보 (1회성)",
+      "content": "{0} 거래량이 없네요.. 운전수는 주무시고 계신가?",
+      "targetSymbols": ["DOGE", "PEPE"],
+      "minChange": -1,
+      "maxChange": 1,
+      "width": 550,
+      "height": 250,
+      "isOneTime": true
+    }
+  ]
+}

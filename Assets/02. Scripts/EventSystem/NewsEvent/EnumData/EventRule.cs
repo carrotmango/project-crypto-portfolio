@@ -26,4 +26,11 @@ public class EventRule {
     // AfterPrerequisite
     public DayOffset dayOffset;
     public TimeRule timeRule;
+
+
+    // =================================================================
+    //  필수 코인 심볼 목록 (이 코인들이 상장되어 있어야만 이벤트 실행)
+    // 상장 이벤트시 비워둘것
+    // =================================================================
+    public string[] prerequisitesSymbols;
 }
