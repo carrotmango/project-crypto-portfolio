@@ -114,7 +114,6 @@ public class CapitalDepositPanel : MonoBehaviour {
         if (currentCapitalLabel != null) currentCapitalLabel.text = $"납입금액: {currentCap:N0}";
     }
 
-    // ★ 여기가 수정된 핵심 로직입니다 ★
     void OnClickDeposit() {
         if (inputField == null) return;
         if (OfficeManager.Instance == null) return;

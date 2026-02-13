@@ -57,7 +57,7 @@ public class RealEstatePanelController : MonoBehaviour {
             id = "room_001",
             name = "작은 원룸",
             price = 5000000,
-            monthlyYield = 0.013f,
+            monthlyYield = 0.033f,
             owned = false,
             imageKey = "estate_500"
         },
@@ -65,7 +65,7 @@ public class RealEstatePanelController : MonoBehaviour {
             id = "room_002",
             name = "안산시 원룸",
             price = 10000000,
-            monthlyYield = 0.021f,
+            monthlyYield = 0.037f,
             owned = false,
             imageKey = "estate_1000"
         },
@@ -73,7 +73,7 @@ public class RealEstatePanelController : MonoBehaviour {
             id = "room_002",
             name = "오이도 쓰리룸",
             price = 70000000,
-            monthlyYield = 0.016f,
+            monthlyYield = 0.031f,
             owned = false,
             imageKey = "estate_7000"
         },
@@ -81,7 +81,7 @@ public class RealEstatePanelController : MonoBehaviour {
             id = "room_003",
             name = "구로동 원룸",
             price = 50000000,
-            monthlyYield = 0.019f,
+            monthlyYield = 0.042f,
             owned = false,
             imageKey = "estate_5000"
         },
@@ -89,7 +89,7 @@ public class RealEstatePanelController : MonoBehaviour {
             id = "room_004",
             name = "성산동 원룸",
             price = 100000000,
-            monthlyYield = 0.018f,
+            monthlyYield = 0.045f,
             owned = false,
             imageKey = "estate_10000"
         },
@@ -97,7 +97,7 @@ public class RealEstatePanelController : MonoBehaviour {
             id = "room_005",
             name = "롯데캐슬 잠실 (166m²)",
             price = 3000000000,
-            monthlyYield = 0.033f,
+            monthlyYield = 0.073f,
             owned = false,
             imageKey = "estate_3B"
         },
@@ -234,6 +234,7 @@ public class RealEstatePanelController : MonoBehaviour {
         data.purchasePrice = data.price;
         data.nextIncomeDate = Now.AddDays(7);
 
+        TransactionManager.Instance.AddRecord("부동산", data.price, "출금", "사토시 현금");
         RefreshPage();
         OnRealEstateChanged?.Invoke();
     }
@@ -246,6 +247,7 @@ public class RealEstatePanelController : MonoBehaviour {
         data.owned = false;
         data.ownedText = "미보유";
 
+        TransactionManager.Instance.AddRecord("부동산", data.price, "입금", "사토시 현금");
         RefreshPage();
         OnRealEstateChanged?.Invoke();
     }
@@ -354,7 +356,8 @@ public class RealEstatePanelController : MonoBehaviour {
             if (GlobalNotificationManager.Instance != null) {
 
                 string message = $"{totalIncome:N0}원이 입금되었습니다.";
-                string fullDetail = $"[부동산 수익 입금]\n\n보유하신 부동산에서 수익이 발생하여 계좌로 입금되었습니다.\n\n입금액: +{totalIncome:N0}원";
+                string fullDetail = $"[부동산 임대료 입금]\n\n보유하신 부동산에서 수익이 발생하여 계좌로 입금되었습니다.\n\n입금액: +{totalIncome:N0}원";
+                TransactionManager.Instance.AddRecord("부동산", totalIncome, "입금", "사토시 현금");
 
                 GlobalNotificationManager.Instance.ShowNotification(
                     "RealEstate",   // 타입 (초록색 or 파란색)

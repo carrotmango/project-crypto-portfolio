@@ -146,6 +146,19 @@ public class AppSelectorController : MonoBehaviour {
         }
     }
 
+    public void CloseSatoshiBank() {
+        if(bankPanel != null) {
+            bankPanel.SetActive(false);
+            if (marketPanel != null && marketPanel.activeSelf) {
+                return;
+            } else {
+                if(appPanel != null) {
+                    appPanel.SetActive(true);
+                }
+            }
+        }
+    }
+
     // [수정됨] 포낸스(선물) 앱 열기 (잠금 체크 추가)
     public void OpenFourNance() {
         // 1. 해금 여부 체크

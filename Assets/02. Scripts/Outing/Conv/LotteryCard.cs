@@ -55,6 +55,7 @@ public class LotteryCard : MonoBehaviour {
             PlayerManager.Instance.AddLotteryBuy(ticketPrice);
 
             Debug.Log($"복권 구매 완료! 잔액: {playerManager.satoshiBankCash}원");
+            TransactionManager.Instance.AddRecord("복권", ticketPrice, "출금", "사토시 현금");
 
             lotteryPanel.SetActive(true);
             StartGame();
@@ -218,6 +219,7 @@ public class LotteryCard : MonoBehaviour {
 
             resultString = NumberToKorean(currentWinningAmount);
             Debug.Log($"★ {currentWinningAmount}원 입금 완료!");
+            TransactionManager.Instance.AddRecord("복권", currentWinningAmount, "입금", "사토시 현금");
         } else {
             Debug.Log("꽝입니다...");
         }

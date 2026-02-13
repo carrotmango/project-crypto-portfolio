@@ -68,6 +68,8 @@ public class PartTimeJobController : MonoBehaviour {
         message += $"--------------------\n" +
                    $"총 지급액: {totalWage:N0}원";
 
+        TransactionManager.Instance.AddRecord("아르바이트", totalWage, "입금", "사토시 현금");
+
         UIManager.Instance.ShowConfirm(message);
 
         // 5. 마무으리
@@ -118,6 +120,8 @@ public class PartTimeJobController : MonoBehaviour {
         }
 
         message += $"총 지급액: {totalWage:N0}원";
+
+        TransactionManager.Instance.AddRecord("아르바이트", totalWage, "입금", "사토시 현금");
 
         UIManager.Instance.ShowConfirm(message);
 

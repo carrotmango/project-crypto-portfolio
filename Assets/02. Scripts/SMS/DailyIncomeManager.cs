@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor.Localization.Plugins.XLIFF.V12;
 using UnityEngine;
 
 public class DailyIncomeManager : MonoBehaviour {
@@ -39,6 +40,8 @@ public class DailyIncomeManager : MonoBehaviour {
         fullBody += "\n--------------------------------\n";
         fullBody += $"실 수령액: {total:N0}원\n";
         fullBody += "사토시 은행 계좌로 지급되었습니다.";
+
+        TransactionManager.Instance.AddRecord("급여", total, "입금", "사토시 현금");
 
         // 3. 글로벌 알림 호출 (파란색 Bank 테마)
         if (GlobalNotificationManager.Instance != null) {

@@ -63,6 +63,7 @@ public class WebMessageSender : MonoBehaviour
         {
             lastSyncedDay = currentDay;
             SendPlayerDataToWeb();
+            Debug.Log($"totalAsset:{totalAsset}");
             Debug.Log("[WebMessageSender] 플레이어 데이터 전송 완료");
         }
     }

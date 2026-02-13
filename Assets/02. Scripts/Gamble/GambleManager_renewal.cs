@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections;
 using System;
+using UnityEditor.Localization.Plugins.XLIFF.V12;
 
 public class GambleManager_renewal : MonoBehaviour {
 
@@ -236,6 +237,8 @@ public class GambleManager_renewal : MonoBehaviour {
         if (mode == "GAMBLE MONSTER") gambleMonster.GambleStart();
         else if (mode == "COIN FLIP") coinFlip.GambleStart();
         else if (mode == "DEATH FUN") deathFun.GambleStart();
+
+        TransactionManager.Instance.AddRecord("오락실", betAmount, "출금", "사토시 현금");
     }
 
 
@@ -273,9 +276,10 @@ public class GambleManager_renewal : MonoBehaviour {
 
         if (reward > 0) {
             PlayerManager.Instance.satoshiBankCash += reward;
+            TransactionManager.Instance.AddRecord("오락실", reward, "입금", "사토시 현금");
             CoinManager.Instance.UpdateCashText();
         }
-
+        
         currentBetAmount = 0;
         InitSlider();
         UpdateGameLabel();

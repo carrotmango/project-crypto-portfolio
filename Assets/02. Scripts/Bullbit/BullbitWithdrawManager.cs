@@ -229,6 +229,9 @@ public class BullbitWithdrawManager : MonoBehaviour {
             PlayerManager.Instance.ChangeBullbitCash(-totalDeduct);
 
             PlayerManager.Instance.satoshiBankCash += amount;
+
+            TransactionManager.Instance.AddRecord("불비트", amount, "입금", "사토시 현금");
+
         } else {
             string symbol = coinDropdown.options[coinDropdown.value].text.Trim().ToUpper();
             string destination = exchangeDropdown.options[exchangeDropdown.value].text;

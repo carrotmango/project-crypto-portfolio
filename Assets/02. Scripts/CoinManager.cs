@@ -316,8 +316,10 @@ public class CoinManager : MonoBehaviour
         return total;
     }
 
+    public double GetCompanyCapital() => OfficeManager.Instance.companyCapital;
+
     public double GetSatoshiBankAsset() => PlayerManager.Instance.satoshiBankCash;
-    public double GetTotalUserAsset() => GetBullbitAsset() + GetSatoshiBankAsset();
+    public double GetTotalUserAsset() => GetBullbitAsset() + GetSatoshiBankAsset() + GetCompanyCapital();
     //public double GetTotalUserAsset() => GetBullbitAsset() + GetSatoshiBankAsset() + GetGambleCashFromSatoshiBank(); // 구버전
 
     public void UpdateCashText() {

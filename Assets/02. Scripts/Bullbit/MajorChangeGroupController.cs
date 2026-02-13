@@ -8,9 +8,9 @@ public class MajorChangeGroupController : MonoBehaviour {
     public TextMeshProUGUI[] rateTexts;
     public CanvasGroup canvasGroup;
 
-    public Color positiveColor = new Color32(0, 200, 0, 255);   // green
-    public Color negativeColor = new Color32(220, 50, 50, 255); // red
-    public Color neutralColor = new Color32(180, 180, 180, 255); // gray
+    private Color positiveColor = new Color32(50, 214, 149, 255);   // green
+    private Color negativeColor = new Color32(230, 60, 60, 255); // red
+    private Color neutralColor = new Color32(180, 180, 180, 255); // gray
 
     public void SetData(string label, List<CoinManager.CoinChangeInfo> infos) {
         labelText.text = label;

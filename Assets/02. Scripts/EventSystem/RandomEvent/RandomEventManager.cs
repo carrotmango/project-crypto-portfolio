@@ -150,8 +150,11 @@ public class RandomEventManager : MonoBehaviour {
 
 
     void ApplyEventEffect(RandomEventData data) {
-        if (data.satoshiBankChange != 0)
+        if (data.satoshiBankChange != 0) {
             PlayerManager.Instance.ChangeSatoshiMoney(data.satoshiBankChange);
+            TransactionManager.Instance.AddRecord("사건",Mathf.Abs((float)data.satoshiBankChange),data.satoshiBankChange >= 0 ? "입금" : "출금","사토시 현금");
+        }
+        
 
         if (data.bullbitChange != 0)
             PlayerManager.Instance.ChangeBullbitCash(data.bullbitChange);
