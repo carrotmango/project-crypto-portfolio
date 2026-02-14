@@ -157,6 +157,7 @@ public class CapitalDepositPanel : MonoBehaviour {
         // 5. 실제 처리
         PlayerManager.Instance.satoshiBankCash -= amount;
         OfficeManager.Instance.AddCapital(amount);
+        TransactionManager.Instance.AddRecord("자본투입", amount, "출금", "사토시 현금");
 
         RefreshUI();
         inputField.text = ""; // 입력창 비움

@@ -8,6 +8,7 @@ public class BankTransferUIController : MonoBehaviour {
     public Button confirmButton;
     public Button all;
     public WithdrawPanelController withdrawPanelController;
+    public TextMeshProUGUI possibleAmount;
 
     void Start() {
         InitializePlatformDropdown();
@@ -17,6 +18,7 @@ public class BankTransferUIController : MonoBehaviour {
         ValidateInput(""); // 초기 상태 확인
         amountInputField.onEndEdit.AddListener(FormatInputAsCurrency);
         all.onClick.AddListener(OnAllClicked);
+        RefreshUI();
     }
 
     void InitializePlatformDropdown() {
@@ -33,6 +35,20 @@ public class BankTransferUIController : MonoBehaviour {
 
         double available = PlayerManager.Instance.satoshiBankCash;
         confirmButton.interactable = amount <= available;
+    }
+
+    public void RefreshUI() {
+        showPossibleAmount();
+        ValidateInput(amountInputField.text);
+    }
+
+    void showPossibleAmount() {
+        double amount = PlayerManager.Instance.satoshiBankCash;
+
+        if (possibleAmount != null) {
+            // :N0는 천 단위 콤마를 찍어줍니다 (예: 1,000,000)
+            possibleAmount.text = $"가능 금액: {amount:N0}원";
+        }
     }
 
     void OnConfirmTransfer() {
@@ -64,6 +80,8 @@ public class BankTransferUIController : MonoBehaviour {
         confirmButton.interactable = false;
         CoinManager.Instance.UpdateCashText();
 
+        RefreshUI();
+
         if (withdrawPanelController != null)
             withdrawPanelController.ClosePanel();
 
@@ -93,6 +111,7 @@ public class BankTransferUIController : MonoBehaviour {
         }
 
         amountInputField.text = "";
+        RefreshUI();
         confirmButton.interactable = false;
     }
     public void PrepareForBullbit() {

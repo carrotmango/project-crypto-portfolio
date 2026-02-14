@@ -11,7 +11,7 @@ public class TransactionData {
 
     // 생성자: 데이터를 편하게 만들기 위한 틀
     public TransactionData(string target, double amount, string type, string balanceType) {
-        this.date = System.DateTime.Now.ToString("MM.dd HH:mm");
+        this.date = CoinManager.Instance.CurrentDateTime.ToString("MM.dd HH:mm");
         this.target = target;
         this.amount = amount;
         this.type = type;

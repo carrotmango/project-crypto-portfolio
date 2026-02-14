@@ -1,4 +1,5 @@
 using System;
+using UnityEditor.Localization.Plugins.XLIFF.V12;
 using UnityEngine;
 
 public class OfficeManager : MonoBehaviour {
@@ -115,6 +116,7 @@ public class OfficeManager : MonoBehaviour {
 
         PlayerManager.Instance.satoshiBankCash -= cost;
         CriticalSkillLevel++;
+        TransactionManager.Instance.AddRecord("스킬강화", cost, "출금", "사토시 현금");
         return true;
     }
 
@@ -252,6 +254,7 @@ public class OfficeManager : MonoBehaviour {
         PlayerManager.Instance.satoshiBankCash -= cost;
         salarySkillLevel++;
         RecalculateSalary();
+        TransactionManager.Instance.AddRecord("스킬강화", cost, "출금", "사토시 현금");
         return true;
     }
 
