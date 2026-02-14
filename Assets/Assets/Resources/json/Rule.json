@@ -430,7 +430,21 @@
   "repeatType": 1,
   "gate": true,
   "effectKey": "pengu_C_pump_big"
+},
+{
+  "key": "middleEastWar",
+  "authorId": "system",
+  "executionMode": 1,
+  "startDate": "2020-01-25 00:00",
+  "endDate": "2020-01-30 23:59",
+  "timeRule": { "type": 0 },
+  "probability": 1.0,
+  "repeatType": 1,
+  "gate": true,
+  "prerequisitesSymbols": [], 
+  "uiKey": "middleEastWar",
+  "effectKey": "middleEastWar",
+  "outcomes": []
 }
-
   ]
 }

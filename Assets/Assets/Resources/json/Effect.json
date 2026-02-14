@@ -270,8 +270,8 @@
       "symbols": ["BTC", "ETH"],
       "coinEventType": -1,
       "targetMarketPhase": 8,
-      "priceChangeMin": -9,
-      "priceChangeMax": -5,
+      "priceChangeMin": -3,
+      "priceChangeMax": -4,
       "durationHours": 48
     }
   ]
@@ -392,7 +392,28 @@
       "durationHours": 2
     }
   ]
+},
+{
+  "key": "middleEastWar",
+  "durationHours": 120,
+  "exchangeRateEffect": {
+    "targetRateMin": 1430.0,
+    "targetRateMax": 1520.0,
+    "durationHours": 120
+  },
+  "globalMarketPhase": {
+    "phase": 4, 
+    "durationHours": 24
+  },
+  "targetGroups": [
+    {
+      "symbols": [], 
+      "priceChangeMin": -15.0,
+      "priceChangeMax": -30.0,
+      "durationHours": 24,
+      "targetMarketPhase": 4
+    }
+  ]
 }
-
   ]
 }

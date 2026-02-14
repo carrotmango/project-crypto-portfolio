@@ -70,12 +70,12 @@ public class CoinManager : MonoBehaviour
     public event Action<DateTime> OnCandleBoundary;
     public System.Action OnMarketUpdated;
     private HashSet<string> dailySurgeAlerts = new HashSet<string>();
+    private int lastRecordedDay = -1;
 
     public struct CoinChangeInfo {
         public CoinData coin;
         public double changeRate;
     }
-
 
     public void GetMajorDailyChanges(
     out List<CoinChangeInfo> topGainers,
@@ -156,14 +156,28 @@ public class CoinManager : MonoBehaviour
             currentDateTime = currentDateTime.AddMinutes(30);
             OnTimeAdvanced?.Invoke(currentDateTime);
 
-            if (currentDateTime.Hour == 9 && currentDateTime.Minute == 0)
-            {   
-                foreach (var coin in coins)
-                {
-                    coin.InitialPrice = coin.CurrentPrice;
+            // 매 프레임 혹은 매 틱마다 체크
+            if (currentDateTime.Hour == 9 && currentDateTime.Minute == 0) {
+                // 오늘 날짜에 아직 기록을 안 했다면 (오전 9시 정각에 최초 1회 실행)
+                if (lastRecordedDay != currentDateTime.Day) {
+                    // 1. 코인 시가 갱신 로직 (기존 유지)
+                    foreach (var coin in coins) {
+                        coin.InitialPrice = coin.CurrentPrice;
+                    }
+                    dailySurgeAlerts.Clear();
+
+                    // 2. 차트 데이터 추가 (오전 9시 환율 기준)
+                    if (ExchangeChartManager.Instance != null) {
+                        float currentRate = (float)GlobalEconomyManager.UsdToKrw;
+                        ExchangeChartManager.Instance.AddPriceData(currentRate);
+
+                        // 오늘 기록 완료 표시 (날짜를 저장해서 9시 0분 동안 중복 실행 방지)
+                        lastRecordedDay = currentDateTime.Day;
+                        Debug.Log($"[차트 업데이트] 오전 9시 정각 환율 기록 완료: {currentRate}원");
+                    }
                 }
-                dailySurgeAlerts.Clear();
             }
+
 
             if (currentDateTime.Hour == 8 && currentDateTime.Minute == 0) {
                 FearIndexManager.Instance?.RecalculateDailyFear();
@@ -173,6 +187,17 @@ public class CoinManager : MonoBehaviour
             if (currentDateTime.Hour == 0 && currentDateTime.Minute == 0) {
                 survivalDays++;
 
+                if (LoanManager.Instance != null) {
+                    LoanManager.Instance.CheckLoanTick();
+                }
+
+                if (ProductManager.Instance != null) {
+                    ProductManager.Instance.CheckAndProcessExpiry();
+                }
+
+                if (SatoshiBankPanel.Instance != null) {
+                    SatoshiBankPanel.Instance.RefreshDepositStatus();
+                }
                 OfficeManager.Instance?.TryPaySalary();
                 RealEstatePanelController.Instance?.ProcessDailyEstateIncome(currentDateTime);
 
@@ -377,7 +402,7 @@ public class CoinManager : MonoBehaviour
         {
             TimeSpeed.Paused => float.MaxValue,
             TimeSpeed.Normal => 1f,
-            TimeSpeed.Double => 0.25f,
+            TimeSpeed.Double => 0.2f,
             _ => 2f
         };
     }

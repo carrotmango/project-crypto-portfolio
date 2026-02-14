@@ -223,6 +223,18 @@
             "contentImage": "",
             "width": 550,
             "height": 400
+        },
+        {
+            "key": "middleEastWar",
+            "type": 0,
+            "authorName": "글로벌 뉴스",
+            "category": 2,
+            "title": "",
+            "message": "중동 지역 주요 산유국 간의 미사일 교전이 확인되었습니다.\n\n국제 유가와 달러 환율이 폭등하고 있습니다.",
+            "profileImage": "bullbit.png",
+            "contentImage": "middle_east_war.png",
+            "width": 550,
+            "height": 800
         }
     ]
 }

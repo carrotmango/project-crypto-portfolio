@@ -6,7 +6,7 @@ public class TargetGroupEffect {
     public List<string> symbols;
 
     // 0 = Listing, 1 = Delisting, 2 = Rename
-    public int coinEventType;
+    public int coinEventType = -1;
     public int eventType;
     public double relistBasePrice;
 
@@ -15,7 +15,7 @@ public class TargetGroupEffect {
     public string newName;
 
     // 시장/가격 영향
-    public MarketPhase targetMarketPhase;
+    public int targetMarketPhase = -1;
     public float priceChangeMin;
     public float priceChangeMax;
 
