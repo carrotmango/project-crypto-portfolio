@@ -75,6 +75,7 @@ public static class CoinMetaDatabase {
         // =========================================================
         new("앱토스", "APT", 1000, 115000000, CoinTheme.Layer1, 3, "차세대 메인넷", "", bullbitListed: false),
         new("수이", "SUI", 300, 115000000, CoinTheme.Layer1, 3, "무브 언어 체인", "", bullbitListed: false),
-        new("펭구코인", "PENGU", 10.0, 115000000, CoinTheme.Meme, 4, "귀여운 펭구", "", bullbitListed: false)
+        new("펭구코인", "PENGU", 10.0, 115000000, CoinTheme.Meme, 4, "귀여운 펭구", "", bullbitListed: false),
+        new("초코코인", "CHK", 300, 115000000, CoinTheme.Meme, 4, "인기있는 밈코인", "", bullbitListed: false)
     };
 }

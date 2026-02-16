@@ -54,7 +54,7 @@ public class DeathFunPanel : MonoBehaviour {
         valueText.text = $"{currentProfit:N0}";
 
         if (audioSource && successClip)
-            audioSource.PlayOneShot(successClip);
+            if (successClip != null) SfxPlayer.Instance.Play(successClip);
     }
 
     // 실패
@@ -68,7 +68,7 @@ public class DeathFunPanel : MonoBehaviour {
         takeProfitButton.interactable = true;
 
         if (audioSource && failClip)
-            audioSource.PlayOneShot(failClip);
+            if (failClip != null) SfxPlayer.Instance.Play(failClip);
 
         stageManager.DisableAllCells();
     }

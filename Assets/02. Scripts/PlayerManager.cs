@@ -32,6 +32,9 @@ public class PlayerManager : MonoBehaviour {
     public double fournanceTotalVolume = 0;   // 누적 거래량 (레버리지 포함 금액)
     public double fournanceTotalFee = 0;      // 누적 수수료 (진입+종료)
     public double fournanceRealizedPnL = 0;   // 누적 실현 손익 (확정된 수익/손실)
+    [Header("오락실(Gamble) 누적 통계")]
+    public long totalGambleSpent = 0;  // 총 베팅 금액 (지출)
+    public long totalGambleEarned = 0; // 총 당첨 금액 (수입)
 
     public event Action OnStatsChanged;
  
@@ -75,6 +78,15 @@ public class PlayerManager : MonoBehaviour {
     // 복권 당첨
     public void AddLotteryWin(long amount) {
         totalLotteryWonAmount += amount;
+        OnStatsChanged?.Invoke();
+    }
+    public void AddGambleSpend(long amount) {
+        totalGambleSpent += amount;
+        OnStatsChanged?.Invoke();
+    }
+
+    public void AddGambleEarn(long amount) {
+        totalGambleEarned += amount;
         OnStatsChanged?.Invoke();
     }
 

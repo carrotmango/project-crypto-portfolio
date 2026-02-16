@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
-using System.Collections; // [필수]
+using System.Collections;
+using System; // [필수]
 
 public class ETCPortfolioManager : MonoBehaviour {
 
@@ -16,6 +17,10 @@ public class ETCPortfolioManager : MonoBehaviour {
     public TextMeshProUGUI lottoCountText;
     public TextMeshProUGUI lottoSpentText;
     public TextMeshProUGUI lottoWonText;
+    [Header("4. 오락실 통계 (PlayerManager 연동)")] 
+    public TextMeshProUGUI gambleSpentText; // 총 베팅금
+    public TextMeshProUGUI gambleEarnedText; // 총 당첨금
+    public TextMeshProUGUI gambleNetProfitText; // 순손익 (+/-)
 
     private void OnEnable() {
         StartCoroutine(UpdateRoutine());
@@ -79,6 +84,29 @@ public class ETCPortfolioManager : MonoBehaviour {
             lottoCountText.text = $"구매한 복권 수: {pm.totalLotteryTicketCount:N0}장";
             lottoSpentText.text = $"누적 복권 구매 금액: {pm.totalLotterySpentAmount:N0}원";
             lottoWonText.text = $"누적 복권 당첨 금액: {pm.totalLotteryWonAmount:N0}원";
+        }
+
+        if (gambleSpentText != null) {
+            gambleSpentText.text = $"총 베팅 금액: {pm.totalGambleSpent:N0}원";
+        }
+
+        if (gambleEarnedText != null) {
+            gambleEarnedText.text = $"총 당첨 금액: {pm.totalGambleEarned:N0}원";
+        }
+
+        if (gambleNetProfitText != null) {
+            long netProfit = pm.totalGambleEarned - pm.totalGambleSpent;
+
+            if (netProfit > 0) {
+       
+                gambleNetProfitText.text = $"오락실 손익: <color=#32D695>▲{netProfit:N0}원</color>";
+            } else if (netProfit < 0) {
+                // 손해: 파란색 (▼) - 부호 떼고 출력
+                gambleNetProfitText.text = $"오락실 손익: <color=#E63C3C>▼{Math.Abs(netProfit):N0}원</color>";
+            } else {
+                // 본전
+                gambleNetProfitText.text = $"오락실 손익: -";
+            }
         }
     }
 }

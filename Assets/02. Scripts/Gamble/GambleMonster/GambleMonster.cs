@@ -241,7 +241,7 @@ public class GambleMonster : MonoBehaviour {
         isReloading = true;
 
         if (audioSource != null && reloadClip != null)
-            audioSource.PlayOneShot(reloadClip);
+            if (reloadClip != null) SfxPlayer.Instance.Play(reloadClip);
 
         yield return new WaitForSeconds(1f);
 
@@ -261,7 +261,7 @@ public class GambleMonster : MonoBehaviour {
     private void TryShootOnce() {
         if (currentAmmo <= 0) {
             if (audioSource != null && gunEmptyClip != null)
-                audioSource.PlayOneShot(gunEmptyClip);
+                if (gunEmptyClip != null) SfxPlayer.Instance.Play(gunEmptyClip);
             return;
         }
 
@@ -271,7 +271,7 @@ public class GambleMonster : MonoBehaviour {
         UpdateAmmoUI();
 
         if (audioSource != null && gunshotClip != null)
-            audioSource.PlayOneShot(gunshotClip);
+            if (gunshotClip != null) SfxPlayer.Instance.Play(gunshotClip);
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);

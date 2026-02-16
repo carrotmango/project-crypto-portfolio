@@ -61,7 +61,8 @@ public class CoinFlip : MonoBehaviour {
     IEnumerator RunFlip() {
 
         if (audioSource != null && coinFlipSound != null) {
-            audioSource.PlayOneShot(coinFlipSound);
+            // 클릭 소리 교체
+            if (coinFlipSound != null) SfxPlayer.Instance.Play(coinFlipSound);
         }
 
         resultText.text = "동전 던지는 중...";

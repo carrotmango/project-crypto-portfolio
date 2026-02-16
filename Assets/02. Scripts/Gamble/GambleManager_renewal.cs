@@ -231,6 +231,7 @@ public class GambleManager_renewal : MonoBehaviour {
 
         currentBetAmount = betAmount;
         PlayerManager.Instance.satoshiBankCash -= betAmount;
+        PlayerManager.Instance.AddGambleSpend(betAmount);
         CoinManager.Instance.UpdateCashText();
 
         string mode = gameModes[currentGameIndex];
@@ -278,6 +279,7 @@ public class GambleManager_renewal : MonoBehaviour {
             PlayerManager.Instance.satoshiBankCash += reward;
             TransactionManager.Instance.AddRecord("오락실", reward, "입금", "사토시 현금");
             CoinManager.Instance.UpdateCashText();
+            PlayerManager.Instance.AddGambleEarn(reward);
         }
         
         currentBetAmount = 0;

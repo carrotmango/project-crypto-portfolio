@@ -104,6 +104,30 @@
             "width": 550,
             "height": 380
         },
+                {
+            "key": "choco_listing_announce_1",
+            "type": 0,
+            "authorName": "Shocking News",
+            "category": 4,
+            "title": "",
+            "message": "불비트 거래소는 신규 코인 CHK의 상장을 예고했습니다.\n\nCHK 코인은 약 하루 뒤 거래가 시작될 예정이며, CHK코인은 최근 인기있는 밈코인 입니다.",
+            "profileImage": "shocking.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 360
+        },
+                        {
+            "key": "choco_listing_announce_2",
+            "type": 0,
+            "authorName": "Shocking News",
+            "category": 4,
+            "title": "",
+            "message": "불비트 거래소는 신규 코인 CHK의 상장을 완료했습니다.",
+            "profileImage": "shocking.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 360
+        },
         {
             "key": "pengu_A_listing_announce",
             "type": 0,
@@ -164,13 +188,25 @@
             "width": 550,
             "height": 700
         },
+                {
+            "key": "trump_president",
+            "type": 0,
+            "authorName": "Donald Trump",
+            "category": 2,
+            "title": "",
+            "message": "미국은 앞으로 친 암호화폐 정책을 밟을것입니다.\n 모든 비트코인을 정식 화폐로 인정할 예정이며, \n법안 통과를 위한 절차를 준비하고 있습니다.",
+            "profileImage": "trump.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 360
+        },
         {
             "key": "trumpevent1",
             "type": 0,
             "authorName": "Donald Trump",
             "category": 2,
             "title": "",
-            "message": "나는 비트코인을 사랑한다. 정말 사랑한다.\n암호화폐 시장? 지금 폭발하고 있어. 미래다.\n그리고 나는 이 시장을 엄청 긍정적으로 본다.\n솔직히 말해서, 내 전 재산을 전부 넣어도 아깝지 않아.\n날 믿어라. 나를 따라와라. 절대 후회하지 않을 거다.",
+            "message": "나는 비트코인을 사랑한다. 정말 사랑한다.\n나를 믿고 따라와라.\n나는 이 시장을 엄청 긍정적으로 본다.\n솔직히 말해서, 내 전 재산을 전부 넣어도 아깝지 않아.\n모두 부자로 만들 것. 미국을 다시 위대하게",
             "profileImage": "trump.jpg",
             "contentImage": "trump_bitcoin_01.jpg",
             "width": 550,
@@ -230,7 +266,7 @@
             "authorName": "글로벌 뉴스",
             "category": 2,
             "title": "",
-            "message": "중동 지역 주요 산유국 간의 미사일 교전이 확인되었습니다.\n\n국제 유가와 달러 환율이 폭등하고 있습니다.",
+            "message": "[긴급 1보] 중동 지역 주요 산유국 간의 핵 미사일 교전이 확인되었습니다.\n\n국제 유가와 달러 환율이 폭등하고 있으며, \n\n 규모 7수준의 지진이 감지되었습니다.",
             "profileImage": "bullbit.png",
             "contentImage": "middle_east_war.png",
             "width": 550,

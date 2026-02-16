@@ -9,6 +9,9 @@ public static class GlobalEconomyManager {
     public static double BaseInterestRate = 4.25;
     public static double TargetInterestRate = 4.25;
 
+    public static double TaxRate = 10.0;
+    public static double TargetTaxRate = 10.0; // 이벤트로 변동될 목표 세율
+
     // 매 틱(Update/FixedUpdate)마다 호출
     public static void TickExchangeRate() {
 

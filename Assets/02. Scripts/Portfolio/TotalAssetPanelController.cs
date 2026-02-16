@@ -12,7 +12,7 @@ public class TotalAssetPanelController : MonoBehaviour {
 
     [Header("포트폴리오 패널 연결")]
     public GameObject bullbitPortfolioPanel;
-    public GameObject satoshiPortfolioPanel;
+    //public GameObject satoshiPortfolioPanel;
     public GameObject statusPanel;
 
     [System.Serializable]
@@ -152,7 +152,7 @@ public class TotalAssetPanelController : MonoBehaviour {
     // --- 패널 오픈 로직 (기존 유지) ---
     void OpenPortfolioPanel(string platformId) {
         bullbitPortfolioPanel.SetActive(false);
-        satoshiPortfolioPanel.SetActive(false);
+        //satoshiPortfolioPanel.SetActive(false);
 
         switch (platformId) {
             case "bullbit":
@@ -163,9 +163,9 @@ public class TotalAssetPanelController : MonoBehaviour {
                 bullbitPortfolioPanel.SetActive(true);
                 break;
             case "satoshi_bank":
-                satoshiPortfolioPanel.transform.SetAsLastSibling();
-                satoshiPortfolioPanel.transform.localPosition = Vector3.zero;
-                satoshiPortfolioPanel.SetActive(true);
+                //satoshiPortfolioPanel.transform.SetAsLastSibling();
+                //satoshiPortfolioPanel.transform.localPosition = Vector3.zero;
+                //satoshiPortfolioPanel.SetActive(true);
                 break;
             case "my_total_asset":
                 statusPanel.SetActive(true);
@@ -175,7 +175,7 @@ public class TotalAssetPanelController : MonoBehaviour {
 
     public void ClosePortfolioPanels() {
         bullbitPortfolioPanel.SetActive(false);
-        satoshiPortfolioPanel.SetActive(false);
+        //satoshiPortfolioPanel.SetActive(false);
         totalAssetPanel.SetActive(true);
     }
 

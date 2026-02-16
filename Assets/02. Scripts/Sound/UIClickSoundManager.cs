@@ -23,7 +23,7 @@ public class UIClickSoundManager : MonoBehaviour {
                 GameObject go = result.gameObject;
 
                 if (go.GetComponent<Button>() != null || go.GetComponent<UIClickable>() != null) {
-                    audioSource.PlayOneShot(defaultClickSound);
+                    if (defaultClickSound != null) SfxPlayer.Instance.Play(defaultClickSound);
                     break;
                 }
             }
