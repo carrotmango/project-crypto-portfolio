@@ -18,6 +18,7 @@ public class CoinData {
     public int Volatility;        // 변동성 레벨
     public string Description;    // 설명
     public bool IsListed;         // 현재 상장 여부
+    public bool IsActiveListed;
 
     // ===== 기존 구조 유지 =====
     public const int MaxCandleHistory = 35;
@@ -82,21 +83,44 @@ public class CoinData {
     public int MaxBaseCandles = 70;
 
     // ===== 생성자 (수정됨) =====
-    public CoinData(string name, string symbol, double startPrice, double supply, CoinType type = CoinType.Normal) {
-        Name = name;
-        Symbol = symbol;
-        Supply = supply;
-        Type = type;
+    // ===== 생성자 (최종 통합 버전) =====
+    public CoinData(CoinMetaData meta) {
+        // 1. 기본 정보 복사
+        Name = meta.Name;
+        Symbol = meta.Symbol;
+        Supply = meta.MaxSupply;
+        Volatility = meta.VolatilityLevel;
+        Description = meta.Description;
 
-        if (Type == CoinType.Stable) {
-            FixedDollarValue = 1.0; // USDT, USDC 등
+        // 2. 테마 저장 (퀘스트 시스템용)
+        Theme = meta.Theme.ToString();
+
+        // 3. 스테이블 코인 및 가격 초기화
+        if (meta.Theme == CoinTheme.Stable) {
+            Type = CoinType.Stable;
+            FixedDollarValue = 1.0;
             CurrentPrice = FixedDollarValue * GlobalEconomyManager.UsdToKrw;
         } else {
-            CurrentPrice = startPrice;
+            Type = CoinType.Normal;
+            CurrentPrice = meta.InitialPrice;
         }
 
         InitialPrice = CurrentPrice;
         PriceHistory.Add(CurrentPrice);
+
+        // 4. 랜덤 상장 로직 (솔라나 등 비상장 문제 해결)
+        if (meta.IsDefaultListed) {
+            IsActiveListed = true; // 비트코인 등 무조건 상장
+        } else if (meta.BullbitListed) {
+            // 50% 확률로 이번 판 상장 여부 결정
+            IsActiveListed = UnityEngine.Random.value > 0.5f;
+        } else {
+            IsActiveListed = false; // 이벤트 전용 등
+        }
+
+        // 상태 동기화
+        IsListed = IsActiveListed;
+        IsDelisted = !IsActiveListed;
     }
 
     public void ApplyRelist(double basePrice) {
@@ -217,15 +241,6 @@ public class CoinData {
         BaseCandleHistory.Add(CurrentBaseCandle);
         if (BaseCandleHistory.Count > MaxBaseCandles) BaseCandleHistory.RemoveAt(0);
         CurrentBaseCandle = new BaseCandle(CurrentBaseCandle.close);
-    }
-
-    private MarketPhase GetRandomMovePhase() {
-        float roll = UnityEngine.Random.value;
-        if (roll < 0.15f) return MarketPhase.MildBull;
-        if (roll < 0.70f) return MarketPhase.Sideways;
-        if (roll < 0.85f) return MarketPhase.MildBear;
-        if (roll < 0.95f) return MarketPhase.Bear;
-        return MarketPhase.BigBear;
     }
 
     public MarketPhase GetEffectivePhase(DateTime now, MarketPhase globalPhase) {

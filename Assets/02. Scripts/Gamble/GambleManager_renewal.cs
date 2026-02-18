@@ -3,7 +3,6 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections;
 using System;
-using UnityEditor.Localization.Plugins.XLIFF.V12;
 
 public class GambleManager_renewal : MonoBehaviour {
 

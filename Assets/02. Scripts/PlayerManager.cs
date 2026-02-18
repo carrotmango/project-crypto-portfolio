@@ -135,7 +135,10 @@ public class PlayerManager : MonoBehaviour {
             SyncCoinOwnedAmount(symbol);
         }
 
-        AddTradeVolume(tradeValue);
+        QuestManager.Instance.ProcessAction(QuestType.BuyCount, 1, symbol);
+
+        // [수정 2] 거래대금 함수에도 심볼을 넘겨줍니다.
+        AddTradeVolume(tradeValue, symbol);
     }
 
     // [수정] fee 파라미터 추가!
@@ -189,7 +192,10 @@ public class PlayerManager : MonoBehaviour {
         double tradeValue = price * quantity; // 실제 매도되는 금액
 
 
-        AddTradeVolume(tradeValue);
+        QuestManager.Instance.ProcessAction(QuestType.SellCount, 1, symbol);
+
+        // [수정 2] 거래대금 함수에 심볼 전달
+        AddTradeVolume(tradeValue, symbol);
 
         return true;
     }
@@ -275,8 +281,11 @@ public class PlayerManager : MonoBehaviour {
         return totalBuy;
     }
 
-    public void AddTradeVolume(double amountInKRW) {
+    public void AddTradeVolume(double amountInKRW, string symbol = null) {
         totalTradeVolume += amountInKRW;
+
+        // 퀘스트 매니저에게 금액과 심볼을 같이 넘김
+        QuestManager.Instance.ProcessAction(QuestType.TotalTradeAmount, amountInKRW, symbol);
     }
     // [추가] 외부 입금(이체) 전용 함수 (거래대금 X, 수수료 X)
     public void RegisterTransferIn(string symbol, double price, double quantity) {

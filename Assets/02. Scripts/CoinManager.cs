@@ -424,7 +424,7 @@ public class CoinManager : MonoBehaviour
 
         meta.BullbitListed = true;
 
-        var coin = new CoinData(meta.Name, meta.Symbol, meta.InitialPrice, meta.MaxSupply);
+        var coin = new CoinData(meta);
         coins.Add(coin);
 
         // 메인 UI 갱신
@@ -507,54 +507,32 @@ public class CoinManager : MonoBehaviour
         currentDateTime = dt;
     }
     IEnumerator InitializeRoutine() {
-
         foreach (var meta in CoinMetaDatabase.AllCoins) {
+            // 불비트 취급 코인이면 일단 무조건 생성 (그래야 비상장 표시 가능)
             if (meta.BullbitListed) {
-                if (!meta.IsDefaultListed) {
-                    // 기본 상장이 아닌 놈(랜덤 상장 후보)은 50% 확률로 탈락시킴
-                    if (UnityEngine.Random.value < 0.5f) {
-                        continue; // 이번 판엔 상장 안 함 (Skip)
-                    }
-                }
-                // Theme Stable 타입으로 생성
-                CoinType type = (meta.Theme == CoinTheme.Stable) ? CoinType.Stable : CoinType.Normal;
-
-                // CoinData 생성자 파라미터에 type 추가 (CoinData 생성자 수정 필요)
-                var coin = new CoinData(meta.Name, meta.Symbol, meta.InitialPrice, meta.MaxSupply, type);
-
-                coin.IsListed = true;   // <--- 이게 있어야 "상장됨"으로 인식
-                coin.IsDelisted = false;
-
-                // 메타 데이터 정보 주입 (CoinData에 새로 추가하신 변수들)
-                coin.Theme = meta.Theme.ToString();
-                coin.Volatility = meta.VolatilityLevel;
-                coin.Description = meta.Description;
-
+                // [중요] 생성자 하나로 모든 확률/테마/타입 결정 끝!
+                var coin = new CoinData(meta);
                 coins.Add(coin);
             }
         }
 
+        // UI 및 시간 흐름 시작 (기존 로직 유지)
         UpdateCashText();
         UpdateDateText();
         UpdateSpeedButtonVisuals();
-        assetPanelController.RenderPlatformRows();
+        if (assetPanelController != null) assetPanelController.RenderPlatformRows();
 
-       // 한 프레임 대기
         yield return null;
 
         foreach (var coin in coins) {
             coin.EnsureRuntimeCandle(coin.CurrentPrice);
         }
 
-        //  UI 강제 최종 동기화 (0.2초 문제 해결 지점)
         UpdateCashText();
         UpdateDateText();
         Canvas.ForceUpdateCanvases();
 
-        // 이제 틱 시작
         StartCoroutine(GameTickRoutine());
-
-        // 여기서 준비 완료 선언
         GameBootState.playerReady = true;
     }
 
@@ -604,7 +582,7 @@ public class CoinManager : MonoBehaviour
 
         // 3. 코인 생성 (InitializeRoutine과 똑같은 방식 사용)
         CoinType type = (meta.Theme == CoinTheme.Stable) ? CoinType.Stable : CoinType.Normal;
-        var newCoin = new CoinData(meta.Name, meta.Symbol, meta.InitialPrice, meta.MaxSupply, type);
+        var newCoin = new CoinData(meta);
 
         // 추가 속성 할당 (CoinData에 해당 필드가 있다면 주석 해제)
         // newCoin.Theme = meta.Theme.ToString();

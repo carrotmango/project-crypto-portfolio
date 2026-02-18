@@ -71,7 +71,7 @@ public static class CoinMetaDatabase {
 
 
         // =========================================================
-        // 3. [이벤트 전용] (Bullbit: X) - 초기 상장 절대 불가 3종
+        // 3. [이벤트 전용] (Bullbit: X) - 초기 상장 절대 불가
         // =========================================================
         new("앱토스", "APT", 1000, 115000000, CoinTheme.Layer1, 3, "차세대 메인넷", "", bullbitListed: false),
         new("수이", "SUI", 300, 115000000, CoinTheme.Layer1, 3, "무브 언어 체인", "", bullbitListed: false),

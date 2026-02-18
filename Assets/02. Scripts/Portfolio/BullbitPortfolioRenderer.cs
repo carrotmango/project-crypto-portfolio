@@ -56,13 +56,9 @@ public class BullbitPortfolioRenderer : MonoBehaviour {
 
             if (amount <= 0) continue;
 
-            bool listed = CoinManager.Instance.IsCoinListedOnBullbit(symbol);
+            CoinData coin = CoinManager.Instance.coins.Find(c => c.Symbol == symbol);
 
-            CoinData coin = null;
-            if (listed) {
-                coin = CoinManager.Instance.coins
-                    .Find(c => c.Symbol == symbol);
-            }
+            bool listed = (coin != null && coin.IsActiveListed);
 
             GameObject row = Instantiate(portfolioCoinRowPrefab, contentParent);
 
@@ -105,9 +101,10 @@ public class BullbitPortfolioRenderer : MonoBehaviour {
             double avgPrice = PlayerManager.Instance.GetAvgPrice(symbol);
             double buyTotal = avgPrice * amount;
 
-            double evalTotal = listed && coin != null
-                ? coin.CurrentPrice * amount
-                : 0;
+            double evalTotal = 0;
+            if (listed && coin != null) {
+                evalTotal = coin.CurrentPrice * amount;
+            }
 
             double profitLoss = evalTotal - buyTotal;
             double returnRate = buyTotal > 0 ? (profitLoss / buyTotal) * 100 : 0;

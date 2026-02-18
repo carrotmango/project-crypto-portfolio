@@ -282,7 +282,7 @@ public class LobbyManager : MonoBehaviour {
 
             foreach (var meta in CoinMetaDatabase.AllCoins) {
                 if (meta.BullbitListed) {
-                    var coin = new CoinData(meta.Name, meta.Symbol, meta.InitialPrice, meta.MaxSupply);
+                    var coin = new CoinData(meta);
                     CoinManager.Instance.coins.Add(coin);
                 }
             }

@@ -14,8 +14,8 @@ public class OfficePanelController : MonoBehaviour {
     public GameObject capitalDepositPanel;
     public GameObject skillUpgradePanel;
     public GameObject glossaryPanel;
-    public GameObject glossariesParent;
-    public GameObject airdropContent;
+    public GameObject questPanel;
+
 
     [Header("--- HomePanel UI Bindings ---")]
     public TextMeshProUGUI homeNameLabel;
@@ -87,12 +87,23 @@ public class OfficePanelController : MonoBehaviour {
     }
 
     public void OpenCapitalDeposit() {
-        // ★ [수정] 열려있는 다른 팝업들 먼저 닫기 (중첩 방지)
         CloseAllSubPanels();
 
         if (homePanel != null) homePanel.SetActive(false);
         if (capitalDepositPanel != null) {
             capitalDepositPanel.SetActive(true);
+        }
+    }
+
+    public void OpenQuestPanel() {
+        CloseAllSubPanels();
+
+        if (homePanel != null) homePanel.SetActive(false);
+
+        if (questPanel != null) {
+            questPanel.SetActive(true);
+
+
         }
     }
 
@@ -111,14 +122,11 @@ public class OfficePanelController : MonoBehaviour {
     public void OpenGlossaryAirdrop() {
         // FAQ 패널 내부 전환이므로 CloseAllSubPanels 호출 안 함
         if (glossaryPanel != null) glossaryPanel.SetActive(false);
-        if (glossariesParent != null) glossariesParent.SetActive(true);
-        if (airdropContent != null) airdropContent.SetActive(true);
+
     }
 
     // FAQ 상세에서 다시 FAQ 리스트로
     public void BackToGlossaryMain() {
-        if (airdropContent != null) airdropContent.SetActive(false);
-        if (glossariesParent != null) glossariesParent.SetActive(false);
         if (glossaryPanel != null) glossaryPanel.SetActive(true);
     }
 
@@ -131,8 +139,7 @@ public class OfficePanelController : MonoBehaviour {
         if (capitalDepositPanel != null) capitalDepositPanel.SetActive(false);
         if (skillUpgradePanel != null) skillUpgradePanel.SetActive(false);
         if (glossaryPanel != null) glossaryPanel.SetActive(false);
-        if (glossariesParent != null) glossariesParent.SetActive(false);
-        if (airdropContent != null) airdropContent.SetActive(false);
+        if (questPanel != null) questPanel.SetActive(false);
     }
 
     // =========================
