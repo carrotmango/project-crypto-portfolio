@@ -42,6 +42,24 @@ public class OfficePanelController : MonoBehaviour {
 
     private int lastShownSurvivalDay = -1;
 
+    [Header("Quest Notification")]
+    public GameObject questNotificationBadge; // 초록색 원형 이미지 (GameObject)
+    public TextMeshProUGUI questNotificationCountText; // 숫자 텍스트
+
+    // 이 함수를 호출해서 배지를 껐다 켜거나 숫자를 갱신합니다.
+    public void UpdateQuestBadge(int count) {
+        if (questNotificationBadge == null) return;
+
+        if (count > 0) {
+            questNotificationBadge.SetActive(true);
+            if (questNotificationCountText != null) {
+                questNotificationCountText.text = count.ToString();
+            }
+        } else {
+            questNotificationBadge.SetActive(false);
+        }
+    }
+
     private void OnEnable() {
         if (PlayerManager.Instance != null) {
             PlayerManager.Instance.OnPlayerNameChanged += RefreshHomePanel;

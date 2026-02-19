@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestSO
   category: 2
   questID: 0_002
-  title: "\uB9CE\uC774 \uC0AC\uBA74 \uB9CE\uC774 \uBC88\uB2E4"
+  title: "\uB9CE\uC774 \uC0AC\uBA74 \uB9CE\uC774 \uBC88\uB2E4 1"
   description: "\uBD88\uBE44\uD2B8 \uAC70\uB798\uB300\uAE08 200\uB9CC\uC6D0"
   type: 2
   targetCount: 2000000
@@ -23,5 +23,5 @@ MonoBehaviour:
   rewards:
   - type: 1
     targetID: PENGU
-    amount: 500000
+    amount: 5000
   prerequisiteQuestID: 

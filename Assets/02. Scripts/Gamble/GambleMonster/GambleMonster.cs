@@ -227,6 +227,7 @@ public class GambleMonster : MonoBehaviour {
         if (gambleManager != null) {
             gambleManager.GambleFinish(score);
             gambleManager.OnReturnFromGame();
+            gambleManager.turnOnDim();
         }
 
         score = 0;

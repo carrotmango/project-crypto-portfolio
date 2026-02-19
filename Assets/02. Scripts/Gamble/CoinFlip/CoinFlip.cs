@@ -100,6 +100,7 @@ public class CoinFlip : MonoBehaviour {
 
         coinFlipPanel.SetActive(false);
         gambleManager.OnReturnFromGame();
+        gambleManager.turnOnDim();
     }
 
 

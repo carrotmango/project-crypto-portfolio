@@ -6,6 +6,7 @@ public class StageManager : MonoBehaviour {
     [Header("프리팹 및 부모")]
     public GameObject stageRowPrefab;
     public Transform contentParent; // ScrollView 안의 Viewport 안의 Content
+    public GambleManager_renewal gambleManager;
 
     [Header("현재 상태")]
     public int CurrentFloor => currentFloor;
@@ -67,6 +68,10 @@ public class StageManager : MonoBehaviour {
 
     public void PassFloor() {
         currentFloor++;
+        int reachedFloor = currentFloor;
+        QuestManager.Instance.ProcessAction(QuestType.DeathFunFloorCumulative, 1);
+
+        QuestManager.Instance.ProcessAction(QuestType.DeathFunFloorMax, reachedFloor);
         if (currentFloor < stageRows.Count) {
             UpdateFloorState();
         } else {

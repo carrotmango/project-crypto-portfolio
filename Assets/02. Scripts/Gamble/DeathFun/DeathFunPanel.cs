@@ -81,6 +81,9 @@ public class DeathFunPanel : MonoBehaviour {
 
         gambleManager.GambleFinish(currentProfit);
         CloseAndReset();
+        if (gambleManager != null) {
+            gambleManager.turnOnDim();
+        }
     }
 
     // 종료

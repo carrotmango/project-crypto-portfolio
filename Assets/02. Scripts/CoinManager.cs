@@ -406,37 +406,44 @@ public class CoinManager : MonoBehaviour
             _ => 2f
         };
     }
-    
-    public void ListNewCoin(string symbol)
-    {
-        if (coins.Exists(c => c.Symbol == symbol))
-        {
-            Debug.LogWarning($"코인 '{symbol}'은(는) 이미 상장되어 있습니다.");
+
+    public void ListNewCoin(string symbol) {
+        var existingCoin = coins.Find(c => c.Symbol == symbol);
+
+        if (existingCoin != null && existingCoin.IsListed) {
+            Debug.LogWarning($"[ListNewCoin] 코인 '{symbol}'은(는) 이미 상장되어 활성화된 상태입니다.");
             return;
         }
 
-        var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
-        if (meta == null)
-        {
-            Debug.LogError($"상장하려는 코인 '{symbol}'을(를) 데이터베이스에서 찾을 수 없습니다.");
-            return;
+        if (existingCoin != null) {
+            existingCoin.IsListed = true;
+            existingCoin.IsDelisted = false;
+
+            var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
+            if (meta != null) meta.BullbitListed = true;
+
+            Debug.Log($"[ListNewCoin] 기존 데이터 '{symbol}'을(를) 상장 상태로 전환했습니다.");
+        } else {
+            var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
+            if (meta == null) {
+                Debug.LogError($"[ListNewCoin] '{symbol}' 메타 데이터를 찾을 수 없습니다.");
+                return;
+            }
+
+            meta.BullbitListed = true;
+            existingCoin = new CoinData(meta);
+            existingCoin.IsListed = true;
+            coins.Add(existingCoin);
+
+            Debug.Log($"[ListNewCoin] 신규 코인 '{symbol}'이(가) 시장에 추가되었습니다.");
         }
 
-        meta.BullbitListed = true;
-
-        var coin = new CoinData(meta);
-        coins.Add(coin);
-
-        // 메인 UI 갱신
         var uiManager = FindAnyObjectByType<MainUIManager>();
         if (uiManager != null) {
-            uiManager.AddCoinRow(coin);
+            uiManager.AddCoinRow(existingCoin);
         }
 
-        // 자산 패널 갱신
         assetPanelController?.RenderPlatformRows();
-
-        Debug.Log($"[신규 상장] 코인 '{symbol}'이(가) 시장에 추가되었습니다.");
     }
 
     public void DelistCoin(string symbol) {

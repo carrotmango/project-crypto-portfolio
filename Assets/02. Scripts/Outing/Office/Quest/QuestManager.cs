@@ -52,21 +52,31 @@ public class QuestManager : MonoBehaviour {
             if (so.type != type) continue;
             if (!progressDict.ContainsKey(so.questID)) continue;
 
-            // [추가] 테마 조건 체크
+            // [추가] 테마 조건 체크 (거래 관련 퀘스트일 때만 작동)
             if (so.useThemeCondition && !string.IsNullOrEmpty(symbol)) {
-                // 1. 거래한 코인의 정보를 찾음
                 var coinMeta = System.Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
-
-                // 2. 코인 정보가 없거나, 테마가 다르면 카운트 안 함
                 if (coinMeta == null || coinMeta.Theme != so.targetTheme) {
                     continue;
                 }
             }
 
             var progress = progressDict[so.questID];
-            if (!progress.isClaimed && !progress.IsCompleted(so.targetCount)) {
-                progress.currentCount += amount;
-                uiItemDict[so.questID].UpdateUI();
+
+            // 이미 보상을 받았으면 스킵
+            if (progress.isClaimed) continue;
+
+            // 퀘스트 타입에 따른 로직 분기
+            if (type == QuestType.DeathFunFloorMax) {
+                if (amount > progress.currentCount) {
+                    progress.currentCount = amount;
+                    uiItemDict[so.questID].UpdateUI();
+                }
+            } else {
+                if (!progress.IsCompleted(so.targetCount)) {
+                    progress.currentCount += amount;
+                    uiItemDict[so.questID].UpdateUI();
+                    RefreshQuestNotification();
+                }
             }
         }
     }
@@ -117,6 +127,7 @@ public class QuestManager : MonoBehaviour {
             uiItemDict[id].UpdateUI();
 
             uiItemDict[id].transform.SetAsLastSibling();
+            RefreshQuestNotification();
         }
     }
     private void ActivateNextStep(string completedID) {
@@ -136,6 +147,32 @@ public class QuestManager : MonoBehaviour {
             if (progressDict[kv.Key].isClaimed) {
                 kv.Value.transform.SetAsLastSibling();
             }
+        }
+    }
+    public int GetClaimableQuestCount() {
+        int count = 0;
+        foreach (var so in allQuests) {
+            if (progressDict.ContainsKey(so.questID)) {
+                var progress = progressDict[so.questID];
+                // 완료는 되었는데, 아직 보상을 받지 않은 상태
+                if (progress.IsCompleted(so.targetCount) && !progress.isClaimed) {
+                    if (uiItemDict.ContainsKey(so.questID) && uiItemDict[so.questID].gameObject.activeSelf) {
+                        count++;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    // 오피스 패널에 알림을 갱신하라고 명령하는 함수
+    public void RefreshQuestNotification() {
+        // 씬에 있는 OfficePanelController를 찾아서 전달
+        // (만약 참조를 미리 가지고 있다면 더 좋습니다)
+        var officePanel = FindObjectOfType<OfficePanelController>();
+        if (officePanel != null) {
+            int count = GetClaimableQuestCount();
+            officePanel.UpdateQuestBadge(count);
         }
     }
 }

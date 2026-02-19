@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections;
 using System;
+using static UnityEditor.AddressableAssets.Build.Layout.BuildLayout;
 
 public class GambleManager_renewal : MonoBehaviour {
 
@@ -58,10 +59,15 @@ public class GambleManager_renewal : MonoBehaviour {
     private const int GAMBLE_MONSTER_RATE_NUM = 45;   // 분자
     private const int GAMBLE_MONSTER_RATE_DEN = 10000; // 분모
 
+    [Header("Top UI Control")]
+    public GameObject menuButton;
+    public GameObject speedButtons;
 
 
     // 패널 열릴 때 초기화
     public void OpenPanel() {
+        if (menuButton != null) menuButton.SetActive(true);
+        if (speedButtons != null) speedButtons.SetActive(true);
         InitSlider();
         UpdateGameLabel();
     }
@@ -227,6 +233,8 @@ public class GambleManager_renewal : MonoBehaviour {
             StartCoroutine(ShowAlert("은행 잔고가 부족합니다"));
             return;
         }
+        if (menuButton != null) menuButton.SetActive(false);
+        if (speedButtons != null) speedButtons.SetActive(false);
 
         currentBetAmount = betAmount;
         PlayerManager.Instance.satoshiBankCash -= betAmount;
@@ -277,6 +285,7 @@ public class GambleManager_renewal : MonoBehaviour {
         if (reward > 0) {
             PlayerManager.Instance.satoshiBankCash += reward;
             TransactionManager.Instance.AddRecord("오락실", reward, "입금", "사토시 현금");
+            QuestManager.Instance.ProcessAction(QuestType.ArcadeWinCash, reward);
             CoinManager.Instance.UpdateCashText();
             PlayerManager.Instance.AddGambleEarn(reward);
         }
@@ -284,9 +293,12 @@ public class GambleManager_renewal : MonoBehaviour {
         currentBetAmount = 0;
         InitSlider();
         UpdateGameLabel();
+
     }
-
-
+    public void turnOnDim() {
+        if (menuButton != null) menuButton.SetActive(true);
+        if (speedButtons != null) speedButtons.SetActive(true);
+    }
 
     // 게임 모드 이동
     public void OnClickGameNext() {

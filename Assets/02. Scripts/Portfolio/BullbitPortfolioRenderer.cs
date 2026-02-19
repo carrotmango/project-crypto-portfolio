@@ -76,7 +76,7 @@ public class BullbitPortfolioRenderer : MonoBehaviour {
 
             CoinData coin = CoinManager.Instance.coins.Find(c => c.Symbol == symbol);
 
-            bool listed = (coin != null && coin.IsActiveListed);
+            bool listed = (coin != null && coin.IsListed && !coin.IsDelisted);
 
             GameObject row = Instantiate(portfolioCoinRowPrefab, contentParent);
 
@@ -153,7 +153,7 @@ public class BullbitPortfolioRenderer : MonoBehaviour {
                 profitText.text = "-";
                 profitText.color = Color.gray;
 
-                rateText.text = "비상장";
+                rateText.text = " ";
                 rateText.color = Color.gray;
             }
 

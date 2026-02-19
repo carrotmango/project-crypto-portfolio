@@ -5,7 +5,10 @@ public enum QuestType {
     BuyCount,         // 매수 횟수
     SellCount,        // 매도 횟수
     TotalTradeAmount,  // 총 거래 금액
-    PartTimeJobIncome
+    PartTimeJobIncome,
+    ArcadeWinCash,
+    DeathFunFloorCumulative,
+    DeathFunFloorMax
 }
 
 // 2. 퀘스트 분류 (어떤 종류의 퀘스트인가?)
