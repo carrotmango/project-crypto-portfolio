@@ -59,6 +59,9 @@ public class PlayerManager : MonoBehaviour {
     public void AddPartTimeJob(long income) {
         totalPartTimeJobCount++;
         totalPartTimeJobIncome += income;
+        if (QuestManager.Instance != null) {
+            QuestManager.Instance.ProcessAction(QuestType.PartTimeJobIncome, income);
+        }
         OnStatsChanged?.Invoke();
     }
 
@@ -326,6 +329,39 @@ public class PlayerManager : MonoBehaviour {
             return OfficeManager.Instance.currentRankIndex;
         }
     }
+    public void SellAllListedCoins() {
+        // 딕셔너리 수정 중 에러 방지를 위해 키 리스트 복사
+        List<string> keys = new List<string>(holdings.Keys);
+        bool soldAny = false;
 
+        foreach (string symbol in keys) {
+            double amount = holdings[symbol];
+            if (amount <= 0) continue;
 
+            // 상장 여부 확인 (상장 폐지 코인은 제외)
+            CoinData coin = CoinManager.Instance.coins.Find(c => c.Symbol == symbol);
+            if (coin != null && coin.IsActiveListed && !coin.IsDelisted) {
+
+                // [핵심] 수수료 계산 (기존 매도 로직과 동일하게 0.05% 등으로 설정)
+                double currentPrice = coin.CurrentPrice;
+                double fee = (currentPrice * amount) * 0.0005; // 수수료율에 맞춰 수정하세요
+
+                // [수정] 직접 변수를 깎지 않고 RegisterSell을 호출하여 모든 통계를 갱신합니다.
+                // RegisterSell 내부에서 realizedProfit 합산, 보유량 제거, 거래대금 누적이 다 처리됩니다.
+                double sellQuantity = amount;
+                if (RegisterSell(symbol, currentPrice, ref sellQuantity, fee)) {
+                    // 매도 대금에서 수수료를 뺀 실제 금액을 통장에 입금
+                    double netRevenue = (currentPrice * sellQuantity) - fee;
+                    bullbitCash += netRevenue;
+
+                    Debug.Log($"[일괄매도 완료] {symbol} | 수익 합산 및 평단가 정리 완료");
+                    soldAny = true;
+                }
+            }
+        }
+
+        if (soldAny) {
+            OnStatsChanged?.Invoke(); // 통계 UI 갱신 이벤트 호출
+        }
+    }
 }

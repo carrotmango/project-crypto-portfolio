@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cb492652f32a14499b27a5816e1c5fd, type: 3}
   m_Name: Quest_Buy_meme_5
   m_EditorClassIdentifier: Assembly-CSharp::QuestSO
-  category: 0
+  category: 2
   questID: 0_003
-  title: "\uBC08\uCF54\uC778 5\uBC88 \uB9E4\uC218\uD558\uAE30"
-  description: 
+  title: "\uB5A1\uC0C1 \uC608\uAC10"
+  description: "\uBC08\uCF54\uC778 5\uBC88 \uB9E4\uC218\uD558\uAE30"
   type: 0
   targetCount: 5
   useThemeCondition: 1
@@ -24,3 +24,4 @@ MonoBehaviour:
   - type: 1
     targetID: SOL
     amount: 5
+  prerequisiteQuestID: 

@@ -28,20 +28,19 @@ public class QuestManager : MonoBehaviour {
             GameObject go = Instantiate(questPrefab, contentParent);
             QuestUIItem uiItem = go.GetComponent<QuestUIItem>();
             uiItem.Setup(so, newProgress);
-
             uiItemDict.Add(so.questID, uiItem);
-        }
 
-        foreach (var kv in uiItemDict) {
-            string id = kv.Key;
-            QuestUIItem item = kv.Value;
-
-            // 만약 이미 보상을 받았다면?
-            if (progressDict[id].isClaimed) {
-                // 맨 아래로 이동!
-                item.transform.SetAsLastSibling();
+            // [추가] 선행 퀘스트가 있다면 일단 UI를 숨김
+            if (!string.IsNullOrEmpty(so.prerequisiteQuestID)) {
+                // 선행 퀘스트가 아직 완료(보상수령)되지 않았다면 비활성화
+                if (!progressDict.ContainsKey(so.prerequisiteQuestID) || !progressDict[so.prerequisiteQuestID].isClaimed) {
+                    go.SetActive(false);
+                }
             }
         }
+
+        // 정렬 로직 (기존 동일)
+        RefreshSortOrder();
     }
 
     // 예전 'AddQuestProgress'를 대신하는 함수
@@ -113,11 +112,30 @@ public class QuestManager : MonoBehaviour {
                         break;
                 }
             }
-
+            ActivateNextStep(id);
             // UI 갱신 (완료됨 표시)
             uiItemDict[id].UpdateUI();
 
             uiItemDict[id].transform.SetAsLastSibling();
+        }
+    }
+    private void ActivateNextStep(string completedID) {
+        foreach (var so in allQuests) {
+            if (so.prerequisiteQuestID == completedID) {
+                if (uiItemDict.ContainsKey(so.questID)) {
+                    uiItemDict[so.questID].gameObject.SetActive(true);
+                    // 새로 나타난 퀘스트를 위쪽으로 정렬해주면 좋습니다.
+                    uiItemDict[so.questID].transform.SetAsFirstSibling();
+                }
+            }
+        }
+    }
+    private void RefreshSortOrder() {
+        // 이미 완료된 것들 아래로 보내는 기존 로직
+        foreach (var kv in uiItemDict) {
+            if (progressDict[kv.Key].isClaimed) {
+                kv.Value.transform.SetAsLastSibling();
+            }
         }
     }
 }

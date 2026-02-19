@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class QuestUIItem : MonoBehaviour {
     [Header("UI 연결")]
     public TextMeshProUGUI titleText;
+    public TextMeshProUGUI descriptionText;
     public TextMeshProUGUI progressText;
     public TextMeshProUGUI rewardText;
     public Button rewardButton;
@@ -23,6 +24,10 @@ public class QuestUIItem : MonoBehaviour {
         _progress = progress;
 
         titleText.text = _so.title;
+
+        if (descriptionText != null) {
+            descriptionText.text = _so.description;
+        }
 
         // [수정] 보상 리스트가 있을 때 처리
         if (_so.rewards != null && _so.rewards.Count > 0) {
@@ -101,6 +106,7 @@ public class QuestUIItem : MonoBehaviour {
     // 텍스트 색깔을 한꺼번에 바꿔주는 함수
     private void SetTextColor(Color color) {
         titleText.color = color;
+        descriptionText.color = color;
         progressText.color = color;
         rewardText.color = color;
     }

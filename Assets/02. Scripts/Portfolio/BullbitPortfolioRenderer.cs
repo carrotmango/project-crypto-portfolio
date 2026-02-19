@@ -20,11 +20,29 @@ public class BullbitPortfolioRenderer : MonoBehaviour {
 
     [Header("Trade Option Panel")]
     public TradeOptionPanelController tradeOptionPanelController;
+    [Header("Sell All")]
+    public Button sellAllButton;
 
     private float timer = 0f;
 
     void OnEnable() {
         RenderPortfolioRows(); // 패널이 켜질 때 즉시 반영
+    }
+
+    void Start() {
+        // 버튼 리스너 연결
+        if (sellAllButton != null) {
+            sellAllButton.onClick.AddListener(OnSellAllButtonClicked);
+        }
+    }
+
+    public void OnSellAllButtonClicked() {
+        PlayerManager.Instance.SellAllListedCoins();
+
+        // 2. UI 즉시 갱신
+        RenderPortfolioRows();
+
+        Debug.Log("상장 코인 일괄 매도가 완료되었습니다.");
     }
 
     void Update() {

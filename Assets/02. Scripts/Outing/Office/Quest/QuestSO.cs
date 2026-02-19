@@ -21,4 +21,7 @@ public class QuestSO : ScriptableObject {
 
     [Header("보상")]
     public List<QuestReward> rewards;
+
+    [Header("연계 설정")]
+    public string prerequisiteQuestID;
 }
