@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,7 +13,7 @@ public class GameMenuController : MonoBehaviour {
     [Header("Audio")]
     public Slider bgmSlider;
     public Slider sfxSlider;
-    public BgmPlayer bgmPlayer;
+    //public BgmPlayer bgmPlayer;
     public SfxPlayer sfxPlayer;
 
 
@@ -28,8 +29,10 @@ public class GameMenuController : MonoBehaviour {
         saveButton.onClick.AddListener(OnClickSave);
         exitButton.onClick.AddListener(OnClickExit);
 
-        if (bgmPlayer != null && bgmSlider != null) {
-            bgmSlider.value = bgmPlayer.GetVolume();
+        if (BgmPlayer.Instance != null && bgmSlider != null) {
+            // [수정] BgmPlayer에 GetVolume()이 없다면 audioSource에 직접 접근하거나 
+            // 아까 제가 제안드린 대로 BgmPlayer에 GetVolume을 추가했다면 그대로 유지
+            bgmSlider.value = BgmPlayer.Instance.GetVolume();
             bgmSlider.onValueChanged.AddListener(OnBgmVolumeChanged);
         }
 
@@ -41,8 +44,8 @@ public class GameMenuController : MonoBehaviour {
 
 
     private void OnBgmVolumeChanged(float value) {
-        if (bgmPlayer != null) {
-            bgmPlayer.SetVolume(value);
+        if (BgmPlayer.Instance != null) {
+            BgmPlayer.Instance.SetVolume(value);
         }
     }
 
@@ -56,9 +59,11 @@ public class GameMenuController : MonoBehaviour {
 
     private void OpenMenu() {
         menuPanel.SetActive(true);
+        menuPanel.transform.localScale = Vector3.one * 0.5f;
+        menuPanel.transform.DOScale(1f, 0.2f).SetEase(Ease.OutBack).SetUpdate(true);
 
-        if (bgmPlayer != null && bgmSlider != null) {
-            bgmSlider.value = bgmPlayer.GetVolume();
+        if (BgmPlayer.Instance != null && bgmSlider != null) {
+            bgmSlider.value = BgmPlayer.Instance.GetVolume();
         }
 
         if (sfxPlayer != null && sfxSlider != null) {

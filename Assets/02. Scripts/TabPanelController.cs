@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 using static CoinManager;
 
@@ -35,6 +36,9 @@ public class TabPanelController : MonoBehaviour {
     public GameObject partimeJob;
     public GameObject convPanel;
 
+    [Header("UI Text Lables")]
+    public TextMeshProUGUI marketTabLabel;
+
     public Button bullbitButton;
     private bool isBullbitButtonClicked = false;
 
@@ -53,6 +57,38 @@ public class TabPanelController : MonoBehaviour {
     public void ShowAssetPanel() {
         CloseSubPanelsIfOpen();
         totalAssetPanel.SetActive(true);
+        if (BgmPlayer.Instance != null) BgmPlayer.Instance.PlayTradingBgm();
+    }
+    public void OpenMarketViaButton() {
+        bool isFuturesUnlocked = OfficeManager.Instance != null && OfficeManager.Instance.IsFuturesUnlocked();
+
+        // [추가] 현재 앱이 거래소 관련 앱(현물/선물)이 아니면, 무조건 불비트로 일단 세팅
+        if (coinManager.currentApp != AppType.Bullbit && coinManager.currentApp != AppType.Perp) {
+            coinManager.currentApp = AppType.Bullbit;
+        } else if (isFuturesUnlocked) {
+            // 이미 거래소 관련 앱이 켜져 있는 상태(activeSelf)에서 또 누를 때만 토글 스왑
+            if (coinScrollView.activeSelf || perpPanel.activeSelf) {
+                coinManager.currentApp = (coinManager.currentApp == AppType.Bullbit)
+                                         ? AppType.Perp
+                                         : AppType.Bullbit;
+            }
+        } else {
+            // 해금 안 됐으면 무조건 불비트
+            coinManager.currentApp = AppType.Bullbit;
+        }
+
+        // 텍스트와 패널 갱신
+        UpdateMarketUI();
+    }
+
+    private void UpdateMarketUI() {
+        // 1. 텍스트 변경
+        if (marketTabLabel != null) {
+            marketTabLabel.text = (coinManager.currentApp == AppType.Perp) ? "선물 거래소" : "현물 거래소";
+        }
+
+        // 2. 패널 갱신 (이미 작성하신 ShowMarketPanel 호출)
+        ShowMarketPanel();
     }
 
     public void ShowMarketPanel(AppType? overrideApp = null) {
@@ -60,23 +96,30 @@ public class TabPanelController : MonoBehaviour {
         totalAssetPanel.SetActive(false);
         appPanel.SetActive(false);
 
+        // 우선순위: 1. 인자로 넘어온 앱, 2. 현재 설정된 앱
         AppType appToShow = overrideApp ?? coinManager.currentApp;
 
-        if (appToShow == AppType.Bullbit || isBullbitButtonClicked) {
-            coinScrollView.SetActive(true);
-            isBullbitButtonClicked = false;
+        // [수정] 조건문 순서를 명확하게 분리합니다.
+        if (appToShow == AppType.Bullbit) {
+            if (coinScrollView != null) coinScrollView.SetActive(true);
+        } else if (appToShow == AppType.Perp) {
+            if (perpPanel != null) perpPanel.SetActive(true);
         } else if (appToShow == AppType.SatoshiBank) {
-            bankPanel.SetActive(true);
+            if (bankPanel != null) bankPanel.SetActive(true);
         } else if (appToShow == AppType.Xbird) {
-            xbirdPanel.SetActive(true);
+            if (xbirdPanel != null) xbirdPanel.SetActive(true);
         } else if (appToShow == AppType.Gamble) {
-            gamblePanel.SetActive(true);
+            if (gamblePanel != null) gamblePanel.SetActive(true);
         }
+        if (BgmPlayer.Instance != null) BgmPlayer.Instance.PlayTradingBgm();
+        // 불비트 버튼 전용 플래그 리셋 (이제 필요 없으면 삭제해도 무방)
+        isBullbitButtonClicked = false;
     }
 
     public void ShowAppPanel() {
         CloseSubPanelsIfOpen();
         appPanel.SetActive(true);
+        if (BgmPlayer.Instance != null) BgmPlayer.Instance.PlayTradingBgm();
     }
 
     void CloseSubPanelsIfOpen() {
@@ -129,11 +172,13 @@ public class TabPanelController : MonoBehaviour {
             } else {
             }
         }
+        if (BgmPlayer.Instance != null) BgmPlayer.Instance.PlayTradingBgm();
     }
 
 
     public void ShowOutingPanel() {
         CloseSubPanelsIfOpen();
         if (outingPanel != null) outingPanel.SetActive(true);
+        if (BgmPlayer.Instance != null) BgmPlayer.Instance.PlayOutingBgm();
     }
 }

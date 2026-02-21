@@ -33,7 +33,7 @@ public class BankTransferUIController : MonoBehaviour {
             return;
         }
 
-        double available = PlayerManager.Instance.satoshiBankCash;
+        double available = System.Math.Floor(PlayerManager.Instance.satoshiBankCash);
         confirmButton.interactable = amount <= available;
     }
 
@@ -54,27 +54,23 @@ public class BankTransferUIController : MonoBehaviour {
     void OnConfirmTransfer() {
         string raw = amountInputField.text.Replace(",", "");
         double.TryParse(raw, out double amount);
-        double available = PlayerManager.Instance.satoshiBankCash;
+
+        // [수정] 비교 대상 잔액도 정수로 처리
+        double available = System.Math.Floor(PlayerManager.Instance.satoshiBankCash);
 
         if (amount > available) return;
 
         string platform = platformDropdown.options[platformDropdown.value].text;
 
         if (platform == "불비트") {
+            // [핵심] 입력받은 '정수' 금액만큼만 정확히 뺍니다. 
+            // 잔액에 남은 0.213...원은 그대로 은행에 남겨두거나 아예 무시합니다.
             PlayerManager.Instance.satoshiBankCash -= amount;
             PlayerManager.Instance.ChangeBullbitCash(amount);
 
-            // 기록 추가: 사토시 은행 입장에서는 '출금'
             TransactionManager.Instance.AddRecord("불비트", amount, "출금", "사토시 현금");
- 
-
-            Debug.Log($"사토시 → 불비트 {amount}원 이체 완료");
+            Debug.Log($"사토시 → 불비트 {amount:N0}원 이체 완료 (소수점 제외)");
         }
-        //else if (platform == "망고카지노") {
-        //    PlayerManager.Instance.satoshiBankCash -= amount;
-        //    PlayerManager.Instance.mangoCasinoCash += amount;
-        //    Debug.Log($"사토시 → 망고카지노 {amount}원 이체 완료");
-        //}
 
         amountInputField.text = "";
         confirmButton.interactable = false;
@@ -98,7 +94,8 @@ public class BankTransferUIController : MonoBehaviour {
     }
 
     void OnAllClicked() {
-        double amount = PlayerManager.Instance.satoshiBankCash;
+        double amount = System.Math.Floor(PlayerManager.Instance.satoshiBankCash);
+
         amountInputField.text = $"{amount:N0}";
         amountInputField.caretPosition = amountInputField.text.Length;
         ValidateInput(amountInputField.text);

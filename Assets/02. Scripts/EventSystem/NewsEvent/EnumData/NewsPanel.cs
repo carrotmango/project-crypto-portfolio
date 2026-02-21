@@ -9,6 +9,7 @@ public class NewsPanel : MonoBehaviour {
     public GameObject newsItemPrefab;
     public NewsRepository newsRepo;
     private NewsCategory currentCategory = NewsCategory.All;
+    public GameObject emptyNoticeObject;
 
     [Header("탭 텍스트 설정")]
     // 이제 이미지 대신 텍스트 컴포넌트를 직접 넣습니다.
@@ -22,7 +23,6 @@ public class NewsPanel : MonoBehaviour {
     }
 
     public void RefreshXbird(NewsCategory category) {
-
         currentCategory = category;
 
         // 1. 글자 색상 하이라이트 연출
@@ -31,10 +31,18 @@ public class NewsPanel : MonoBehaviour {
         // 2. 기존 뉴스 제거
         foreach (Transform child in contentParent) Destroy(child.gameObject);
 
-        // 3. 발생한 뉴스만 출력
+        // 3. 발생한 뉴스 출력
         var history = newsRepo.GetNewsByCategory(category);
-        foreach (var item in history) {
-            Show(item.data, item.occurredTime);
+
+        // [수정] 데이터가 있는지 먼저 확인
+        if (history == null || history.Count == 0) {
+            if (emptyNoticeObject != null) emptyNoticeObject.SetActive(true);
+        } else {
+            if (emptyNoticeObject != null) emptyNoticeObject.SetActive(false);
+
+            foreach (var item in history) {
+                Show(item.data, item.occurredTime);
+            }
         }
     }
 
@@ -58,6 +66,8 @@ public class NewsPanel : MonoBehaviour {
         if (currentCategory != NewsCategory.All && data.category != currentCategory) {
             return;
         }
+
+        if (emptyNoticeObject != null) emptyNoticeObject.SetActive(false);
 
         var go = Instantiate(newsItemPrefab, contentParent);
         go.transform.SetAsFirstSibling();

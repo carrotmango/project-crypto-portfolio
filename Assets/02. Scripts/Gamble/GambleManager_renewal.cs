@@ -3,7 +3,6 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections;
 using System;
-using static UnityEditor.AddressableAssets.Build.Layout.BuildLayout;
 
 public class GambleManager_renewal : MonoBehaviour {
 
@@ -68,6 +67,11 @@ public class GambleManager_renewal : MonoBehaviour {
     public void OpenPanel() {
         if (menuButton != null) menuButton.SetActive(true);
         if (speedButtons != null) speedButtons.SetActive(true);
+
+        if (BgmPlayer.Instance != null) {
+            BgmPlayer.Instance.PlayArcadeBgm();
+        }
+
         InitSlider();
         UpdateGameLabel();
     }
@@ -254,6 +258,9 @@ public class GambleManager_renewal : MonoBehaviour {
     public void OnClickExit() {
         if (outingPanel != null) {
             outingPanel.SetActive(true);
+        }
+        if (BgmPlayer.Instance != null) {
+            BgmPlayer.Instance.PlayOutingBgm();
         }
 
         gameObject.SetActive(false);

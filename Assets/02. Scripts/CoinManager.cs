@@ -54,7 +54,8 @@ public class CoinManager : MonoBehaviour
         SatoshiBank,
         Xbird,
         None,
-        Gamble
+        Gamble,
+        Perp
     }
 
     public AppType currentApp = AppType.Bullbit;
@@ -162,6 +163,7 @@ public class CoinManager : MonoBehaviour
                 if (lastRecordedDay != currentDateTime.Day) {
                     // 1. 코인 시가 갱신 로직 (기존 유지)
                     foreach (var coin in coins) {
+                        coin.RecordDailyClosePrice();
                         coin.InitialPrice = coin.CurrentPrice;
                     }
                     dailySurgeAlerts.Clear();

@@ -13,8 +13,8 @@ public class OfficePanelController : MonoBehaviour {
     public GameObject homePanel;
     public GameObject capitalDepositPanel;
     public GameObject skillUpgradePanel;
-    public GameObject glossaryPanel;
     public GameObject questPanel;
+    public GameObject researchPanel;
 
 
     [Header("--- HomePanel UI Bindings ---")]
@@ -125,6 +125,17 @@ public class OfficePanelController : MonoBehaviour {
         }
     }
 
+    public void OpenResearchPanel() {
+        CloseAllSubPanels(); 
+
+        if (homePanel != null) homePanel.SetActive(false);
+
+        if (researchPanel != null) {
+            researchPanel.SetActive(true);
+          
+        }
+    }
+
     public void OpenSkillUpgrade() {
         // ★ [수정] 열려있는 다른 팝업들(납입 패널 등) 먼저 닫기 (중첩 방지)
         CloseAllSubPanels();
@@ -136,17 +147,6 @@ public class OfficePanelController : MonoBehaviour {
         }
     }
 
-    // FAQ 내부: 에어드랍 버튼 클릭 시
-    public void OpenGlossaryAirdrop() {
-        // FAQ 패널 내부 전환이므로 CloseAllSubPanels 호출 안 함
-        if (glossaryPanel != null) glossaryPanel.SetActive(false);
-
-    }
-
-    // FAQ 상세에서 다시 FAQ 리스트로
-    public void BackToGlossaryMain() {
-        if (glossaryPanel != null) glossaryPanel.SetActive(true);
-    }
 
     // 공통 뒤로가기
     public void OnClickBack() {
@@ -156,8 +156,8 @@ public class OfficePanelController : MonoBehaviour {
     void CloseAllSubPanels() {
         if (capitalDepositPanel != null) capitalDepositPanel.SetActive(false);
         if (skillUpgradePanel != null) skillUpgradePanel.SetActive(false);
-        if (glossaryPanel != null) glossaryPanel.SetActive(false);
         if (questPanel != null) questPanel.SetActive(false);
+        if (researchPanel != null) researchPanel.SetActive(false);
     }
 
     // =========================

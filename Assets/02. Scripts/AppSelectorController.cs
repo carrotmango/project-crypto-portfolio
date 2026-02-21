@@ -44,6 +44,8 @@ public class AppSelectorController : MonoBehaviour {
     private Color32 unlockedColor = new Color32(255, 255, 255, 255);    // 흰색 (기본)
 
 
+
+
     private void Start() {
         // 게임 시작하면 승진 이벤트에 구독 신청
         if (OfficeManager.Instance != null) {

@@ -162,7 +162,9 @@ public class LobbyManager : MonoBehaviour {
 
         lobbyPanel.SetActive(false);
         mainPanel.SetActive(true);
-        BgmPlayer.Instance.PlayIntroBgm();
+        if (BgmPlayer.Instance != null) {
+            BgmPlayer.Instance.PlayTradingBgm();
+        }
 
         statusPanelController.SetPlayerInfo(playerName, currentCharacterIndex, birthday);
 
@@ -379,7 +381,9 @@ public class LobbyManager : MonoBehaviour {
             // 로비  메인 패널 전환
             lobbyPanel.SetActive(false);
             mainPanel.SetActive(true);
-            BgmPlayer.Instance.PlayIntroBgm();
+            if (BgmPlayer.Instance != null) {
+                BgmPlayer.Instance.PlayTradingBgm();
+            }
 
             // Load 관련
             GameBootState.saveLoaded = true;
