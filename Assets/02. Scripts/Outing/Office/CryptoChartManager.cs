@@ -84,7 +84,7 @@ public class CryptoChartManager : MonoBehaviour {
         rt.pivot = new Vector2(0f, 0.5f);
         Vector2 direction = end - start;
         rt.anchoredPosition = start;
-        rt.sizeDelta = new Vector2(direction.magnitude, 2.0f);
+        rt.sizeDelta = new Vector2(direction.magnitude, 1.0f);
         rt.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
     }
 

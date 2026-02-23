@@ -31,6 +31,7 @@ public class TabPanelController : MonoBehaviour {
     public WithdrawPanelController withdrawPanelController;
     public TotalAssetPanelController assetPanelController;
     public CoinManager coinManager;
+    public ResearchDetailPopup newsDetailPopup;
 
     [Header("외출 건물들")]
     public GameObject partimeJob;
@@ -126,6 +127,11 @@ public class TabPanelController : MonoBehaviour {
         // 1. 외부 컨트롤러 정리
         if (assetPanelController != null) assetPanelController.ClosePortfolioPanels();
         if (withdrawPanelController != null && withdrawPanelController.IsOpen()) withdrawPanelController.ClosePanel();
+
+        if (newsDetailPopup != null && newsDetailPopup.gameObject.activeSelf) {
+            // 애니메이션 없이 즉시 끄는 게 전환 시에는 더 깔끔합니다.
+            newsDetailPopup.gameObject.SetActive(false);
+        }
 
         // 2. 오피스 하위 패널들 직접 리셋
         if (statusPanel != null) statusPanel.SetActive(false);

@@ -9,6 +9,11 @@ public class NewsRepository : MonoBehaviour {
     private List<UIEventData> allItems;
     private List<OccurredNewsData> occurredHistory = new List<OccurredNewsData>();
 
+    public List<OccurredNewsData> GetResearchArticles() {
+        // 발생했던 뉴스 중 article 객체가 존재하는 것들만 골라냄
+        return occurredHistory.FindAll(x => x.data.article != null && !string.IsNullOrEmpty(x.data.article.title));
+    }
+
     void Awake() {
         map = new Dictionary<string, UIEventData>();
         var wrapper = JsonUtility.FromJson<Wrapper>(uiNewsJson.text);

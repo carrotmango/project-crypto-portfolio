@@ -11,6 +11,8 @@ public class NewsPanel : MonoBehaviour {
     private NewsCategory currentCategory = NewsCategory.All;
     public GameObject emptyNoticeObject;
 
+    public RetroToggleController communityToggle;
+
     [Header("탭 텍스트 설정")]
     // 이제 이미지 대신 텍스트 컴포넌트를 직접 넣습니다.
     public List<TextMeshProUGUI> tabTexts;
@@ -24,23 +26,27 @@ public class NewsPanel : MonoBehaviour {
 
     public void RefreshXbird(NewsCategory category) {
         currentCategory = category;
-
-        // 1. 글자 색상 하이라이트 연출
         UpdateTabVisuals((int)category);
 
-        // 2. 기존 뉴스 제거
         foreach (Transform child in contentParent) Destroy(child.gameObject);
 
-        // 3. 발생한 뉴스 출력
         var history = newsRepo.GetNewsByCategory(category);
 
-        // [수정] 데이터가 있는지 먼저 확인
         if (history == null || history.Count == 0) {
             if (emptyNoticeObject != null) emptyNoticeObject.SetActive(true);
         } else {
             if (emptyNoticeObject != null) emptyNoticeObject.SetActive(false);
 
             foreach (var item in history) {
+                // [핵심 필터 로직]
+                // 1. 이 글이 시스템 생성 똥글(noise_)인가?
+                bool isNoise = item.data.key.StartsWith("noise_");
+                // 2. 현재 토글이 꺼져(핵심 모드) 있는가?
+                bool isFilterActive = communityToggle != null && !communityToggle.IsCommunityVisible;
+
+                // 똥글인데 필터가 켜져 있다면 화면에 그리지 않고 건너뜁니다.
+                if (isNoise && isFilterActive) continue;
+
                 Show(item.data, item.occurredTime);
             }
         }
@@ -53,6 +59,10 @@ public class NewsPanel : MonoBehaviour {
             // 선택된 탭의 글자만 하늘색으로 변경
             tabTexts[i].color = (i == selectedIndex) ? activeTextColor : inactiveTextColor;
         }
+    }
+    public void OnToggleRefresh() {
+        // 현재 선택된 카테고리 상태 그대로 리스트만 다시 그립니다.
+        RefreshXbird(currentCategory);
     }
 
     public void OnClickTab(int categoryIndex) {

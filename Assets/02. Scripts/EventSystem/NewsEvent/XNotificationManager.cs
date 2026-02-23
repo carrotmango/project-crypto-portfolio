@@ -127,45 +127,6 @@ public class XNotificationManager : MonoBehaviour {
         }
     }
 
-    //private IEnumerator NotificationRoutine() {
-    //    float t = 0f;
-    //    float duration = 0.25f;
-    //    cg.alpha = 0f;
-
-    //    // slide in
-    //    while (t < duration) {
-    //        t += Time.deltaTime;
-    //        float n = t / duration;
-
-    //        cg.alpha = Mathf.Lerp(0f, 1f, n);
-    //        float y = Mathf.Lerp(hiddenY, shownY, n);
-    //        rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, y);
-
-    //        yield return null;
-    //    }
-
-    //    cg.alpha = 1f;
-    //    rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, shownY);
-
-    //    yield return new WaitForSeconds(3f);
-
-    //    // slide out
-    //    t = 0f;
-    //    while (t < duration) {
-    //        t += Time.deltaTime;
-    //        float n = t / duration;
-
-    //        cg.alpha = Mathf.Lerp(1f, 0f, n);
-    //        float y = Mathf.Lerp(shownY, hiddenY, n);
-    //        rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, y);
-
-    //        yield return null;
-    //    }
-
-    //    cg.alpha = 0f;
-    //    rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, hiddenY);
-    //    panel.SetActive(false);
-    //}
 
     private void OnClickNotification() {
         panel.SetActive(false);

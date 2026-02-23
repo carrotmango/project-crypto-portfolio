@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,47 +12,62 @@ public class ResearchDetailController : MonoBehaviour {
 
     [Header("Top Info")]
     public Image coinIcon;
-    public TextMeshProUGUI nameAndSymbolTopText; // "ºñÆ®ÄÚÀÎ\n(BTC)"
-    public TextMeshProUGUI currentPriceText;     // "°¡°Ý\n134,300,000"
-    public TextMeshProUGUI changePercentText;    // "µî¶ô·ü\n2%"
+    public TextMeshProUGUI nameAndSymbolTopText;
+    public TextMeshProUGUI currentPriceText;
+    public TextMeshProUGUI changePercentText;
 
     [Header("Tabs")]
     public Button overviewBtn;
-    public Button marketBtn;
     public Button newsBtn;
-    private Color32 activeTabColor = new Color32(20, 255, 8, 255); // R20 G255 B8
+    private Color32 activeTabColor = new Color32(20, 255, 8, 255);
+
+    [Header("Tab Contents")]
+    public GameObject overviewGroup;
+    public GameObject newsGroup;
 
     [Header("Overview Content")]
-    public TextMeshProUGUI titleNameSymbolText;  // "ºñÆ®ÄÚÀÎ (BTC)"
-    public TextMeshProUGUI descriptionText;      // ¸ÞÅ¸µ¥ÀÌÅÍ ¼³¸í
+    public TextMeshProUGUI titleNameSymbolText;
+    public TextMeshProUGUI descriptionText;
 
-    public TextMeshProUGUI circulatingVolumeText; // ÁÂÃø À¯Åë±Ô¸ð (MC)
-    public TextMeshProUGUI marketCapText;         // ¿ìÃø ½Ã°¡ÃÑ¾× (FDV)
+    public TextMeshProUGUI circulatingVolumeText;
+    public TextMeshProUGUI marketCapText;
 
-    public TextMeshProUGUI currentCirculatingSupplyText; // "BTC 19,600,000"
-    public TextMeshProUGUI totalSupplyText;              // "BTC 21,000,000"
+    public TextMeshProUGUI currentCirculatingSupplyText;
+    public TextMeshProUGUI totalSupplyText;
 
-    public TextMeshProUGUI athText; // ¿ª´ë ÃÖ°í°¡
-    public TextMeshProUGUI atlText; // ¿ª´ë ÃÖÀú°¡
+    public TextMeshProUGUI athText;
+    public TextMeshProUGUI atlText;
 
-    public TextMeshProUGUI riskGradeText; // "S+"
-    public TextMeshProUGUI categoryText;  // "·¹ÀÌ¾î 1"
+    public TextMeshProUGUI riskGradeText;
+    public TextMeshProUGUI categoryText;
+    public TextMeshProUGUI contractAddressText;
+    public TextMeshProUGUI proofTypeText;
+
+    [Header("Sub Panels")]
+    public LockupHalvingInfoPanel lockupInfoPanel;
 
     [Header("Chart Connection")]
     public CryptoChartManager chartManager;
-    public Button tickChartBtn;   // '30ºÐ' ¹öÆ° ¿¬°á
-    public Button dailyChartBtn;  // '1D' ¹öÆ° ¿¬°á
+    public Button tickChartBtn;
+    public Button dailyChartBtn;
     private bool isDailyChart = false;
 
     private CoinData currentCoin;
+    public string CurrentCoinSymbol => currentCoin != null ? currentCoin.Symbol : "";
 
     void Start() {
         if (backBtn != null) backBtn.onClick.AddListener(OnClickBack);
-        if (overviewBtn != null) overviewBtn.onClick.AddListener(() => UpdateTabUI(overviewBtn));
-        if (marketBtn != null) marketBtn.onClick.AddListener(() => UpdateTabUI(marketBtn));
-        if (newsBtn != null) newsBtn.onClick.AddListener(() => UpdateTabUI(newsBtn));
 
-        // [NEW] 30ºÐ / 1D ¹öÆ° ÀÌº¥Æ® ¿¬°á
+        if (overviewBtn != null) overviewBtn.onClick.AddListener(() => {
+            UpdateTabUI(overviewBtn);
+            ShowTabGroup(true);
+        });
+
+        if (newsBtn != null) newsBtn.onClick.AddListener(() => {
+            UpdateTabUI(newsBtn);
+            ShowTabGroup(false);
+        });
+
         if (tickChartBtn != null) tickChartBtn.onClick.AddListener(() => SetChartMode(false));
         if (dailyChartBtn != null) dailyChartBtn.onClick.AddListener(() => SetChartMode(true));
     }
@@ -75,7 +90,7 @@ public class ResearchDetailController : MonoBehaviour {
         if (currentCoin == null || !detailPanel.activeSelf) return;
 
         RefreshTextUI();
-        RefreshChart(); // [¼öÁ¤] AddPriceData ´ë½Å RefreshChart ÇÏ³ª¸¸ È£Ãâ!
+        RefreshChart();
     }
 
     public void OpenPanel(CoinData coin) {
@@ -83,10 +98,29 @@ public class ResearchDetailController : MonoBehaviour {
         listPanel.SetActive(false);
         detailPanel.SetActive(true);
 
-        SetChartMode(false); // [¼öÁ¤] Ã¢ ¿­ ¶§ ¹«Á¶°Ç '30ºÐºÀ' ¸ðµå·Î ÃÊ±âÈ­ ¹× Â÷Æ® ±×¸®±â
-
+        SetChartMode(false);
         RefreshTextUI();
-        UpdateTabUI(overviewBtn); // Ã¢ ¿­¸é ¹«Á¶°Ç °³¿ä ÅÇ
+
+        UpdateTabVisual(true);
+        ShowTabGroup(true);
+    }
+
+    public void ShowTabGroup(bool isOverview) {
+        if (overviewGroup != null) overviewGroup.SetActive(isOverview);
+        if (newsGroup != null) newsGroup.SetActive(!isOverview);
+    }
+
+    public void UpdateTabVisual(bool isOverview) {
+        SetTabStyle(overviewBtn, isOverview);
+        SetTabStyle(newsBtn, !isOverview);
+    }
+    private void SetTabStyle(Button btn, bool isActive) {
+        if (btn == null) return;
+        var txt = btn.GetComponentInChildren<TextMeshProUGUI>();
+        if (txt != null) {
+            txt.color = isActive ? activeTabColor : Color.white;
+            txt.fontStyle = isActive ? FontStyles.Underline : FontStyles.Normal;
+        }
     }
 
     public void OnClickBack() {
@@ -94,14 +128,12 @@ public class ResearchDetailController : MonoBehaviour {
         listPanel.SetActive(true);
     }
 
-    // [NEW] 30ºÐ / 1D ¸ðµå º¯°æ ¹× Â÷Æ® ´Ù½Ã ±×¸®±â
     public void SetChartMode(bool toDaily) {
         isDailyChart = toDaily;
         UpdateChartTabUI();
         RefreshChart();
     }
 
-    // [NEW] Â÷Æ® ÅÇ ¹öÆ° »ö»ó ¿¬Ãâ
     private void UpdateChartTabUI() {
         if (tickChartBtn != null) {
             var txt = tickChartBtn.GetComponentInChildren<TextMeshProUGUI>();
@@ -119,18 +151,13 @@ public class ResearchDetailController : MonoBehaviour {
         List<double> finalChartData = new List<double>();
 
         if (isDailyChart) {
-
             if (currentCoin.DailyHistory != null && currentCoin.DailyHistory.Count > 0) {
-
                 finalChartData.AddRange(currentCoin.DailyHistory);
             } else {
-
                 finalChartData.Add(currentCoin.InitialPrice);
             }
-
             finalChartData.Add(currentCoin.CurrentPrice);
         } else {
-
             if (currentCoin.PriceHistory != null) {
                 finalChartData.AddRange(currentCoin.PriceHistory);
             }
@@ -138,97 +165,102 @@ public class ResearchDetailController : MonoBehaviour {
         chartManager.DrawChart(finalChartData);
     }
 
-    private void RefreshTextUI() {
+    //   publicìœ¼ë¡œ ìœ ì§€ ë° GetThemeNameKR ì¶”ê°€
+    public void RefreshTextUI() {
         if (currentCoin == null) return;
         var meta = CoinMetaDatabase.AllCoins.FirstOrDefault(m => m.Symbol == currentCoin.Symbol);
 
-        // 1. »ó´Ü Á¤º¸
-        coinIcon.sprite = Resources.Load<Sprite>($"Coins/{currentCoin.Symbol}");
-        nameAndSymbolTopText.text = $"{currentCoin.Name}\n({currentCoin.Symbol})";
+        bool isUsd = false;
+        var parent = GetComponentInParent<ResearchPanelController>();
+        if (parent != null) isUsd = parent.ShowInUsd;
 
-        currentPriceText.text = currentCoin.CurrentPrice < 10
-            ? $"°¡°Ý\n{currentCoin.CurrentPrice:N4} ¿ø"
-            : $"°¡°Ý\n{currentCoin.CurrentPrice:N0} ¿ø";
+        if (meta != null && lockupInfoPanel != null) {
+            lockupInfoPanel.Setup(currentCoin, meta, isUsd);
+        }
+
+        if (coinIcon != null) coinIcon.sprite = Resources.Load<Sprite>($"Coins/{currentCoin.Symbol}");
+        if (nameAndSymbolTopText != null) nameAndSymbolTopText.text = $"{currentCoin.Name}\n({currentCoin.Symbol})";
+
+        if (currentPriceText != null) {
+            currentPriceText.text = isUsd
+                ? $"ê°€ê²©\n{GetFormattedPriceUSD(currentCoin.CurrentPrice)}"
+                : $"ê°€ê²©\n{currentCoin.GetFormattedPriceKRW().Replace("â‚©", "")} ì›";
+        }
 
         double change = currentCoin.InitialPrice > 0 ? ((currentCoin.CurrentPrice - currentCoin.InitialPrice) / currentCoin.InitialPrice) * 100.0 : 0;
-        changePercentText.text = $"µî¶ô·ü\n{change:+0.##;-0.##}%";
-        changePercentText.color = change > 0 ? activeTabColor : (change < 0 ? Color.red : Color.white);
+        if (changePercentText != null) {
+            changePercentText.text = $"ë“±ë½ë¥ \n{change:+0.##;-0.##}%";
+            changePercentText.color = change > 0 ? activeTabColor : (change < 0 ? Color.red : Color.white);
+        }
 
-        // 2. °³¿ä(Overview) º»¹® Á¤º¸
         if (meta != null) {
-            titleNameSymbolText.text = $"{currentCoin.Name} ({currentCoin.Symbol})";
-            descriptionText.text = meta.Description;
+            double mc = currentCoin.CurrentPrice * currentCoin.CirculatingSupply;
+            double fdv = currentCoin.CurrentPrice * currentCoin.MaxSupply;
 
-            // [¼öÁ¤] À¯Åë±Ô¸ð(MC) vs ½Ã°¡ÃÑ¾×(FDV) È®½ÇÇÑ ºÐ¸®!
-            double mc = currentCoin.CurrentPrice * meta.CirculatingSupply; // À¯Åë±Ô¸ð
-            double fdv = currentCoin.CurrentPrice * meta.MaxSupply;        // ½Ã°¡ÃÑ¾× (¿ÏÀüÈñ¼®)
+            if (circulatingVolumeText != null) circulatingVolumeText.text = FormatCurrency(mc, isUsd);
+            if (marketCapText != null) marketCapText.text = FormatCurrency(fdv, isUsd);
 
-            circulatingVolumeText.text = FormatKoreanCurrency(mc);
-            marketCapText.text = FormatKoreanCurrency(fdv);
+            if (currentCirculatingSupplyText != null) currentCirculatingSupplyText.text = $"{currentCoin.Symbol} {currentCoin.CirculatingSupply:N0}";
+            if (totalSupplyText != null) totalSupplyText.text = $"{currentCoin.Symbol} {currentCoin.MaxSupply:N0}";
 
-            // ½Éº¼ + À¯Åë·®
-            currentCirculatingSupplyText.text = $"{currentCoin.Symbol} {meta.CirculatingSupply:N0}";
-            totalSupplyText.text = $"{currentCoin.Symbol} {meta.MaxSupply:N0}";
+            if (athText != null)
+                athText.text = isUsd ? GetFormattedPriceUSD(currentCoin.AllTimeHigh) : $"{currentCoin.AllTimeHigh:N0} ì›";
 
-            riskGradeText.text = meta.GetRiskGrade();
-            categoryText.text = GetThemeNameKR(meta.Theme);
+            if (atlText != null)
+                atlText.text = isUsd ? GetFormattedPriceUSD(currentCoin.AllTimeLow) : $"{currentCoin.AllTimeLow:N0} ì›";
 
-            // ATH/ATL ÀÓ½Ã Ã³¸®
-            athText.text = currentCoin.AllTimeHigh < 10
-                            ? $"{currentCoin.AllTimeHigh:N4} ¿ø"
-                            : $"{currentCoin.AllTimeHigh:N0} ¿ø";
+            if (titleNameSymbolText != null) titleNameSymbolText.text = $"{currentCoin.Name} ({currentCoin.Symbol})";
+            if (descriptionText != null) descriptionText.text = meta.Description;
+            if (contractAddressText != null) contractAddressText.text = meta.ContractAddress;
+            if (proofTypeText != null) proofTypeText.text = $"[{meta.Proof.ToString()}]";
+            if (riskGradeText != null) riskGradeText.text = meta.GetRiskGrade();
 
-            atlText.text = currentCoin.AllTimeLow < 10
-                ? $"{currentCoin.AllTimeLow:N4} ¿ø"
-                : $"{currentCoin.AllTimeLow:N0} ¿ø";
+            //   ì—¬ê¸°ì„œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
+            if (categoryText != null) categoryText.text = GetThemeNameKR(meta.Theme);
         }
     }
 
-    // ´ÜÀ§ Á¤¹Ð ÆÄ½Ì
-    private string FormatKoreanCurrency(double amount) {
-        if (amount >= 1_0000_0000_0000_0000_0000d) { // 1ÇØ ÀÌ»ó
-            long hae = (long)(amount / 1_0000_0000_0000_0000_0000d);
-            long kyung = (long)((amount % 1_0000_0000_0000_0000_0000d) / 1_0000_0000_0000_0000d);
-            return kyung > 0 ? $"{hae}ÇØ {kyung}°æ ¿ø" : $"{hae}ÇØ ¿ø";
+    public string FormatCurrency(double krwAmount, bool isUsd) {
+        if (isUsd) {
+            double usdAmount = krwAmount / GlobalEconomyManager.UsdToKrw;
+            if (usdAmount >= 1_000_000_000_000d) return $"${(usdAmount / 1_000_000_000_000d):F2}T";
+            if (usdAmount >= 1_000_000_000d) return $"${(usdAmount / 1_000_000_000d):F2}B";
+            if (usdAmount >= 1_000_000d) return $"${(usdAmount / 1_000_000d):F2}M";
+            if (usdAmount >= 1_000d) return $"${(usdAmount / 1_000d):F2}K";
+            return $"${usdAmount:N2}";
+        } else {
+            if (krwAmount >= 1_0000_0000_0000d) return $"{(krwAmount / 1_0000_0000_0000d):F2}ì¡° ì›";
+            if (krwAmount >= 1_0000_0000d) return $"{(krwAmount / 1_0000_0000d):F2}ì–µ ì›";
+            if (krwAmount >= 1_0000d) return $"{(krwAmount / 1_0000d):F2}ë§Œ ì›";
+            return $"{krwAmount:N0} ì›";
         }
-        if (amount >= 1_0000_0000_0000_0000d) { // 1°æ ÀÌ»ó
-            long kyung = (long)(amount / 1_0000_0000_0000_0000d);
-            long jo = (long)((amount % 1_0000_0000_0000_0000d) / 1_0000_0000_0000d);
-            return jo > 0 ? $"{kyung}°æ {jo}Á¶ ¿ø" : $"{kyung}°æ ¿ø";
-        }
-        if (amount >= 1_0000_0000_0000d) { // 1Á¶ ÀÌ»ó
-            long jo = (long)(amount / 1_0000_0000_0000d);
-            long uk = (long)((amount % 1_0000_0000_0000d) / 1_0000_0000d);
-            return uk > 0 ? $"{jo}Á¶ {uk}¾ï ¿ø" : $"{jo}Á¶ ¿ø";
-        }
-        if (amount >= 1_0000_0000d) { // 1¾ï ÀÌ»ó
-            long uk = (long)(amount / 1_0000_0000d);
-            long man = (long)((amount % 1_0000_0000d) / 1_0000d);
-            return man > 0 ? $"{uk}¾ï {man}¸¸ ¿ø" : $"{uk}¾ï ¿ø";
-        }
-        return $"{amount:N0} ¿ø";
     }
 
+    public string GetFormattedPriceUSD(double krwPrice) {
+        double usd = krwPrice / GlobalEconomyManager.UsdToKrw;
+        if (usd >= 1.0) return $"${usd:N2}";
+        if (usd >= 0.001) return $"${usd:N4}";
+        return $"${usd:F6}";
+    }
+
+    //   ì—ëŸ¬ ì›ì¸ í•´ê²°: í…Œë§ˆ ì´ë¦„ì„ ê°€ì ¸ì˜¤ëŠ” í•¨ìˆ˜ ì¶”ê°€
     private string GetThemeNameKR(CoinTheme theme) {
         return theme switch {
-            CoinTheme.Layer1 => "·¹ÀÌ¾î 1",
-            CoinTheme.Layer2 => "·¹ÀÌ¾î 2",
-            CoinTheme.Meme => "¹Ò",
-            CoinTheme.AI => "AI / ÀÎ°øÁö´É",
+            CoinTheme.Layer1 => "ë ˆì´ì–´ 1",
+            CoinTheme.Layer2 => "ë ˆì´ì–´ 2",
+            CoinTheme.Meme => "ë°ˆ",
+            CoinTheme.AI => "AI / ì¸ê³µì§€ëŠ¥",
             CoinTheme.RWA => "RWA",
             CoinTheme.ZK => "ZK",
-            CoinTheme.DeFi => "µðÆÄÀÌ",
-            CoinTheme.Stable => "½ºÅ×ÀÌºí",
+            CoinTheme.DeFi => "ë””íŒŒì´",
+            CoinTheme.Stable => "ìŠ¤í…Œì´ë¸”",
             _ => theme.ToString()
         };
     }
 
-    // ÅÇ ¼±ÅÃ ½Ã ¾ð´õ¶óÀÎ ¹× ÄÃ·¯ ¿¬Ãâ
     public void UpdateTabUI(Button selectedBtn) {
         ResetTab(overviewBtn);
-        ResetTab(marketBtn);
         ResetTab(newsBtn);
-
         var txt = selectedBtn.GetComponentInChildren<TextMeshProUGUI>();
         if (txt != null) {
             txt.color = activeTabColor;

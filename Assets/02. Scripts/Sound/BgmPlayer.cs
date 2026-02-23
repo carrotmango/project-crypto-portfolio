@@ -14,9 +14,10 @@ public class BgmPlayer : MonoBehaviour {
     private AudioSource audioSource;
     private int currentTradingIndex = 0;
     private bool isTradingMode = false;
-    private bool isTransitioning = false; // [추가] 전환 중인지 체크
+    private bool isTransitioning = false;
 
     private float masterVolume = 1.0f;
+    private const string BGM_VOLUME_KEY = "BgmMasterVolume"; // PlayerPrefs용 키
 
     void Awake() {
         if (Instance != null && Instance != this) {
@@ -28,11 +29,13 @@ public class BgmPlayer : MonoBehaviour {
 
         audioSource = GetComponent<AudioSource>();
         audioSource.playOnAwake = false;
-        masterVolume = audioSource.volume;
+
+        // [추가] 저장된 볼륨 불러오기 (기본값 1.0)
+        masterVolume = PlayerPrefs.GetFloat(BGM_VOLUME_KEY, 1.0f);
+        audioSource.volume = masterVolume;
     }
 
     void Update() {
-        // [수정] 재생 중이 아니고, 전환 중도 아니며, 클립이 할당되어 있을 때만 다음 곡으로!
         if (isTradingMode && !isTransitioning && audioSource.clip != null) {
             if (!audioSource.isPlaying && audioSource.time == 0) {
                 Debug.Log($"[BGM] 곡 종료 감지! 다음 트레이딩 곡으로 전환 시도. 현재 인덱스: {currentTradingIndex}");
@@ -47,21 +50,18 @@ public class BgmPlayer : MonoBehaviour {
     }
 
     public void PlayTradingBgm() {
-        // [수정] 이미 트레이딩 곡이 재생 중이라면 인덱스를 0으로 바꾸지 말고 그냥 리턴!
         if (isTradingMode && IsCurrentClipInTradingList()) return;
 
         isTradingMode = true;
         isTransitioning = false;
 
-        // [수정] 여기서 currentTradingIndex = 0; 을 지워야 합니다.
-        // 대신 현재 인덱스에 맞는 곡을 틀어줍니다.
         if (tradingBgms.Count > 0) {
             CrossFade(tradingBgms[currentTradingIndex], false);
         }
     }
 
     private void PlayNextTradingBgm() {
-        if (tradingBgms.Count <= 1) return; // 곡이 1개 이하면 넘길 필요 없음
+        if (tradingBgms.Count <= 1) return;
 
         isTransitioning = true;
         currentTradingIndex = (currentTradingIndex + 1) % tradingBgms.Count;
@@ -94,9 +94,8 @@ public class BgmPlayer : MonoBehaviour {
             audioSource.loop = isTradingMode ? false : loop;
             audioSource.Play();
 
-            // [핵심] Play() 직후 아주 잠깐 기다렸다가 감지 로직을 풀어줘야 안전합니다.
             audioSource.DOFade(masterVolume, 0.5f).SetUpdate(true).OnComplete(() => {
-                Debug.Log($"[BGM] '{nextClip.name}' 페이드인 완료. 이제 다음 종료를 감지합니다.");
+                Debug.Log($"[BGM] '{nextClip.name}' 페이드인 완료. 볼륨: {masterVolume}");
                 isTransitioning = false;
             });
         });
@@ -108,6 +107,12 @@ public class BgmPlayer : MonoBehaviour {
 
     public void SetVolume(float value) {
         masterVolume = value;
+
+        // [추가] 볼륨 설정 시 즉시 저장
+        PlayerPrefs.SetFloat(BGM_VOLUME_KEY, value);
+        PlayerPrefs.Save();
+
+        // 페이드 중이 아닐 때만 즉시 볼륨 반영
         if (!DOTween.IsTweening(audioSource)) {
             audioSource.volume = value;
         }

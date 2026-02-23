@@ -1,6 +1,17 @@
 using System;
 
 [Serializable]
+public class ArticleData {
+    public string provider;      // 발행사 (예: Bullbit Financial)
+    public string title;         // 뉴스 제목
+    public string summary;       // 뉴스 본문/요약
+    public string newsImage;     // 뉴스용 별도 이미지 (없으면 contentImage 사용)
+    public string[] targetSymbols;
+    public string expertOpinion;
+}
+
+
+[Serializable]
 public class UIEventData {
     public string key;
     public UIEventType type;
@@ -15,6 +26,8 @@ public class UIEventData {
     public string contentImage;
     public float height;
     public float width;
+
+    public ArticleData article;
 }
 
 public enum UIEventType {

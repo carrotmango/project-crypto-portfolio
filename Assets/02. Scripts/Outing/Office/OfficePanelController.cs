@@ -126,13 +126,18 @@ public class OfficePanelController : MonoBehaviour {
     }
 
     public void OpenResearchPanel() {
-        CloseAllSubPanels(); 
+        CloseAllSubPanels();
 
         if (homePanel != null) homePanel.SetActive(false);
 
         if (researchPanel != null) {
             researchPanel.SetActive(true);
-          
+
+            // ★ [추가] 리서치 패널 컨트롤러를 찾아서 '메인(뉴스)' 탭을 강제로 열게 합니다.
+            var researchCtrl = researchPanel.GetComponent<ResearchPanelController>();
+            if (researchCtrl != null) {
+                researchCtrl.ShowMainPanel();
+            }
         }
     }
 

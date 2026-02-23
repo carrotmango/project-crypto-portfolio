@@ -10,7 +10,8 @@ public enum TimeSpeed
 {
     Paused,
     Normal,
-    Double
+    Double,
+    test
 }
 
 public class CoinManager : MonoBehaviour
@@ -72,6 +73,7 @@ public class CoinManager : MonoBehaviour
     public System.Action OnMarketUpdated;
     private HashSet<string> dailySurgeAlerts = new HashSet<string>();
     private int lastRecordedDay = -1;
+    private double baseTotalMarketCap = -1;
 
     public struct CoinChangeInfo {
         public CoinData coin;
@@ -189,6 +191,14 @@ public class CoinManager : MonoBehaviour
             if (currentDateTime.Hour == 0 && currentDateTime.Minute == 0) {
                 survivalDays++;
 
+                // 시나리오 매니저에게 판단 위임
+                if (CoinEventScenarioManager.Instance != null) {
+                    CoinEventScenarioManager.Instance.CheckAndExecuteScenarios(currentDateTime, coins);
+                }
+
+                // 데이터가 바뀌었으니 UI를 새로 그리라고 모든 패널에 신호를 보냅니다.
+                OnMarketUpdated?.Invoke();
+
                 if (LoanManager.Instance != null) {
                     LoanManager.Instance.CheckLoanTick();
                 }
@@ -239,7 +249,7 @@ public class CoinManager : MonoBehaviour
 
                 // 이제 CoinData 내부에서 Type을 체크하므로, 
                 // Stable 코인은 phase 영향을 받지 않고 환율만 따르게 됩니다.
-                coin.GenerateNextPrice(phase, vol, 2f, 0f);
+                coin.GenerateNextPrice(phase, vol, 2f, 0f, currentDateTime);
 
                 CheckPriceSurgeAndNotify(coin);
             }
@@ -405,6 +415,7 @@ public class CoinManager : MonoBehaviour
             TimeSpeed.Paused => float.MaxValue,
             TimeSpeed.Normal => 1f,
             TimeSpeed.Double => 0.2f,
+            TimeSpeed.test => 0.01f,
             _ => 2f
         };
     }
@@ -418,14 +429,20 @@ public class CoinManager : MonoBehaviour
         }
 
         if (existingCoin != null) {
+            // 1. 이미 객체가 존재하는 경우 (비상장 상태였다가 상장되는 경우)
             existingCoin.IsListed = true;
-            existingCoin.IsDelisted = false;
+            existingCoin.IsDelisted = false; // 상폐/거래정지 상태 무조건 해제
 
             var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
             if (meta != null) meta.BullbitListed = true;
 
+            // 차트 캔들 및 가격 강제 초기화 (이게 없으면 차트가 깨집니다)
+            existingCoin.InitialPrice = existingCoin.CurrentPrice;
+            existingCoin.EnsureRuntimeCandle(existingCoin.CurrentPrice);
+
             Debug.Log($"[ListNewCoin] 기존 데이터 '{symbol}'을(를) 상장 상태로 전환했습니다.");
         } else {
+            // 2. 리스트에 아예 없어서 새로 생성해야 하는 경우 (이벤트 코인 등)
             var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
             if (meta == null) {
                 Debug.LogError($"[ListNewCoin] '{symbol}' 메타 데이터를 찾을 수 없습니다.");
@@ -434,18 +451,33 @@ public class CoinManager : MonoBehaviour
 
             meta.BullbitListed = true;
             existingCoin = new CoinData(meta);
+
+            // 핵심: 50% 랜덤 확률 무시하고 강제로 상장 및 거래 활성화
             existingCoin.IsListed = true;
+            existingCoin.IsDelisted = false;
+
+            // 핵심: 첫 캔들과 히스토리 강제 생성 (가격 고장 및 차트 일자 현상 방지)
+            existingCoin.InitialPrice = existingCoin.CurrentPrice;
+            existingCoin.PriceHistory.Clear();
+            existingCoin.PriceHistory.Add(existingCoin.CurrentPrice);
+            existingCoin.EnsureRuntimeCandle(existingCoin.CurrentPrice);
+            existingCoin.RecordDailyClosePrice();
+
             coins.Add(existingCoin);
 
             Debug.Log($"[ListNewCoin] 신규 코인 '{symbol}'이(가) 시장에 추가되었습니다.");
         }
 
+        // UI 갱신 로직
         var uiManager = FindAnyObjectByType<MainUIManager>();
         if (uiManager != null) {
             uiManager.AddCoinRow(existingCoin);
         }
 
         assetPanelController?.RenderPlatformRows();
+
+        // 상장 직후 1틱 바로 돌게 알림 발송
+        OnMarketUpdated?.Invoke();
     }
 
     public void DelistCoin(string symbol) {
@@ -536,7 +568,7 @@ public class CoinManager : MonoBehaviour
         foreach (var coin in coins) {
             coin.EnsureRuntimeCandle(coin.CurrentPrice);
         }
-
+        SetBaseMarketCap();
         UpdateCashText();
         UpdateDateText();
         Canvas.ForceUpdateCanvases();
@@ -611,5 +643,64 @@ public class CoinManager : MonoBehaviour
 
         Debug.Log($"[이벤트 상장] {meta.Name}({meta.Symbol}) 거래 개시!");
     }
+    public void ReleaseLockupSupply(string symbol, float percent) {
+        var coin = coins.Find(c => c.Symbol == symbol);
+        var meta = Array.Find(CoinMetaDatabase.AllCoins, m => m.Symbol == symbol);
 
+        if (coin != null && meta != null) {
+            long releaseAmount = (long)(meta.MaxSupply * percent);
+            long nextSupply = meta.CirculatingSupply + releaseAmount;
+
+            // 유통량 즉시 반영 (MaxSupply 가드)
+            meta.CirculatingSupply = Math.Min(nextSupply, meta.MaxSupply);
+
+            Debug.Log($"[이벤트] {symbol} 락업 해제 발생: {percent * 100}% ({releaseAmount}개) 추가 유통");
+
+            // 리서치 패널 등이 열려있다면 갱신 신호 발송
+            OnMarketUpdated?.Invoke();
+        }
+    }
+
+    // [추가] 반감기 도달 시 일일 발행량을 절반으로 깎는 함수
+    public void ApplyHalving(string symbol) {
+        var meta = Array.Find(CoinMetaDatabase.AllCoins, m => m.Symbol == symbol);
+
+        if (meta != null && meta.DailyMintAmount > 0) {
+            meta.DailyMintAmount /= 2; // 일일 발행량 절반 삭감
+            Debug.Log($"[반감기] {symbol} 반감기 적용 완료. 새로운 일일 발행량: {meta.DailyMintAmount}");
+
+            OnMarketUpdated?.Invoke();
+        }
+    }
+    public void SetBaseMarketCap() {
+        double totalCap = 0;
+        foreach (var coin in coins) {
+            // 조건: 상장됨 + 상폐 안됨 + 밈 코인 아님 + 가격 유효
+            if (coin.IsListed && !coin.IsDelisted && coin.CurrentPrice > 0 && coin.Theme != CoinTheme.Meme.ToString()) {
+                // 시가총액 = 가격 * 유통량
+                totalCap += coin.CurrentPrice * coin.CirculatingSupply;
+            }
+        }
+        baseTotalMarketCap = totalCap;
+        Debug.Log($"[불비트 지수] 기준 시가총액 설정 완료: {baseTotalMarketCap:N0}원 (지수 1000 시작)");
+    }
+    public float CalculateBullbitIndex() {
+        // 아직 기준값이 설정 안 됐으면 기본값 반환
+        if (baseTotalMarketCap <= 0) return 1000f;
+
+        double currentTotalCap = 0;
+
+        foreach (var coin in coins) {
+            // 조건 동일하게 적용
+            if (coin.IsListed && !coin.IsDelisted && coin.CurrentPrice > 0 && coin.Theme != CoinTheme.Meme.ToString()) {
+                // 현재 시가총액 합산
+                currentTotalCap += coin.CurrentPrice * coin.CirculatingSupply;
+            }
+        }
+
+        // 공식: (현재 시총 / 기준 시총) * 1000
+        double index = (currentTotalCap / baseTotalMarketCap) * 1000.0;
+
+        return (float)index;
+    }
 }

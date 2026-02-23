@@ -104,7 +104,7 @@
             "width": 550,
             "height": 380
         },
-                {
+        {
             "key": "choco_listing_announce_1",
             "type": 0,
             "authorName": "Shocking News",
@@ -116,7 +116,7 @@
             "width": 550,
             "height": 360
         },
-                        {
+        {
             "key": "choco_listing_announce_2",
             "type": 0,
             "authorName": "Shocking News",
@@ -162,7 +162,15 @@
             "profileImage": "elon.jpg",
             "contentImage": "elon_doge_02.jpg",
             "width": 550,
-            "height": 700
+            "height": 700,
+                     "article": {
+                "provider": "MangoRock Investment",
+                "title": "일론 머스크. 도지 페페 언급만으로 수십프로 급등? 인생이 장난인가?",
+                "summary": "일론 머스크 CEO가 도지 와 페페 언급 만으로 코인의 가격을 급등시켰습니다.이것이 정상적인 시장의 사이클인지 투자자들은 의문을 갖고있습니다.",
+		"expertOpinion": "단기적 급등으로 보이니 가급적 매수 X",
+                "newsImage": "elon_doge_01.jpg",
+                "targetSymbols": ["DOGE", "PEPE"]
+            }
         },
         {
             "key": "dogepepefix",
@@ -188,7 +196,7 @@
             "width": 550,
             "height": 700
         },
-                {
+        {
             "key": "trump_president",
             "type": 0,
             "authorName": "Donald Trump",
@@ -198,7 +206,15 @@
             "profileImage": "trump.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 360
+            "height": 360,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "트럼프, 친 암호화폐 행보 가속화",
+                "summary": "트럼프 전 대통령이 비트코인에 대한 강한 신뢰를 재표명하며, 미 대선 공약으로 국가 전략 자산화를 시사했습니다.",
+		"expertOpinion": "매수를 추천합니다",
+                "newsImage": "trump_bitcoin_02.jpg",
+                "targetSymbols": ["BTC", "ETH","TRUMP"]
+            }
         },
         {
             "key": "trumpevent1",

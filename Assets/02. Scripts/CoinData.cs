@@ -10,7 +10,9 @@ public class CoinData {
     public string Symbol;
     public double CurrentPrice;
     public double InitialPrice;
-    public double Supply;
+    public long CirculatingSupply; // 실시간 유통량 (매일 늘어날 변수)
+    public long MaxSupply;         // 최대 발행 가능량 (게이지의 100% 기준)
+    public double Supply;          // (기존 변수 유지용)
     public CoinType Type = CoinType.Normal;
     public double FixedDollarValue = 1.0;
     public bool IsDelisted = false;
@@ -22,11 +24,14 @@ public class CoinData {
     public double AllTimeHigh; // 역대 최고가
     public double AllTimeLow;  // 역대 최저가
 
-
     // ===== 기존 구조 유지 =====
     public const int MaxCandleHistory = 35;
     public MarketPhase CurrentPhaseOverride = MarketPhase.Sideways;
     public DateTime PhaseOverrideEndTime = DateTime.MinValue;
+
+    // [신규 추가] 락업 & 반감기 전용 독립 가격 개입 변수 (창과 방패)
+    public double lockupAndHalvingBias = 0;
+    public DateTime lockupAndHalvingBiasEndTime = DateTime.MinValue;
 
     public List<double> PriceHistory = new();
     public List<double> DailyHistory = new List<double>();
@@ -86,21 +91,18 @@ public class CoinData {
     public BaseCandle CurrentBaseCandle;
     public int MaxBaseCandles = 70;
 
-    // ===== 생성자 (수정됨) =====
     // ===== 생성자 (최종 통합 버전) =====
     public CoinData(CoinMetaData meta) {
-        // 1. 기본 정보 복사
         Name = meta.Name;
         Symbol = meta.Symbol;
-        Supply = meta.MaxSupply;
+        CirculatingSupply = meta.CirculatingSupply;
+        MaxSupply = meta.MaxSupply;
+        Supply = MaxSupply;
         Volatility = meta.VolatilityLevel;
         Description = meta.Description;
- 
 
-        // 2. 테마 저장 (퀘스트 시스템용)
         Theme = meta.Theme.ToString();
 
-        // 3. 스테이블 코인 및 가격 초기화
         if (meta.Theme == CoinTheme.Stable) {
             Type = CoinType.Stable;
             FixedDollarValue = 1.0;
@@ -115,17 +117,14 @@ public class CoinData {
         AllTimeLow = CurrentPrice;
         PriceHistory.Add(CurrentPrice);
 
-        // 4. 랜덤 상장 로직 (솔라나 등 비상장 문제 해결)
         if (meta.IsDefaultListed) {
-            IsActiveListed = true; // 비트코인 등 무조건 상장
+            IsActiveListed = true;
         } else if (meta.BullbitListed) {
-            // 50% 확률로 이번 판 상장 여부 결정
             IsActiveListed = UnityEngine.Random.value > 0.5f;
         } else {
-            IsActiveListed = false; // 이벤트 전용 등
+            IsActiveListed = false;
         }
 
-        // 상태 동기화
         IsListed = IsActiveListed;
         IsDelisted = !IsActiveListed;
     }
@@ -136,6 +135,11 @@ public class CoinData {
         InitialPrice = CurrentPrice;
         PhaseOverrideEndTime = DateTime.MinValue;
         CurrentPhaseOverride = MarketPhase.Sideways;
+
+        // [신규] 재상장 시 독립 변수도 초기화
+        lockupAndHalvingBias = 0;
+        lockupAndHalvingBiasEndTime = DateTime.MinValue;
+
         currentOpen = null;
         currentHigh = double.MinValue;
         currentLow = double.MaxValue;
@@ -143,9 +147,8 @@ public class CoinData {
         BaseCandleHistory.Clear();
     }
 
-    // ===== 가격 생성 (핵심 로직 수정) =====
-    // ===== 가격 생성 (8단계 최적화 버전) =====
-    public void GenerateNextPrice(MarketPhase inputPhase, int volatilityLevel = 1, float maxChangePct = 1f, float externalBias = 0f) {
+    // [핵심 변경] now(현재 게임 시간)를 받아와서 Bias 만료 체크를 합니다.
+    public void GenerateNextPrice(MarketPhase inputPhase, int volatilityLevel = 1, float maxChangePct = 1f, float externalBias = 0f, DateTime now = default) {
         if (IsDelisted) return;
 
         if (Type == CoinType.Stable) {
@@ -154,64 +157,80 @@ public class CoinData {
         } else {
             MarketPhase phase = inputPhase;
 
-            // 1. 방향성 확률 (기존 유지)
+            // 1. 승률 조절 (격차를 확 줄여서 복리 스노우볼 방지)
             double directionBias = phase switch {
-                MarketPhase.MegaBull => 0.90,
-                MarketPhase.SuperBull => 0.75,
-                MarketPhase.BigBull => 0.65,
-                MarketPhase.Bull => 0.60,
-                MarketPhase.MildBull => 0.55,
-                MarketPhase.Sideways => 0.5,
-                MarketPhase.MildBear => 0.45,
-                MarketPhase.Bear => 0.35,
-                MarketPhase.BigBear => 0.20,
-                MarketPhase.SuperBear => 0.10,
-                MarketPhase.MegaBear => 0.05,
-                _ => 0.5,
+                MarketPhase.MegaBull => 0.65,
+                MarketPhase.SuperBull => 0.60,
+                MarketPhase.BigBull => 0.57,
+                MarketPhase.Bull => 0.54,
+                MarketPhase.MildBull => 0.52,
+                MarketPhase.Sideways => 0.50, // 완벽한 5:5 보합
+                MarketPhase.MildBear => 0.48,
+                MarketPhase.Bear => 0.46,
+                MarketPhase.BigBear => 0.43,
+                MarketPhase.SuperBear => 0.40,
+                MarketPhase.MegaBear => 0.35,
+                _ => 0.50,
             };
 
-            // 2. 기본 변동폭
+            // 2. 틱당 진폭(%) 현실화 (하루 48틱이므로 매우 작아야 함)
             double baseMagnitude = phase switch {
-                MarketPhase.MegaBull => 1.8,
-                MarketPhase.MegaBear => 2.2,
-                MarketPhase.SuperBull => 1.0,
-                MarketPhase.SuperBear => 1.2,
-                MarketPhase.Sideways => 0.12,
-                _ => 0.5,
+                MarketPhase.MegaBull or MarketPhase.MegaBear => 1.5,   // 초대형 호재/악재 터졌을 때만 큼
+                MarketPhase.SuperBull or MarketPhase.SuperBear => 1.0,
+                MarketPhase.BigBull or MarketPhase.BigBear => 0.7,
+                _ => 0.3, // Sideways, Mild, Bull 등 평상시는 틱당 0.3% 내외로 잔잔하게
             };
 
-            // 3. [수정] 변동성 멀티플라이어 (1~8단계 확장)
             double volMultiplier = volatilityLevel switch {
-                1 => 0.75,  // S+
-                2 => 1.05,  // S
-                3 => 1.8,   // A
-                4 => 2.5,   // B
-                5 => 3.7,   // C
-                6 => 6.0,   // D (본격 알트 지옥 시작)
-                7 => 8.0,  // E
-                8 => 15.0,  // F (도박/스캠급)
+                1 => 0.75,
+                2 => 1.05,
+                3 => 1.8,
+                4 => 2.5,
+                5 => 3.7,
+                6 => 6.0,
+                7 => 8.0,
+                8 => 15.0,
                 _ => 1.0,
             };
 
             double finalMaxMagnitude = baseMagnitude * volMultiplier;
 
-            // 4. [수정] 하락장 가중치 (6단계 이상 통합 하락 로직)
+            // 3. 강제 추세 밀어주기 (Mega 급에서만 발동되도록 제한)
             double baseBias = phase switch {
-                MarketPhase.MegaBull => 0.06 * volMultiplier,
-                // 6단계(D등급)부터는 하락장에서 0.18배율로 내리꽂음
-                MarketPhase.MegaBear or MarketPhase.SuperBear => (volatilityLevel >= 6)
-                    ? -0.18 * volMultiplier
-                    : -0.09 * volMultiplier,
-                MarketPhase.Sideways => 0,
-                _ => (baseMagnitude * 0.02) * volMultiplier
+                MarketPhase.MegaBull => 0.05 * volMultiplier,
+                MarketPhase.MegaBear => -0.05 * volMultiplier,
+                _ => 0.0 // 나머지는 억지 상승/하락 없음
             };
 
             bool isUp = UnityEngine.Random.value < directionBias;
-            double magnitude = UnityEngine.Random.Range(0f, (float)finalMaxMagnitude);
-            double deltaPct = (isUp ? magnitude : -magnitude) + baseBias + externalBias;
+            // 캔들 길이 계산 (최소 길이 보장)
+            double magnitude = UnityEngine.Random.Range((float)finalMaxMagnitude * 0.1f, (float)finalMaxMagnitude);
 
+            // =========================================================
+            // [핵심] 차트 흔들기 (Super, Mega 급에서만 양봉/음봉 길이 차이 발생)
+            // Mild나 평상시엔 길이가 비슷해서 차트가 부드럽게 지그재그를 그림
+            // =========================================================
+            if (phase == MarketPhase.MegaBull || phase == MarketPhase.SuperBull) {
+                if (isUp) magnitude *= 1.3; else magnitude *= 0.7; // 상승장 특유의 장대양봉
+            } else if (phase == MarketPhase.MegaBear || phase == MarketPhase.SuperBear) {
+                if (!isUp) magnitude *= 1.3; else magnitude *= 0.7; // 폭락장 특유의 장대음봉
+            }
+
+            // [락업 및 반감기 시나리오 강제 개입 로직 (유지)]
+            double activeLockupBias = 0;
+            if (now != default && now < lockupAndHalvingBiasEndTime) {
+                if (UnityEngine.Random.value < 0.3f) {
+                    activeLockupBias = -lockupAndHalvingBias * UnityEngine.Random.Range(0.5f, 1.5f);
+                    if (lockupAndHalvingBias > 0) isUp = false;
+                    else if (lockupAndHalvingBias < 0) isUp = true;
+                } else {
+                    activeLockupBias = lockupAndHalvingBias * UnityEngine.Random.Range(0.8f, 1.2f);
+                }
+            }
+
+            // 최종 가격 연산
+            double deltaPct = (isUp ? magnitude : -magnitude) + baseBias + externalBias + activeLockupBias;
             CurrentPrice = CurrentPrice * (1 + deltaPct / 100.0);
-            // 소수점 아래 4자리까지 표현되는 코인들을 위해 하한선 조정
             CurrentPrice = Math.Max(CurrentPrice, 0.0001);
         }
 
@@ -221,22 +240,16 @@ public class CoinData {
 
     public void OnPriceUpdate(double newPrice) {
         CurrentPrice = newPrice;
-
         if (newPrice > AllTimeHigh) AllTimeHigh = newPrice;
         if (newPrice < AllTimeLow) AllTimeLow = newPrice;
-
         if (currentOpen == null) {
             currentOpen = newPrice; currentHigh = newPrice; currentLow = newPrice;
         } else {
             currentHigh = Math.Max(currentHigh, newPrice);
             currentLow = Math.Min(currentLow, newPrice);
         }
-
-        if (CurrentBaseCandle == null) {
-            CurrentBaseCandle = new BaseCandle(newPrice);
-        } else {
-            CurrentBaseCandle.Update(newPrice);
-        }
+        if (CurrentBaseCandle == null) CurrentBaseCandle = new BaseCandle(newPrice);
+        else CurrentBaseCandle.Update(newPrice);
 
         if (CurrentRuntimeCandle != null && !CurrentRuntimeCandle.IsClosed) {
             CurrentRuntimeCandle.UpdatePrice(newPrice);
@@ -279,26 +292,19 @@ public class CoinData {
         if (Attributes.TryGetValue(key, out var value) && value is T t) return t;
         return defaultValue;
     }
-    public double GetCurrentPriceUSD() {
-        // 현재 원화가격을 실시간 환율로 나눔
-        return CurrentPrice / GlobalEconomyManager.UsdToKrw;
-    }
+
+    public double GetCurrentPriceUSD() => CurrentPrice / GlobalEconomyManager.UsdToKrw;
 
     public string GetFormattedPriceUSD(double? customPrice = null) {
         double price = customPrice ?? GetCurrentPriceUSD();
-        // 달러 표기법: $1,234.56
         if (price >= 1000) return $"${price:N2}";
         else if (price >= 1) return $"${price:N2}";
-        else return $"${price:N4}"; // 소액 코인은 소수점 4자리
+        else return $"${price:N4}";
     }
 
     public void RecordDailyClosePrice() {
         if (IsDelisted) return;
-
         DailyHistory.Add(CurrentPrice);
-
-        if (DailyHistory.Count > 100) {
-            DailyHistory.RemoveAt(0);
-        }
+        if (DailyHistory.Count > 100) DailyHistory.RemoveAt(0);
     }
 }

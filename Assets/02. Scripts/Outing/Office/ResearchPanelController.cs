@@ -50,11 +50,24 @@ public class ResearchPanelController : MonoBehaviour {
     public Toggle usdToggle; // 인스펙터에서 달러 표시 체크박스 연결
     private bool showInUsd = false; // 현재 달러 표시 모드인지 여부
 
+    [Header("Main/Analysis Tabs")]
+    public GameObject mainPanel;      // Total News And Exchange 오브젝트
+    public GameObject analysisPanel;  // CoinSelect 오브젝트
+    public Button mainTabButton;      // '메인' 버튼
+    public Button analysisTabButton;  // '분석' 버튼
+
+    [Header("Tab Button Labels")]
+    public TextMeshProUGUI mainTabText;     // '메인' 버튼의 글자
+    public TextMeshProUGUI analysisTabText; // '분석' 버튼의 글자
+
     private bool filterWishlistOnly = false;
     private HashSet<string> wishlistedSymbols = new HashSet<string>();
     private Color32 starActiveColor = new Color32(255, 200, 0, 255);
     private Color32 starInactiveColor = new Color32(200, 200, 200, 255);
     private List<CoinTheme> sortedThemeMap = new List<CoinTheme>();
+
+    private Color32 tabActiveColor = new Color32(20, 255, 8, 255); // #14FF08
+    private Color32 tabNormalColor = Color.white;                  // 비활성 시 흰색
 
     void Start() {
         LoadWishlist();
@@ -74,12 +87,60 @@ public class ResearchPanelController : MonoBehaviour {
             usdToggle.onValueChanged.AddListener(ToggleCurrencyMode);
         }
 
+        if (mainTabButton != null) mainTabButton.onClick.AddListener(ShowMainPanel);
+        if (analysisTabButton != null) analysisTabButton.onClick.AddListener(ShowAnalysisPanel);
+
+        // 시작 시 기본 화면 설정 (메인 패널 오픈)
+        ShowMainPanel();
         RefreshCoinRows();
     }
+
+    // 메인 패널(뉴스/환율) 보여주기
+    public void ShowMainPanel() {
+        // 1. 만약 상세 패널이 켜져 있다면 닫기 (뒤로가기 로직 실행)
+        if (detailController != null && detailController.detailPanel.activeSelf) {
+            detailController.OnClickBack();
+        }
+
+        // 2. 패널 전환
+        mainPanel.SetActive(true);
+        analysisPanel.SetActive(false);
+
+        // 3. 라벨 색상 변경
+        if (mainTabText != null) mainTabText.color = tabActiveColor;
+        if (analysisTabText != null) analysisTabText.color = tabNormalColor;
+
+        Debug.Log("리서치: 메인 탭 활성화 (상세패널 종료 포함)");
+    }
+
+    // 분석 패널(코인 리스트) 보여주기
+    public void ShowAnalysisPanel() {
+        // 1. 만약 상세 패널이 켜져 있다면 닫기
+        if (detailController != null && detailController.detailPanel.activeSelf) {
+            detailController.OnClickBack();
+        }
+
+        // 2. 패널 전환
+        mainPanel.SetActive(false);
+        analysisPanel.SetActive(true);
+
+        // 3. 라벨 색상 변경
+        if (mainTabText != null) mainTabText.color = tabNormalColor;
+        if (analysisTabText != null) analysisTabText.color = tabActiveColor;
+
+        RefreshCoinRows();
+        Debug.Log("리서치: 분석 탭 활성화 (상세패널 종료 포함)");
+    }
+    public bool ShowInUsd => showInUsd; // 자식들이 읽어갈 수 있도록 프로퍼티 노출
+
     public void ToggleCurrencyMode(bool isUsd) {
         showInUsd = isUsd;
-        // 즉시 UI 갱신 (Update를 기다리지 않고 바로 갱신)
-        RefreshCoinRows();
+        RefreshCoinRows(); // 리스트 갱신
+
+        // 만약 상세 패널이 열려있다면 상세 패널도 즉시 갱신
+        if (detailController != null && detailController.detailPanel.activeSelf) {
+            detailController.RefreshTextUI();
+        }
     }
 
     public void ResetFiltersAndSort() {
@@ -89,6 +150,7 @@ public class ResearchPanelController : MonoBehaviour {
 
         // B. 필터 초기화
         if (wishlistToggle != null) wishlistToggle.isOn = false;
+        if (usdToggle != null) usdToggle.isOn = false;
         if (themeDropdown != null) themeDropdown.value = 0; // "전체보기"로 변경
         filterWishlistOnly = false;
 

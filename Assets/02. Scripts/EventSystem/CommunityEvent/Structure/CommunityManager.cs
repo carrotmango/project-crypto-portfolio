@@ -17,6 +17,9 @@ public class CommunityManager : MonoBehaviour {
     public float duplicateCooltimeHours = 24f; // 모든 글은 24시간 쿨타임 고정
     public float authorCooltimeHours = 2f;
 
+
+    public RetroToggleController communityToggle;
+
     private Dictionary<string, DateTime> lastPostedTime = new Dictionary<string, DateTime>();
     private Dictionary<string, DateTime> lastAuthorTime = new Dictionary<string, DateTime>();
     private HashSet<string> usedOneTimePosts = new HashSet<string>();
@@ -145,7 +148,9 @@ public class CommunityManager : MonoBehaviour {
         sessionAuthors.Add(author);
 
         UIEventData data = new UIEventData {
+            // [수정] CommunityManager에서 생성하는 모든 글은 'noise_' 접두사를 붙여서 똥글로 분류
             key = "noise_" + Guid.NewGuid().ToString(),
+
             type = UIEventType.News,
             category = NewsCategory.Community,
             authorName = author,
@@ -156,8 +161,16 @@ public class CommunityManager : MonoBehaviour {
             height = pick.height
         };
 
+        // 기록은 무조건 합니다.
         if (newsRepo != null) newsRepo.AddToHistory(data, now);
-        if (newsPanel != null) newsPanel.Show(data, now);
+
+        // [수정] 알림 노출 여부: 토글이 켜져 있을 때만 알림(Show)을 띄웁니다.
+        // (이곳에서 생성되는 글은 무조건 노이즈이므로 토글 상태만 체크하면 됨)
+        if (communityToggle != null && communityToggle.IsCommunityVisible) {
+            if (newsPanel != null) {
+                newsPanel.Show(data, now);
+            }
+        }
 
         return true;
     }
