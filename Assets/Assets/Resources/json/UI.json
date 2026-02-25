@@ -13,144 +13,50 @@
             "height": 400
         },
         {
-            "key": "movement_rumor",
-            "type": 2,
-            "title": "전화",
-            "message": "???: 어이 나 투자왕 장태웅인데, 그? 무비? 무브먼트? 그거 곧 \n 상장폐지할 거 같다고 하니까.. 당장 처분해!!",
-            "profileImage": "anonymous.jpg",
-            "contentImage": ""
-        },
-        {
-            "key": "movement_A_delist_risk",
+            "key": "trump_president",
             "type": 0,
-            "authorName": "Shocking News",
-            "category": 4,
+            "authorName": "Donald Trump",
+            "category": 2,
             "title": "",
-            "message": "최근 커뮤니티에서 확산되고 있는 무브먼트(Movement) 코인 관련 루머에 대해 불비트 거래소가 상황을 주시 중인 것으로 알려졌습니다.\n해당 루머는 개발사 MoveLabs 소속 핵심 인물과 관련된 의혹을 포함하고 있으며, 거래소는 사실 관계를 확인하고 있습니다.\n불비트 측은 현재 상장 유지 여부를 검토 중이며, 빠르면 다음 날 관련 결정이 내려질 수 있습니다.",
-            "profileImage": "shocking.jpg",
+            "message": "좋은 하루입니다. 미국 시민분들\n저는 새로 당선된 미국 대통령 트럼프 입니다.\n내일인 1월 3일 미국을 다시 위대하게 만들 \n중대한 주요 경제 정책과 암호화폐 정책들을 발표할 예정입니다.",
+            "profileImage": "trump.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 400
+            "height": 300,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "도널드 트럼프 미 대통령, 오는 3일 중대 발표 예정",
+                "summary": "트럼프 미 대통령이 오는 3일 중대한 주요 경제 정책과 암호화폐 정책들을 발표할 예정이라고 밝혔습니다.\n트럼프 대통령은 취임 이전부터 친 암호화폐인 사업가로 알려진 바가 있습니다.",
+                "expertOpinion": "암호화폐 업계의 긍정적인 영향이 보입니다.",
+                "newsImage": "trump_01_01_news.jpg",
+                "targetSymbols": []
+            }
         },
         {
-            "key": "movement_rumor_is_rumor",
+            "key": "trump_president_02",
             "type": 0,
-            "authorName": "Shocking News",
-            "category": 4,
+            "authorName": "Donald Trump",
+            "category": 2,
             "title": "",
-            "message": "무브먼트 랩스가 올해 TVL이 무려 40배나 증가했다고 발표했습니다. \n 앞으로도 공개될 내용이 하나 더 남아있다라고도 언급했습니다.",
-            "profileImage": "shocking.jpg",
+            "message": "막강한 달러의 시대를 다시 열겠습니다. 하지만 그 달러는 더 이상 창고에 썩지 않을 것입니다.\n금리를 낮추고 규제를 부숴서, 시장에 엄청난 에너지를 공급하겠습니다.\n동시에, 미국은 세계 최초로 비트코인을 국가 전략 자산으로 보유할 것입니다.\n비트코인은 가짜 자산이 아닙니다. 그것은 혁명이며, 금보다 더 똑똑한 자산입니다.",
+            "profileImage": "trump.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 400
-        },
-        {
-            "key": "movement_B_delisted",
-            "type": 0,
-            "authorName": "Shocking News",
-            "category": 4,
-            "title": "",
-            "message": "불비트 거래소는 내부 심사 결과에 따라 무브먼트(Movement) 코인의 \n개발자 Rushi Manche의 범행이 사실로 들어났으며, 상장폐지를 최종 결정했습니다.\n본 공지 이후 무브먼트 코인의 모든 거래는 즉시 중단되며, 추가적인 입출금 지원 여부는 추후 안내될 예정입니다.",
-            "profileImage": "shocking.jpg",
-            "contentImage": "shocking_news_01",
-            "width": 550,
-            "height": 700
-        },
-        {
-            "key": "movement_B_not_delisted",
-            "type": 0,
-            "authorName": "Shocking News",
-            "category": 4,
-            "title": "",
-            "message": "무브먼트(Movement) 코인 개발진과 관련해 제기되었던 의혹은 사실이 아닌 것으로 확인되었습니다.\n\n불비트 거래소는 상장폐지 검토를 철회했으며, 무브먼트 코인의 거래는 기존과 동일하게 유지됩니다.",
-            "profileImage": "shocking.jpg",
-            "contentImage": "",
-            "width": 550,
-            "height": 360
-        },
-        {
-            "key": "movement_C_engine_upgrade",
-            "type": 0,
-            "authorName": "Shocking News",
-            "category": 4,
-            "title": "",
-            "message": "무브먼트(Movement) 개발팀은 네트워크 성능과 안정성을 대폭 개선하는 신규 엔진 업그레이드를 공개했습니다.\n\n이번 업데이트를 통해 처리 속도와 확장성이 강화되며, 향후 생태계 확장을 위한 기반이 마련될 예정입니다.",
-            "profileImage": "shocking.jpg",
-            "contentImage": "",
-            "width": 550,
-            "height": 340
-        },
-        {
-            "key": "movement_D_revival_prepare",
-            "type": 0,
-            "authorName": "Shocking News",
-            "category": 4,
-            "title": "",
-            "message": "무브먼트(Movement) 프로젝트 팀은 거래 중단 이후 프로젝트 재정비에 착수했다고 밝혔습니다.\n\n개발 로드맵 재정렬과 내부 구조 개선을 거쳐, 향후 재상장을 목표로 준비가 진행 중입니다.",
-            "profileImage": "shocking.jpg",
-            "contentImage": "",
-            "width": 550,
-            "height": 340
-        },
-        {
-            "key": "movement_E_relist",
-            "type": 0,
-            "authorName": "Shocking News",
-            "category": 4,
-            "title": "",
-            "message": "불비트 거래소는 내부 심사를 마친 뒤 무브먼트(Movement) 코인의 재상장을 공식 발표했습니다.\n\n무브먼트 코인은 금일 오전부터 거래가 재개되며, 향후 변동성 확대에 대한 주의가 필요합니다.",
-            "profileImage": "shocking.jpg",
-            "contentImage": "",
-            "width": 550,
-            "height": 380
-        },
-        {
-            "key": "choco_listing_announce_1",
-            "type": 0,
-            "authorName": "Shocking News",
-            "category": 4,
-            "title": "",
-            "message": "불비트 거래소는 신규 코인 CHK의 상장을 예고했습니다.\n\nCHK 코인은 약 하루 뒤 거래가 시작될 예정이며, CHK코인은 최근 인기있는 밈코인 입니다.",
-            "profileImage": "shocking.jpg",
-            "contentImage": "",
-            "width": 550,
-            "height": 360
-        },
-        {
-            "key": "choco_listing_announce_2",
-            "type": 0,
-            "authorName": "Shocking News",
-            "category": 4,
-            "title": "",
-            "message": "불비트 거래소는 신규 코인 CHK의 상장을 완료했습니다.",
-            "profileImage": "shocking.jpg",
-            "contentImage": "",
-            "width": 550,
-            "height": 360
-        },
-        {
-            "key": "pengu_A_listing_announce",
-            "type": 0,
-            "authorName": "Shocking News",
-            "category": 4,
-            "title": "",
-            "message": "불비트 거래소는 신규 코인 PENGU의 상장을 예고했습니다.\n\nPENGU 코인은 약 하루 뒤 거래가 시작될 예정이며, 투자자들의 관심이 집중되고 있습니다.",
-            "profileImage": "shocking.jpg",
-            "contentImage": "",
-            "width": 550,
-            "height": 360
-        },
-        {
-            "key": "pengu_B_listed",
-            "type": 0,
-            "authorName": "Shocking News",
-            "category": 4,
-            "title": "",
-            "message": "불비트 거래소는 금일 PENGU 코인의 상장을 완료했습니다.\n\n현재 PENGU 코인은 기준가로 거래되고 있으며, 초기 시장 안정화가 진행 중입니다.",
-            "profileImage": "shocking.jpg",
-            "contentImage": "",
-            "width": 550,
-            "height": 360
+            "height": 300,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "[특종] 트럼프 '비트코인 전략 자산화' 입법 서명... 전 세계 자금 미국으로 집결",
+                "summary": "트럼프 당선인이 비트코인 100만 개 국가 비축안과 연준 금리 인하 압박을 골자로 한 '뉴 이코노미' 정책을 발표했습니다.\n전문가들은 이번 조치로 인해 달러 가치가 희석되는 대신 위험자산으로의 대이동이 시작될 것으로 보고 있습니다.",
+                "expertOpinion": "이것은 단순한 정책이 아니라 거대한 자본의 흐름입니다.",
+                "newsImage": "trump_01_03_news.jpg",
+                "targetSymbols": [
+                    "BTC",
+                    "ETH",
+                    "USDT",
+                    "USDC",
+                    "TRUMP"
+                ]
+            }
         },
         {
             "key": "elonevent1",
@@ -163,130 +69,97 @@
             "contentImage": "elon_doge_02.jpg",
             "width": 550,
             "height": 700,
-                     "article": {
+            "article": {
                 "provider": "MangoRock Investment",
-                "title": "일론 머스크. 도지 페페 언급만으로 수십프로 급등? 인생이 장난인가?",
-                "summary": "일론 머스크 CEO가 도지 와 페페 언급 만으로 코인의 가격을 급등시켰습니다.이것이 정상적인 시장의 사이클인지 투자자들은 의문을 갖고있습니다.",
-		"expertOpinion": "단기적 급등으로 보이니 가급적 매수 X",
+                "title": "일론 머스크. 도지 페페 언급만으로 수십프로 급등시키다.",
+                "summary": "일론 머스크 CEO가 도지 와 페페 언급 만으로 코인의 가격을 급등시켰습니다.이것이 정상적인 시장의 반응인지 투자자들은 의문을 갖고있습니다.",
+                "expertOpinion": "단기적 급등으로 보이니 가급적 매수 X",
                 "newsImage": "elon_doge_01.jpg",
-                "targetSymbols": ["DOGE", "PEPE"]
+                "targetSymbols": [
+                    "DOGE",
+                    "PEPE"
+                ]
             }
         },
         {
-            "key": "dogepepefix",
+            "key": "Qubit_psy",
             "type": 0,
-            "authorName": "Shocking News",
-            "category": 4,
+            "authorName": "양자왕",
+            "category": 1,
             "title": "",
-            "message": "급등 이후 도지(DOGE)와 페페(PEPE) 코인에 대한 차익 실현 매물이 대거 출회되고 있습니다.\n\n시장에서는 단기 과열 해소 과정으로 해석하고 있으며, 변동성 확대에 주의가 필요합니다.",
+            "message": "당신은 아직도 비트코인은 안전하다는 개발자들의 거짓말을 믿는가? 양자컴퓨터는 이미 당신이 과거에 노출한 공개키를 수집해 사형 집행의 날만을 기다리고 있다.\n잠겨있던 사토시의 물량이 시장에 쏟아지고 희소성이 쓰레기가 되는 순간,\n당신의 '디지털 금'은 한순간에 '디지털 데이터 조각'으로 전락할 것이다. \n탈출할 기회는 지금뿐이다...",
+            "profileImage": "test.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 300
+        },
+        {
+            "key": "xrp_rumor",
+            "type": 0,
+            "authorName": "찌라시맨",
+            "category": 1,
+            "title": "",
+            "message": "내가 알고있는 소식통에 따르면, 내일이나 모레쯤.. XRP 관련 중요한 이야기가 나온다고 함. XRP 포지션으로 들고 있는 사람들 변동성 조심하셈",
+            "profileImage": "Newsguy.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 300
+        },
+        {
+            "key": "xrp_rumor_positive",
+            "type": 0,
+            "authorName": "쇼킹뉴스",
+            "category": 3,
+            "title": "",
+            "message": "최근 북미권 대형 상업은행 한 곳에서 리플(XRP)의 온디맨드 유동성(ODL)\n 솔루션을 내부 송금망에 도입하기 위해 비공개 테스트를 진행 중이라는 소식이 들어왔습니다.\n현재 기술 검증 1단계인 것으로 파악되며, 공식 발표 시 파급력이 상당할 것으로 보입니다.",
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 360
+            "height": 300,
+        "article": {
+        "provider": "MangoRock Investment",
+        "title": "리플(XRP) - 북미 대형 은행 ODL 도입 검증 착수",
+        "summary": "리플의 핵심 기술인 ODL(온디맨드 유동성)이 북미 상업은행의 실제 송금망에 적용될 정황이 포착되었습니다. 이는 단순 파트너십을 넘어 실제 유통량에 직접적인 영향을 줄 수 있는 메가톤급 호재입니다.",
+        "expertOpinion": "기술 검증 1단계 소식에 이미 매수세가 붙고 있습니다. 공식 발표 시 '재료 소멸'로 인한 단기 급락이 올 수 있으니 분할 매도로 수익을 확정 지으십시오.",
+        "newsImage": "xrp_news.jpg",
+        "targetSymbols": [
+            "XRP"
+        ]
+    }
         },
         {
-            "key": "elonevent2",
-            "type": 0,
-            "authorName": "Elon Musk",
-            "category": 1,
-            "title": "",
-            "message": "요즘 애니메이션 볼만한 거 없나?",
-            "profileImage": "elon.jpg",
-            "contentImage": "elon_anime_01.png",
-            "width": 550,
-            "height": 700
+        "key": "xrp_rumor_negative",
+        "type": 0,
+        "authorName": "쇼킹뉴스",
+        "category": 3,
+        "title": "",
+        "message": "리플(XRP) 측 법률 대리인이 최근 인터뷰에서 SEC와의 최종 합의가 당초 예상보다 지연될 가능성이 크다고 언급했습니다. 시장 전문가들은 이로 인해 단기적인 불확실성이 커지면서 일부 기관 투자자들이 물량을 조절하고 있는 것으로 분석하고 있습니다.",
+        "profileImage": "shocking.jpg",
+        "contentImage": "",
+        "width": 550,
+        "height": 300,
+        "article": {
+        "provider": "MangoRock Investment",
+        "title": "SEC-리플 합의 장기화 조짐... 기관 이탈 주의보",
+        "summary": "법률 대리인의 발언으로 인해 조기 합의에 대한 시장의 기대감이 꺾였습니다. 불확실성을 기피하는 기관 자금이 거래소로 유입되는 정황이 포착되어 하락 압력이 커지고 있습니다.",
+        "expertOpinion": "전형적인 지지선 테스트 구간입니다. 합의 지연은 이미 가격에 반영되기 시작했으나, 추가적인 덤핑이 나올 수 있으니 저점 매수는 지양하십시오.",
+        "newsImage": "xrp_news.jpg",
+        "targetSymbols": [
+            "XRP"
+        ]
+    }
         },
-        {
-            "key": "trump_president",
+                {
+            "key": "xrp_rumor_negative2",
             "type": 0,
-            "authorName": "Donald Trump",
-            "category": 2,
+            "authorName": "Bullbit Official",
+            "category": 5,
             "title": "",
-            "message": "미국은 앞으로 친 암호화폐 정책을 밟을것입니다.\n 모든 비트코인을 정식 화폐로 인정할 예정이며, \n법안 통과를 위한 절차를 준비하고 있습니다.",
-            "profileImage": "trump.jpg",
+            "message": "[입금] 리플(XRP) 대량 입금 알림 (100,000,000 XRP)\n방금 전 해외 거래소 지갑으로 대규모 XRP 입금이 확인되었습니다.",
+            "profileImage": "shoking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 360,
-            "article": {
-                "provider": "MangoRock Investment",
-                "title": "트럼프, 친 암호화폐 행보 가속화",
-                "summary": "트럼프 전 대통령이 비트코인에 대한 강한 신뢰를 재표명하며, 미 대선 공약으로 국가 전략 자산화를 시사했습니다.",
-		"expertOpinion": "매수를 추천합니다",
-                "newsImage": "trump_bitcoin_02.jpg",
-                "targetSymbols": ["BTC", "ETH","TRUMP"]
-            }
-        },
-        {
-            "key": "trumpevent1",
-            "type": 0,
-            "authorName": "Donald Trump",
-            "category": 2,
-            "title": "",
-            "message": "나는 비트코인을 사랑한다. 정말 사랑한다.\n나를 믿고 따라와라.\n나는 이 시장을 엄청 긍정적으로 본다.\n솔직히 말해서, 내 전 재산을 전부 넣어도 아깝지 않아.\n모두 부자로 만들 것. 미국을 다시 위대하게",
-            "profileImage": "trump.jpg",
-            "contentImage": "trump_bitcoin_01.jpg",
-            "width": 550,
-            "height": 700
-        },
-        {
-            "key": "powellevent1",
-            "type": 0,
-            "authorName": "Jerome Hayden Powell",
-            "category": 2,
-            "title": "",
-            "message": "암호화폐는 통화가 아닙니다.\n불법 자금 세탁과 범죄 은닉에 사용되는 위험한 자산입니다.\n강력한 규제와 감독 없이는 금융 안정은 불가능합니다.\n규제 없이는 파멸뿐입니다.",
-            "profileImage": "powell.jpg",
-            "contentImage": "powell_announce_01.jpg",
-            "width": 550,
-            "height": 700
-        },
-        {
-            "key": "aptos_listing_news",
-            "type": 0,
-            "authorName": "불비트 뉴스",
-            "category": 4,
-            "title": "",
-            "message": "차세대 고성능 레이어 1 블록체인으로 주목받던 앱토스(APT)가 오늘부로 불비트 거래소에 정식 상장되었습니다.\n\n초기 변동성이 예상되오니 투자에 유의하시기 바랍니다.",
-            "profileImage": "bullbit.png",
-            "contentImage": "",
-            "width": 550,
-            "height": 400
-        },
-        {
-            "key": "sui_listing_soon_news",
-            "type": 0,
-            "authorName": "불비트 뉴스",
-            "category": 4,
-            "title": "",
-            "message": "차세대 레이어1 블록체인 수이(SUI)가 곧 불비트 거래소에 상장될 예정입니다.\n\n많은 관심 바랍니다.",
-            "profileImage": "bullbit.png",
-            "contentImage": "",
-            "width": 550,
-            "height": 400
-        },
-        {
-            "key": "sui_listing_news",
-            "type": 0,
-            "authorName": "불비트 뉴스",
-            "category": 4,
-            "title": "",
-            "message": "차세대 레이어1 블록체인 수이(SUI)가 오늘부로 불비트 거래소에 정식 상장되었습니다.\n\n상장 직후 변동성이 클 수 있으니 투자에 유의하시기 바랍니다.",
-            "profileImage": "bullbit.png",
-            "contentImage": "",
-            "width": 550,
-            "height": 400
-        },
-        {
-            "key": "middleEastWar",
-            "type": 0,
-            "authorName": "글로벌 뉴스",
-            "category": 2,
-            "title": "",
-            "message": "[긴급 1보] 중동 지역 주요 산유국 간의 핵 미사일 교전이 확인되었습니다.\n\n국제 유가와 달러 환율이 폭등하고 있으며, \n\n 규모 7수준의 지진이 감지되었습니다.",
-            "profileImage": "bullbit.png",
-            "contentImage": "middle_east_war.png",
-            "width": 550,
-            "height": 800
+            "height": 300
         }
     ]
 }

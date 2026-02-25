@@ -3,6 +3,8 @@ using System;
 
 [Serializable]
 public class TargetGroupEffect {
+    public TargetSegment targetSegment;
+
     public List<string> symbols;
 
     // 0 = Listing, 1 = Delisting, 2 = Rename

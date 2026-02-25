@@ -115,6 +115,29 @@ public class EffectManager : MonoBehaviour {
         if (data.globalMarketPhase != null) {
             coinManager.CurrentMarket = data.globalMarketPhase.phase;
 
+            // [수정 포인트 A] 전체 코인에 대해 '시나리오 패턴' 강제 할당
+            // "불장이다" -> "모든 코인은 이제부터 30% 상승(혹은 페이즈별 배율)을 향해 간다"
+            if (ChartPatternEngine.Instance != null) {
+                float duration = data.globalMarketPhase.durationHours;
+                MarketPhase phase = data.globalMarketPhase.phase;
+
+                // 페이즈별 기본 목표 배율 가져오기 (예: SuperBull = 1.3배)
+                double targetMult = GetDefaultMultiplier(phase);
+
+                foreach (var coin in coinManager.coins) {
+                    if (!coin.IsListed || coin.IsDelisted || coin.Type == CoinType.Stable) continue;
+
+                    // 변동성(Volatility)에 따라 목표가 차등 적용 (잡코인은 더 크게)
+                    double coinMult = ApplyVolatilityToMultiplier(targetMult, coin.Volatility);
+
+                    // 엔진에게 명령: "이 코인, 이 시간동안, 이 배율까지 패턴 그려라"
+                    ChartPatternEngine.Instance.AssignScenarioPattern(
+                        coin, phase, duration, coinMult
+                    );
+                }
+                Debug.Log($"[Effect] 글로벌 시나리오 패턴 발동: {phase}, 목표배율 약 x{targetMult:F2}");
+            }
+
             Debug.Log(
                 $"[Effect] GlobalMarketPhase → {data.globalMarketPhase.phase} " +
                 $"({data.globalMarketPhase.durationHours}h)"
@@ -127,16 +150,25 @@ public class EffectManager : MonoBehaviour {
         if (data.targetGroups == null) return;
 
         foreach (var group in data.targetGroups) {
-
-            // [수정 포인트 1] 심볼 리스트가 비어있으면 '전체 코인'을 타겟으로 설정
+            // [보완] 세그먼트 리스트와 개별 심볼 리스트를 합칩니다.
             List<string> targetSymbols = new List<string>();
 
-            if (group.symbols == null || group.symbols.Count == 0) {
-                // 현재 존재하는 모든 코인의 심볼을 가져옴
-                targetSymbols = coinManager.coins.Select(c => c.Symbol).ToList();
-            } else {
-                // 지정된 코인만 가져옴
-                targetSymbols = group.symbols;
+            if (group.targetSegment != TargetSegment.None) {
+                targetSymbols.AddRange(GetSymbolsBySegment(group.targetSegment));
+            }
+
+            if (group.symbols != null && group.symbols.Count > 0) {
+                // 중복 심볼 방지하며 추가
+                foreach (var s in group.symbols) {
+                    if (!targetSymbols.Contains(s)) targetSymbols.Add(s);
+                }
+            }
+
+            // 아무 타겟도 없을 때의 기본 처리 (Stable/Trash 제외 전체)
+            if (targetSymbols.Count == 0 && group.targetSegment == TargetSegment.None) {
+                targetSymbols = coinManager.coins
+                    .Where(c => c.Class != CoinClass.Trash && c.Class != CoinClass.Stable)
+                    .Select(c => c.Symbol).ToList();
             }
 
             foreach (var symbol in targetSymbols) {
@@ -215,6 +247,8 @@ public class EffectManager : MonoBehaviour {
 
                     double before = coin.CurrentPrice;
                     coin.CurrentPrice *= 1.0 + finalPercent / 100.0;
+                    // [추가 필요] 이 코드가 있어야 엔진이 "아 가격이 바뀌었네?" 하고 즉시 인지합니다.
+                    coin.OnPriceUpdate(coin.CurrentPrice);
 
                     Debug.Log(
                         $"[Effect] {symbol}(Lv{volatility}) " +
@@ -227,17 +261,54 @@ public class EffectManager : MonoBehaviour {
                 // D. 개별 코인 페이즈 오버라이드
                 // -------------------------------------------------
                 if (group.targetMarketPhase >= 0) {
-                    // 0 이상일 때만 실제 Enum으로 변환하여 적용
-                    coin.CurrentPhaseOverride = (MarketPhase)group.targetMarketPhase;
+                    MarketPhase phase = (MarketPhase)group.targetMarketPhase;
+                    coin.CurrentPhaseOverride = phase;
                     coin.PhaseOverrideEndTime = now.AddHours(group.durationHours);
 
-                    Debug.Log(
-                        $"[Effect] {symbol} 페이즈 변경 → " +
-                        $"{(MarketPhase)group.targetMarketPhase} ({group.durationHours}h)"
-                    );
+                    // [핵심 수정] 펌핑된 가격을 '시작점'으로 하는 새로운 패턴을 즉시 부여!
+                    // 이렇게 해야 엔진이 펌핑된 가격을 "정상"으로 인식하고 위로 더 쏩니다.
+                    if (ChartPatternEngine.Instance != null) {
+                        double targetMult = GetDefaultMultiplier(phase);
+                        double coinMult = ApplyVolatilityToMultiplier(targetMult, coin.Volatility);
+
+                        ChartPatternEngine.Instance.AssignScenarioPattern(
+                            coin, phase, group.durationHours, coinMult
+                        );
+                        Debug.Log($"[Effect] {symbol} 펌핑 후 시나리오 패턴 재설정 (목표: x{coinMult})");
+                    }
                 }
             }
         }
+    }
+    private double GetDefaultMultiplier(MarketPhase phase) {
+        return phase switch {
+            MarketPhase.MegaBull => 1.50,  // +50%
+            MarketPhase.SuperBull => 1.30, // +30% (행님 요구사항)
+            MarketPhase.BigBull => 1.15,   // +15%
+            MarketPhase.Bull => 1.08,      // +8%
+            MarketPhase.Sideways => 1.0,   // 0%
+            MarketPhase.Bear => 0.90,      // -10%
+            MarketPhase.BigBear => 0.70,   // -30%
+            MarketPhase.SuperBear => 0.50, // -50%
+            MarketPhase.MegaBear => 0.30,  // -70%
+            _ => 1.0
+        };
+    }
+
+    // [헬퍼 함수 추가] 변동성 적용
+    private double ApplyVolatilityToMultiplier(double baseMult, int volatility) {
+        // baseMult가 1.5(MegaBull)일 때
+        if (baseMult > 1.0) {
+            // [수정] 안정도(volatility)가 낮으면 목표가 상승분(0.5)을 대폭 삭감합니다.
+            // Vol 1(비트코인)은 상승분의 40%만 반영 (예: 1.5 -> 1.2로 하향 조정)
+            // Vol 5(알트)는 100% 반영, Vol 8(잡코인)은 160% 반영
+            double boost = 0.2 + (volatility * 0.2);
+            return 1.0 + (baseMult - 1.0) * boost;
+        } else if (baseMult < 1.0) {
+            double dropScale = 0.2 + (volatility * 0.2);
+            return 1.0 - (1.0 - baseMult) * dropScale;
+        }
+        return 1.0;
     }
 
 
@@ -255,5 +326,45 @@ public class EffectManager : MonoBehaviour {
 
         // targetGroups 종료는
         // CoinManager에서 PhaseOverrideEndTime으로 처리
+    }
+    // =========================================================
+    // [신규] 세그먼트 자동 분류 로직
+    // =========================================================
+    private List<string> GetSymbolsBySegment(TargetSegment segment) {
+
+        // 1. 현재 상장된 유효 코인 리스트
+        var activeCoins = coinManager.coins.Where(c => c.IsListed && !c.IsDelisted).ToList();
+        List<string> result = new List<string>();
+
+        switch (segment) {
+            case TargetSegment.Total1:
+                // 비트 + 이더 + 모든 알트 (Trash, Stable 제외)
+                result = activeCoins
+                    .Where(c => c.Class != CoinClass.Stable && c.Class != CoinClass.Trash)
+                    .Select(c => c.Symbol).ToList();
+                break;
+
+            case TargetSegment.Alternative1:
+                // 이더 + 모든 알트 (BTC 제외, Trash/Stable 당연히 제외)
+                result = activeCoins
+                    .Where(c => c.Symbol != "BTC" && c.Class != CoinClass.Stable && c.Class != CoinClass.Trash)
+                    .Select(c => c.Symbol).ToList();
+                break;
+
+            case TargetSegment.Alternative2:
+                // 비트, 이더 제외 모든 알트 (Trash/Stable 제외)
+                result = activeCoins
+                    .Where(c => c.Symbol != "BTC" && c.Symbol != "ETH" && c.Class != CoinClass.Stable && c.Class != CoinClass.Trash)
+                    .Select(c => c.Symbol).ToList();
+                break;
+
+            case TargetSegment.Trash:
+                // 오직 Trash 등급만
+                result = activeCoins
+                    .Where(c => c.Class == CoinClass.Trash)
+                    .Select(c => c.Symbol).ToList();
+                break;
+        }
+        return result;
     }
 }

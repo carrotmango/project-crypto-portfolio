@@ -17,8 +17,10 @@ public class PostTemplate {
     public string[] targetSymbols; // 특정 코인 전용
     public double minPrice = 0;    // 최소 가격
     public double maxPrice = 0;    // 최대 가격
-    public double minChange = 0;   // 최소 변동률 (+30)
-    public double maxChange = 0;   // 최대 변동률 (-30)
+    public double minChange = 0;   // 최소 변동률 
+    public double maxChange = 0;   // 최대 변동률 
+    public int minCoins = 1; // 기본값 1
+    public int maxCoins = 1; // 기본값 1
 
     public string startDate;       // "MM-dd"
     public string endDate;         // "MM-dd"

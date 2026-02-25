@@ -1,10 +1,17 @@
 using System;
 using System.Collections.Generic;
 
+public enum TargetSegment {
+    None,
+    Total1,       // BTC + ETH + All Alts (전체)
+    Alternative1, // ETH + All Alts (비트 제외)
+    Alternative2, // All Alts (비트, 이더 제외)
+    Trash         // 잡코인 (나중에 구현)
+}
+
 [Serializable]
 public class EffectData {
     public string key;
-
     public GlobalMarketPhaseEffect globalMarketPhase;
     public List<TargetGroupEffect> targetGroups;
     public ListEventEffect listEvent;

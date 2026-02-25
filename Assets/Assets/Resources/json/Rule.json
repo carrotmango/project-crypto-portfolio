@@ -22,7 +22,7 @@
       "authorId": "system",
       "executionMode": 1,
       "startDate": "2020-01-02 12:00",
-      "endDate": "2020-01-03 22:00",
+      "endDate": "2020-01-02 12:30",
       "prerequisitesSymbols": [],
       "timeRule": {
         "type": 0
@@ -34,96 +34,11 @@
       "effectKey": "trump_president"
     },
     {
-      "key": "movement_rumor",
+      "key": "trump_president_02",
       "authorId": "system",
       "executionMode": 1,
-      "startDate": "2020-01-05 09:00",
-      "endDate": "2020-01-05 10:00",
-      "timeRule": {
-        "type": 0
-      },
-      "probability": 1.0,
-      "repeatType": 1,
-      "gate": false,
-      "prerequisites": [],
-      "prerequisitesSymbols": [
-        "MOVE"
-      ],
-      "outcomes": [
-        {
-          "key": "movement_A_delist_risk_rumor",
-          "weight": 0.55
-        },
-        {
-          "key": "movement_rumor_is_rumor",
-          "weight": 0.45
-        }
-      ],
-      "outcomeRule": "OneOf",
-      "uiKey": "movement_rumor"
-    },
-    {
-      "key": "movement_rumor_is_rumor",
-      "authorId": "system",
-      "executionMode": 2,
-      "dayOffset": {
-        "type": 1,
-        "days": 2
-      },
-      "timeRule": {
-        "type": 2
-      },
-      "probability": 1.0,
-      "repeatType": 1,
-      "gate": true,
-      "prerequisites": [
-        "movement_rumor"
-      ],
-      "prerequisitesSymbols": [
-        "MOVE"
-      ],
-      "outcomes": [
-        {
-          "key": "movement_C_engine_upgrade_2",
-          "weight": 1.0
-        }
-      ],
-      "uiKey": "movement_rumor_is_rumor",
-      "effectKey": "movement_rumor_is_rumor"
-    },
-    {
-      "key": "movement_A_delist_risk_rumor",
-      "authorId": "system",
-      "executionMode": 2,
-      "dayOffset": {
-        "type": 1,
-        "days": 2
-      },
-      "timeRule": {
-        "type": 2
-      },
-      "probability": 1.0,
-      "repeatType": 1,
-      "gate": true,
-      "prerequisites": [
-        "movement_rumor"
-      ],
-      "prerequisitesSymbols": [
-        "MOVE"
-      ],
-      "outcomes": [
-        {
-          "key": "movement_A_delist_risk_news",
-          "weight": 1.0
-        }
-      ]
-    },
-    {
-      "key": "choco_listing_announce_1",
-      "authorId": "system",
-      "executionMode": 1,
-      "startDate": "2020-01-05 10:00",
-      "endDate": "2020-01-05 22:00",
+      "startDate": "2020-01-03 12:00",
+      "endDate": "2020-01-03 12:30",
       "prerequisitesSymbols": [],
       "timeRule": {
         "type": 0
@@ -131,241 +46,14 @@
       "probability": 1.0,
       "repeatType": 1,
       "gate": true,
-      "uiKey": "choco_listing_announce_1",
-      "outcomes": [
-        {
-          "key": "choco_listing_announce_2",
-          "weight": 1.0
-        }
-      ]
-    },
-    {
-      "key": "choco_listing_announce_2",
-      "authorId": "system",
-      "executionMode": 2,
-      "prerequisites": [
-        "choco_listing_announce_1"
-      ],
-      "dayOffset": {
-        "type": 1,
-        "days": 1
-      },
-      "timeRule": {
-        "type": 1,
-        "hour": 10,
-        "minute": 0
-      },
-      "repeatType": 1,
-      "gate": true,
-      "effectKey": "choco_listing_announce_2",
-      "uiKey": "choco_listing_announce_2",
-      "outcomes": []
-    },
-    {
-      "key": "choco_pump_1",
-      "authorId": "system",
-      "executionMode": 2,
-      "prerequisites": [
-        "choco_listing_announce_2"
-      ],
-      "dayOffset": {
-        "type": 1,
-        "days": 39
-      },
-      "timeRule": {
-        "type": 1,
-        "hour": 11,
-        "minute": 0
-      },
-      "effectKey": "choco_pump_1"
-    },
-    {
-      "key": "movement_A_delist_risk_news",
-      "authorId": "system",
-      "executionMode": 2,
-      "prerequisites": [
-        "movement_A_delist_risk_rumor"
-      ],
-      "dayOffset": {
-        "type": 1,
-        "days": 5
-      },
-      "timeRule": {
-        "type": 0
-      },
-      "repeatType": 1,
-      "gate": true,
-      "effectKey": "movement_A_delist_risk",
-      "uiKey": "movement_A_delist_risk",
-      "prerequisitesSymbols": [
-        "MOVE"
-      ],
-      "outcomeRule": "OneOf",
-      "outcomes": [
-        {
-          "key": "movement_B_delisted",
-          "weight": 0.5
-        },
-        {
-          "key": "movement_B_not_delisted",
-          "weight": 0.5
-        }
-      ]
-    },
-    {
-      "key": "movement_B_delisted",
-      "authorId": "system",
-      "executionMode": 2,
-      "prerequisites": [
-        "movement_A_delist_risk_news"
-      ],
-      "dayOffset": {
-        "type": 1,
-        "days": 2
-      },
-      "timeRule": {
-        "type": 0
-      },
-      "repeatType": 1,
-      "gate": true,
-      "effectKey": "movement_B_delisted",
-      "uiKey": "movement_B_delisted",
-      "prerequisitesSymbols": [
-        "MOVE"
-      ],
-      "outcomes": [
-        {
-          "key": "movement_D_revival_prepare",
-          "weight": 1.0
-        }
-      ]
-    },
-    {
-      "key": "movement_B_not_delisted",
-      "authorId": "system",
-      "executionMode": 2,
-      "prerequisites": [
-        "movement_A_delist_risk_news"
-      ],
-      "dayOffset": {
-        "type": 1,
-        "days": 2
-      },
-      "timeRule": {
-        "type": 0
-      },
-      "repeatType": 1,
-      "gate": true,
-      "effectKey": "movement_B_not_delisted",
-      "uiKey": "movement_B_not_delisted",
-      "prerequisitesSymbols": [
-        "MOVE"
-      ],
-      "outcomes": [
-        {
-          "key": "movement_C_engine_upgrade",
-          "weight": 1.0
-        }
-      ]
-    },
-    {
-      "key": "movement_C_engine_upgrade",
-      "authorId": "system",
-      "executionMode": 2,
-      "prerequisites": [
-        "movement_B_not_delisted"
-      ],
-      "dayOffset": {
-        "type": 1,
-        "days": 4
-      },
-      "timeRule": {
-        "type": 1,
-        "hour": 18,
-        "minute": 0
-      },
-      "repeatType": 1,
-      "gate": true,
-      "prerequisitesSymbols": [
-        "MOVE"
-      ],
-      "effectKey": "movement_C_engine_upgrade",
-      "uiKey": "movement_C_engine_upgrade"
-    },
-    {
-      "key": "movement_C_engine_upgrade_2",
-      "authorId": "system",
-      "executionMode": 2,
-      "prerequisites": [
-        "movement_rumor_is_rumor"
-      ],
-      "dayOffset": {
-        "type": 1,
-        "days": 4
-      },
-      "timeRule": {
-        "type": 1,
-        "hour": 18,
-        "minute": 0
-      },
-      "repeatType": 1,
-      "gate": true,
-      "prerequisitesSymbols": [
-        "MOVE"
-      ],
-      "effectKey": "movement_C_engine_upgrade",
-      "uiKey": "movement_C_engine_upgrade"
-    },
-    {
-      "key": "movement_D_revival_prepare",
-      "authorId": "system",
-      "executionMode": 2,
-      "prerequisites": [
-        "movement_B_delisted"
-      ],
-      "dayOffset": {
-        "type": 1,
-        "days": 4
-      },
-      "timeRule": {
-        "type": 0
-      },
-      "repeatType": 1,
-      "gate": true,
-      "uiKey": "movement_D_revival_prepare",
-      "outcomes": [
-        {
-          "key": "movement_E_relist",
-          "weight": 1.0
-        }
-      ]
-    },
-    {
-      "key": "movement_E_relist",
-      "authorId": "system",
-      "executionMode": 2,
-      "prerequisites": [
-        "movement_D_revival_prepare"
-      ],
-      "dayOffset": {
-        "type": 1,
-        "days": 6
-      },
-      "timeRule": {
-        "type": 1,
-        "hour": 9,
-        "minute": 0
-      },
-      "repeatType": 1,
-      "gate": true,
-      "effectKey": "movement_E_relist",
-      "uiKey": "movement_E_relist"
+      "uiKey": "trump_president_02",
+      "effectKey": "trump_president_02"
     },
     {
       "key": "elonevent1",
       "authorId": "system",
       "executionMode": 1,
-      "startDate": "2020-01-02 12:00",
+      "startDate": "2020-01-04 12:00",
       "endDate": "2020-01-04 20:00",
       "timeRule": {
         "type": 0
@@ -387,395 +75,129 @@
       ]
     },
     {
-      "key": "elonevent2",
+      "key": "Qubit_psy",
       "authorId": "system",
       "executionMode": 1,
-      "startDate": "2020-01-05 12:00",
-      "endDate": "2020-01-06 20:00",
+      "startDate": "2020-01-05 09:10",
+      "endDate": "2020-01-05 09:40",
       "timeRule": {
         "type": 0
       },
       "probability": 1.0,
       "repeatType": 1,
-      "gate": true,
-      "prerequisitesSymbols": [
-        "ANIME"
-      ],
-      "uiKey": "elonevent2",
-      "effectKey": "elonevent2",
-      "outcomes": []
-    },
-    {
-      "key": "dogepepefix",
-      "authorId": "system",
-      "executionMode": 2,
-      "prerequisites": [
-        "elonevent1"
-      ],
-      "prerequisitesSymbols": [
-        "DOGE",
-        "PEPE"
-      ],
-      "dayOffset": {
-        "type": 0
-      },
-      "timeRule": {
-        "type": 1,
-        "hour": 18,
-        "minute": 0
-      },
-      "repeatType": 1,
-      "gate": true,
-      "effectKey": "dogepepefix"
-    },
-    {
-      "key": "trumpevent1",
-      "authorId": "system",
-      "executionMode": 1,
-      "startDate": "2020-01-15 12:00",
-      "endDate": "2020-01-17 22:00",
-      "prerequisitesSymbols": [
-        "TRUMP",
-        "BTC"
-      ],
-      "timeRule": {
-        "type": 0
-      },
-      "probability": 1.0,
-      "repeatType": 1,
-      "gate": true,
-      "uiKey": "trumpevent1",
-      "effectKey": "trumpevent1"
-    },
-    {
-      "key": "powellevent1",
-      "authorId": "system",
-      "executionMode": 1,
-      "startDate": "2020-01-06 09:00",
-      "endDate": "2020-01-09 18:00",
+      "gate": false,
       "prerequisitesSymbols": [],
-      "timeRule": {
-        "type": 0
-      },
-      "probability": 1.0,
-      "repeatType": 1,
-      "gate": true,
-      "uiKey": "powellevent1",
-      "effectKey": "powellevent1"
+      "prerequisites": [],
+      "outcomes": [],
+      "uiKey": "Qubit_psy"
     },
     {
-      "key": "aptos_listing_news",
+      "key": "xrp_rumor",
       "authorId": "system",
       "executionMode": 1,
-      "startDate": "2020-01-11 11:00",
-      "endDate": "2020-01-14 18:00",
-      "timeRule": {
-        "type": 0
-      },
-      "probability": 1.0,
-      "prerequisitesSymbols": [],
-      "repeatType": 1,
-      "gate": true,
-      "uiKey": "aptos_listing_news",
-      "effectKey": "aptos_listing_news",
-      "outcomes": [
-        {
-          "key": "aptos_pump_1",
-          "weight": 1.0
-        }
-      ]
-    },
-    {
-      "key": "aptos_pump_1",
-      "authorId": "system",
-      "executionMode": 2,
-      "prerequisites": [
-        "aptos_listing_news"
-      ],
-      "prerequisitesSymbols": [
-        "APT"
-      ],
-      "dayOffset": {
-        "type": 0
-      },
-      "timeRule": {
-        "type": 1,
-        "hour": 12,
-        "minute": 0
-      },
-      "repeatType": 1,
-      "gate": true,
-      "effectKey": "aptos_pump_1",
-      "outcomes": [
-        {
-          "key": "aptos_dump_1",
-          "weight": 1.0
-        }
-      ]
-    },
-    {
-      "key": "aptos_dump_1",
-      "authorId": "system",
-      "executionMode": 2,
-      "prerequisites": [
-        "aptos_pump_1"
-      ],
-      "prerequisitesSymbols": [
-        "APT"
-      ],
-      "dayOffset": {
-        "type": 0
-      },
-      "timeRule": {
-        "type": 1,
-        "hour": 16,
-        "minute": 0
-      },
-      "repeatType": 1,
-      "gate": true,
-      "effectKey": "aptos_dump_1",
-      "outcomes": [
-        {
-          "key": "aptos_pump_2",
-          "weight": 1.0
-        }
-      ]
-    },
-    {
-      "key": "aptos_pump_2",
-      "authorId": "system",
-      "executionMode": 2,
-      "prerequisites": [
-        "aptos_dump_1"
-      ],
-      "prerequisitesSymbols": [
-        "APT"
-      ],
-      "dayOffset": {
-        "type": 0
-      },
-      "timeRule": {
-        "type": 1,
-        "hour": 20,
-        "minute": 0
-      },
-      "repeatType": 1,
-      "gate": true,
-      "effectKey": "aptos_pump_2"
-    },
-    {
-      "key": "sui_listing_announce",
-      "authorId": "system",
-      "executionMode": 1,
-      "startDate": "2020-01-18 10:00",
-      "endDate": "2020-01-21 22:00",
-      "prerequisitesSymbols": [],
+      "startDate": "2020-01-05 19:00",
+      "endDate": "2020-01-05 22:00",
       "timeRule": {
         "type": 0
       },
       "probability": 1.0,
       "repeatType": 1,
-      "gate": true,
-      "uiKey": "sui_listing_soon_news",
-      "outcomes": [
-        {
-          "key": "sui_listing_news",
-          "weight": 1.0
-        }
-      ]
-    },
-    {
-      "key": "sui_listing_news",
-      "authorId": "system",
-      "executionMode": 2,
-      "prerequisites": [
-        "sui_listing_announce"
-      ],
-      "prerequisitesSymbols": [],
-      "dayOffset": {
-        "type": 1,
-        "days": 1
-      },
-      "timeRule": {
-        "type": 1,
-        "hour": 10,
-        "minute": 0
-      },
-      "repeatType": 1,
-      "gate": true,
-      "effectKey": "sui_listing_news",
-      "uiKey": "sui_listing_news",
-      "outcomes": [
-        {
-          "key": "sui_pump_1",
-          "weight": 1.0
-        }
-      ]
-    },
-    {
-      "key": "sui_pump_1",
-      "authorId": "system",
-      "executionMode": 2,
-      "prerequisites": [
-        "sui_listing_news"
-      ],
+      "gate": false,
+      "prerequisites": [],
       "prerequisitesSymbols": [
-        "SUI"
+        "XRP"
       ],
-      "dayOffset": {
-        "type": 0
-      },
-      "timeRule": {
-        "type": 1,
-        "hour": 11,
-        "minute": 0
-      },
-      "repeatType": 1,
-      "gate": true,
-      "effectKey": "sui_pump_1",
       "outcomes": [
         {
-          "key": "sui_dump_1",
-          "weight": 1.0
-        }
-      ]
-    },
-    {
-      "key": "sui_dump_1",
-      "authorId": "system",
-      "executionMode": 2,
-      "prerequisites": [
-        "sui_pump_1"
-      ],
-      "prerequisitesSymbols": [
-        "SUI"
-      ],
-      "dayOffset": {
-        "type": 0
-      },
-      "timeRule": {
-        "type": 1,
-        "hour": 13,
-        "minute": 0
-      },
-      "repeatType": 1,
-      "gate": true,
-      "effectKey": "sui_dump_1",
-      "outcomes": [
+          "key": "xrp_rumor_positive",
+          "weight": 0.5
+        },
         {
-          "key": "sui_pump_2",
-          "weight": 1.0
+          "key": "xrp_rumor_negative",
+          "weight": 0.5
         }
-      ]
+      ],
+      "outcomeRule": "OneOf",
+      "uiKey": "xrp_rumor"
     },
     {
-      "key": "sui_pump_2",
+      "key": "xrp_rumor_positive",
       "authorId": "system",
       "executionMode": 2,
-      "prerequisites": [
-        "sui_dump_1"
-      ],
-      "prerequisitesSymbols": [
-        "SUI"
-      ],
       "dayOffset": {
-        "type": 0
-      },
-      "timeRule": {
         "type": 1,
-        "hour": 16,
-        "minute": 0
+        "days": 2
       },
-      "repeatType": 1,
-      "gate": true,
-      "effectKey": "sui_pump_2"
-    },
-    {
-      "key": "pengu_A_listing_announce",
-      "authorId": "system",
-      "executionMode": 1,
-      "startDate": "2020-01-12 10:00",
-      "endDate": "2020-01-13 22:00",
-      "prerequisitesSymbols": [],
       "timeRule": {
-        "type": 0
+        "type": 2
       },
       "probability": 1.0,
       "repeatType": 1,
       "gate": true,
-      "uiKey": "pengu_A_listing_announce",
-      "outcomes": [
-        {
-          "key": "pengu_B_listed",
-          "weight": 1.0
-        }
-      ]
-    },
-    {
-      "key": "pengu_B_listed",
-      "authorId": "system",
-      "executionMode": 2,
       "prerequisites": [
-        "pengu_A_listing_announce"
-      ],
-      "dayOffset": {
-        "type": 1,
-        "days": 1
-      },
-      "timeRule": {
-        "type": 1,
-        "hour": 10,
-        "minute": 0
-      },
-      "repeatType": 1,
-      "gate": true,
-      "effectKey": "pengu_B_listed",
-      "uiKey": "pengu_B_listed",
-      "outcomes": [
-        {
-          "key": "pengu_pump_1",
-          "weight": 1.0
-        }
-      ]
-    },
-    {
-      "key": "pengu_pump_1",
-      "authorId": "system",
-      "executionMode": 2,
-      "prerequisites": [
-        "pengu_B_listed"
+        "xrp_rumor"
       ],
       "prerequisitesSymbols": [
-        "PENGU"
+        "XRP"
       ],
-      "dayOffset": {
-        "type": 0
-      },
-      "timeRule": {
-        "type": 1,
-        "hour": 11,
-        "minute": 0
-      },
-      "repeatType": 1,
-      "gate": true,
-      "effectKey": "pengu_C_pump_big"
+      "outcomes": [
+      ],
+      "uiKey": "xrp_rumor_positive",
+      "effectKey": "xrp_rumor_positive"
     },
     {
-      "key": "middleEastWar",
+      "key": "xrp_rumor_negative",
       "authorId": "system",
-      "executionMode": 1,
-      "startDate": "2020-01-25 00:00",
-      "endDate": "2020-01-25 23:59",
+      "executionMode": 2,
+      "dayOffset": {
+        "type": 1,
+        "days": 2
+      },
       "timeRule": {
-        "type": 0
+        "type": 2
       },
       "probability": 1.0,
       "repeatType": 1,
       "gate": true,
-      "prerequisitesSymbols": [],
-      "uiKey": "middleEastWar",
-      "effectKey": "middleEastWar",
-      "outcomes": []
+      "prerequisites": [
+        "xrp_rumor"
+      ],
+      "prerequisitesSymbols": [
+        "XRP"
+      ],
+      "outcomes": [
+        {
+          "key": "xrp_rumor_negative2",
+          "weight": 1.0
+        }
+      ],
+      "uiKey": "xrp_rumor_negative",
+      "effectKey": "xrp_rumor_negative"
+    },
+            {
+      "key": "xrp_rumor_negative2",
+      "authorId": "system",
+      "executionMode": 2,
+      "dayOffset": {
+        "type": 1,
+        "days": 2
+      },
+      "timeRule": {
+        "type": 2
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisites": [
+        "xrp_rumor_negative"
+      ],
+      "prerequisitesSymbols": [
+        "XRP"
+      ],
+      "outcomes": [
+      ],
+      "uiKey": "xrp_rumor_negative2",
+      "effectKey": "xrp_rumor_negative2"
     }
   ]
 }

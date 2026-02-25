@@ -345,8 +345,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
-  m_fontSizeBase: 20
+  m_fontSize: 18
+  m_fontSizeBase: 18
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -498,6 +498,7 @@ MonoBehaviour:
     postYn: 1
     eventType: 
     authorId: 
+    uiKey: 
 --- !u!1 &6859723588360378276
 GameObject:
   m_ObjectHideFlags: 0

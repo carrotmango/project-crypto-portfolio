@@ -164,10 +164,21 @@ public class CoinManager : MonoBehaviour
                 // 오늘 날짜에 아직 기록을 안 했다면 (오전 9시 정각에 최초 1회 실행)
                 if (lastRecordedDay != currentDateTime.Day) {
                     // 1. 코인 시가 갱신 로직 (기존 유지)
-                    foreach (var coin in coins) {
-                        coin.RecordDailyClosePrice();
-                        coin.InitialPrice = coin.CurrentPrice;
+                    foreach (var c in coins) {
+                        c.RecordDailyClosePrice();
+                        c.InitialPrice = c.CurrentPrice;
+
+                        // [핵심] 일일 채굴량 반영 로직
+                        var meta = Array.Find(CoinMetaDatabase.AllCoins, m => m.Symbol == c.Symbol);
+                        if (meta != null && meta.DailyMintAmount > 0) {
+                            long nextSupply = c.CirculatingSupply + meta.DailyMintAmount;
+                            c.CirculatingSupply = Math.Min(nextSupply, c.MaxSupply);
+
+                            // 메타데이터 동기화
+                            meta.CirculatingSupply = c.CirculatingSupply;
+                        }
                     }
+
                     dailySurgeAlerts.Clear();
 
                     // 2. 차트 데이터 추가 (오전 9시 환율 기준)
@@ -182,6 +193,11 @@ public class CoinManager : MonoBehaviour
                 }
             }
 
+            if (CoinEventScenarioManager.Instance != null) {
+                CoinEventScenarioManager.Instance.CheckAndExecuteScenarios(currentDateTime, coins);
+            }
+
+
 
             if (currentDateTime.Hour == 8 && currentDateTime.Minute == 0) {
                 FearIndexManager.Instance?.RecalculateDailyFear();
@@ -192,9 +208,6 @@ public class CoinManager : MonoBehaviour
                 survivalDays++;
 
                 // 시나리오 매니저에게 판단 위임
-                if (CoinEventScenarioManager.Instance != null) {
-                    CoinEventScenarioManager.Instance.CheckAndExecuteScenarios(currentDateTime, coins);
-                }
 
                 // 데이터가 바뀌었으니 UI를 새로 그리라고 모든 패널에 신호를 보냅니다.
                 OnMarketUpdated?.Invoke();
@@ -234,27 +247,41 @@ public class CoinManager : MonoBehaviour
                     // BaseCandle은 그대로
                     coin.CloseBaseCandle();
                 }
+                TryAssignRandomPatterns();
 
                 OnCandleBoundary?.Invoke(currentDateTime);
             }
 
-
-
             GlobalEconomyManager.TickExchangeRate();
 
             foreach (var coin in coins) {
+                // 스테이블 코인은 예외 (기존 유지)
+                if (coin.Type == CoinType.Stable) {
+                    coin.GenerateNextPrice(MarketPhase.Sideways, 1, 0, 0, currentDateTime);
+                    CheckPriceSurgeAndNotify(coin);
+                    continue;
+                }
+
+                // 1. 차트 패턴 엔진 값 가져오기 (없으면 0)
+                double patternDelta = 0;
+                if (ChartPatternEngine.Instance != null) {
+                    patternDelta = ChartPatternEngine.Instance.GetPatternDelta(coin);
+                }
+
+                // 2. 페이즈 및 변동성 가져오기
+                // (여기서 반감기 때 설정한 SuperBull을 가져옵니다!)
                 var phase = coin.GetEffectivePhase(currentDateTime, CurrentMarket);
                 var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == coin.Symbol);
                 int vol = (meta != null) ? meta.VolatilityLevel : 1;
 
-                // 이제 CoinData 내부에서 Type을 체크하므로, 
-                // Stable 코인은 phase 영향을 받지 않고 환율만 따르게 됩니다.
-                coin.GenerateNextPrice(phase, vol, 2f, 0f, currentDateTime);
+                // 3. 통합 실행 (★ 이 아래에 있던 모든 if/else/eventBias 로직은 삭제하십시오!)
+                coin.GenerateNextPrice(phase, vol, 2f, (float)(patternDelta * 100.0), currentDateTime);
 
                 CheckPriceSurgeAndNotify(coin);
             }
 
             OnMarketUpdated?.Invoke();
+
             if (tickCount % 1 == 0)
             {
                 foreach (var coin in coins)
@@ -476,7 +503,6 @@ public class CoinManager : MonoBehaviour
 
         assetPanelController?.RenderPlatformRows();
 
-        // 상장 직후 1틱 바로 돌게 알림 발송
         OnMarketUpdated?.Invoke();
     }
 
@@ -532,7 +558,6 @@ public class CoinManager : MonoBehaviour
 
         Debug.Log($"[CoinManager] 재상장 처리: {symbol}");
 
-        // UI 즉시 반영
         assetPanelController?.RenderPlatformRows();
 
         var ui = FindAnyObjectByType<MainUIManager>();
@@ -702,5 +727,26 @@ public class CoinManager : MonoBehaviour
         double index = (currentTotalCap / baseTotalMarketCap) * 1000.0;
 
         return (float)index;
+    }
+    private void TryAssignRandomPatterns() {
+        if (ChartPatternEngine.Instance == null) return;
+
+        foreach (var coin in coins) {
+            // 거래 안 되는 코인이나 스테이블은 패스
+            if (!coin.IsListed || coin.IsDelisted || coin.Type == CoinType.Stable) continue;
+
+            // [중요] "시나리오 패턴"이 이미 돌고 있으면 랜덤 패턴 부여 금지!
+            // (EffectManager가 내린 30% 상승 명령 등을 방해하지 않기 위함)
+            if (ChartPatternEngine.Instance.IsScenarioPatternActive(coin.Symbol)) {
+                continue;
+            }
+
+            // 시나리오가 없을 때만 30% 확률로 랜덤 패턴 부여 (시장 활성화용)
+            if (UnityEngine.Random.value < 0.3f) {
+                // 잡코인(변동성4 이상)은 짧게(4~8시간), 메이저는 길게(12~24시간)
+                float duration = (coin.Volatility >= 4) ? UnityEngine.Random.Range(4f, 8f) : UnityEngine.Random.Range(12f, 24f);
+                ChartPatternEngine.Instance.AssignRandomPattern(coin, CurrentMarket, duration);
+            }
+        }
     }
 }

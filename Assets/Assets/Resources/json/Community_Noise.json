@@ -1,64 +1,181 @@
 {
   "templates": [
     {
-      "//": "도지/페페 떡상 (40% 이상)",
-      "content": "와 {0} 무빙 뭐냐? ㅋㅋ?",
+      "//": "도지/페페 떡상 전용 (단일)",
+      "content": "와 {0} 무빙 뭐냐? ㅋㅋ? 벌써 ${4} 찍었네",
       "targetSymbols": ["DOGE", "PEPE"],
       "minChange": 40,
-      "width": 550,
-      "height": 300
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 300
     },
     {
       "//": "도지 전용 (일론 언급)",
-      "content": "일론 형 믿고 있었다구!!! 도지 1달러 가즈아ㅏㅏ",
+      "content": "일론 형 믿고 있었다구!!! {3} 떡상 가즈아ㅏㅏ",
       "targetSymbols": ["DOGE"],
       "fixedName": "도지아빠",
       "minChange": 40,
-      "width": 550,
-      "height": 300
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 300
     },
     {
-      "//": "도지/페페 홀딩 독려",
-      "content": "도지 페페 홀딩들 하십시오,,, 사이버펑크 시대를 맞이하라,,,,",
+      "//": "도지/페페 멀티 홀딩 독려",
+      "content": "{0} 홀딩들 하십시오,,, 사이버펑크 시대를 맞이하라,,,,",
       "targetSymbols": ["DOGE", "PEPE"],
       "minChange": 40,
-      "width": 550,
-      "height": 300
+      "minCoins": 2, "maxCoins": 2,
+      "width": 550, "height": 300
     },
     {
-      "//": "숏은안돼요",
-      "content": "도지 페페 숏잡으면 혼납니다",
+      "//": "범용 급등 1 (단일)",
+      "content": "와 {0} 무빙 실화냐? {2}원 뚫고 전고점 가네 ㄷㄷ",
+      "targetSymbols": [],
+      "minChange": 14,
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 300
+    },
+    {
+      "//": "범용 급등 (멀티 전용)",
+      "content": "와 {0} {1}% 상승 머냐? 현재 가격 {2}원이네? ㄷㄷ",
+      "targetSymbols": [],
+      "minChange": 14,
+      "minCoins": 2, "maxCoins": 4,
+      "width": 550, "height": 300
+    },
+    {
+      "//": "급등 2 (전문가 컨셉)",
+      "content": "{0} 차트 보니까 전형적인 컵앤핸들이네요. ${4} 안착하면 풀매수 때립니다.",
+      "targetSymbols": [],
+      "minChange": 15,
+      "minCoins": 1, "maxCoins": 2,
+      "width": 550, "height": 300
+    },
+    {
+      "//": "급등 3",
+      "content": "#{3} 부의 바구니 뭔데 ㄷㄷ 벌써 {1}% 돌파",
+      "targetSymbols": [],
+      "minChange": 15,
+      "minCoins": 1, "maxCoins": 3,
+      "width": 550, "height": 300
+    },
+    {
+      "//": "급락 1 (단일)",
+      "content": "{0} {2}원 층수 구조대 언제오냐... 나 여기서 평생 살아야 됨?",
+      "targetSymbols": [],
+      "maxChange": -14,
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 300
+    },
+    {
+      "//": "급락 (멀티)",
+      "content": "{0} 같이 처박네.. 달러로도 {4} 무너짐.. 그냥 눈물이 나네요..",
+      "targetSymbols": [],
+      "maxChange": -14,
+      "minCoins": 2, "maxCoins": 4,
+      "width": 550, "height": 300
+    },
+    {
+      "//": "숏 금지 (도지/페페 저격)",
+      "content": "도지 페페 숏잡으면 혼납니다. ${4} 뚫는거 안보임?",
       "targetSymbols": ["DOGE", "PEPE"],
-      "minChange": 40,
-      "width": 550,
-      "height": 300
+      "minChange": 14,
+      "minCoins": 1, "maxCoins": 2,
+      "width": 550, "height": 300
     },
     {
-      "//": "페페 전용 (1회성)",
-      "content": "묻지마라... {0} 풀매수 완료",
-      "targetSymbols": ["PEPE"],
-      "fixedName": "페페러버",
-      "width": 550,
-      "height": 300,
-      "isOneTime": true
+      "//": "싱글 1: 대기 타던 유저 (떡상)",
+      "content": "아 어제 {0} 팔았는데.. 내가 팔면 {4} 찍는 건 과학이냐? 하;",
+      "targetSymbols": [],
+      "minChange": 14,
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 300
+    },
+{
+      "//": "싱글: 대떡락 (30% 이상 폭락 시에만 발동)",
+      "content": "다 끝났다 ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ {0} 상폐 가냐?",
+      "targetSymbols": [],
+      "maxChange": -30, 
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 300
     },
     {
-      "//": "떡락 절규",
-      "content": "{0} 이거 스캠이었나요..? 내 돈 환불 안되나요...;;",
-      "targetSymbols": ["DOGE", "PEPE"],
-      "maxChange": -5,
-      "width": 550,
-      "height": 300
+      "//": "오름숏 (비트코인이 -10%보다 더 떨어지면)",
+      "content": "오름 숏 TO 30K",
+      "targetSymbols": ["BTC"],
+      "maxChange": -10,
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 300
     },
     {
-      "//": "횡보 (1회성)",
-      "content": "{0} 거래량이 없네요.. 운전수는 주무시고 계신가?",
-      "targetSymbols": ["DOGE", "PEPE"],
-      "minChange": -1,
-      "maxChange": 1,
-      "width": 550,
-      "height": 250,
-      "isOneTime": true
+      "//": "싱글 2: 행복회로 (떡상)",
+      "content": "{0} 떡상 가즈아!! 오늘부터 {2}원 지지하면 앞자리 바뀐다 ㅋㅋ",
+      "targetSymbols": [],
+      "minChange": 20,
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 300
+    },
+    {
+      "//": "싱글 3: 공포 조장 (떡락)",
+      "content": "지금 {0} 던지는 게 지능순임? {2}원 무너졌는데 왜 안 나감?;;",
+      "targetSymbols": [],
+      "maxChange": -14,
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 300
+    },
+    {
+      "//": "싱글 4: 비트코인 전용 대장님 찬양 (특정 저격)",
+      "content": "역시 대장님 {0} 무빙 보소.. 벌써 ${4} 돌파.. 알트들 길 터주러 가시네",
+      "targetSymbols": ["BTC"],
+      "minChange": 14,
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 300
+    },
+    {
+      "//": "멀티 1: 불장 분위기 (상승)",
+      "content": "와 {0} 다같이 커플링 무빙 치네 ㄷㄷ 평균 {1}% 수익 중!! 장 분위기 미쳤다!!",
+      "targetSymbols": [],
+      "minChange": 15,
+      "minCoins": 2, "maxCoins": 4,
+      "width": 550, "height": 300
+    },
+    {
+      "//": "멀티 2: 단체 익절 타임 (상승)",
+      "content": "{0} 덕분에 오늘 소고기 파티 합니다 ㅋㅋㅋ 꺼억~ 잘 먹고 갑니다!",
+      "targetSymbols": [],
+      "minChange": 18,
+      "minCoins": 2, "maxCoins": 3,
+      "width": 550, "height": 300
+    },
+    {
+      "//": "멀티 3: 단체 곡소리 (하락)",
+      "content": "{0} 잡은 사람 많냐..? 평균 {1}% 처박는데 한강 수온 체크하러 가야 될 듯.. 하;",
+      "targetSymbols": [],
+      "maxChange": -15,
+      "minCoins": 2, "maxCoins": 4,
+      "width": 550, "height": 300
+    },
+    {
+      "//": "멀티 4: 물타기 고백 (하락)",
+      "content": "{0} 계속 떨어지길래 물타다가 내가 물에 잠기겠네... 살려줘 ㅠㅠ",
+      "targetSymbols": [],
+      "maxChange": -18,
+      "minCoins": 2, "maxCoins": 3,
+      "width": 550, "height": 300
+    },
+    {
+      "//": "범용: 광기 (상승)",
+      "content": "자 드가자~ {0} 버스 아직 안 떠났다! {4}는 그냥 통과지! 지금이라도 타라 ㅋㅋㅋㅋ",
+      "targetSymbols": [],
+      "minChange": 25,
+      "minCoins": 1, "maxCoins": 4,
+      "width": 550, "height": 300
+    },
+    {
+      "//": "범용: 상폐빔 걱정 (급락)",
+      "content": "아니 {0} 무빙 이거 상폐빔 아님? 거래량 터지는데 무섭네;;",
+      "targetSymbols": [],
+      "maxChange": -25,
+      "minCoins": 1, "maxCoins": 2,
+      "width": 550, "height": 300
     }
   ]
 }

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6838153152122398963}
-  - component: {fileID: 4851593538436136229}
+  - component: {fileID: 1469493985274768198}
   m_Layer: 5
   m_Name: Candle_new
   m_TagString: Untagged
@@ -38,7 +38,7 @@ RectTransform:
   m_AnchoredPosition: {x: -0.00012207031, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0, y: 0.5}
---- !u!114 &4851593538436136229
+--- !u!114 &1469493985274768198
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,15 +47,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 2498187171305115586}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb53244ad5cf2d44088e26803d483026, type: 3}
+  m_Script: {fileID: 11500000, guid: 4e310c5ead7587347b5d58d336892b3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CandleView
   body: {fileID: 2692961698814770397}
   wick: {fileID: 7729645830490891462}
   bodyImage: {fileID: 1528731504041886619}
   wickImage: {fileID: 6662242160238841262}
-  bodyWidth: 6
-  wickWidth: 2
 --- !u!1 &2509535339288329020
 GameObject:
   m_ObjectHideFlags: 0

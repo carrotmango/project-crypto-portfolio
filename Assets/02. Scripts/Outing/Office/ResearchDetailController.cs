@@ -223,15 +223,27 @@ public class ResearchDetailController : MonoBehaviour {
     public string FormatCurrency(double krwAmount, bool isUsd) {
         if (isUsd) {
             double usdAmount = krwAmount / GlobalEconomyManager.UsdToKrw;
-            if (usdAmount >= 1_000_000_000_000d) return $"${(usdAmount / 1_000_000_000_000d):F2}T";
-            if (usdAmount >= 1_000_000_000d) return $"${(usdAmount / 1_000_000_000d):F2}B";
-            if (usdAmount >= 1_000_000d) return $"${(usdAmount / 1_000_000d):F2}M";
-            if (usdAmount >= 1_000d) return $"${(usdAmount / 1_000d):F2}K";
+
+            // 달러($) 단위 확장: T(조), B(십억)를 넘어 Q(경)까지
+            if (usdAmount >= 1_000_000_000_000_000d) return $"${(usdAmount / 1_000_000_000_000_000d):F2}Q"; // Quadrillion (경)
+            if (usdAmount >= 1_000_000_000_000d) return $"${(usdAmount / 1_000_000_000_000d):F2}T";      // Trillion (조)
+            if (usdAmount >= 1_000_000_000d) return $"${(usdAmount / 1_000_000_000d):F2}B";           // Billion (십억)
+            if (usdAmount >= 1_000_000d) return $"${(usdAmount / 1_000_000d):F2}M";                // Million (백만)
+            if (usdAmount >= 1_000d) return $"${(usdAmount / 1_000d):F2}K";                        // Thousand (천)
             return $"${usdAmount:N2}";
         } else {
+            // 원화(₩) 단위 확장: 조(兆)를 넘어 경(京), 해(垓)까지
+            // 해(垓) = 10의 20승 (1,0000 * 경)
+            if (krwAmount >= 1_0000_0000_0000_0000_0000d) return $"{(krwAmount / 1_0000_0000_0000_0000_0000d):F2}해 원";
+            // 경(京) = 10의 16승 (1,0000 * 조)
+            if (krwAmount >= 1_0000_0000_0000_0000d) return $"{(krwAmount / 1_0000_0000_0000_0000d):F2}경 원";
+            // 조(兆) = 10의 12승 (1,0000 * 억)
             if (krwAmount >= 1_0000_0000_0000d) return $"{(krwAmount / 1_0000_0000_0000d):F2}조 원";
+            // 억(億) = 10의 8승
             if (krwAmount >= 1_0000_0000d) return $"{(krwAmount / 1_0000_0000d):F2}억 원";
+            // 만(萬) = 10의 4승
             if (krwAmount >= 1_0000d) return $"{(krwAmount / 1_0000d):F2}만 원";
+
             return $"{krwAmount:N0} 원";
         }
     }
