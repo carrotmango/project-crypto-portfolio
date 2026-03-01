@@ -2,10 +2,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 using TMPro;
+using static TotalIndexChartManager;
 
-// ChartPeriod가 다른 스크립트에 있다면 주석 처리
+// ChartPeriod가 다른 스크립트에 있다면 주석 처리 (에러 났던 부분!)
 // public enum ChartPeriod { M30, D1 } 
 
 public class ExchangeChartManager : MonoBehaviour {
@@ -24,7 +24,6 @@ public class ExchangeChartManager : MonoBehaviour {
     public Color inactiveColor = Color.gray;
 
     [Header("차트 설정")]
-    public int maxDays = 30;
     public Color chartColor = new Color(0.2f, 0.8f, 0.2f, 1f);
     public int labelCount = 5;
 
@@ -33,16 +32,8 @@ public class ExchangeChartManager : MonoBehaviour {
     public TextMeshProUGUI mainRateText;
     public TextMeshProUGUI diffRateText;
 
-
-    // 데이터 저장소
-    private List<float> history30M = new List<float>();
-    private List<float> history1D = new List<float>();
-
     // 현재 모드 (기본 30M)
     private ChartPeriod currentMode = ChartPeriod.M30;
-
-    private DateTime lastTickTime;
-    private int lastRecordedDay = -1;
 
     private List<GameObject> activeObjects = new List<GameObject>();
     private List<GameObject> activeLabels = new List<GameObject>();
@@ -61,114 +52,67 @@ public class ExchangeChartManager : MonoBehaviour {
         if (Instance == null) Instance = this;
     }
 
+    // ★ UI 켜질 때 이벤트 구독 및 그리기
     void OnEnable() {
-        // 패널 켜질 때 자동 갱신
-        DrawChart();
-        UpdateExchangeRateUI();
+        if (ExchangeDataManager.Instance != null) {
+            ExchangeDataManager.Instance.OnDataUpdated += RefreshChart;
+        }
+        RefreshChart();
+    }
+
+    // ★ UI 꺼질 때 이벤트 해제 (메모리 최적화)
+    void OnDisable() {
+        if (ExchangeDataManager.Instance != null) {
+            ExchangeDataManager.Instance.OnDataUpdated -= RefreshChart;
+        }
     }
 
     void Start() {
-        InitializeDummyData();
-
-        if (CoinManager.Instance != null) {
-            lastTickTime = CoinManager.Instance.CurrentDateTime;
-            lastRecordedDay = CoinManager.Instance.CurrentDateTime.Day;
-        }
-
         OnClick30M(); // 시작 시 30M 모드
     }
 
-    void Update() {
-        if (CoinManager.Instance == null) return;
+    // ★★★ 데이터를 가져와서 그리는 통합 함수 ★★★
+    public void RefreshChart() {
+        if (ExchangeDataManager.Instance == null) return;
 
-        DateTime currentDt = CoinManager.Instance.CurrentDateTime;
-        float currentRate = (float)GlobalEconomyManager.UsdToKrw;
+        List<float> targetData = (currentMode == ChartPeriod.M30)
+            ? ExchangeDataManager.Instance.history30M
+            : ExchangeDataManager.Instance.history1D;
 
-        // [30M 로직]
-        if (currentDt != lastTickTime) {
-            AddDataToList(history30M, currentRate);
-            lastTickTime = currentDt;
-        } else {
-            UpdateLastData(history30M, currentRate);
-        }
-
-        // [1D 로직]
-        UpdateLastData(history1D, currentRate);
-
-        if (currentDt.Hour == 9 && currentDt.Minute == 0 && currentDt.Day != lastRecordedDay) {
-            AddDataToList(history1D, currentRate);
-            lastRecordedDay = currentDt.Day;
-        }
-
-        // 화면 그리기 (매개변수 없이 호출)
-        DrawChart();
-        UpdateExchangeRateUI();
+        DrawChart(targetData);
+        UpdateExchangeRateUI(targetData);
     }
 
-    // ★★★ [에러 해결 1] CoinManager 호환용 함수 ★★★
+    // ★★★ [에러 해결 1] CoinManager 호환용 함수 (유지) ★★★
     public void AddPriceData(float newRate) {
-        // 실제 로직은 Update에서 돌므로 여긴 비워둠 (에러 방지용)
+        // 실제 데이터 관리는 ExchangeDataManager에서 하므로 비워둡니다.
     }
 
-    // ★★★ [에러 해결 2] SatoshiBankPanel 호환용 함수 (매개변수 없는 버전) ★★★
-    // 이 함수가 없어서 SatoshiBankPanel에서 빨간 줄이 떴던 겁니다.
+    // ★★★ [에러 해결 2] SatoshiBankPanel 호환용 함수 (유지) ★★★
     public void DrawChart() {
-        List<float> targetData = (currentMode == ChartPeriod.M30) ? history30M : history1D;
-        DrawChart(targetData); // 내부적으로 진짜 그리는 함수 호출
+        RefreshChart();
     }
 
     public void UpdateExchangeRateUI() {
-        List<float> targetData = (currentMode == ChartPeriod.M30) ? history30M : history1D;
-        UpdateExchangeRateUI(targetData);
+        RefreshChart();
     }
 
     // --- 버튼 이벤트 ---
     public void OnClick30M() {
         currentMode = ChartPeriod.M30;
         UpdateButtonColors();
-        DrawChart();
-        UpdateExchangeRateUI();
+        RefreshChart();
     }
 
     public void OnClick1D() {
         currentMode = ChartPeriod.D1;
         UpdateButtonColors();
-        DrawChart();
-        UpdateExchangeRateUI();
+        RefreshChart();
     }
 
     private void UpdateButtonColors() {
         if (btnText30M != null) btnText30M.color = (currentMode == ChartPeriod.M30) ? activeColor : inactiveColor;
         if (btnText1D != null) btnText1D.color = (currentMode == ChartPeriod.D1) ? activeColor : inactiveColor;
-    }
-
-    private void AddDataToList(List<float> list, float value) {
-        list.Add(value);
-        if (list.Count > maxDays) list.RemoveAt(0);
-    }
-
-    private void UpdateLastData(List<float> list, float value) {
-        if (list.Count > 0) list[list.Count - 1] = value;
-        else list.Add(value);
-    }
-
-    private void InitializeDummyData() {
-        float currentRate = (float)GlobalEconomyManager.UsdToKrw;
-        history30M.Clear();
-        float temp30 = currentRate;
-        for (int i = 0; i < maxDays; i++) {
-            history30M.Add(temp30);
-            temp30 += UnityEngine.Random.Range(-0.5f, 0.5f);
-        }
-        history30M.Reverse();
-
-        history1D.Clear();
-        float temp1D = currentRate;
-        for (int i = 0; i < maxDays; i++) {
-            history1D.Add(temp1D);
-            temp1D += UnityEngine.Random.Range(-5f, 5f);
-        }
-        history1D.Reverse();
     }
 
     // ★★★ 실제 그리기 로직 (내부용) ★★★
@@ -185,6 +129,9 @@ public class ExchangeChartManager : MonoBehaviour {
 
         float width = container.rect.width;
         float height = container.rect.height;
+
+        // 매니저에서 maxDays 가져오기
+        int maxDays = ExchangeDataManager.Instance != null ? ExchangeDataManager.Instance.maxDays : 30;
         float xStep = width / (maxDays - 1);
 
         for (int i = 0; i < dataList.Count - 1; i++) {
@@ -263,7 +210,6 @@ public class ExchangeChartManager : MonoBehaviour {
 
         // 1. exchangeRateText 변수에 "1,350.12 대한민국 원" 포맷으로 바로 주입
         if (exchangeRateText != null) {
-            // N2: 천 단위 콤마 + 소수점 둘째 자리
             exchangeRateText.text = $"<color=#{hexColor}>{currentPrice:N2} 대한민국 원</color>";
         }
 

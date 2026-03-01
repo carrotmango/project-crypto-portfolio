@@ -23,13 +23,15 @@ public class EventUIManager : MonoBehaviour {
             case UIEventType.News: {
                     // [추가] 1. 뉴스가 발생했으니 히스토리에 무조건 기록합니다!
                     // (EventUIManager에 public NewsRepository newsRepo; 연결 필요)
-                    var repo = FindObjectOfType<NewsRepository>();
+                    var repo = FindAnyObjectByType<NewsRepository>();
                     if (repo != null) repo.AddToHistory(data, gameTime);
+                    if (data.postYn) {
+                        newsPanel.Show(data, gameTime);
+                    } else {
+                        Debug.Log($"[EventUIManager] '{data.key}'는 postYn=false이므로 피드에 띄우지 않습니다.");
+                    }
 
-                    // 2. 트위터(Xbird) 피드에 추가
-                    newsPanel.Show(data, gameTime);
-
-                    // 3. 리서치 데이터(Article)가 있다면 리포트 목록 갱신
+                    // 3. 리서치 데이터(Article) 갱신 (이것도 피드 표시 여부와 상관없이 무조건 실행!)
                     if (data.article != null && !string.IsNullOrEmpty(data.article.title)) {
                         if (researchDetail != null) {
                             var newsMgr = researchDetail.newsGroup.GetComponent<ResearchNewsManager>();

@@ -126,17 +126,18 @@ public static class CoinMetaDatabase {
             5, 0, 2, 0, "M2E 프로젝트", "0x771...bc2", bullbitListed: true, isDefaultListed: true),
 
         new("페페", "PEPE", 0.18, 115000000, 115000000, CoinTheme.Meme, ProofType.Token,CoinClass.Alt, 4, 0, 0, 0, "개구리 밈 코인", "0x698...92c",  bullbitListed: true, isDefaultListed: true),
+        new("솔라나", "SOL", 130000.0, 85000000, 115000000, CoinTheme.Layer1, ProofType.PoS,CoinClass.Alt, 3, 0, 0, 500, "고성능 레이어1", "Native", bullbitListed: true, isDefaultListed: true),
+        new("애니메코인", "ANIME", 80.0, 90000000, 115000000, CoinTheme.Meme, ProofType.Token,CoinClass.Alt, 4, 0, 0, 0, "서브컬쳐 NFT", "0x882...fa1", bullbitListed: true, isDefaultListed: true),
+        new("아비트럼", "ARB", 345, 250000000, 1000000000, CoinTheme.Layer2, ProofType.Token,CoinClass.Alt, 4, 0, 2, 0, "이더리움 레이어2", "0x912...62b", bullbitListed: true, isDefaultListed: true),
+        new("에이브", "AAVE", 180000.0, 115000000, 115000000, CoinTheme.DeFi, ProofType.PoS,CoinClass.Alt, 3, 0, 0, 0, "탈중앙 대출", "Native", bullbitListed: true, isDefaultListed: true),
 
         // =========================================================
         // 2. [랜덤 상장] - isDefaultListed: false 추가
         // =========================================================
-        new("솔라나", "SOL", 130000.0, 85000000, 115000000, CoinTheme.Layer1, ProofType.PoS,CoinClass.Alt, 3, 0, 0, 500, "고성능 레이어1", "Native", isDefaultListed: false),
         new("트론", "TRX", 280, 870000000, 1000000000, CoinTheme.Layer1, ProofType.PoS,CoinClass.Alt, 2, 0, 0, 1000, "고효율 네트워크", "Native", bullbitListed: true, isDefaultListed: false),
-        new("아비트럼", "ARB", 345, 250000000, 1000000000, CoinTheme.Layer2, ProofType.Token,CoinClass.Alt, 4, 0, 2, 0, "이더리움 레이어2", "0x912...62b", bullbitListed: true, isDefaultListed: false),
-        new("에이브", "AAVE", 180000.0, 115000000, 115000000, CoinTheme.DeFi, ProofType.PoS,CoinClass.Alt, 3, 0, 0, 0, "탈중앙 대출", "Native", isDefaultListed: false),
         new("톤", "TON", 2000.0, 34000000, 115000000, CoinTheme.Layer1, ProofType.PoS,CoinClass.Alt, 3, 0, 0, 200, "텔레그램 생태계", "Native", isDefaultListed: false),
         new("사인", "SIGN", 110.0, 50000000, 115000000, CoinTheme.ZK, ProofType.Token,CoinClass.Alt, 4, 0, 3, 0, "소셜 플랫폼", "0x43a...221", isDefaultListed: false),
-        new("애니메코인", "ANIME", 80.0, 90000000, 115000000, CoinTheme.Meme, ProofType.Token,CoinClass.Alt, 4, 0, 0, 0, "서브컬쳐 NFT", "0x882...fa1", isDefaultListed: false),
+
 
 
         // =========================================================

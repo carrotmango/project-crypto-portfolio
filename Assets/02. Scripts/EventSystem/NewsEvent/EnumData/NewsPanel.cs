@@ -71,6 +71,8 @@ public class NewsPanel : MonoBehaviour {
     }
 
     public void Show(UIEventData data, DateTime gameTime) {
+        if (!data.postYn) return;
+
         if (newsItemPrefab == null || contentParent == null) return;
 
         if (currentCategory != NewsCategory.All && data.category != currentCategory) {

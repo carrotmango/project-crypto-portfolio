@@ -16,6 +16,11 @@ public class XFeedSpawner : MonoBehaviour {
     // 1) 플레이 중 새로운 이벤트 생성
     // ------------------------------------------------
     public GameObject SpawnFromData(XPostData data) {
+
+        if (!data.postYn) {
+            return null;
+        }
+
         if (xPrefab == null || contentParent == null) return null;
 
         var go = Instantiate(xPrefab, contentParent);

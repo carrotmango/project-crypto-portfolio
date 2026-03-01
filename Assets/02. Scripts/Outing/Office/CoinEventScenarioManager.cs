@@ -198,7 +198,7 @@ public class CoinEventScenarioManager : MonoBehaviour {
                 string halvingKey = $"halving_applied_{coin.Symbol}_{lastEventDate:yyyyMMdd}";
                 if (!processedKeys.Contains(halvingKey)) {
                     meta.DailyMintAmount /= 2;
-                    string msg = $"{coin.Name}({coin.Symbol}) 반감기 시즌 돌입! 채굴 보상이 절반으로 줄어듭니다.";
+                    string msg = $"{coin.Name}({coin.Symbol}) 반감기 시즌으로, 채굴 보상이 절반으로 줄어듭니다.";
                     SendNews($"news_halving_{coin.Symbol}_{now:yyyyMMdd}", "[공고]", coin.Symbol, msg);
                     processedKeys.Add(halvingKey);
                     Debug.Log($"<color=#00BFFF>[반감기 시스템]</color> {coin.Symbol}: 채굴량 반토막");

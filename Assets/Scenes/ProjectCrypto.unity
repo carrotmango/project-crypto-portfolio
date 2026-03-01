@@ -9537,7 +9537,6 @@ MonoBehaviour:
   btnText1D: {fileID: 417952138}
   activeColor: {r: 0, g: 1, b: 0, a: 1}
   inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  maxDays: 30
   chartColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
   labelCount: 3
   exchangeRateText: {fileID: 0}
@@ -15016,12 +15015,11 @@ MonoBehaviour:
   btnText1D: {fileID: 1181070455}
   activeColor: {r: 0, g: 1, b: 0, a: 1}
   inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  maxDays: 30
   chartColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
   labelCount: 3
+  verticalPadding: 10
   indexValueText: {fileID: 742654377}
   indexChangeText: {fileID: 1943350231}
-  verticalPadding: 10
 --- !u!1 &137522015
 GameObject:
   m_ObjectHideFlags: 0
@@ -54219,7 +54217,6 @@ MonoBehaviour:
   btnText1D: {fileID: 0}
   activeColor: {r: 0, g: 1, b: 0, a: 1}
   inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  maxDays: 30
   chartColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
   labelCount: 3
   exchangeRateText: {fileID: 1333051239}
@@ -88541,7 +88538,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1318519021}
   m_HandleRect: {fileID: 1318519020}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -95427,6 +95424,8 @@ GameObject:
   - component: {fileID: 947101841}
   - component: {fileID: 947101840}
   - component: {fileID: 947101842}
+  - component: {fileID: 947101843}
+  - component: {fileID: 947101844}
   m_Layer: 0
   m_Name: CoinManager
   m_TagString: Untagged
@@ -95492,6 +95491,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecd6bb9487435334b97c53f53af0ac13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CoinEventScenarioManager
+--- !u!114 &947101843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 947101839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6933c6d65c13a744ba7fe082abbd487, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IndexDataManager
+  maxDays: 30
+  history30M: []
+  history1D: []
+--- !u!114 &947101844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 947101839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0174e1a38919b44a9b4f493feccf1b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExchangeDataManager
+  maxDays: 30
+  history30M: []
+  history1D: []
 --- !u!1 &947335511
 GameObject:
   m_ObjectHideFlags: 0
@@ -206308,6 +206337,7 @@ MonoBehaviour:
   prevRealEstate: 0
   prevLottoWin: 0
   prevGambleNet: 0
+  taxPeriod: 0
 --- !u!1 &1994519683
 GameObject:
   m_ObjectHideFlags: 0

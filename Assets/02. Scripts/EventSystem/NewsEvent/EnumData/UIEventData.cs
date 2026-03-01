@@ -26,6 +26,7 @@ public class UIEventData {
     public string contentImage;
     public float height;
     public float width;
+    public bool postYn = true;
 
     public ArticleData article;
 }

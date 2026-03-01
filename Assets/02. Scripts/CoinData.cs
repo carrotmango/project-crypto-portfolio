@@ -138,27 +138,25 @@ public class CoinData {
 
             // 2. [수정] 누락된 Mild 페이즈 추가 및 확률 조정
             (double bias, double probability) = phase switch {
-                MarketPhase.MegaBull => (0.0035, 0.65),// 강력한 매수세
+                MarketPhase.MegaBull => (0.0035, 0.65),
                 MarketPhase.SuperBull => (0.0040, 0.65),
-                MarketPhase.BigBull => (0.0010, 0.56),
-                MarketPhase.Bull => (0.0005, 0.54),
+                MarketPhase.BigBull => (0.0015, 0.60),  // BigBull도 간격 조정을 위해 살짝 상향 (0.56 -> 0.60)
+                MarketPhase.Bull => (0.0010, 0.57),     // Bull도 간격 조정을 위해 상향 (0.54 -> 0.57)
 
-                // [신규] 약상승: 확실한 우상향 (틱당 0.03% 상승, 확률 52%)
-                MarketPhase.MildBull => (0.0003, 0.52),
+                // [신규] 약상승: 승률을 56%로 올리고, 추세 방향성(Bias)을 3배가량 강화
+                MarketPhase.MildBull => (0.0008, 0.55),
 
-                // [수정] 보합: 방향성(Bias)은 0이지만 확률은 50:50
                 MarketPhase.Sideways => (0.0000, 0.50),
 
-                // [신규] 약하락: 확실한 우하향
-                MarketPhase.MildBear => (-0.0003, 0.48),
+                // [신규] 약하락: 승률을 44%로 내리고, 추세 방향성(Bias) 강화
+                MarketPhase.MildBear => (-0.0008, 0.45),
 
-                MarketPhase.Bear => (-0.0005, 0.46),
-                MarketPhase.BigBear => (-0.0010, 0.44),
-                MarketPhase.SuperBear => (-0.015, 0.42),
-                MarketPhase.MegaBear => (-0.0025, 0.38),
+                MarketPhase.Bear => (-0.0010, 0.43),    // (0.46 -> 0.43)
+                MarketPhase.BigBear => (-0.0015, 0.40), // (0.44 -> 0.40)
+                MarketPhase.SuperBear => (-0.015, 0.35),// (0.42 -> 0.35)
+                MarketPhase.MegaBear => (-0.0025, 0.35),// (0.38 -> 0.35)
                 _ => (0.0, 0.50)
             };
-
             // 3. [핵심] 기본 진폭(Magnitude) 대폭 상향 (실선 방지)
             // 기존 0.5에서 1.2로 올려서 캔들 몸통을 두껍게 만듭니다.
             double baseMagnitude = 1.2 * volMultiplier;

@@ -1,6 +1,6 @@
 {
   "effects": [
-    { 
+    {
       "key": "trump_president",
       "durationHours": 18,
       "exchangeRateEffect": {
@@ -13,7 +13,7 @@
         "durationHours": 24
       }
     },
-{
+    {
       "key": "trump_president_02",
       "durationHours": 24,
       "exchangeRateEffect": {
@@ -22,15 +22,15 @@
         "durationHours": 24
       },
       "globalMarketPhase": {
-        "phase": 3, 
+        "phase": 3,
         "durationHours": 24
       },
       "targetGroups": [
         {
-          "targetSegment": 1, 
+          "targetSegment": 1,
           "symbols": [],
           "coinEventType": -1,
-          "targetMarketPhase": 3, 
+          "targetMarketPhase": 3,
           "priceChangeMin": 5,
           "priceChangeMax": 6,
           "durationHours": 36
@@ -41,7 +41,7 @@
             "TRUMP"
           ],
           "coinEventType": -1,
-          "targetMarketPhase": 3, 
+          "targetMarketPhase": 3,
           "priceChangeMin": 10,
           "priceChangeMax": 15,
           "durationHours": 24
@@ -126,6 +126,770 @@
           "priceChangeMin": -4,
           "priceChangeMax": -8,
           "durationHours": 7
+        }
+      ]
+    },
+    {
+      "key": "solana_news_0107",
+      "durationHours": 72,
+      "globalMarketPhase": {
+        "phase": 5,
+        "durationHours": 24
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "SOL"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 4,
+          "priceChangeMin": 5,
+          "priceChangeMax": 10,
+          "durationHours": 72
+        }
+      ]
+    },
+    {
+      "key": "movement_news_0109",
+      "durationHours": 48,
+      "globalMarketPhase": {
+        "phase": 5,
+        "durationHours": 24
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "MOVE"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 5,
+          "priceChangeMin": 5,
+          "priceChangeMax": 6,
+          "durationHours": 48
+        }
+      ]
+    },
+    {
+      "key": "movement_A_delist_risk",
+      "durationHours": 24,
+      "globalMarketPhase": {
+        "phase": 5,
+        "durationHours": 24
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "MOVE"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 5,
+          "priceChangeMin": -5,
+          "priceChangeMax": -7,
+          "durationHours": 24
+        }
+      ]
+    },
+    {
+      "key": "movement_B_delisted",
+      "durationHours": 24,
+      "globalMarketPhase": {
+        "phase": 8,
+        "durationHours": 24
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "MOVE"
+          ],
+          "coinEventType": 1,
+          "targetMarketPhase": 9,
+          "priceChangeMin": -50,
+          "priceChangeMax": -51,
+          "durationHours": 24
+        }
+      ]
+    },
+    {
+      "key": "movement_E_relist",
+      "durationHours": 4,
+      "globalMarketPhase": {
+        "phase": 5,
+        "durationHours": 4
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "MOVE"
+          ],
+          "coinEventType": 2,
+          "relistBasePrice": 400,
+          "targetMarketPhase": 1,
+          "priceChangeMin": 10,
+          "priceChangeMax": 20,
+          "durationHours": 4
+        }
+      ]
+    },
+    {
+      "key": "movement_B_not_delisted",
+      "durationHours": 24,
+      "globalMarketPhase": {
+        "phase": 5,
+        "durationHours": 24
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "MOVE"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 4,
+          "priceChangeMin": 10,
+          "priceChangeMax": 20,
+          "durationHours": 6
+        }
+      ]
+    },
+    {
+      "key": "movement_C_engine_upgrade",
+      "durationHours": 24,
+      "globalMarketPhase": {
+        "phase": 5,
+        "durationHours": 24
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "MOVE"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 3,
+          "priceChangeMin": 5,
+          "priceChangeMax": 8,
+          "durationHours": 24
+        }
+      ]
+    },
+    {
+      "key": "movement_rumor_is_rumor",
+      "durationHours": 24,
+      "globalMarketPhase": {
+        "phase": 5,
+        "durationHours": 24
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "MOVE"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 3,
+          "priceChangeMin": 10,
+          "priceChangeMax": 15,
+          "durationHours": 24
+        }
+      ]
+    },
+    {
+      "key": "choco_listing_announce_2",
+      "durationHours": 3,
+      "globalMarketPhase": {
+        "phase": 5,
+        "durationHours": 3
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "CHK"
+          ],
+          "coinEventType": 0,
+          "targetMarketPhase": 3,
+          "priceChangeMin": 0,
+          "priceChangeMax": 0,
+          "durationHours": 3
+        }
+      ]
+    },
+    {
+      "key": "choco_pump_1",
+      "durationHours": 12,
+      "globalMarketPhase": {
+        "phase": 5,
+        "durationHours": 12
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "CHK"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 3,
+          "priceChangeMin": 50,
+          "priceChangeMax": 60,
+          "durationHours": 8
+        }
+      ]
+    },
+    {
+      "key": "elonevent2",
+      "durationHours": 24,
+      "globalMarketPhase": {
+        "phase": 5,
+        "durationHours": 24
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "ANIME"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 3,
+          "priceChangeMin": 20,
+          "priceChangeMax": 25,
+          "durationHours": 12
+        }
+      ]
+    },
+    {
+      "key": "fomc_comming_01_12",
+      "durationHours": 24,
+      "exchangeRateEffect": {
+        "targetRateMin": 1333.0,
+        "targetRateMax": 1336.0,
+        "durationHours": 24
+      },
+      "globalMarketPhase": {
+        "phase": 5,
+        "durationHours": 24
+      },
+      "targetGroups": []
+    },
+    {
+      "key": "fomc_01_14",
+      "durationHours": 48,
+      "globalMarketPhase": {
+        "phase": 7,
+        "durationHours": 48
+      },
+      "targetGroups": [
+        {
+          "targetSegment": 1,
+          "symbols": [],
+          "coinEventType": -1,
+          "targetMarketPhase": 7,
+          "priceChangeMin": -15,
+          "priceChangeMax": -16,
+          "durationHours": 48
+        }
+      ]
+    },
+    {
+      "key": "trump_01_16",
+      "durationHours": 48,
+      "globalMarketPhase": {
+        "phase": 3,
+        "durationHours": 48
+      },
+      "targetGroups": [
+        {
+          "targetSegment": 1,
+          "symbols": [],
+          "coinEventType": -1,
+          "targetMarketPhase": 3,
+          "priceChangeMin": 7,
+          "priceChangeMax": 13,
+          "durationHours": 48
+        },
+        {
+          "symbols": [
+            "TRUMP"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 3,
+          "priceChangeMin": 15,
+          "priceChangeMax": 20,
+          "durationHours": 12
+        }
+      ]
+    },
+    {
+      "key": "arbitrum_01_17",
+      "durationHours": 24,
+      "globalMarketPhase": {
+        "phase": 3,
+        "durationHours": 24
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "ARB"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 1,
+          "priceChangeMin": 15,
+          "priceChangeMax": 20,
+          "durationHours": 1
+        }
+      ]
+    },
+    {
+      "key": "strategy_01_19",
+      "durationHours": 48,
+      "exchangeRateEffect": {
+        "targetRateMin": 1331.0,
+        "targetRateMax": 1331.0,
+        "durationHours": 24
+      },
+      "globalMarketPhase": {
+        "phase": 2,
+        "durationHours": 24
+      },
+      "targetGroups": [
+        {
+          "targetSegment": 1,
+          "symbols": [],
+          "coinEventType": -1,
+          "targetMarketPhase": 3,
+          "priceChangeMin": 7,
+          "priceChangeMax": 13,
+          "durationHours": 48
+        },
+        {
+          "symbols": [
+            "BTC",
+            "ETH"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 3,
+          "priceChangeMin": 10,
+          "priceChangeMax": 12,
+          "durationHours": 12
+        }
+      ]
+    },
+    {
+      "key": "price_fix_01_21",
+      "durationHours": 36,
+      "globalMarketPhase": {
+        "phase": 6,
+        "durationHours": 36
+      },
+      "targetGroups": []
+    },
+    {
+      "key": "sui_listing_news",
+      "durationHours": 1,
+      "targetGroups": [
+        {
+          "symbols": [
+            "SUI"
+          ],
+          "coinEventType": 0,
+          "targetMarketPhase": 3,
+          "priceChangeMin": 0,
+          "priceChangeMax": 0,
+          "durationHours": 1
+        }
+      ]
+    },
+    {
+      "key": "sui_dump_1",
+      "durationHours": 4,
+      "targetGroups": [
+        {
+          "symbols": [
+            "SUI"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 4,
+          "priceChangeMin": -30,
+          "priceChangeMax": -45,
+          "durationHours": 4
+        }
+      ]
+    },
+    {
+      "key": "sui_pump_1",
+      "durationHours": 1,
+      "targetGroups": [
+        {
+          "symbols": [
+            "SUI"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 4,
+          "priceChangeMin": 20,
+          "priceChangeMax": 25,
+          "durationHours": 1
+        }
+      ]
+    },
+    {
+      "key": "sui_pump_2",
+      "durationHours": 2,
+      "targetGroups": [
+        {
+          "symbols": [
+            "SUI"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 3,
+          "priceChangeMin": 45,
+          "priceChangeMax": 50,
+          "durationHours": 2
+        }
+      ]
+    },
+    {
+      "key": "positive_days_01_23",
+      "durationHours": 48,
+      "globalMarketPhase": {
+        "phase": 4,
+        "durationHours": 24
+      },
+      "targetGroups": [
+        {
+          "targetSegment": 3,
+          "symbols": [],
+          "coinEventType": -1,
+          "targetMarketPhase": 2,
+          "priceChangeMin": 10,
+          "priceChangeMax": 20,
+          "durationHours": 48
+        },
+        {
+          "symbols": [
+            "BTC",
+            "ETH"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 5,
+          "priceChangeMin": 2,
+          "priceChangeMax": 4,
+          "durationHours": 24
+        }
+      ]
+    },
+    {
+      "key": "pengu_B_listed",
+      "durationHours": 3,
+      "globalMarketPhase": {
+        "phase": 2,
+        "durationHours": 3
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "PENGU"
+          ],
+          "coinEventType": 0,
+          "relistBasePrice": 100,
+          "targetMarketPhase": 2,
+          "priceChangeMin": 0,
+          "priceChangeMax": 0,
+          "durationHours": 3
+        }
+      ]
+    },
+    {
+      "key": "pengu_C_pump_big",
+      "durationHours": 12,
+      "globalMarketPhase": {
+        "phase": 1,
+        "durationHours": 12
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "PENGU"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 1,
+          "priceChangeMin": 150,
+          "priceChangeMax": 150,
+          "durationHours": 12
+        }
+      ]
+    },
+    {
+      "key": "pengu_C_pump_small",
+      "durationHours": 12,
+      "globalMarketPhase": {
+        "phase": 2,
+        "durationHours": 12
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "PENGU"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 2,
+          "priceChangeMin": 30,
+          "priceChangeMax": 30,
+          "durationHours": 12
+        }
+      ]
+    },
+            {
+      "key": "middle_east_issue_01_24",
+      "durationHours": 48,
+      "globalMarketPhase": {
+        "phase": 7,
+        "durationHours": 48
+      },
+      "targetGroups": [
+        {
+          "targetSegment": 3,
+          "symbols": [],
+          "coinEventType": -1,
+          "targetMarketPhase": 7,
+          "priceChangeMin": -4,
+          "priceChangeMax": -5,
+          "durationHours": 48
+        },
+        {
+          "symbols": [
+            "BTC",
+            "ETH"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 7,
+          "priceChangeMin": -10,
+          "priceChangeMax": -11,
+          "durationHours": 48
+        }
+      ]
+    },
+                {
+      "key": "positive_eth_days_01_26",
+      "durationHours": 36,
+      "globalMarketPhase": {
+        "phase": 4,
+        "durationHours": 36
+      },
+      "targetGroups": [
+        {
+          "targetSegment": 2,
+          "symbols": [],
+          "coinEventType": -1,
+          "targetMarketPhase": 4,
+          "priceChangeMin": 15,
+          "priceChangeMax": 16,
+          "durationHours": 48
+        },
+        {
+          "symbols": [
+            "BTC",
+            "ETH"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 4,
+          "priceChangeMin": 10,
+          "priceChangeMax": 11,
+          "durationHours": 36
+        }
+      ]
+    },
+    {
+      "key": "positive_days_01_28",
+      "durationHours": 36,
+      "globalMarketPhase": {
+        "phase": 3,
+        "durationHours": 36
+      },
+      "targetGroups": [
+        {
+          "targetSegment": 1,
+          "symbols": [],
+          "coinEventType": -1,
+          "targetMarketPhase": 3,
+          "priceChangeMin": 10,
+          "priceChangeMax": 15,
+          "durationHours": 48
+        },
+        {
+          "symbols": [
+            "BTC",
+            "ETH"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 3,
+          "priceChangeMin": 10,
+          "priceChangeMax": 11,
+          "durationHours": 36
+        }
+      ]
+    },
+        {
+      "key": "stable_days_02_01",
+      "durationHours": 48,
+      "globalMarketPhase": {
+        "phase": 6,
+        "durationHours": 48
+      },
+      "targetGroups": [
+      ]
+    },
+        {
+      "key": "pengu_pump_02_03",
+      "durationHours": 36,
+      "globalMarketPhase": {
+        "phase": 6,
+        "durationHours": 36
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "PENGU"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 5,
+          "priceChangeMin": 30,
+          "priceChangeMax": 32,
+          "durationHours": 36
+        }
+      ]
+    },
+    {
+      "key": "anime_pump_02_05",
+      "durationHours": 36,
+      "globalMarketPhase": {
+        "phase": 6,
+        "durationHours": 36
+      },
+      "targetGroups": [
+        {
+          "symbols": [
+            "ANIME"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 5,
+          "priceChangeMin": 35,
+          "priceChangeMax": 45,
+          "durationHours": 36
+        }
+      ]
+    },
+      {
+      "key": "middle_east_trump_02_06",
+      "durationHours": 36,
+      "exchangeRateEffect": {
+      "targetRateMin": 1400.0,
+      "targetRateMax": 1410.0,
+      "durationHours": 24
+      },
+      "globalMarketPhase": {
+        "phase": 6,
+        "durationHours": 36
+      },
+      "targetGroups": [
+        {
+          "targetSegment": 1,
+          "symbols": [],
+          "coinEventType": -1,
+          "targetMarketPhase": 6,
+          "priceChangeMin": -6,
+          "priceChangeMax": -12,
+          "durationHours": 36
+        },
+                {
+          "symbols": [
+            "BTC",
+            "ETH"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 7,
+          "priceChangeMin": -15,
+          "priceChangeMax": -16,
+          "durationHours": 36
+        }
+      ]
+    },
+      {
+      "key": "Market_goes_down_02_08",
+      "durationHours": 36,
+      "exchangeRateEffect": {
+      "targetRateMin": 1440.0,
+      "targetRateMax": 1450.0,
+      "durationHours": 24
+      },
+      "globalMarketPhase": {
+        "phase": 6,
+        "durationHours": 36
+      },
+      "targetGroups": [
+        {
+          "targetSegment": 1,
+          "symbols": [],
+          "coinEventType": -1,
+          "targetMarketPhase": 7,
+          "priceChangeMin": -7,
+          "priceChangeMax": -15,
+          "durationHours": 36
+        },
+                {
+          "symbols": [
+            "BTC"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 7,
+          "priceChangeMin": -39,
+          "priceChangeMax": -43,
+          "durationHours": 36
+        }
+      ]
+    },
+          {
+      "key": "Aave_positive_02_09",
+      "durationHours": 36,
+      "globalMarketPhase": {
+        "phase": 6,
+        "durationHours": 36
+      },
+      "targetGroups": [
+        {
+          "targetSegment": 3,
+          "symbols": [],
+          "coinEventType": -1,
+          "targetMarketPhase": 3,
+          "priceChangeMin": 20,
+          "priceChangeMax": 25,
+          "durationHours": 36
+        },
+                {
+          "symbols": [
+            "AAVE"
+          ],
+          "coinEventType": -1,
+          "targetMarketPhase": 2,
+          "priceChangeMin": 40,
+          "priceChangeMax": 50,
+          "durationHours": 36
+        }
+      ]
+    },
+          {
+      "key": "middle_east_war_02_11",
+      "durationHours": 48,
+      "exchangeRateEffect": {
+      "targetRateMin": 1510.0,
+      "targetRateMax": 1530.0,
+      "durationHours": 24
+      },
+      "globalMarketPhase": {
+        "phase": 6,
+        "durationHours": 48
+      },
+      "targetGroups": [
+        {
+          "targetSegment": 1,
+          "symbols": [],
+          "coinEventType": -1,
+          "targetMarketPhase": 7,
+          "priceChangeMin": -40,
+          "priceChangeMax": -45,
+          "durationHours": 48
         }
       ]
     }

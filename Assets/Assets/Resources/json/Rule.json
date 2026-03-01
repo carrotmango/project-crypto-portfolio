@@ -140,8 +140,7 @@
       "prerequisitesSymbols": [
         "XRP"
       ],
-      "outcomes": [
-      ],
+      "outcomes": [],
       "uiKey": "xrp_rumor_positive",
       "effectKey": "xrp_rumor_positive"
     },
@@ -174,7 +173,7 @@
       "uiKey": "xrp_rumor_negative",
       "effectKey": "xrp_rumor_negative"
     },
-            {
+    {
       "key": "xrp_rumor_negative2",
       "authorId": "system",
       "executionMode": 2,
@@ -194,10 +193,876 @@
       "prerequisitesSymbols": [
         "XRP"
       ],
-      "outcomes": [
-      ],
+      "outcomes": [],
       "uiKey": "xrp_rumor_negative2",
       "effectKey": "xrp_rumor_negative2"
+    },
+    {
+      "key": "solana_news_0107",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-01-07 09:00",
+      "endDate": "2020-01-07 10:30",
+      "prerequisitesSymbols": [
+        "SOL"
+      ],
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "uiKey": "solana_news_0107",
+      "effectKey": "solana_news_0107"
+    },
+    {
+      "key": "movement_news_0109",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-01-09 13:00",
+      "endDate": "2020-01-09 16:30",
+      "prerequisitesSymbols": [
+        "MOVE"
+      ],
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "uiKey": "movement_news_0109",
+      "effectKey": "movement_news_0109"
+    },
+    {
+      "key": "movement_rumor",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-01-09 20:00",
+      "endDate": "2020-01-09 21:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": false,
+      "prerequisites": [],
+      "prerequisitesSymbols": [
+        "MOVE"
+      ],
+      "outcomes": [
+        {
+          "key": "movement_A_delist_risk_rumor",
+          "weight": 0.75
+        },
+        {
+          "key": "movement_rumor_is_rumor",
+          "weight": 0.25
+        }
+      ],
+      "outcomeRule": "OneOf",
+      "uiKey": "movement_rumor"
+    },
+    {
+      "key": "movement_rumor_is_rumor",
+      "authorId": "system",
+      "executionMode": 2,
+      "dayOffset": {
+        "type": 1,
+        "days": 1
+      },
+      "timeRule": {
+        "type": 2
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisites": [
+        "movement_rumor"
+      ],
+      "prerequisitesSymbols": [
+        "MOVE"
+      ],
+      "outcomes": [
+        {
+          "key": "movement_C_engine_upgrade_2",
+          "weight": 1.0
+        }
+      ],
+      "uiKey": "movement_rumor_is_rumor",
+      "effectKey": "movement_rumor_is_rumor"
+    },
+    {
+      "key": "movement_A_delist_risk_rumor",
+      "authorId": "system",
+      "executionMode": 2,
+      "dayOffset": {
+        "type": 1,
+        "days": 1
+      },
+      "timeRule": {
+        "type": 2
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisites": [
+        "movement_rumor"
+      ],
+      "prerequisitesSymbols": [
+        "MOVE"
+      ],
+      "outcomes": [
+        {
+          "key": "movement_A_delist_risk_news",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "key": "movement_A_delist_risk_news",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "movement_A_delist_risk_rumor"
+      ],
+      "dayOffset": {
+        "type": 1,
+        "days": 2
+      },
+      "timeRule": {
+        "type": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "effectKey": "movement_A_delist_risk",
+      "uiKey": "movement_A_delist_risk",
+      "prerequisitesSymbols": [
+        "MOVE"
+      ],
+      "outcomeRule": "OneOf",
+      "outcomes": [
+        {
+          "key": "movement_B_delisted",
+          "weight": 0.5
+        },
+        {
+          "key": "movement_B_not_delisted",
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "key": "movement_B_delisted",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "movement_A_delist_risk_news"
+      ],
+      "dayOffset": {
+        "type": 1,
+        "days": 2
+      },
+      "timeRule": {
+        "type": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "effectKey": "movement_B_delisted",
+      "uiKey": "movement_B_delisted",
+      "prerequisitesSymbols": [
+        "MOVE"
+      ],
+      "outcomes": [
+        {
+          "key": "movement_D_revival_prepare",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "key": "movement_B_not_delisted",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "movement_A_delist_risk_news"
+      ],
+      "dayOffset": {
+        "type": 1,
+        "days": 2
+      },
+      "timeRule": {
+        "type": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "effectKey": "movement_B_not_delisted",
+      "uiKey": "movement_B_not_delisted",
+      "prerequisitesSymbols": [
+        "MOVE"
+      ],
+      "outcomes": [
+        {
+          "key": "movement_C_engine_upgrade",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "key": "movement_C_engine_upgrade",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "movement_B_not_delisted"
+      ],
+      "dayOffset": {
+        "type": 1,
+        "days": 2
+      },
+      "timeRule": {
+        "type": 1,
+        "hour": 18,
+        "minute": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [
+        "MOVE"
+      ],
+      "effectKey": "movement_C_engine_upgrade",
+      "uiKey": "movement_C_engine_upgrade"
+    },
+    {
+      "key": "movement_C_engine_upgrade_2",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "movement_rumor_is_rumor"
+      ],
+      "dayOffset": {
+        "type": 1,
+        "days": 2
+      },
+      "timeRule": {
+        "type": 1,
+        "hour": 18,
+        "minute": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [
+        "MOVE"
+      ],
+      "effectKey": "movement_C_engine_upgrade",
+      "uiKey": "movement_C_engine_upgrade"
+    },
+    {
+      "key": "movement_D_revival_prepare",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "movement_B_delisted"
+      ],
+      "dayOffset": {
+        "type": 1,
+        "days": 4
+      },
+      "timeRule": {
+        "type": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "uiKey": "movement_D_revival_prepare",
+      "outcomes": [
+        {
+          "key": "movement_E_relist",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "key": "movement_E_relist",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "movement_D_revival_prepare"
+      ],
+      "dayOffset": {
+        "type": 1,
+        "days": 25
+      },
+      "timeRule": {
+        "type": 1,
+        "hour": 9,
+        "minute": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "effectKey": "movement_E_relist",
+      "uiKey": "movement_E_relist"
+    },
+    {
+      "key": "choco_listing_announce_1",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-01-12 10:00",
+      "endDate": "2020-01-12 22:00",
+      "prerequisitesSymbols": [],
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "uiKey": "choco_listing_announce_1",
+      "outcomes": [
+        {
+          "key": "choco_listing_announce_2",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "key": "choco_listing_announce_2",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "choco_listing_announce_1"
+      ],
+      "dayOffset": {
+        "type": 1,
+        "days": 1
+      },
+      "timeRule": {
+        "type": 1,
+        "hour": 10,
+        "minute": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "effectKey": "choco_listing_announce_2",
+      "uiKey": "choco_listing_announce_2",
+      "outcomes": []
+    },
+    {
+      "key": "choco_pump_1",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "choco_listing_announce_2"
+      ],
+      "dayOffset": {
+        "type": 1,
+        "days": 32
+      },
+      "timeRule": {
+        "type": 1,
+        "hour": 11,
+        "minute": 0
+      },
+      "effectKey": "choco_pump_1",
+      "uiKey": "choco_pump_1"
+    },
+    {
+      "key": "elonevent2",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-01-11 12:00",
+      "endDate": "2020-01-11 20:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [
+        "ANIME"
+      ],
+      "uiKey": "elonevent2",
+      "effectKey": "elonevent2",
+      "outcomes": []
+    },
+    {
+      "key": "fomc_comming_01_12",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-01-12 18:00",
+      "endDate": "2020-01-12 19:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "fomc_comming_01_12",
+      "effectKey": "fomc_comming_01_12",
+      "outcomes": []
+    },
+    {
+      "key": "fomc_01_14",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-01-14 18:00",
+      "endDate": "2020-01-14 19:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "fomc_01_14",
+      "effectKey": "fomc_01_14",
+      "outcomes": []
+    },
+    {
+      "key": "trump_01_16",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-01-16 14:00",
+      "endDate": "2020-01-16 19:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "trump_01_16",
+      "effectKey": "trump_01_16",
+      "outcomes": []
+    },
+    {
+      "key": "arbitrum_01_17",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-01-17 14:00",
+      "endDate": "2020-01-17 19:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "arbitrum_01_17",
+      "effectKey": "arbitrum_01_17",
+      "outcomes": []
+    },
+    {
+      "key": "strategy_01_19",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-01-19 12:00",
+      "endDate": "2020-01-19 19:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "strategy_01_19",
+      "effectKey": "strategy_01_19",
+      "outcomes": []
+    },
+    {
+      "key": "price_fix_01_21",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-01-21 12:00",
+      "endDate": "2020-01-21 14:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "price_fix_01_21",
+      "outcomes": []
+    },
+    {
+      "key": "sui_listing_announce",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-01-21 10:00",
+      "endDate": "2020-01-21 22:00",
+      "prerequisitesSymbols": [],
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "uiKey": "sui_listing_soon_news",
+      "outcomes": [
+        {
+          "key": "sui_listing_news",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "key": "sui_listing_news",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "sui_listing_announce"
+      ],
+      "prerequisitesSymbols": [],
+      "dayOffset": {
+        "type": 1,
+        "days": 1
+      },
+      "timeRule": {
+        "type": 1,
+        "hour": 10,
+        "minute": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "effectKey": "sui_listing_news",
+      "uiKey": "sui_listing_news",
+      "outcomes": [
+        {
+          "key": "sui_pump_1",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "key": "sui_pump_1",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "sui_listing_news"
+      ],
+      "prerequisitesSymbols": [
+        "SUI"
+      ],
+      "dayOffset": {
+        "type": 0
+      },
+      "timeRule": {
+        "type": 1,
+        "hour": 11,
+        "minute": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "effectKey": "sui_pump_1",
+      "outcomes": [
+        {
+          "key": "sui_dump_1",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "key": "sui_dump_1",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "sui_pump_1"
+      ],
+      "prerequisitesSymbols": [
+        "SUI"
+      ],
+      "dayOffset": {
+        "type": 0
+      },
+      "timeRule": {
+        "type": 1,
+        "hour": 13,
+        "minute": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "effectKey": "sui_dump_1",
+      "outcomes": [
+        {
+          "key": "sui_pump_2",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "key": "sui_pump_2",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "sui_dump_1"
+      ],
+      "prerequisitesSymbols": [
+        "SUI"
+      ],
+      "dayOffset": {
+        "type": 0
+      },
+      "timeRule": {
+        "type": 1,
+        "hour": 16,
+        "minute": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "effectKey": "sui_pump_2"
+    },
+    {
+      "key": "positive_days_01_23",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-01-23 13:00",
+      "endDate": "2020-01-23 14:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "positive_days_01_23",
+      "effectKey": "positive_days_01_23",
+      "outcomes": []
+    },
+    {
+      "key": "pengu_A_listing_announce",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-01-22 10:00",
+      "endDate": "2020-01-22 22:00",
+      "prerequisitesSymbols": [],
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "uiKey": "pengu_A_listing_announce",
+      "outcomes": [
+        {
+          "key": "pengu_B_listed",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "key": "pengu_B_listed",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "pengu_A_listing_announce"
+      ],
+      "dayOffset": {
+        "type": 1,
+        "days": 1
+      },
+      "timeRule": {
+        "type": 1,
+        "hour": 10,
+        "minute": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "effectKey": "pengu_B_listed",
+      "uiKey": "pengu_B_listed",
+      "outcomes": [
+        {
+          "key": "pengu_pump_1",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "key": "pengu_pump_1",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "pengu_B_listed"
+      ],
+      "prerequisitesSymbols": [
+        "PENGU"
+      ],
+      "dayOffset": {
+        "type": 0
+      },
+      "timeRule": {
+        "type": 1,
+        "hour": 11,
+        "minute": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "effectKey": "pengu_C_pump_big"
+    },
+    {
+      "key": "middle_east_issue_01_24",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-01-24 12:00",
+      "endDate": "2020-01-24 13:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "middle_east_issue_01_24",
+      "effectKey": "middle_east_issue_01_24",
+      "outcomes": []
+    },
+    {
+      "key": "positive_eth_days_01_26",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-01-26 15:00",
+      "endDate": "2020-01-26 16:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "positive_eth_days_01_26",
+      "effectKey": "positive_eth_days_01_26",
+      "outcomes": []
+    },
+    {
+      "key": "positive_days_01_28",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-01-28 15:00",
+      "endDate": "2020-01-28 16:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "positive_days_01_28",
+      "effectKey": "positive_days_01_28",
+      "outcomes": []
+    },
+    {
+      "key": "stable_days_02_01",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-02-01 14:00",
+      "endDate": "2020-02-01 15:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "stable_days_02_01",
+      "outcomes": []
+    },
+    {
+      "key": "pengu_pump_02_03",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-02-03 14:00",
+      "endDate": "2020-02-03 15:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "pengu_pump_02_03",
+      "uiKey": "pengu_pump_02_03",
+      "outcomes": []
+    },
+        {
+      "key": "anime_pump_02_05",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-02-05 10:00",
+      "endDate": "2020-02-05 11:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "anime_pump_02_05",
+      "uiKey": "anime_pump_02_05",
+      "outcomes": []
+    },
+            {
+      "key": "middle_east_trump_02_06",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-02-06 12:00",
+      "endDate": "2020-02-06 14:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "middle_east_trump_02_06",
+      "uiKey": "middle_east_trump_02_06",
+      "outcomes": []
+    },
+    {
+      "key": "Market_goes_down_02_08",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-02-08 12:00",
+      "endDate": "2020-02-08 14:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "Market_goes_down_02_08",
+      "outcomes": []
+    },
+        {
+      "key": "Aave_positive_02_09",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-02-09 20:00",
+      "endDate": "2020-02-09 22:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "Aave_positive_02_09",
+      "uiKey": "Aave_positive_02_09",
+      "outcomes": []
+    },
+    {
+      "key": "middle_east_war_02_11",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-02-11 12:00",
+      "endDate": "2020-02-11 14:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "middle_east_war_02_11",
+      "uiKey": "middle_east_war_02_11",
+      "outcomes": []
     }
   ]
 }

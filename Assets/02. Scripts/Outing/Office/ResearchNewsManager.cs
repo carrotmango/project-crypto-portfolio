@@ -30,9 +30,11 @@ public class ResearchNewsManager : MonoBehaviour {
 
         int activeNewsCount = 0;
 
-        // 4. 필터링 및 생성
+        // 4. 필터링 및 생성 (최신 뉴스가 위로 가도록 역순 순회)
         var researchNews = newsRepo.GetResearchArticles();
-        foreach (var item in researchNews) {
+        for (int i = researchNews.Count - 1; i >= 0; i--) {
+            var item = researchNews[i];
+
             if (item.data.article == null || item.data.article.targetSymbols == null) continue;
 
             bool isTarget = false;
@@ -50,13 +52,13 @@ public class ResearchNewsManager : MonoBehaviour {
                 go.GetComponent<ResearchNewsLoader>().Setup(item.data, item.occurredTime);
                 activeNewsCount++;
             }
-
-            if (noContentObject != null) {
-                // 뉴스가 0개면 true, 1개 이상이면 false
-                noContentObject.SetActive(activeNewsCount == 0);
-            }
-
         }
+
+        if (noContentObject != null) {
+            // 뉴스가 0개면 true, 1개 이상이면 false
+            noContentObject.SetActive(activeNewsCount == 0);
+        }
+
         Debug.Log($"[리서치] 현재 코인: {currentSymbol} / 히스토리에 있는 정제된 기사 수: {researchNews.Count}");
     }
 }

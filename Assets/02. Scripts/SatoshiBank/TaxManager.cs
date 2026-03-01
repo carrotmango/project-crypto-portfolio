@@ -18,6 +18,10 @@ public class TaxManager : MonoBehaviour {
     [SerializeField] private long prevLottoWin = 0;
     [SerializeField] private long prevGambleNet = 0;
 
+    public enum TaxPeriodType { Monthly, Quarterly }
+    [Header("Tax Settings (세금 주기 설정)")]
+    public TaxPeriodType taxPeriod = TaxPeriodType.Quarterly;
+
     private void Awake() {
         if (Instance == null) Instance = this;
     }
@@ -50,8 +54,21 @@ public class TaxManager : MonoBehaviour {
         }
     }
 
+    //  세달 주기용
+    //private bool IsTaxMonth(DateTime date) {
+    //    return date.Day == 1 && (date.Month == 1 || date.Month == 4 || date.Month == 7 || date.Month == 10);
+    //}
+
+    // 한달 주기
     private bool IsTaxMonth(DateTime date) {
-        return date.Day == 1 && (date.Month == 1 || date.Month == 4 || date.Month == 7 || date.Month == 10);
+        if (date.Day != 1) return false; // 무조건 1일에만 체크
+
+        if (taxPeriod == TaxPeriodType.Monthly) {
+            return true; // 매달 1일이면 무조건 true
+        } else {
+            // Quarterly (분기별: 1, 4, 7, 10월)
+            return date.Month == 1 || date.Month == 4 || date.Month == 7 || date.Month == 10;
+        }
     }
 
     // 소득 계산 및 고지서 발행
