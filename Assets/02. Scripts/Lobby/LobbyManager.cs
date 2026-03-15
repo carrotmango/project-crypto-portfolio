@@ -66,6 +66,8 @@ public class LobbyManager : MonoBehaviour {
 
         ShowCharacter(currentCharacterIndex);
         UpdateBirthdayDisplay();
+
+        StartCoroutine(PlayLobbyBgmWithDelay());
     }
 
     // -------------------------------
@@ -120,8 +122,11 @@ public class LobbyManager : MonoBehaviour {
     }
 
     void UpdateBirthdayDisplay() {
-        monthText.text = $"{month}월";
-        dayText.text = $"{day}일";
+        // 달(Month) 표시: 숫자(month)를 이용해 MONTH_1, MONTH_2 등의 키를 동적으로 부릅니다.
+        monthText.text = LocalizationManager.GetText($"MONTH_{month}");
+
+        // 일(Day) 표시: 한글은 "1일", 영어는 "1" (UNIT_DAY가 빈칸이므로)
+        dayText.text = $"{day}{LocalizationManager.GetText("UNIT_DAY")}";
     }
 
     void ClampDayToMonth() {
@@ -131,12 +136,15 @@ public class LobbyManager : MonoBehaviour {
 
     int GetDaysInMonth(int month) {
         switch (month) {
-            case 2: return 28;
+            case 2:
+                return 29; // 윤달을 고려해 29일까지 열어둠
             case 4:
             case 6:
             case 9:
-            case 11: return 30;
-            default: return 31;
+            case 11:
+                return 30;
+            default:
+                return 31;
         }
     }
 
@@ -162,7 +170,10 @@ public class LobbyManager : MonoBehaviour {
 
         lobbyPanel.SetActive(false);
         mainPanel.SetActive(true);
+
         if (BgmPlayer.Instance != null) {
+            // [수정] StopBgm()과 Invoke를 지우고 즉시 호출합니다.
+            // CrossFade가 알아서 로비 음악을 줄이고 트레이딩 음악을 키웁니다.
             BgmPlayer.Instance.PlayTradingBgm();
         }
 
@@ -170,7 +181,7 @@ public class LobbyManager : MonoBehaviour {
 
         WebMessageSender sender = FindAnyObjectByType<WebMessageSender>();
         if (sender != null) {
-            sender.totalAsset = 2100000; // 초기 자산
+            sender.totalAsset = 0; // 초기 자산
             sender.SendPlayerDataToWeb(); // 게임 시작 시 Web으로 전송
         } else {
             Debug.LogWarning("[LobbyManager] WebMessageSender가 씬에 없습니다.");
@@ -204,7 +215,7 @@ public class LobbyManager : MonoBehaviour {
         startOptionPanel.SetActive(true);
     }
 
-    void OnNewGameClicked() {
+    public void OnNewGameClicked() {
         Debug.Log("새 게임 시작");
         SaveManager.DeleteSave();
 
@@ -499,8 +510,22 @@ public class LobbyManager : MonoBehaviour {
             }
         }
     }
+
+    private void PlayTradingMusicDelayed() {
+        if (BgmPlayer.Instance != null) {
+            BgmPlayer.Instance.PlayTradingBgm();
+        }
+    }
+
     public void RestartGame() {
         Time.timeScale = 1f; 
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    System.Collections.IEnumerator PlayLobbyBgmWithDelay() {
+        yield return null; // 한 프레임 대기
+        if (BgmPlayer.Instance != null) {
+            BgmPlayer.Instance.PlayLobbyBgm();
+        }
     }
 }

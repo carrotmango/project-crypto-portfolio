@@ -29,11 +29,23 @@ public class NoticePopupController : MonoBehaviour {
         // 2. 내용 작성 (Rich Text 활용으로 가독성 업)
         if (contentText != null) {
             contentText.text =
-                "<size=120%><color=#14FF08>플레이해주셔서 진심으로 감사합니다!</color></size>\n\n" +
-                "<b>[알려진 버그 안내]</b>\n" +
-                "• 불비트에서 에어드랍을 받았거나,\n" +
-                "• 보유 코인 종목이 1개인 경우 <color=red>전액 매도가 되지 않는 현상</color>이 있습니다!\n" +
-                "해당 부분은 현재 수정 중이오니 양해 부탁드립니다.\n\n" +
+                "<size=125%><color=#14FF08>프로젝트 크립토 데모 버전에 오신 것을 환영합니다!</color></size>\n\n" +
+
+                "<b>[데모 버전 안내]</b>\n" +
+                "• 데모 버전은 <color=#FF6347>게임 시간 4월 2일</color>에 종료됩니다.\n" +
+                "• 별도의 튜토리얼은 없으며, 여러분의 <color=#00BFFF>플레이 데이터</color>를 기반으로\n" +
+                "  향후 정식 튜토리얼이 제작될 예정입니다!\n\n" +
+
+                "<b>[개발 진행 중인 사항]</b>\n" +
+                "• <color=#FFD700>비서 전화 기능</color> 및 <color=#FFD700>업무 패널 메시지 로그</color>는 현재 미구현 상태입니다.\n" +
+                "• <color=#FFD700>캐릭터 선택 초상화</color> 및 <color=#FFD700>로딩 스크린 이미지</color>는 현재 임시 리소스이며 정식 데모 버전에서 변경될 예정입니다.\n" +
+                "• <color=#FFD700>편의점 명칭</color> 및 <color=#FFD700>코인 이름</color>은 추후 업데이트 시 모두 변경됩니다.\n" +
+                "• 편의성 및 피드 UI 피드백 일부 반영되었습니다.\n\n" +
+
+                "<b>[목표]</b>\n" +
+                "운명의 날이 오기 전까지 시장의 흐름을 읽고, 과감한 투자로 \n" +
+                "세계 최고의 <color=#FFD700>자산가</color> 자리에 도전해 보세요!\n\n" +
+
                 "<b>[커뮤니티 및 제보]</b>\n" +
                 "버그 및 건의사항은 <color=#7289DA>Discord</color> 또는 메일로 제보해 주세요!\n" +
                 "이메일: <color=#FFD700>projectcrypto11@gmail.com</color>";

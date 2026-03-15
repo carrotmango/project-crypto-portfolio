@@ -169,7 +169,7 @@ public class QuestManager : MonoBehaviour {
     public void RefreshQuestNotification() {
         // 씬에 있는 OfficePanelController를 찾아서 전달
         // (만약 참조를 미리 가지고 있다면 더 좋습니다)
-        var officePanel = FindObjectOfType<OfficePanelController>();
+        var officePanel = FindFirstObjectByType<OfficePanelController>();
         if (officePanel != null) {
             int count = GetClaimableQuestCount();
             officePanel.UpdateQuestBadge(count);

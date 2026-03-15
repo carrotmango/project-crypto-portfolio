@@ -142,6 +142,11 @@ public class PlayerManager : MonoBehaviour {
 
         // [수정 2] 거래대금 함수에도 심볼을 넘겨줍니다.
         AddTradeVolume(tradeValue, symbol);
+
+        CoinData coin = CoinManager.Instance.coins.Find(c => c.Symbol == symbol);
+        if (coin != null) {
+            coin.MarkTradeOnCurrentCandle(TradeType.SpotBuy);
+        }
     }
 
     // [수정] fee 파라미터 추가!
@@ -199,6 +204,11 @@ public class PlayerManager : MonoBehaviour {
 
         // [수정 2] 거래대금 함수에 심볼 전달
         AddTradeVolume(tradeValue, symbol);
+
+        CoinData coin = CoinManager.Instance.coins.Find(c => c.Symbol == symbol);
+        if (coin != null) {
+            coin.MarkTradeOnCurrentCandle(TradeType.SpotSell);
+        }
 
         return true;
     }
@@ -330,38 +340,42 @@ public class PlayerManager : MonoBehaviour {
         }
     }
     public void SellAllListedCoins() {
-        // 딕셔너리 수정 중 에러 방지를 위해 키 리스트 복사
-        List<string> keys = new List<string>(holdings.Keys);
-        bool soldAny = false;
+        // 1. 매도할 코인 목록을 먼저 따로 빼둡니다. 
+        // (딕셔너리를 순회하면서 동시에 값을 지우면 에러가 날 수 있기 때문)
+        List<string> symbolsToSell = new List<string>();
 
-        foreach (string symbol in keys) {
-            double amount = holdings[symbol];
-            if (amount <= 0) continue;
+        foreach (var kvp in holdings) {
+            string symbol = kvp.Key;
+            double amount = kvp.Value;
 
-            // 상장 여부 확인 (상장 폐지 코인은 제외)
+            if (amount <= 0) continue; // 가진 개수가 0이면 패스
+
             CoinData coin = CoinManager.Instance.coins.Find(c => c.Symbol == symbol);
-            if (coin != null && coin.IsActiveListed && !coin.IsDelisted) {
 
-                // [핵심] 수수료 계산 (기존 매도 로직과 동일하게 0.05% 등으로 설정)
-                double currentPrice = coin.CurrentPrice;
-                double fee = (currentPrice * amount) * 0.0005; // 수수료율에 맞춰 수정하세요
-
-                // [수정] 직접 변수를 깎지 않고 RegisterSell을 호출하여 모든 통계를 갱신합니다.
-                // RegisterSell 내부에서 realizedProfit 합산, 보유량 제거, 거래대금 누적이 다 처리됩니다.
-                double sellQuantity = amount;
-                if (RegisterSell(symbol, currentPrice, ref sellQuantity, fee)) {
-                    // 매도 대금에서 수수료를 뺀 실제 금액을 통장에 입금
-                    double netRevenue = (currentPrice * sellQuantity) - fee;
-                    bullbitCash += netRevenue;
-
-                    Debug.Log($"[일괄매도 완료] {symbol} | 수익 합산 및 평단가 정리 완료");
-                    soldAny = true;
-                }
+            // 2. 현재 상장되어 있고(IsListed), 상장 폐지되지 않은(!IsDelisted) 코인만 타겟으로 잡음
+            if (coin != null && coin.IsListed && !coin.IsDelisted) {
+                symbolsToSell.Add(symbol);
             }
         }
 
-        if (soldAny) {
-            OnStatsChanged?.Invoke(); // 통계 UI 갱신 이벤트 호출
+        // 3. 타겟으로 잡힌 코인들을 '최소 거래 금액' 등의 조건 무시하고 강제로 전부 매도 처리
+        foreach (string symbol in symbolsToSell) {
+            double amountToSell = holdings[symbol];
+            CoinData coin = CoinManager.Instance.coins.Find(c => c.Symbol == symbol);
+
+            // 현재가 기준으로 수익 계산
+            double revenue = coin.CurrentPrice * amountToSell;
+
+            // 플레이어 현금에 더하기 (수수료 로직이 있다면 여기서 빼주세요)
+            bullbitCash += revenue;
+
+            // 보유량 0으로 초기화
+            holdings[symbol] = 0;
+
+            // (선택) 매수 평단가 기록이 딕셔너리에 따로 있다면 그것도 0으로 초기화
+            // avgPriceDict[symbol] = 0; 
         }
+
+        Debug.Log($"총 {symbolsToSell.Count}개 종목의 전액 매도가 강제 완료되었습니다.");
     }
 }

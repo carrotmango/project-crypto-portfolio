@@ -5,6 +5,8 @@ using System;
 /// - 봉 마감 전까지 High/Low 계속 갱신
 
 public class RuntimeCandle {
+
+    public TradeType TradeFlag = TradeType.None;
     public double Open { get; private set; }
     public double High { get; private set; }
     public double Low { get; private set; }
@@ -12,6 +14,7 @@ public class RuntimeCandle {
 
     public bool IsInitialized { get; private set; }
     public bool IsClosed { get; private set; }
+    public DateTime Timestamp { get; set; }
 
 
     /// 새 봉 시작 (Open 설정)
@@ -23,6 +26,10 @@ public class RuntimeCandle {
 
         IsInitialized = true;
         IsClosed = false;
+
+        if (CoinManager.Instance != null) {
+            Timestamp = CoinManager.Instance.CurrentDateTime;
+        }
     }
 
     public RuntimeCandle() {
@@ -54,6 +61,10 @@ public class RuntimeCandle {
 
         IsInitialized = true;
         IsClosed = true;
+
+        if (CoinManager.Instance != null) {
+            Timestamp = CoinManager.Instance.CurrentDateTime;
+        }
     }
 
     // 기존 생성자는 그대로 두고, 이 함수를 추가합니다.
@@ -65,5 +76,9 @@ public class RuntimeCandle {
 
         IsInitialized = true;
         IsClosed = false; // 핵심: 닫히지 않은 상태로 설정
+
+        if (CoinManager.Instance != null) {
+            Timestamp = CoinManager.Instance.CurrentDateTime;
+        }
     }
 }

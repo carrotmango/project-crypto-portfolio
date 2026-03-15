@@ -19,23 +19,25 @@ public class MajorChangeRotator : MonoBehaviour {
         while (true) {
             CoinManager.Instance.GetMajorDailyChanges(out var gainers, out var losers);
 
-            //Debug.Log($"Gainers: {gainers.Count}, Losers: {losers.Count}");
-
             if (gainers.Count == 0 && losers.Count == 0) {
                 yield return null;
                 continue;
             }
 
-            group.SetData("주요 상승", gainers);
+            // 1. 주요 상승 (Top Gainers) 표시
+            string gainerTitle = LocalizationManager.GetText("LBL_TOP_GAINERS");
+            group.SetData(gainerTitle, gainers);
+
             yield return FadeIn();
             yield return new WaitForSeconds(displayTime);
-
             yield return FadeOut();
 
-            group.SetData("주요 하락", losers);
+            // 2. 주요 하락 (Top Losers) 표시
+            string loserTitle = LocalizationManager.GetText("LBL_TOP_LOSERS");
+            group.SetData(loserTitle, losers);
+
             yield return FadeIn();
             yield return new WaitForSeconds(displayTime);
-
             yield return FadeOut();
         }
     }

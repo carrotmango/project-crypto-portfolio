@@ -47,7 +47,11 @@ public class SatoshiBankPanel : MonoBehaviour {
     }
 
     void RefreshName() {
-        userNameLabel.text = $"안녕하세요, {PlayerManager.Instance.playerName}님, 오늘도 좋은 하루 되세요. ";
+        // [수정] 인사말 현지화 적용
+        if (userNameLabel != null) {
+            string greetingFormat = LocalizationManager.GetText("MSG_BANK_GREETING");
+            userNameLabel.text = string.Format(greetingFormat, PlayerManager.Instance.playerName);
+        }
     }
 
     // [핵심] 대출 상태 및 UI 텍스트 갱신 함수
@@ -56,10 +60,11 @@ public class SatoshiBankPanel : MonoBehaviour {
 
         double principal = LoanManager.Instance.currentLoanPrincipal;
         bool hasLoan = principal > 0;
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY"); // 원 / Won
 
         // 1. 대출 잔액 표시 (hasLoan 체크 강화)
         if (loanBalanceText != null) {
-            loanBalanceText.text = hasLoan ? $"{principal:N0}원" : "보유중인 대출이 없습니다.";
+            loanBalanceText.text = hasLoan ? $"{principal:N0}{unit}" : LocalizationManager.GetText("LBL_LOAN_NONE");
         }
 
         // 2. 상세 정보 갱신
@@ -68,11 +73,14 @@ public class SatoshiBankPanel : MonoBehaviour {
             double monthlyRate = annualRate / 12.0 / 100.0;
             long interest = (long)(principal * monthlyRate);
 
-            if (estimatedInterestText != null)
-                estimatedInterestText.text = $"예상이자: {interest:N0}원 ({annualRate:F1}%)";
+            if (estimatedInterestText != null) {
+                estimatedInterestText.text = string.Format(LocalizationManager.GetText("LBL_LOAN_EST_INTEREST"), interest.ToString("N0"), unit, annualRate.ToString("F1"));
+            }
 
-            if (nextPaymentDateText != null)
-                nextPaymentDateText.text = $"다음 납부일: {LoanManager.Instance.nextPaymentDate:MM/dd/yyyy}";
+            if (nextPaymentDateText != null) {
+                string formattedDate = LoanManager.Instance.nextPaymentDate.ToString("MM/dd/yyyy");
+                nextPaymentDateText.text = string.Format(LocalizationManager.GetText("LBL_LOAN_NEXT_PAY"), formattedDate);
+            }
         } else {
             if (estimatedInterestText != null) estimatedInterestText.text = " ";
             if (nextPaymentDateText != null) nextPaymentDateText.text = " ";
@@ -81,7 +89,6 @@ public class SatoshiBankPanel : MonoBehaviour {
         // 버튼 활성화
         if (repayPanelOpenButton != null) repayPanelOpenButton.gameObject.SetActive(hasLoan);
 
-        // [추가] 나의 잔액(사토시 뱅크 현금) 텍스트도 여기서 같이 갱신해주면 좋습니다.
         CoinManager.Instance.UpdateCashText();
     }
 
@@ -108,10 +115,11 @@ public class SatoshiBankPanel : MonoBehaviour {
         if (ProductManager.Instance == null) return;
 
         bool hasDeposit = ProductManager.Instance.myDeposits.Count > 0;
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY"); // 원 / Won
 
         if (!hasDeposit) {
             if (depositMainInfoText != null)
-                depositMainInfoText.text = "가입 중인 예금 상품이 없습니다.";
+                depositMainInfoText.text = LocalizationManager.GetText("LBL_DEPOSIT_NONE");
 
             if (depositDetailText != null) depositDetailText.text = "";
             if (cancelDepositButton != null) cancelDepositButton.gameObject.SetActive(false);
@@ -122,8 +130,13 @@ public class SatoshiBankPanel : MonoBehaviour {
             var data = ProductManager.Instance.myDeposits[ProductManager.Instance.myDeposits.Count - 1];
 
             if (depositMainInfoText != null) {
-                depositMainInfoText.text = $"예금액: <color=#00FF00>{data.principal:N0}원</color>\n" +
-                                           $"가입 기간: {data.durationMonth}개월 ({data.interestRate:F1}%)";
+                depositMainInfoText.text = string.Format(
+                    LocalizationManager.GetText("LBL_DEPOSIT_MAIN_INFO"),
+                    data.principal.ToString("N0"),
+                    unit,
+                    data.durationMonth,
+                    data.interestRate.ToString("F1")
+                );
             }
 
             if (depositDetailText != null) {
@@ -134,9 +147,12 @@ public class SatoshiBankPanel : MonoBehaviour {
                 // 예상 수익 계산
                 long expectedProfit = (long)(data.principal * (data.interestRate / 100.0) * (data.durationMonth / 12.0));
 
-                // [수정] 줄바꿈(\n)을 넣어 남은 기간과 예상 수익을 분리했습니다.
-                depositDetailText.text = $"남은 기간: <color=#FFD700>{remainingDays}일</color>\n" +
-                                         $"예상 수익: <color=#00FF00>{expectedProfit:N0}원</color>";
+                depositDetailText.text = string.Format(
+                    LocalizationManager.GetText("LBL_DEPOSIT_DETAIL_INFO"),
+                    remainingDays,
+                    expectedProfit.ToString("N0"),
+                    unit
+                );
             }
         }
     }

@@ -55,6 +55,14 @@ public class EconomyTestController : MonoBehaviour {
                 }
                 Debug.Log(log);
             }
+            if (Input.GetKeyDown(KeyCode.LeftBracket)) {
+                FastForwardGameTime(7);
+            }
+
+            // ] 키 : 30일(한 달) 스킵
+            if (Input.GetKeyDown(KeyCode.RightBracket)) {
+                FastForwardGameTime(30);
+            }
         }
 
         // -----------------------------------------------------------
@@ -201,5 +209,47 @@ public class EconomyTestController : MonoBehaviour {
         // CoinManager.Instance.OnMarketUpdated?.Invoke(); 
 
         Debug.Log($"<color=#FF00FF>[테스트 제어]</color> 시장 페이즈가 강제로 변경됨: <b>{phase}</b>");
+    }
+    private void FastForwardGameTime(int days) {
+        if (CoinManager.Instance == null) return;
+
+        var cm = CoinManager.Instance;
+        // 하루는 48틱 (30분 단위이므로 24시간 * 2)
+        int totalTicksToSkip = days * 24 * 2;
+
+        Debug.Log($"<color=#FF00FF>[Time Warp]</color> {days}일 간의 데이터를 생성합니다... (총 {totalTicksToSkip} 틱)");
+
+        // 성능을 위해 일시적으로 타임스케일을 멈추거나 조절할 필요 없이 
+        // 로직만 CPU 선에서 빠르게 반복 실행합니다.
+        for (int i = 0; i < totalTicksToSkip; i++) {
+            // CoinManager의 핵심 로직을 수동으로 1틱 실행하는 것과 같습니다.
+            // 다만, 내부 변수 접근을 위해 CoinManager에 public 함수를 하나 만드는 것이 깔끔합니다.
+            // 아래는 현재 소스 구조에서 리플렉션 없이 접근 가능한 시나리오입니다.
+
+            SimulateOneTick(cm);
+        }
+
+        Debug.Log($"<color=#00FFFF>[Time Warp 완료]</color> 현재 시간: {cm.CurrentDateTime:yyyy/MM/dd HH:mm}");
+
+        // 최종 UI 갱신 요청
+        cm.UpdateCashText();
+        // cm.OnMarketUpdated?.Invoke(); // 필요한 경우 주석 해제
+    }
+
+    private void SimulateOneTick(CoinManager cm) {
+        // 1. 시간 증가 (private 변수이므로 SetDateTime 사용)
+        DateTime nextTime = cm.CurrentDateTime.AddMinutes(30);
+        cm.SetDateTime(nextTime);
+
+        // 2. 틱 카운트 증가
+        cm.SetTickCount(cm.TickCount + 1);
+
+        // 3. 매일 오전 9시 정산 로직 (CoinManager 내부 로직 복사/호출)
+        // ※ 실제로는 CoinManager의 GameTickRoutine 내부 로직을 public 함수로 빼서 호출하는게 제일 좋습니다.
+        // 현재는 외부에서 접근 가능한 로직 위주로 처리합니다.
+
+        // 주의: CoinManager 내부의 'lastRecordedDay' 등은 private이라 
+        // 완벽한 시뮬레이션을 위해선 CoinManager 소스 수정이 필요할 수 있습니다.
+        // 하지만 단순히 시간과 가격 흐름만 보려면 DateTime 조작으로 충분합니다.
     }
 }

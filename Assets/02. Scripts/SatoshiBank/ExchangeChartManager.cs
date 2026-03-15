@@ -193,7 +193,6 @@ public class ExchangeChartManager : MonoBehaviour {
         }
     }
 
-    // ★★★ 텍스트 갱신 로직 (내부용) ★★★
     private void UpdateExchangeRateUI(List<float> currentList) {
         if (currentList == null || currentList.Count == 0) return;
 
@@ -208,17 +207,20 @@ public class ExchangeChartManager : MonoBehaviour {
 
         string hexColor = ColorUtility.ToHtmlStringRGB(targetColor);
 
-        // 1. exchangeRateText 변수에 "1,350.12 대한민국 원" 포맷으로 바로 주입
+        // 1. exchangeRateText 현지화 (대한민국 원 -> South Korean Won)
         if (exchangeRateText != null) {
-            exchangeRateText.text = $"<color=#{hexColor}>{currentPrice:N2} 대한민국 원</color>";
+            string format = LocalizationManager.GetText("LBL_EXCHANGE_RATE_FORMAT");
+            // {0}: 색상 코드, {1}: 현재 가격
+            exchangeRateText.text = string.Format(format, hexColor, currentPrice.ToString("N2"));
         }
 
-        // 2. mainRateText (기존 1USD = ... 형식 유지)
+        // 2. mainRateText 현지화 (1USD = XXX KRW)
         if (mainRateText != null) {
-            mainRateText.text = $"1USD\n=\n<color=#{hexColor}>{currentPrice:N2}KRW</color>";
+            string format = LocalizationManager.GetText("LBL_EXCHANGE_MAIN_FORMAT");
+            mainRateText.text = string.Format(format, hexColor, currentPrice.ToString("N2"));
         }
 
-        // 3. diffRateText (등락폭 표시)
+        // 3. diffRateText (등락폭 표시 - 기호 및 숫자이므로 언어 무관)
         if (diffRateText != null) {
             float diffPercent = (prevPrice != 0) ? (diffPrice / prevPrice) * 100f : 0f;
             string sign = diffPrice > 0 ? "+" : "";

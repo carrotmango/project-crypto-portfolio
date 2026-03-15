@@ -26,6 +26,9 @@ public class TabPanelController : MonoBehaviour {
     public GameObject skillUpgrade;
     public OfficePanelController officeController;
 
+    [Header("Detail Trading Panel")]
+    public GameObject detailTradingPanel;
+
 
     [Header("Controllers")]
     public WithdrawPanelController withdrawPanelController;
@@ -63,29 +66,41 @@ public class TabPanelController : MonoBehaviour {
     public void OpenMarketViaButton() {
         bool isFuturesUnlocked = OfficeManager.Instance != null && OfficeManager.Instance.IsFuturesUnlocked();
 
-        // [추가] 현재 앱이 거래소 관련 앱(현물/선물)이 아니면, 무조건 불비트로 일단 세팅
-        if (coinManager.currentApp != AppType.Bullbit && coinManager.currentApp != AppType.Perp) {
-            coinManager.currentApp = AppType.Bullbit;
-        } else if (isFuturesUnlocked) {
-            // 이미 거래소 관련 앱이 켜져 있는 상태(activeSelf)에서 또 누를 때만 토글 스왑
-            if (coinScrollView.activeSelf || perpPanel.activeSelf) {
+        // [수정] 단순히 패널이 activeSelf 인지만 보는 게 아니라, 
+        // 입금 패널(withdrawPanel)이 켜져 있는지도 확인해야 합니다.
+        bool isWithdrawOpen = withdrawPanelController != null && withdrawPanelController.IsOpen();
+        bool isAnyMarketOpen = coinScrollView.activeSelf || perpPanel.activeSelf;
+
+        // 1. 거래소가 이미 떠 있고 + 입금 패널 같은 방해 요소가 없을 때만 토글!
+        if (isAnyMarketOpen && !isWithdrawOpen) {
+            if (isFuturesUnlocked) {
                 coinManager.currentApp = (coinManager.currentApp == AppType.Bullbit)
                                          ? AppType.Perp
                                          : AppType.Bullbit;
+            } else {
+                coinManager.currentApp = AppType.Bullbit;
             }
         } else {
-            // 해금 안 됐으면 무조건 불비트
-            coinManager.currentApp = AppType.Bullbit;
+            string perpText = LocalizationManager.GetText("LBL_PERPETUAL_EXCHANGE");
+
+            if (marketTabLabel != null && marketTabLabel.text == perpText && isFuturesUnlocked) {
+                coinManager.currentApp = AppType.Perp;
+            } else {
+                coinManager.currentApp = AppType.Bullbit;
+            }
         }
 
-        // 텍스트와 패널 갱신
+        // 3. 만약 입금 패널이 켜져 있었다면 끄고 거래소 진입
+        if (withdrawPanelController != null) withdrawPanelController.ClosePanel();
+
         UpdateMarketUI();
     }
 
     private void UpdateMarketUI() {
         // 1. 텍스트 변경
         if (marketTabLabel != null) {
-            marketTabLabel.text = (coinManager.currentApp == AppType.Perp) ? "선물 거래소" : "현물 거래소";
+            // 이전에 등록하신 Key 활용
+            marketTabLabel.text = (coinManager.currentApp == AppType.Perp) ? LocalizationManager.GetText("LBL_PERPETUAL_EXCHANGE") : LocalizationManager.GetText("LBL_SPOT_EXCHANGE");
         }
 
         // 2. 패널 갱신 (이미 작성하신 ShowMarketPanel 호출)
@@ -142,6 +157,9 @@ public class TabPanelController : MonoBehaviour {
 
         // 차트
         if (chartPanel != null) chartPanel.SetActive(false);
+
+        // 디테일 패널
+        if (detailTradingPanel != null) detailTradingPanel.SetActive(false);
 
         // 메인 버튼은 일단 꺼둡니다
         if (officeButtons != null) officeButtons.SetActive(false);

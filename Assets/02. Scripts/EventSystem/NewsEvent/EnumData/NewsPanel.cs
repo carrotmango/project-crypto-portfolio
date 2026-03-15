@@ -1,7 +1,8 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro; // ÅØ½ºÆ® Á¦¾î¸¦ À§ÇØ Ãß°¡
+using UnityEngine.UI;
+using TMPro;
 
 public class NewsPanel : MonoBehaviour {
 
@@ -13,15 +14,43 @@ public class NewsPanel : MonoBehaviour {
 
     public RetroToggleController communityToggle;
 
-    [Header("ÅÇ ÅØ½ºÆ® ¼³Á¤")]
-    // ÀÌÁ¦ ÀÌ¹ÌÁö ´ë½Å ÅØ½ºÆ® ÄÄÆ÷³ÍÆ®¸¦ Á÷Á¢ ³Ö½À´Ï´Ù.
+    [Header("íƒ­ í…ìŠ¤íŠ¸ ì„¤ì •")]
     public List<TextMeshProUGUI> tabTexts;
-    public Color activeTextColor = new Color32(0, 191, 255, 255); // È°¼ºÈ­µÈ ±ÛÀÚ»ö (ÇÏ´Ã»ö)
-    public Color inactiveTextColor = Color.white; // ºñÈ°¼ºÈ­µÈ ±ÛÀÚ»ö (Èò»ö)
+    public Color activeTextColor = new Color32(0, 191, 255, 255);
+    public Color inactiveTextColor = Color.white;
+
+    [Header("ì•Œë¦¼ ë±ƒì§€ UI (ë©”ì¸)")]
+    public GameObject newsBadgeObject;
+    public TextMeshProUGUI newsBadgeText;
+
+    [Header("ìŠ¤í¬ë¡¤ ê°ì§€ìš© UI")]
+    public ScrollRect scrollRect;
+    public RectTransform viewportRect;
+
+    private class ActiveNews {
+        public RectTransform rt;
+        public NewsRepository.OccurredNewsData data;
+        public NewsLoader loader;
+    }
+    private List<ActiveNews> activeNewsList = new List<ActiveNews>();
 
     private void Start() {
-        // NewsCategory.AllÀº 0¹øÀÌ¹Ç·Î 0¹ø ÅÇÀ» »õ·Î°íÄ§ÇÕ´Ï´Ù.
+        if (scrollRect != null) {
+            // ğŸ’¡ ë·°í¬íŠ¸ê°€ ë¹„ì–´ìˆìœ¼ë©´ ì•ˆì „í•˜ê²Œ ìë™ í• ë‹¹
+            if (viewportRect == null) viewportRect = scrollRect.viewport;
+            if (viewportRect == null) viewportRect = scrollRect.GetComponent<RectTransform>();
+
+            scrollRect.onValueChanged.AddListener(OnScrollChanged);
+            scrollRect.scrollSensitivity = 20f;
+        }
         RefreshXbird(NewsCategory.All);
+    }
+
+    // ë§¤ í”„ë ˆì„ ê°ì‹œ (íŒ¨ë„ ì¼œì ¸ìˆì„ ë•Œ ë¬´ì¡°ê±´ ì‘ë™)
+    private void Update() {
+        if (gameObject.activeInHierarchy) {
+            CheckVisibleItemsAndMarkRead();
+        }
     }
 
     public void RefreshXbird(NewsCategory category) {
@@ -29,55 +58,125 @@ public class NewsPanel : MonoBehaviour {
         UpdateTabVisuals((int)category);
 
         foreach (Transform child in contentParent) Destroy(child.gameObject);
+        activeNewsList.Clear();
 
         var history = newsRepo.GetNewsByCategory(category);
+        int shownCount = 0;
 
-        if (history == null || history.Count == 0) {
-            if (emptyNoticeObject != null) emptyNoticeObject.SetActive(true);
-        } else {
-            if (emptyNoticeObject != null) emptyNoticeObject.SetActive(false);
-
+        if (history != null && history.Count > 0) {
             foreach (var item in history) {
-                // [ÇÙ½É ÇÊÅÍ ·ÎÁ÷]
-                // 1. ÀÌ ±ÛÀÌ ½Ã½ºÅÛ »ı¼º ¶Ë±Û(noise_)ÀÎ°¡?
-                bool isNoise = item.data.key.StartsWith("noise_");
-                // 2. ÇöÀç Åä±ÛÀÌ ²¨Á®(ÇÙ½É ¸ğµå) ÀÖ´Â°¡?
+                UIEventData eventData = item.data;
+                bool isCommunity = ((int)eventData.category == 1);
+
+                if (category == NewsCategory.All && isCommunity) continue;
                 bool isFilterActive = communityToggle != null && !communityToggle.IsCommunityVisible;
+                if (isCommunity && isFilterActive) continue;
 
-                // ¶Ë±ÛÀÎµ¥ ÇÊÅÍ°¡ ÄÑÁ® ÀÖ´Ù¸é È­¸é¿¡ ±×¸®Áö ¾Ê°í °Ç³Ê¶İ´Ï´Ù.
-                if (isNoise && isFilterActive) continue;
+                var go = Instantiate(newsItemPrefab, contentParent);
+                go.transform.SetAsFirstSibling();
+                ApplySize(go, eventData);
 
-                Show(item.data, item.occurredTime);
+                var loader = go.GetComponent<NewsLoader>();
+                if (loader != null) {
+                    loader.Load(eventData, item.occurredTime, item.isRead);
+
+                    // ğŸ”¥ [í•µì‹¬ 1] íƒ­ ë‹¤ë…€ì˜¤ê±°ë‚˜ ì¼°ì„ ë•Œ DBê°€ true(ì½ìŒ)ë©´ ë¬´ì¡°ê±´ íŒŒë€ë¶ˆ ë„ê³  ì‹œì‘!
+                    loader.SetBadge(!item.isRead);
+                }
+
+                activeNewsList.Add(new ActiveNews {
+                    rt = go.GetComponent<RectTransform>(),
+                    data = item,
+                    loader = loader
+                });
+
+                shownCount++;
             }
         }
-    }
 
-    private void UpdateTabVisuals(int selectedIndex) {
-        for (int i = 0; i < tabTexts.Count; i++) {
-            if (tabTexts[i] == null) continue;
+        if (emptyNoticeObject != null) emptyNoticeObject.SetActive(shownCount == 0);
 
-            // ¼±ÅÃµÈ ÅÇÀÇ ±ÛÀÚ¸¸ ÇÏ´Ã»öÀ¸·Î º¯°æ
-            tabTexts[i].color = (i == selectedIndex) ? activeTextColor : inactiveTextColor;
+        if (gameObject.activeInHierarchy) {
+            Canvas.ForceUpdateCanvases();
+            if (contentParent != null) LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent.GetComponent<RectTransform>());
         }
-    }
-    public void OnToggleRefresh() {
-        // ÇöÀç ¼±ÅÃµÈ Ä«Å×°í¸® »óÅÂ ±×´ë·Î ¸®½ºÆ®¸¸ ´Ù½Ã ±×¸³´Ï´Ù.
-        RefreshXbird(currentCategory);
+
+        UpdateUnreadBadge();
     }
 
-    public void OnClickTab(int categoryIndex) {
-        NewsCategory selected = (NewsCategory)categoryIndex;
-        RefreshXbird(selected);
+    private void OnScrollChanged(Vector2 pos) {
+        CheckVisibleItemsAndMarkRead();
+    }
+
+    private void CheckVisibleItemsAndMarkRead() {
+        if (viewportRect == null) return;
+
+        bool isChanged = false;
+
+        foreach (var active in activeNewsList) {
+            if (active.data.isRead) continue; // ì´ë¯¸ ì²˜ë¦¬ëœ ê±´ ë¬´ì‹œ
+
+            // ë‚´ í™”ë©´ì— ë‹¿ì•˜ëŠ”ì§€(ìµœì´ˆë¡œ ë´¤ëŠ”ì§€) íŒë³„
+            if (IsVisibleInViewport(active.rt, viewportRect)) {
+                // ğŸ”¥ [í•µì‹¬ 2] ë‹¿ëŠ” ìˆœê°„ ë¬´ì¡°ê±´ ì½ìŒ(True) ì²˜ë¦¬!
+                active.data.isRead = true;
+                isChanged = true;
+
+                // ğŸ’¡ í–‰ë‹˜ ìš”ì²­ëŒ€ë¡œ 'ë³´ê³  ìˆëŠ” ë™ì•ˆ'ì—” ë¶ˆ ì•ˆ ë•ë‹ˆë‹¤. 
+                // ë‹¤ë¥¸ íƒ­(í˜„ë¬¼, ì˜¤í”¼ìŠ¤ ë“±) ê°”ë‹¤ê°€ ëŒì•„ì˜¬ ë•Œ ìœ„ RefreshXbird()ê°€ ëŒë©´ì„œ ì˜ì›íˆ êº¼ì§‘ë‹ˆë‹¤.
+            }
+        }
+
+        if (isChanged) UpdateUnreadBadge();
+    }
+
+    // ğŸš€ [ìµœì¢… ë³‘ê¸°] ì“¸ë°ì—†ëŠ” ìˆ˜í•™ ê³„ì‚° ì‹¹ ë¹¼ê³  ìœ ë‹ˆí‹° 100% ê³µì‹ ì‚¬ê°í˜• ì¶©ëŒ í•¨ìˆ˜ë¡œ êµì²´!
+    private bool IsVisibleInViewport(RectTransform item, RectTransform viewport) {
+        if (item == null || viewport == null) return false;
+
+        Vector3[] vCorners = new Vector3[4];
+        viewport.GetWorldCorners(vCorners);
+        Rect viewRect = new Rect(vCorners[0].x, vCorners[0].y, vCorners[2].x - vCorners[0].x, vCorners[2].y - vCorners[0].y);
+
+        Vector3[] iCorners = new Vector3[4];
+        item.GetWorldCorners(iCorners);
+        Rect itemRect = new Rect(iCorners[0].x, iCorners[0].y, iCorners[2].x - iCorners[0].x, iCorners[2].y - iCorners[0].y);
+
+        // UI ì‚¬ê°í˜•ë¼ë¦¬ ë‹¨ 1í”½ì…€ì´ë¼ë„ ê²¹ì¹˜ë©´ "ë³¸ ê²ƒ"ìœ¼ë¡œ ì™„ë²½ ì¸ì‹!
+        return viewRect.Overlaps(itemRect);
+    }
+
+    public void UpdateUnreadBadge() {
+        if (newsBadgeObject == null || newsBadgeText == null || newsRepo == null) return;
+
+        int unreadCount = 0;
+        var allHistory = newsRepo.GetNewsByCategory(NewsCategory.All);
+
+        if (allHistory != null) {
+            foreach (var item in allHistory) {
+                if (((int)item.data.category != 1) && !item.isRead) {
+                    unreadCount++;
+                }
+            }
+        }
+
+        if (unreadCount > 0) {
+            newsBadgeObject.SetActive(true);
+            newsBadgeText.text = unreadCount > 99 ? "99+" : unreadCount.ToString();
+        } else {
+            newsBadgeObject.SetActive(false);
+        }
     }
 
     public void Show(UIEventData data, DateTime gameTime) {
         if (!data.postYn) return;
-
         if (newsItemPrefab == null || contentParent == null) return;
 
-        if (currentCategory != NewsCategory.All && data.category != currentCategory) {
-            return;
-        }
+        bool isCommunity = ((int)data.category == 1);
+
+        if (currentCategory == NewsCategory.All && isCommunity) return;
+        if (currentCategory != NewsCategory.All && (int)data.category != (int)currentCategory) return;
+        if (communityToggle != null && !communityToggle.IsCommunityVisible && isCommunity) return;
 
         if (emptyNoticeObject != null) emptyNoticeObject.SetActive(false);
 
@@ -85,14 +184,52 @@ public class NewsPanel : MonoBehaviour {
         go.transform.SetAsFirstSibling();
         ApplySize(go, data);
 
+        var allHistory = newsRepo.GetNewsByCategory(NewsCategory.All);
+        var sourceItem = allHistory.Find(x => x.data.key == data.key);
+
         var loader = go.GetComponent<NewsLoader>();
-        if (loader != null) loader.Load(data, gameTime);
+        if (loader != null) {
+            bool isReadStatus = sourceItem != null ? sourceItem.isRead : true;
+            loader.Load(data, gameTime, isReadStatus);
+            if (sourceItem != null) loader.SetBadge(!sourceItem.isRead);
+        }
+
+        if (sourceItem != null) {
+            activeNewsList.Add(new ActiveNews { rt = go.GetComponent<RectTransform>(), data = sourceItem, loader = loader });
+        }
+
+        if (gameObject.activeInHierarchy) {
+            Canvas.ForceUpdateCanvases();
+            if (contentParent != null) LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent.GetComponent<RectTransform>());
+        }
     }
 
     private void ApplySize(GameObject go, UIEventData data) {
         var rt = go.GetComponent<RectTransform>();
         if (rt == null) return;
-        if (data.width > 0f) rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, data.width);
-        if (data.height > 0f) rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, data.height);
+        float finalHeight = data.height;
+        rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, data.width > 0 ? data.width : 550f);
+        rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, finalHeight > 0 ? finalHeight : 150f);
+    }
+
+    private void UpdateTabVisuals(int selectedIndex) {
+        for (int i = 0; i < tabTexts.Count; i++) {
+            if (tabTexts[i] == null) continue;
+            tabTexts[i].color = (i == selectedIndex) ? activeTextColor : inactiveTextColor;
+        }
+    }
+
+    public void OnToggleRefresh() => RefreshXbird(currentCategory);
+    public void OnClickTab(int categoryIndex) => RefreshXbird((NewsCategory)categoryIndex);
+
+    public void CleanUpUI(int maxCount) {
+        int currentNoiseUI_Count = 0;
+        for (int i = 0; i < contentParent.childCount; i++) {
+            Transform child = contentParent.GetChild(i);
+            if (child.name.StartsWith("noise_")) {
+                currentNoiseUI_Count++;
+                if (currentNoiseUI_Count > maxCount) Destroy(child.gameObject);
+            }
+        }
     }
 }

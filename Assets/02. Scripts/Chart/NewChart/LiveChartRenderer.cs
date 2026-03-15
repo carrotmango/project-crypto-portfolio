@@ -15,9 +15,10 @@ public enum ChartInterval {
 [System.Flags]
 public enum TradeType {
     None = 0,
-    Buy = 1 << 0,  // 1
-    Sell = 1 << 1  // 2
-    // Buy | Sell = 3 (둘 다 있는 경우)
+    SpotBuy = 1 << 0,   // 1  (현물 매수)
+    SpotSell = 1 << 1,  // 2  (현물 매도)
+    FutureBuy = 1 << 2, // 4  (선물 롱)
+    FutureSell = 1 << 3 // 8  (선물 숏)
 }
 
 public class LiveChartRenderer : MonoBehaviour {
@@ -40,7 +41,7 @@ public class LiveChartRenderer : MonoBehaviour {
     public GameObject hLinePrefab;
     public Color hLineColor = Color.yellow;
     private bool isPlacingHLine = false;
-    private List<HorizontalLineView> activeHLines = new List<HorizontalLineView>();
+    protected List<HorizontalLineView> activeHLines = new List<HorizontalLineView>();
 
     public Color activeBtnColor = new Color32(255, 255, 255, 255);
     public Color inactiveBtnColor = new Color32(100, 100, 100, 255);
@@ -64,10 +65,10 @@ public class LiveChartRenderer : MonoBehaviour {
     public float minMarkerFontSize = 7f; // 줌 아웃 했을 때 최소 글자 크기
     public float maxMarkerFontSize = 11f; // 줌 인 했을 때(기본) 최대 글자 크기
     private TradeType pendingOfflineTrades = TradeType.None;
-
+    protected virtual TradeType AllowedMarkerTypes => TradeType.None;
     // RuntimeCandle(객체) 대신 int(인덱스)로 변경하여 영구 보존
     // Key: 종목코드(Symbol), Value: { 캔들번호(Index) : 거래타입 }
-    private Dictionary<string, Dictionary<int, TradeType>> allCoinTradeHistory = new Dictionary<string, Dictionary<int, TradeType>>();
+    //private Dictionary<string, Dictionary<int, TradeType>> allCoinTradeHistory = new Dictionary<string, Dictionary<int, TradeType>>();
 
     // 마커 UI 오브젝트 풀
     private List<TextMeshProUGUI> tradeMarkerPool = new List<TextMeshProUGUI>();
@@ -119,8 +120,8 @@ public class LiveChartRenderer : MonoBehaviour {
     private int visibleEndIndex = 0;
     private bool lastPausedState = false;
 
-    private double currentVisibleMinPrice;
-    private double currentVisibleMaxPrice;
+    protected double currentVisibleMinPrice;
+    protected double currentVisibleMaxPrice;
 
     [Header("Current Price UI")]
     public RectTransform currentPriceLineRect;
@@ -196,38 +197,36 @@ public class LiveChartRenderer : MonoBehaviour {
 
     // [수정됨] 외부에서 호출 시 코인 데이터를 명확히 지정하는 버전 (권장)
     // 차트가 꺼져있거나, 다른 코인을 보고 있어도 기록이 정확히 남습니다.
-    public void RegisterTrade(CoinData coin, bool isBuy) {
-        if (coin == null) return;
+    //public void RegisterTrade(CoinData coin, bool isBuy) {
+    //    if (coin == null) return;
 
-        string symbol = coin.Symbol;
-        TradeType typeToAdd = isBuy ? TradeType.Buy : TradeType.Sell;
+    //    string symbol = coin.Symbol;
+    //    TradeType typeToAdd = isBuy ? TradeType.Buy : TradeType.Sell;
 
-        // 현재 생성 중인 캔들의 인덱스 (History 개수와 동일)
-        int currentIndex = coin.CandleHistory.Count;
+    //    // 현재 생성 중인 캔들의 인덱스 (History 개수와 동일)
+    //    int currentIndex = coin.CandleHistory.Count;
 
-        // 1. 해당 코인의 장부가 없으면 새로 생성
-        if (!allCoinTradeHistory.ContainsKey(symbol)) {
-            allCoinTradeHistory[symbol] = new Dictionary<int, TradeType>();
-        }
+    //    // 1. 해당 코인의 장부가 없으면 새로 생성
+    //    if (!allCoinTradeHistory.ContainsKey(symbol)) {
+    //        allCoinTradeHistory[symbol] = new Dictionary<int, TradeType>();
+    //    }
 
-        // 2. 해당 인덱스에 기록 없으면 초기화
-        if (!allCoinTradeHistory[symbol].ContainsKey(currentIndex)) {
-            allCoinTradeHistory[symbol][currentIndex] = TradeType.None;
-        }
+    //    // 2. 해당 인덱스에 기록 없으면 초기화
+    //    if (!allCoinTradeHistory[symbol].ContainsKey(currentIndex)) {
+    //        allCoinTradeHistory[symbol][currentIndex] = TradeType.None;
+    //    }
 
-        // 3. 기록 추가 (OR 연산)
-        allCoinTradeHistory[symbol][currentIndex] |= typeToAdd;
-    }
+    //    // 3. 기록 추가 (OR 연산)
+    //    allCoinTradeHistory[symbol][currentIndex] |= typeToAdd;
+    //}
 
-    // [유지] 기존 코드 호환용 (현재 보고 있는 코인에 기록)
-    // 주의: 차트가 켜져있을 때만 정상 작동합니다.
-    public void RegisterTrade(bool isBuy) {
-        if (targetCoin != null) {
-            RegisterTrade(targetCoin, isBuy);
-        } else {
-            Debug.LogWarning("차트가 초기화되지 않아 거래 기록을 남길 수 없습니다. CoinData를 포함한 RegisterTrade를 사용하세요.");
-        }
-    }
+    //public void RegisterTrade(bool isBuy) {
+    //    if (targetCoin != null) {
+    //        RegisterTrade(targetCoin, isBuy);
+    //    } else {
+    //        Debug.LogWarning("차트가 초기화되지 않아 거래 기록을 남길 수 없습니다. CoinData를 포함한 RegisterTrade를 사용하세요.");
+    //    }
+    //}
 
     // [수정됨] tradeHistory.Clear()를 제거하여 기록 유지
     // [수정됨] 버튼 클릭용 (기존과 동일하게 동작)
@@ -259,7 +258,12 @@ public class LiveChartRenderer : MonoBehaviour {
 
         if (interval == ChartInterval._4H) {
             foreach (ChartRenderer.CandleData h in history) {
-                dataToRender.Add(new RuntimeCandle(h.open, h.high, h.low, h.close));
+                var rc = new RuntimeCandle(h.open, h.high, h.low, h.close);
+                rc.TradeFlag = h.TradeFlag; // 플래그 복사 추가
+
+                rc.Timestamp = h.Timestamp;
+
+                dataToRender.Add(rc);
             }
             SetupCurrentCandleFor4H();
         } else {
@@ -283,6 +287,13 @@ public class LiveChartRenderer : MonoBehaviour {
 
         foreach (var c in dataToRender) {
             CreateCandleVisual(c);
+        }
+
+        // ★ [새로 추가된 핵심 로직] 사용하고 남은 잉여 캔들 UI 비활성화
+        for (int i = candles.Count; i < candleViews.Count; i++) {
+            if (candleViews[i].gameObject.activeSelf) {
+                candleViews[i].gameObject.SetActive(false);
+            }
         }
         // ----------------------------------------
 
@@ -312,18 +323,30 @@ public class LiveChartRenderer : MonoBehaviour {
         List<RuntimeCandle> list = new List<RuntimeCandle>();
         if (limitCount <= 0) return list;
         double o = 0, h = double.MinValue, l = double.MaxValue, c = 0;
+        TradeType mergedFlags = TradeType.None; // 플래그 합치기 위한 변수 추가
+
+        DateTime dayTime = default;
+
         int count = 0;
         for (int i = 0; i < limitCount; i++) {
             var data = history[i];
-            if (count == 0) o = data.open;
+            if (count == 0) {
+                o = data.open;
+                dayTime = data.Timestamp;
+            }
             if (data.high > h) h = data.high;
             if (data.low < l) l = data.low;
             c = data.close;
+            mergedFlags |= data.TradeFlag; // 플래그 취합
             count++;
             if (count == 6) {
-                list.Add(new RuntimeCandle(o, h, l, c));
+                var rc = new RuntimeCandle(o, h, l, c);
+                rc.TradeFlag = mergedFlags; // 합쳐진 플래그 적용
+                rc.Timestamp = dayTime;
+                list.Add(rc);
                 count = 0;
                 h = double.MinValue; l = double.MaxValue;
+                mergedFlags = TradeType.None; // 플래그 초기화
             }
         }
         return list;
@@ -334,6 +357,7 @@ public class LiveChartRenderer : MonoBehaviour {
         if (real != null) {
             currentCandle = new RuntimeCandle();
             currentCandle.SetupAsActive(real.Open, real.High, real.Low, real.Close);
+            currentCandle.TradeFlag = real.TradeFlag; // 플래그 적용
         }
     }
 
@@ -341,11 +365,14 @@ public class LiveChartRenderer : MonoBehaviour {
         var real = targetCoin.CurrentRuntimeCandle;
         double open = 0, high = double.MinValue, low = double.MaxValue, close = 0;
         bool hasData = false;
+        TradeType mergedFlags = TradeType.None; // 플래그 변수 추가
+
         if (todayHistory != null && todayHistory.Count > 0) {
             open = todayHistory[0].open;
             foreach (var p in todayHistory) {
                 if (p.high > high) high = p.high;
                 if (p.low < low) low = p.low;
+                mergedFlags |= p.TradeFlag; // 플래그 취합
             }
             close = todayHistory[todayHistory.Count - 1].close;
             hasData = true;
@@ -360,11 +387,13 @@ public class LiveChartRenderer : MonoBehaviour {
                 if (real.Low < low) low = real.Low;
             }
             close = real.Close;
+            mergedFlags |= real.TradeFlag; // 실시간 캔들 플래그 취합
             hasData = true;
         }
         if (hasData) {
             currentCandle = new RuntimeCandle();
             currentCandle.SetupAsActive(open, high, low, close);
+            currentCandle.TradeFlag = mergedFlags; // 합쳐진 플래그 적용
         }
     }
 
@@ -410,7 +439,7 @@ public class LiveChartRenderer : MonoBehaviour {
             Destroy(line.gameObject);
         }
     }
-    private double YToPrice(float yPos) {
+    protected double YToPrice(float yPos) {
         float halfHeight = chartHeight * 0.5f;
         float normalized = (yPos + halfHeight) / chartHeight;
         double range = currentVisibleMaxPrice - currentVisibleMinPrice;
@@ -455,10 +484,10 @@ public class LiveChartRenderer : MonoBehaviour {
 
         if (!paused) {
             TickPrice();
-            UpdateCurrentCandle();
         }
 
-        // ... (나머지 Update 로직 그대로 유지) ...
+        UpdateCurrentCandle();
+
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || isMeasurementMode) {
             HandleMeasurementInput();
         } else {
@@ -583,22 +612,57 @@ public class LiveChartRenderer : MonoBehaviour {
         if (avgPriceTagText != null) avgPriceTagText.text = FormatPrice(avgPrice);
         if (avgPriceTagImage != null) avgPriceTagImage.color = colorAvg;
     }
+    //private void CreateCandleVisual(RuntimeCandle candle) {
+    //    if (candles.Contains(candle)) return;
+    //    var go = Instantiate(candlePrefab, chartContent);
+    //    var rt = go.GetComponent<RectTransform>();
+    //    float xPos = candles.Count * candleSpacing;
+    //    rt.anchorMin = new Vector2(0, 0.5f);
+    //    rt.anchorMax = new Vector2(0, 0.5f);
+    //    rt.pivot = new Vector2(0.5f, 0.5f);
+    //    rt.anchoredPosition = new Vector2(xPos, 0f);
+    //    var view = go.GetComponent<CandleView>();
+    //    view.PriceToY = PriceToY;
+    //    candles.Add(candle);
+    //    candleViews.Add(view);
+    //    float contentWidth = (candles.Count + futureEmptyCandles) * candleSpacing;
+    //    chartContent.sizeDelta = new Vector2(contentWidth, chartContent.sizeDelta.y);
+    //}
+
     private void CreateCandleVisual(RuntimeCandle candle) {
-        if (candles.Contains(candle)) return;
-        var go = Instantiate(candlePrefab, chartContent);
-        var rt = go.GetComponent<RectTransform>();
-        float xPos = candles.Count * candleSpacing;
+        int currentIndex = candles.Count; // 현재 몇 번째 캔들인지 인덱스 확인
+        CandleView view;
+
+        // 1. 이미 만들어둔 캔들 UI가 남아있다면 파괴하지 않고 "재사용"
+        if (currentIndex < candleViews.Count) {
+            view = candleViews[currentIndex];
+            view.gameObject.SetActive(true); // 숨겨뒀던 거 다시 켜기
+        }
+        // 2. 모자라다면 그때만 새로 "생성"
+        else {
+            GameObject go = Instantiate(candlePrefab, chartContent);
+            view = go.GetComponent<CandleView>();
+            candleViews.Add(view); // 풀(Pool)에 보관
+        }
+
+        // 3. 위치 및 데이터 세팅
+        RectTransform rt = view.GetComponent<RectTransform>();
+        float xPos = currentIndex * candleSpacing;
+
         rt.anchorMin = new Vector2(0, 0.5f);
         rt.anchorMax = new Vector2(0, 0.5f);
         rt.pivot = new Vector2(0.5f, 0.5f);
         rt.anchoredPosition = new Vector2(xPos, 0f);
-        var view = go.GetComponent<CandleView>();
+
         view.PriceToY = PriceToY;
-        candles.Add(candle);
-        candleViews.Add(view);
+        view.FormatPriceFunc = this.FormatTooltipPrice;
+        candles.Add(candle); // 실제 데이터 리스트에 추가
+
+        // 부모 컨텐츠 너비 갱신
         float contentWidth = (candles.Count + futureEmptyCandles) * candleSpacing;
         chartContent.sizeDelta = new Vector2(contentWidth, chartContent.sizeDelta.y);
     }
+
     private void HandleInput() {
         Camera cam = parentCanvas != null ? parentCanvas.worldCamera : null;
         if (Input.GetMouseButtonDown(0)) {
@@ -638,16 +702,69 @@ public class LiveChartRenderer : MonoBehaviour {
         chartContent.anchoredPosition = new Vector2(GetLatestDataScrollX(), 0f);
     }
     float GetLatestDataScrollX() {
-        float realContentWidth = candles.Count * candleSpacing;
+        if (candles.Count == 0) return 0f;
+
+        // 가장 최신(마지막) 캔들의 X 좌표 계산
+        float latestCandleX = (candles.Count - 1) * candleSpacing;
+
+        // 현재 차트 화면(뷰포트)의 너비
         float viewportWidth = viewport.rect.width;
-        if (realContentWidth <= viewportWidth) return 0f;
-        return viewportWidth - realContentWidth;
+
+        // 화면 정중앙(너비의 절반) 위치에서 최신 캔들의 위치를 빼주어 
+        // 최신 캔들이 항상 화면 중앙에 고정되도록 계산
+        return (viewportWidth * 0.5f) - latestCandleX;
     }
     float GetMaxFutureScrollX() {
         int latestRemain = futureEmptyCandles;
         float lastVisibleCenterIndex = (candles.Count - latestRemain) + 0.5f;
         return -lastVisibleCenterIndex * candleSpacing;
     }
+    //private void UpdateVisibleRangeAndRender() {
+    //    UpdatePriceLabel(targetCoin.CurrentPrice);
+    //    float currentX = chartContent.anchoredPosition.x;
+    //    float viewportWidth = viewport.rect.width;
+    //    float viewStartPos = -currentX;
+    //    float viewEndPos = -currentX + viewportWidth;
+
+    //    visibleStartIndex = Mathf.FloorToInt(viewStartPos / candleSpacing);
+    //    visibleEndIndex = Mathf.CeilToInt(viewEndPos / candleSpacing);
+
+    //    visibleStartIndex -= 2;
+    //    visibleEndIndex += 2;
+
+    //    visibleStartIndex = Mathf.Clamp(visibleStartIndex, 0, candles.Count - 1);
+    //    visibleEndIndex = Mathf.Clamp(visibleEndIndex, 0, candles.Count - 1);
+
+    //    double maxHigh = double.MinValue;
+    //    double minLow = double.MaxValue;
+    //    int maxHighIndex = -1;
+    //    int minLowIndex = -1;
+
+    //    float currentBodyWidth = Mathf.Max(1f, candleSpacing * 0.8f);
+
+    //    for (int i = 0; i < candleViews.Count; i++) {
+    //        bool isVisible = (i >= visibleStartIndex && i <= visibleEndIndex);
+    //        if (candleViews[i].gameObject.activeSelf != isVisible)
+    //            candleViews[i].gameObject.SetActive(isVisible);
+
+    //        if (isVisible) {
+    //            candleViews[i].UpdateView(candles[i], currentBodyWidth);
+    //            var c = candles[i];
+    //            if (c.High >= maxHigh) { maxHigh = c.High; maxHighIndex = i; }
+    //            if (c.Low < minLow) { minLow = c.Low; minLowIndex = i; }
+    //        }
+    //    }
+    //    UpdateHighLowIndicators(maxHighIndex, maxHigh, minLowIndex, minLow);
+    //    if (maxHigh > minLow) {
+    //        double range = maxHigh - minLow;
+    //        double padding = (range == 0) ? maxHigh * 0.01 : range * verticalPadding;
+    //        currentVisibleMinPrice = minLow - padding;
+    //        currentVisibleMaxPrice = maxHigh + padding;
+    //        UpdateGridLabels(currentVisibleMinPrice, currentVisibleMaxPrice);
+    //    }
+    //    UpdateHorizontalLines();
+    //}
+
     private void UpdateVisibleRangeAndRender() {
         UpdatePriceLabel(targetCoin.CurrentPrice);
         float currentX = chartContent.anchoredPosition.x;
@@ -671,18 +788,25 @@ public class LiveChartRenderer : MonoBehaviour {
 
         float currentBodyWidth = Mathf.Max(1f, candleSpacing * 0.8f);
 
-        for (int i = 0; i < candleViews.Count; i++) {
+        //  [여기 추가!] 현재 차트가 일봉(_1D)인지 확인하는 변수
+        bool isDailyChart = (currentInterval == ChartInterval._1D);
+
+        // ★ [핵심] candleViews.Count가 아니라 진짜 데이터 개수인 candles.Count 까지만 돕니다!
+        for (int i = 0; i < candles.Count; i++) {
             bool isVisible = (i >= visibleStartIndex && i <= visibleEndIndex);
             if (candleViews[i].gameObject.activeSelf != isVisible)
                 candleViews[i].gameObject.SetActive(isVisible);
 
             if (isVisible) {
-                candleViews[i].UpdateView(candles[i], currentBodyWidth);
+                // 🔥 [여기 수정!] 세 번째 인자로 isDailyChart를 쏙 넣어줍니다!
+                candleViews[i].UpdateView(candles[i], currentBodyWidth, isDailyChart);
+
                 var c = candles[i];
                 if (c.High >= maxHigh) { maxHigh = c.High; maxHighIndex = i; }
                 if (c.Low < minLow) { minLow = c.Low; minLowIndex = i; }
             }
         }
+
         UpdateHighLowIndicators(maxHighIndex, maxHigh, minLowIndex, minLow);
         if (maxHigh > minLow) {
             double range = maxHigh - minLow;
@@ -698,50 +822,37 @@ public class LiveChartRenderer : MonoBehaviour {
     // [수정됨] 4H/1D 차트 타입에 맞춰 번지수를 제대로 찾아가도록 수정
     // [수정됨] 현재 보고 있는 코인(coinSymbol)의 장부만 가져와서 그리기
     private void UpdateTradeMarkers() {
-        if (tradeMarkerPrefab == null) return;
-        if (targetCoin == null) return; // 코인 정보 없으면 중단
-
-        // 현재 코인의 장부가 아예 없으면 그릴 것도 없음
-        if (!allCoinTradeHistory.ContainsKey(coinSymbol)) {
-            // 마커 모두 끄고 리턴
-            foreach (var m in tradeMarkerPool) m.gameObject.SetActive(false);
+        if (tradeMarkerPrefab == null) {
+            Debug.LogWarning("[마커 디버그] tradeMarkerPrefab이 할당되지 않았습니다!");
+            return;
+        }
+        if (targetCoin == null) {
+            Debug.LogWarning("[마커 디버그] targetCoin이 null입니다!");
             return;
         }
 
-        // 현재 코인의 기록만 가져옴
-        var myHistory = allCoinTradeHistory[coinSymbol];
         int usedMarkerCount = 0;
 
         // 줌 비율에 따른 폰트 크기 계산
         float zoomRatio = Mathf.InverseLerp(minCandleSpacing, maxCandleSpacing, candleSpacing);
         float currentFontSize = Mathf.Lerp(minMarkerFontSize, maxMarkerFontSize, zoomRatio);
 
-        // 현재 보이는 캔들 범위 내에서만 루프
+        // 현재 렌더러가 허용하는 마커 타입 (현물이면 SpotBuy/Sell, 선물이면 FutureBuy/Sell)
+        TradeType allowed = AllowedMarkerTypes;
+
         for (int i = visibleStartIndex; i <= visibleEndIndex; i++) {
             if (i < 0 || i >= candles.Count) continue;
 
             var candle = candles[i];
-            TradeType flags = TradeType.None;
+            TradeType flags = candle.TradeFlag;
 
-            if (currentInterval == ChartInterval._4H) {
-                // 4H: 1대1 매칭
-                myHistory.TryGetValue(i, out flags);
-            } else {
-                // 1D: 6개 합치기
-                int startRawIndex = i * 6;
-                for (int k = 0; k < 6; k++) {
-                    if (myHistory.TryGetValue(startRawIndex + k, out TradeType f)) {
-                        flags |= f;
-                    }
-                }
-            }
-
-            if (flags == TradeType.None) continue;
+            // 마커가 없거나, 현재 차트에서 허용하지 않는 마커만 있다면 패스
+            if (flags == TradeType.None || (flags & allowed) == 0) continue;
 
             float xPos = (i * candleSpacing) + tradeMarkerXOffset;
 
-            // Buy Check
-            if ((flags & TradeType.Buy) != 0) {
+            // Buy Check (해당 캔들에 Buy 관련 플래그가 있고, 그것이 현재 차트에서 허용될 때만 B 출력)
+            if ((flags & (TradeType.SpotBuy | TradeType.FutureBuy) & allowed) != 0) {
                 var marker = GetMarkerFromPool(usedMarkerCount++);
                 marker.text = "B";
                 marker.color = buyMarkerColor;
@@ -756,10 +867,11 @@ public class LiveChartRenderer : MonoBehaviour {
                 rt.anchoredPosition = new Vector2(xPos, yPos);
 
                 marker.gameObject.SetActive(true);
+                marker.transform.SetAsLastSibling();
             }
 
-            // Sell Check
-            if ((flags & TradeType.Sell) != 0) {
+            // Sell Check (해당 캔들에 Sell 관련 플래그가 있고, 그것이 현재 차트에서 허용될 때만 S 출력)
+            if ((flags & (TradeType.SpotSell | TradeType.FutureSell) & allowed) != 0) {
                 var marker = GetMarkerFromPool(usedMarkerCount++);
                 marker.text = "S";
                 marker.color = sellMarkerColor;
@@ -774,6 +886,7 @@ public class LiveChartRenderer : MonoBehaviour {
                 rt.anchoredPosition = new Vector2(xPos, yPos);
 
                 marker.gameObject.SetActive(true);
+                marker.transform.SetAsLastSibling();
             }
         }
 
@@ -912,18 +1025,31 @@ public class LiveChartRenderer : MonoBehaviour {
     }
     protected virtual void UpdateCurrentCandle() {
         if (currentCandle == null || currentCandle.IsClosed) return;
+
         currentCandle.UpdatePrice(priceDriver.displayPrice);
+
+        if (targetCoin != null && targetCoin.CurrentRuntimeCandle != null) {
+            currentCandle.TradeFlag |= targetCoin.CurrentRuntimeCandle.TradeFlag;
+        }
     }
     protected virtual void UpdatePriceLabel(double price) {
         if (priceInfoLabel != null && targetCoin != null) {
             priceInfoLabel.text = $"{coinName}({coinSymbol}) {targetCoin.GetFormattedPriceKRW()}";
         }
     }
+    //private void ClearChart() {
+    //    foreach (var view in candleViews) if (view != null) DestroyImmediate(view.gameObject);
+    //    candles.Clear();
+    //    candleViews.Clear();
+    //}
+
     private void ClearChart() {
-        foreach (var view in candleViews) if (view != null) DestroyImmediate(view.gameObject);
+        // 프리팹을 파괴(Destroy)하지 않고 재사용하기 위해 데이터 리스트만 비웁니다.
         candles.Clear();
-        candleViews.Clear();
+        // candleViews.Clear(); 는 절대 하지 않습니다! (풀링 유지)
     }
+
+
     void HandleZoom() {
         float scroll = Input.mouseScrollDelta.y;
         if (Mathf.Abs(scroll) < 0.01f) return;
@@ -968,9 +1094,29 @@ public class LiveChartRenderer : MonoBehaviour {
         }
     }
 
+    protected virtual string FormatTooltipPrice(double priceKrw) {
+        // 현물 차트 기본값 (원화)
+        if (priceKrw >= 1000) return $"₩{priceKrw:N0}";
+        else if (priceKrw >= 100) return $"₩{priceKrw:N2}";
+        else if (priceKrw >= 10) return $"₩{priceKrw:N3}";
+        else return $"₩{priceKrw:N4}";
+    }
+
+    //void RefreshAllCandlePositions() {
+    //    if (candles.Count == 0) return;
+    //    for (int i = 0; i < candleViews.Count; i++) {
+    //        RectTransform rt = candleViews[i].GetComponent<RectTransform>();
+    //        float xPos = i * candleSpacing;
+    //        rt.anchoredPosition = new Vector2(xPos, 0f);
+    //    }
+    //    float contentWidth = (candles.Count + futureEmptyCandles) * candleSpacing;
+    //    chartContent.sizeDelta = new Vector2(contentWidth, chartContent.sizeDelta.y);
+    //}
     void RefreshAllCandlePositions() {
         if (candles.Count == 0) return;
-        for (int i = 0; i < candleViews.Count; i++) {
+
+        // ★ [핵심] 여기도 candles.Count 까지만 돕니다!
+        for (int i = 0; i < candles.Count; i++) {
             RectTransform rt = candleViews[i].GetComponent<RectTransform>();
             float xPos = i * candleSpacing;
             rt.anchoredPosition = new Vector2(xPos, 0f);

@@ -10,19 +10,19 @@
             "profileImage": "Xbird_01.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 400
+            "height": 200
         },
         {
             "key": "trump_president",
             "type": 0,
-            "authorName": "Donald Trump",
+            "authorName": "Donald J. Trump",
             "category": 2,
             "title": "",
-            "message": "좋은 하루입니다. 미국 시민분들\n저는 새로 당선된 미국 대통령 트럼프 입니다.\n내일인 1월 3일 미국을 다시 위대하게 만들 \n중대한 주요 경제 정책과 암호화폐 정책들을 발표할 예정입니다.",
+            "message": "좋은 하루입니다. 미국 시민분들 저는 새로 당선된 미국 대통령 트럼프 입니다. 내일인 1월 3일 미국을 다시 위대하게 만들 중대한 주요 경제 정책과 암호화폐 정책들을 발표할 예정입니다.",
             "profileImage": "trump.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 300,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "도널드 트럼프 미 대통령, 오는 3일 중대 발표 예정",
@@ -35,14 +35,14 @@
         {
             "key": "trump_president_02",
             "type": 0,
-            "authorName": "Donald Trump",
+            "authorName": "Donald J. Trump",
             "category": 2,
             "title": "",
-            "message": "막강한 달러의 시대를 다시 열겠습니다. 하지만 그 달러는 더 이상 창고에 썩지 않을 것입니다.\n금리를 낮추고 규제를 부숴서, 시장에 엄청난 에너지를 공급하겠습니다.\n동시에, 미국은 세계 최초로 비트코인을 국가 전략 자산으로 보유할 것입니다.\n비트코인은 가짜 자산이 아닙니다. 그것은 혁명이며, 금보다 더 똑똑한 자산입니다.",
+            "message": "막강한 달러의 시대를 다시 열겠습니다. 하지만 그 달러는 더 이상 창고에 썩지 않을 것입니다. 금리를 낮추고 규제를 부숴서, 시장에 엄청난 에너지를 공급하겠습니다. 동시에, 미국은 세계 최초로 비트코인을 국가 전략 자산으로 보유할 것입니다. 비트코인은 가짜 자산이 아닙니다. 그것은 혁명이며, 금보다 더 똑똑한 자산입니다.",
             "profileImage": "trump.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 300,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "[특종] 트럼프 '비트코인 전략 자산화' 입법 서명... 전 세계 자금 미국으로 집결",
@@ -66,9 +66,9 @@
             "title": "",
             "message": "도지는 이미 달에 있다.\n페페가 조종하고 있음.\n나도 그냥 매일 웃음밖에 안 나와.",
             "profileImage": "elon.jpg",
-            "contentImage": "elon_doge_02.jpg",
+            "contentImage": "",
             "width": 550,
-            "height": 700,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "일론 머스크. 도지 페페 언급만으로 수십프로 급등시키다.",
@@ -91,7 +91,7 @@
             "profileImage": "test.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 300
+            "height": 200
         },
         {
             "key": "xrp_rumor",
@@ -103,7 +103,7 @@
             "profileImage": "Newsguy.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 300
+            "height": 200
         },
         {
             "key": "xrp_rumor_positive",
@@ -115,7 +115,7 @@
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 300,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "리플(XRP) - 북미 대형 은행 ODL 도입 검증 착수",
@@ -137,7 +137,7 @@
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 300,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "SEC-리플 합의 장기화 조짐... 기관 이탈 주의보",
@@ -159,18 +159,18 @@
             "profileImage": "shoking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 300
+            "height": 200
         },
         {
             "key": "solana_news_0107",
             "type": 0,
             "authorName": "쇼킹뉴스",
             "category": 3,
-            "message": "최근 솔라나 기반 주요 디파이(DeFi) 프로토콜들의 예치 자산(TVL)이 지난 24시간 동안 20% 이상 급증했다는 소식입니다.\n신규 스테이킹 프로토콜의 흥행과 더불어 대형 고래들의 자금 유입이 포착되고 있으며, 네트워크 활성 사용자 수 또한 전주 대비 눈에 띄게 증가하며 생태계 전반에 온기가 돌고 있습니다.",
+            "message": "최근 솔라나 기반 주요 디파이(DeFi) 프로토콜들의 예치 자산(TVL)이 지난 24시간 동안 20% 이상 급증했다는 소식입니다. 신규 스테이킹 프로토콜의 흥행과 더불어 대형 고래들의 자금 유입이 포착되고 있으며, 네트워크 활성 사용자 수 또한 전주 대비 눈에 띄게 증가하며 생태계 전반에 온기가 돌고 있습니다.",
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 300,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "솔라나 TVL 반등, 기술적 지지선 확보하나?",
@@ -191,11 +191,11 @@
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 300,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "무브먼트, 웹3의 '애플'이 될 것인가? 압도적 찬사",
-                "summary": "무브먼트 랩스가 제시하는 'M1'과 'M2' 아키텍처는 이더리움의 유동성과 Move 언어의 혁신성을 완벽하게 결합했습니다. 업계 전문가들은 무브먼트가 단순한 기술 프로젝트를 넘어 하나의 거대한 문화적 현상이자 차세대 표준이 될 것으로 내다보고 있습니다.",
+                "summary": "무브먼트 랩스가 제시하는 아키텍처는 이더리움의 유동성과 Move 언어의 혁신성을 완벽하게 결합했습니다. 업계 전문가들은 무브먼트가 단순한 기술 프로젝트를 넘어 하나의 거대한 문화적 현상이자 차세대 표준이 될 것으로 내다보고 있습니다.",
                 "expertOpinion": "무브먼트의 커뮤니티 성장세는 가히 폭발적입니다. 강력한 팬덤과 기술력이 뒷받침된 만큼, 시장 내 입지는 상상 그 이상이 될 것입니다. 지금 이 흐름에 올라타십시오.",
                 "newsImage": "movement_news_0109.jpg",
                 "targetSymbols": [
@@ -216,12 +216,12 @@
             "type": 0,
             "authorName": "쇼킹 뉴스",
             "category": 4,
-            "title": "[단독] 무브먼트(MOVE), 창립자 연루설에 '상장 적격성' 도마 위",
+            "title": "무브먼트(MOVE), 창립자 연루설에 '상장 적격성' 도마 위",
             "message": "최근 커뮤니티에서 확산되고 있는 무브먼트(Movement) 코인 관련 루머에 대해 불비트 거래소가 상황을 주시 중인 것으로 알려졌습니다.\n해당 루머는 개발사 MoveLabs 소속 핵심 인물과 관련된 의혹을 포함하고 있으며, 거래소는 사실 관계를 확인하고 있습니다.\n불비트 측은 현재 상장 유지 여부를 검토 중이며, 빠르면 다음 날 관련 결정이 내려질 수 있습니다.",
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 400,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "무브먼트 랩스 내부 분열 의혹... 거래소 유의종목 지정 검토",
@@ -243,11 +243,11 @@
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 400,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "폭발적인 생태계 확장성 증명... '메가톤급 호재' 예고",
-                "summary": "무브먼트 랩스가 최근의 악성 루머를 정면 반박하며 압도적인 온체인 데이터 지표를 공개했습니다. 특히 TVL의 급격한 상승은 Move 생태계에 대한 강력한 신뢰를 의미하며, 차주 대형 파트너십 발표를 암시했습니다.",
+                "summary": "무브먼트 랩스가 압도적인 온체인 데이터 지표를 공개했습니다. 특히 TVL의 급격한 상승은 Move 생태계에 대한 강력한 신뢰를 의미하며, 차주 대형 파트너십 발표를 암시했습니다.",
                 "expertOpinion": "위기를 기회로 바꾼 데이터입니다. 남은 '한 가지 발표'가 글로벌 결제 기업과의 협업일 경우 가격 반등은 더욱 거세질 것입니다.",
                 "newsImage": "movement_tvl.jpg",
                 "targetSymbols": [
@@ -260,12 +260,12 @@
             "type": 0,
             "authorName": "쇼킹 뉴스",
             "category": 4,
-            "title": "[긴급] 불비트, 무브먼트(MOVE) 상장폐지 확정... 거래 종료",
-            "message": "불비트 거래소는 내부 심사 결과에 따라 무브먼트(Movement) 코인의 \n개발자 Rushi Manche의 범행이 사실로 들어났으며, 상장폐지를 최종 결정했습니다.\n본 공지 이후 무브먼트 코인의 모든 거래는 즉시 중단되며, 추가적인 입출금 지원 여부는 추후 안내될 예정입니다.",
+            "title": "불비트, 무브먼트(MOVE) 상장폐지 확정... 거래 종료",
+            "message": "불비트 거래소는 내부 심사 결과에 따라 무브먼트(Movement) 코인의 개발자 Rushi Manche의 범행이 사실로 들어났으며, 즉시 상장폐지 되었습니다.\n본 공지 이후부터 적용되며, 추가적인 입출금 지원 여부는 추후 안내될 예정입니다.",
             "profileImage": "shocking.jpg",
-            "contentImage": "shocking_news_01",
+            "contentImage": "",
             "width": 550,
-            "height": 700,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "무브먼트 창립자 횡령 사실로... 프로젝트 '최악의 결말'",
@@ -283,11 +283,11 @@
             "authorName": "쇼킹 뉴스",
             "category": 4,
             "title": "무브먼트(MOVE) 의혹 해소... 불비트 \"상장 유지 결정\"",
-            "message": "무브먼트(Movement) 코인 개발진과 관련해 제기되었던 의혹은 사실이 아닌 것으로 확인되었습니다.\n\n불비트 거래소는 상장폐지 검토를 철회했으며, 무브먼트 코인의 거래는 기존과 동일하게 유지됩니다.",
+            "message": "무브먼트(Movement) 코인 개발진과 관련해 제기되었던 의혹은 사실이 아닌 것으로 확인되었습니다. 불비트 거래소는 상장폐지 검토를 철회했으며, 무브먼트 코인의 거래는 기존과 동일하게 유지됩니다.",
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 360,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "악성 루머 종결, 무브먼트 '청렴성' 검증 완료",
@@ -305,11 +305,11 @@
             "authorName": "쇼킹 뉴스",
             "category": 3,
             "title": "무브먼트 'Next Gen' 업그레이드... 속도 10배 향상",
-            "message": "무브먼트(Movement) 개발팀은 네트워크 성능과 안정성을 대폭 개선하는 신규 엔진 업그레이드를 공개했습니다.\n\n이번 업데이트를 통해 처리 속도와 확장성이 강화되며, 향후 생태계 확장을 위한 기반이 마련될 예정입니다.",
+            "message": "무브먼트(Movement) 개발팀은 네트워크 성능과 안정성을 대폭 개선하는 신규 엔진 업그레이드를 공개했습니다. 이번 업데이트를 통해 처리 속도와 확장성이 강화되며, 향후 생태계 확장을 위한 기반이 마련될 예정입니다.",
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 340,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "이더리움 L2의 정점 노린다... 신규 'MOVEVM' 엔진 도입",
@@ -322,44 +322,43 @@
             }
         },
         {
-            "key": "movement_D_revival_prepare",
+            "key": "movement_risk_resolved_03_03",
             "type": 0,
             "authorName": "쇼킹 뉴스",
             "category": 4,
-            "title": "절망에서 희망으로... 무브먼트 '재도약' 로드맵 발표",
-            "message": "무브먼트(Movement) 프로젝트 팀은 거래 중단 이후 프로젝트 재정비에 착수했다고 밝혔습니다.\n\n개발 로드맵 재정렬과 내부 구조 개선을 거쳐, 향후 재상장을 목표로 준비가 진행 중입니다.",
+            "message": "무브먼트(Movement) 프로젝트 측은 최근 불거진 내부 횡령 및 자금 운용 위반 혐의를 공식 인정하고, 당국에 과징금 전액을 납부했다고 밝혔습니다. 재단 측은 문제가 된 인사를 전원 해임하고 강력한 쇄신안을 발표했으며, 이에 따라 거래소 심의위원회는 투자자 보호 조치가 완료되었다고 판단, 거래 재개를 전격 결정했습니다.",
             "profileImage": "shocking.jpg",
-            "contentImage": "",
+            "contentImage": "court_settlement.jpg",
             "width": 550,
-            "height": 340,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
-                "title": "재단 전면 개편... \"커뮤니티와 함께 다시 시작하겠다\"",
-                "summary": "상장폐지라는 고통을 겪은 무브먼트 팀이 경영진 교체와 투명성 강화 대책을 담은 리바이벌 플랜을 내놓았습니다. 손실을 입은 투자자들을 위한 보상안 조율 소식도 들려오고 있습니다.",
-                "expertOpinion": "프로젝트의 생존 의지가 강합니다. 거래소의 재상장 심사 기준을 충족할 수 있을지가 핵심 관건입니다.",
-                "newsImage": "revival.jpg",
+                "title": "범죄 꼬리표 뗐다... 무브먼트, '피해 보상 기금' 조성하며 시장 복귀",
+                "summary": "자금 유용 혐의로 상장 폐지 기로에 섰던 무브먼트가 극적으로 생환했습니다. 재단은 범죄 사실을 인정하는 정면 돌파를 선택, 수백억 규모의 과징금 납부와 더불어 홀더들을 위한 '피해 복구 펀드' 조성을 약속했습니다. 시장은 이를 악재 해소로 받아들이는 분위기입니다.",
+                "expertOpinion": "과거의 잘못은 뼈아프지만, 오히려 '돈으로 해결할 수 있는 리스크'가 된 것이 시장에는 긍정적으로 작용했습니다. 불확실성이 제거된 상황에서 재단이 내놓은 강력한 보상안은 신규 매수세를 유입시키는 트리거가 될 것입니다.",
+                "newsImage": "comeback_chart.jpg",
                 "targetSymbols": [
                     "MOVE"
                 ]
             }
         },
         {
-            "key": "movement_E_relist",
+            "key": "movement_E_resume",
             "type": 0,
             "authorName": "불비트 뉴스",
             "category": 4,
-            "title": "[공지] 무브먼트(MOVE) 불비트 거래소 재상장 안내",
-            "message": "불비트 거래소는 내부 심사를 마친 뒤 무브먼트(Movement) 코인의 재상장을 공식 발표했습니다.\n\n무브먼트 코인은 금일 오전부터 거래가 재개되며, 향후 변동성 확대에 대한 주의가 필요합니다.",
+            "title": "[긴급] 무브먼트(MOVE) 거래 정지 해제... 오늘 오전 11시 거래 재개 확정",
+            "message": "수사 기관의 고강도 조사를 받았던 무브먼트(Movement) 프로젝트가 과징금 납부와 인적 쇄신안을 제출하며 거래 정지 상태에서 벗어났습니다. 불비트 거래소는 '사법 리스크 해소와 투자자 보호 조치가 확인됨에 따라 금일 오전부터 MOVE 토큰의 거래 지원을 재개한다'고 전격 발표했습니다.",
             "profileImage": "bullbit.jpg",
-            "contentImage": "",
+            "contentImage": "trading_resume_alert.jpg",
             "width": 550,
-            "height": 380,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
-                "title": "죽었던 코인의 부활, 무브먼트 'V자 반등' 성공할까?",
-                "summary": "이례적인 재상장 결정은 무브먼트 프로젝트의 개선 노력이 인정받은 결과입니다. 상장폐지 전 가격대를 회복할 수 있을지에 시장의 모든 이목이 쏠리고 있습니다.",
-                "expertOpinion": "재상장 초기에는 극심한 변동성이 예상됩니다. 단기 차익 실현 물량과 장기 홀더들의 물량이 충돌할 수 있으니 주의 깊게 관찰하십시오.",
-                "newsImage": "relisted.jpg",
+                "title": "지옥에서 돌아온 무브먼트... '벌금형 엔딩' 후 시장 복귀에 매수세 폭주",
+                "summary": "자금 유동성 위반 혐의에 대해 유죄 판결과 함께 거액의 과징금을 선고받았던 무브먼트가 모든 행정 절차를 마치고 다시 시장에 상장됩니다. 범죄 혐의라는 불확실성이 '비용 지불'로 종결되자, 대기 중이던 저가 매수세가 강력하게 유입되고 있습니다.",
+                "expertOpinion": "범죄 사실은 인정되었으나, 역설적으로 '더 이상 나올 악재가 없다'는 인식이 시장을 지배하고 있습니다. 거래 정지 기간 동안 억눌렸던 변동성이 거래 재개와 동시에 상방으로 분출될 가능성이 매우 높습니다.",
+                "newsImage": "market_rebound_green.jpg",
                 "targetSymbols": [
                     "MOVE"
                 ]
@@ -371,11 +370,11 @@
             "authorName": "불비트 뉴스",
             "category": 4,
             "title": "",
-            "message": "불비트 거래소는 신규 코인 CHK의 상장을 예고했습니다.\n\nCHK 코인은 약 하루 뒤 거래가 시작될 예정이며, CHK코인은 최근 인기있는 밈코인 입니다.",
+            "message": "신규 토큰인 CHK가 상장됩니다. \nCHK 코인은 약 하루 뒤 거래가 시작될 예정이며, CHK코인은 최근 인기있는 밈코인 입니다.",
             "profileImage": "bullbit.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 360
+            "height": 200
         },
         {
             "key": "choco_listing_announce_2",
@@ -383,11 +382,11 @@
             "authorName": "불비트 뉴스",
             "category": 4,
             "title": "",
-            "message": "불비트 거래소는 신규 코인 CHK의 상장을 완료했습니다.",
+            "message": "신규 코인 CHK의 상장을 완료했습니다.",
             "profileImage": "bullbit.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 360
+            "height": 200
         },
         {
             "key": "elonevent2",
@@ -399,7 +398,7 @@
             "profileImage": "elon.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 300,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "애니 추천 한마디에 펌핑? '머스크 리스크' 또 시작됐나",
@@ -417,11 +416,11 @@
             "authorName": "쇼킹 뉴스",
             "category": 2,
             "title": "",
-            "message": "[경제지표] 미 연준, 오는 14일 FOMC 금리 결정 발표 예정\n\n미국 연방준비제도(Fed)가 오는 1월 14일(현지시간) 올해 첫 연방공개시장위원회(FOMC) 정례회의를 열고 기준금리를 결정할 예정입니다. 이번 발표는 향후 상반기 통화 정책의 방향성을 가늠할 중요한 분수령이 될 것으로 전망되며, 발표 직후 시장의 변동성이 확대될 가능성이 예고되어 있습니다.",
+            "message": "미 연준, 오는 14일 FOMC 금리 결정 발표 예정입니다. 미국 연방준비제도(Fed)가 오는 1월 14일(현지시간) 올해 첫 연방공개시장위원회(FOMC) 정례회의를 열고 기준금리를 결정할 예정입니다. 이번 발표는 향후 상반기 통화 정책의 방향성을 가늠할 중요한 분수령이 될 것으로 전망되며, 발표 직후 시장의 변동성이 확대될 가능성이 예고되어 있습니다.",
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 300
+            "height": 200
         },
         {
             "key": "fomc_01_14",
@@ -431,9 +430,9 @@
             "title": "",
             "message": "인플레이션은 여전히 우리의 목표치인 2%를 상회하고 있으며, 노동 시장의 수급 불균형 또한 지속되고 있습니다. 이에 따라 연준은 기준금리를 25bp 인상하기로 결정했습니다. 우리는 물가 안정을 회복하기 위해 제약적인 정책 기조를 유지할 준비가 되어 있으며, 향후 데이터에 따라 추가적인 조치를 취할 것입니다.",
             "profileImage": "powell.jpg",
-            "contentImage": "powell_announce_01",
+            "contentImage": "",
             "width": 550,
-            "height": 700,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "파월 의장, \"물가 안정 최우선\"... 매파적 동결 기대 저버려",
@@ -449,14 +448,14 @@
         {
             "key": "trump_01_16",
             "type": 0,
-            "authorName": "Donald Trump",
+            "authorName": "Donald J. Trump",
             "category": 2,
             "title": "",
             "message": "금리가 인상되었다는 소식이 들리지만, 걱정할 것 없습니다! 암호화폐 시장은 그 어느 때보다 강력하게 번성할 것이며, 주식 시장 또한 역사상 최고의 기록을 갈아치울 것입니다. 전 세계의 모든 유동성이 다시 미국으로 쏟아져 들어오고 있습니다. 우리는 다시 한번 미국을 위대하게 만들고 있습니다!",
             "profileImage": "trump.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 400,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "트럼프, \"금리 인상? 미국 경제의 질주는 막을 수 없다\"",
@@ -475,16 +474,16 @@
             "authorName": "쇼킹 뉴스",
             "category": 2,
             "title": "",
-            "message": "아비트럼은 오늘 레이어 2 생태계의 새로운 이정표를 세웠습니다. 수천 개의 dApp이 활성화되었으며, 총 예치 자산(TVL)은 역대 최고치를 경신했습니다. 'Nitro' 기술은 가장 빠르고 저렴한 이더리움 확장 솔루션임을 증명하고 있습니다. 이제 아비트럼은 단순한 네트워크를 넘어, 전 세계 금융의 새로운 표준이 될 것입니다. Ready for the Next Leap!",
+            "message": "아비트럼은 오늘 레이어 2 생태계의 새로운 이정표를 세웠습니다. 수천 개의 dApp이 활성화되었으며, 총 예치 자산(TVL)은 역대 최고치를 경신했습니다. 'Nitro' 기술은 가장 빠르고 저렴한 이더리움 확장 솔루션임을 증명하고 있습니다. 이제 아비트럼은 단순한 네트워크를 넘어, 전 세계 금융의 새로운 표준이 될 것입니다.",
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 400,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "아비트럼(ARB) TVL 100억 달러 돌파... 'L2 대장주' 입지 굳혀",
                 "summary": "아비트럼 재단이 발표한 최신 데이터에 따르면 네트워크 내 TVL이 전월 대비 45% 급증하며 100억 달러를 돌파했습니다. 특히 대규모 인센티브 프로그램인 STIP의 성공적인 안착으로 유동성이 폭발적으로 유입되고 있는 것으로 분석됩니다.",
-                "expertOpinion": "이것은 단순한 수치 상승이 아닌, 생태계의 완전한 주도권 확보를 의미합니다. 특히 이더리움 덴쿤 업그레이드 이후 수수료 절감 효과가 아비트럼에서 극대화되면서, 기관 투자자들의 자금이 대거 유입되고 있습니다. 차트상 주요 저항선을 돌파한 만큼, 단기 20% 이상의 추가 급등 가능성이 매우 높습니다.",
+                "expertOpinion": "이것은 단순한 수치 상승이 아닌, 생태계의 완전한 주도권 확보를 의미합니다.",
                 "newsImage": "",
                 "targetSymbols": [
                     "ARB"
@@ -501,12 +500,12 @@
             "profileImage": "saylor.png",
             "contentImage": "",
             "width": 550,
-            "height": 380,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "[속보] 마이크로스트래티지, 비트코인 5억 달러 첫 매수... '기관 시대' 개막",
                 "summary": "나스닥 상장사 마이크로스트래티지가 전격적으로 비트코인을 기업 자산으로 편입했다고 발표했습니다. 마이클 세일러 회장은 인플레이션 헤지 수단으로 비트코인을 선택했으며, 이더리움 네트워크의 기술적 잠재력 또한 높게 평가한다고 덧붙였습니다.",
-                "expertOpinion": "이것은 전례 없는 사건입니다. 보수적인 나스닥 기업이 암호화폐를 '공식 자산'으로 인정한 순간입니다. 비트코인은 기관들의 매수세가 붙으며 10% 이상 급등 중이며, 세일러가 이더리움의 '기술적 잠재력'을 직접 언급하면서 이더리움은 숏 스퀴즈와 함께 15% 이상의 폭발적인 상승세를 보이고 있습니다.",
+                "expertOpinion": "이것은 전례 없는 사건입니다. 보수적인 나스닥 기업이 암호화폐를 '공식 자산'으로 인정한 순간입니다.",
                 "newsImage": "strategy_01_19",
                 "targetSymbols": [
                     "BTC",
@@ -520,11 +519,11 @@
             "authorName": "불비트 뉴스",
             "category": 4,
             "title": "",
-            "message": "차세대 레이어1 블록체인 수이(SUI)가 곧 불비트 거래소에 상장될 예정입니다.\n\n많은 관심 바랍니다.",
+            "message": "차세대 레이어1 블록체인 수이(SUI)가 곧 불비트 거래소에 상장될 예정입니다.\n많은 관심 바랍니다.",
             "profileImage": "bullbit.png",
             "contentImage": "",
             "width": 550,
-            "height": 250
+            "height": 200
         },
         {
             "key": "sui_listing_news",
@@ -532,11 +531,11 @@
             "authorName": "불비트 뉴스",
             "category": 4,
             "title": "",
-            "message": "차세대 레이어1 블록체인 수이(SUI)가 오늘부로 불비트 거래소에 정식 상장되었습니다.\n\n상장 직후 변동성이 클 수 있으니 투자에 유의하시기 바랍니다.",
+            "message": "차세대 레이어1 블록체인 수이(SUI)가 오늘부로 불비트 거래소에 정식 상장되었습니다.\n상장 직후 변동성이 클 수 있으니 투자에 유의하시기 바랍니다.",
             "profileImage": "bullbit.png",
             "contentImage": "",
             "width": 550,
-            "height": 250
+            "height": 200
         },
         {
             "key": "positive_days_01_23",
@@ -548,12 +547,12 @@
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 350,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "시장에 긍정적 바람이 불다!",
                 "summary": "마이크로스트래티지의 시장 진입 소식이 전해진 이후 암호화폐 시장 전반에 걸쳐 긍정적인 기류가 형성되고 있습니다. 비트코인과 이더리움은 주요 저항선을 돌파했으며, 이는 기관들의 리스크 온(Risk-on) 심리 회복에 따른 결과로 분석됩니다.",
-                "expertOpinion": "나스닥 상장사의 비트코인 매수는 시장에 강력한 신뢰를 제공했습니다. 비트코인의 가격 지지선이 견고해짐에 따라 이더리움 등 주요 알트코인으로의 낙수 효과도 당분간 지속될 것으로 보입니다.",
+                "expertOpinion": "비트코인의 가격 지지선이 견고해짐에 따라 이더리움 등 주요 알트코인으로의 낙수 효과도 당분간 지속될 것으로 보입니다.",
                 "newsImage": "",
                 "targetSymbols": [
                     "BTC",
@@ -567,11 +566,11 @@
             "authorName": "쇼킹 뉴스",
             "category": 4,
             "title": "",
-            "message": "불비트 거래소는 신규 코인 PENGU의 상장을 예고했습니다.\n\nPENGU 코인은 약 하루 뒤 거래가 시작될 예정이며, 투자자들의 관심이 집중되고 있습니다.",
+            "message": "불비트 거래소는 신규 코인 PENGU의 상장을 예고했습니다.\nPENGU 코인은 약 하루 뒤 거래가 시작될 예정이며, 투자자들의 관심이 집중되고 있습니다.",
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 360
+            "height": 200
         },
         {
             "key": "pengu_B_listed",
@@ -579,11 +578,11 @@
             "authorName": "쇼킹 뉴스",
             "category": 4,
             "title": "",
-            "message": "불비트 거래소는 금일 PENGU 코인의 상장을 완료했습니다.\n\n현재 PENGU 코인은 기준가로 거래되고 있으며, 초기 시장 안정화가 진행 중입니다.",
+            "message": "불비트 거래소는 금일 PENGU 코인의 상장을 완료했습니다.\n현재 PENGU 코인은 기준가로 거래되고 있으며, 초기 시장 안정화가 진행 중입니다.",
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 360
+            "height": 200
         },
         {
             "key": "middle_east_issue_01_24",
@@ -595,7 +594,7 @@
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 350,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "중동 지역의 리스크... 하락장 오나?",
@@ -619,12 +618,12 @@
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 350,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "올해는 이더리움인가?",
                 "summary": "최근 이더리움 생태계 내의 온체인 데이터가 기록적인 수치를 보여주고 있습니다. 아비트럼(ARB), 옵티미즘(OP) 등 주요 레이어 2 네트워크의 처리량이 본딩되면서, 전체 시스템의 확장성이 비약적으로 상승했습니다.",
-                "expertOpinion": "이더리움은 현재 기술적 성숙 단계에 진입했으며, 이는 곧 생태계 전체의 펀더멘털 강화로 이어지고 있습니다. 글로벌 기업들의 네트워크 참여가 늘어남에 따라 이더리움 기반 시장의 파이는 앞으로도 지속적으로 커질 전망입니다.",
+                "expertOpinion": "이더리움은 현재 기술적 성숙 단계에 진입했으며, 이는 곧 생태계 전체의 펀더멘털 강화로 이어지고 있습니다. ",
                 "newsImage": "",
                 "targetSymbols": [
                     "ETH"
@@ -641,11 +640,11 @@
             "profileImage": "shocking.jpg",
             "contentImage": "",
             "width": 550,
-            "height": 350,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "비트코인 호황이 온다",
-                "summary": "최근 온체인 데이터 분석 결과, 거래소 밖으로 나가는 비트코인 물량이 역대급으로 증가하며 '공급 쇼크' 가능성이 제기되고 있습니다. 이는 투자자들이 현재 가격대를 저점으로 인식하고 장기 보유 모드로 전환했음을 의미하며, 향후 48시간 내에 10~15% 수준의 계단식 상승을 뒷받침하는 강력한 근거가 됩니다.",
+                "summary": "최근 온체인 데이터 분석 결과, 거래소 밖으로 나가는 비트코인 물량이 역대급으로 증가하며 '공급 쇼크' 가능성이 제기되고 있습니다. 이는 투자자들이 현재 가격대를 저점으로 인식하고 장기 보유 모드로 전환된 것일까요?.",
                 "expertOpinion": "투기 세력이 아닌 장기 가치 투자자의 유입은 시장의 질적 성장을 뜻하며, 이는 가장 이상적인 우상향 신호입니다.",
                 "newsImage": "",
                 "targetSymbols": [
@@ -658,12 +657,12 @@
             "key": "pengu_pump_02_03",
             "type": 0,
             "authorName": "PENGU Foundation",
-            "category": 1,
-            "message": "안녕 펭구 가족들! 드디어 우리가 약속했던 거대한 얼음산이 움직입니다.\n생태계의 가치를 높이기 위해 총 공급량의 10%를 소각하는 '아이스버그 번(Iceberg Burn)' 이벤트가 확정되었습니다. 또한, 장기 홀더들을 위한 특별 스테이킹 시스템이 오늘 자정 오픈됩니다.\n물량은 잠기고, 가치는 올라갑니다. 펭구들이 남극의 주인이 되는 날까지 멈추지 않습니다! HODL!",
+            "category": 3,
+            "message": "안녕 펭구 가족들! 드디어 우리가 약속했던 거대한 얼음산이 움직입니다. 생태계의 가치를 높이기 위해 총 공급량의 10%를 소각하는 '아이스버그 번(Iceberg Burn)' 이벤트가 확정되었습니다. 또한, 장기 홀더들을 위한 특별 스테이킹 시스템이 오늘 자정 오픈됩니다. 물량은 잠기고, 가치는 올라갑니다. 펭구들이 남극의 주인이 되는 날까지 멈추지 않습니다! HODL!",
             "profileImage": "pengu_logo.jpg",
             "contentImage": "pengu_event_banner.jpg",
             "width": 550,
-            "height": 450,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "펭구 토큰 소각 일정과 스테이킹 보상안 공개",
@@ -679,12 +678,12 @@
             "key": "anime_pump_02_05",
             "type": 0,
             "authorName": "ANIME Project Team",
-            "category": 1,
+            "category": 3,
             "message": "한국의 애니메 팬 여러분, 기다려주셔서 감사합니다! 국내 최대 만화방 프랜차이즈 일부 지점과 협력하여, 오늘부터 현금 대신 ANIME 코인으로 이용료와 간식을 결제할 수 있는 시스템이 전격 도입됩니다. 우리의 목표는 단순한 토큰을 넘어 '서브컬처의 기축 통화'가 되는 것입니다. 이제 만화책을 보며 실제 ANIME의 가치를 경험해 보세요! (오픈 기념 결제 시 10% 추가 할인 이벤트 진행 중)",
             "profileImage": "anime_logo.jpg",
             "contentImage": "anime_pay_korea.jpg",
             "width": 550,
-            "height": 450,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
                 "title": "애니메코인 한국 인프라 확보 !!",
@@ -699,18 +698,18 @@
         {
             "key": "middle_east_trump_02_06",
             "type": 0,
-            "authorName": "Donald Trump",
+            "authorName": "Donald J. Trump",
             "category": 2,
             "message": "중동 지도자들은 똑똑히 들어야 합니다. 만약 전쟁을 일으켜서 세계를 위험에 빠뜨린다면, 미국의 강력한 응징이 기다릴 것입니다. 우리는 세계 최강의 군대를 가졌고, 참전하는 순간 모든 게 끝날 것입니다! 전쟁을 택한다면 오직 파멸뿐입니다. 선택은 당신들의 몫입니다.",
             "profileImage": "trump.jpg",
             "contentImage": "middle_east_peace_deal.jpg",
             "width": 550,
-            "height": 500,
+            "height": 200,
             "article": {
                 "provider": "MangoRock Investment",
-                "title": "[속보] 트럼프 '중동 전쟁 시 즉각 참전' 무력 시사... 공포 휩싸인 중동, 평화 택하나",
-                "summary": "도널드 트럼프 전 대통령이 중동 분쟁 세력을 향해 '미군의 즉각적인 개입과 파멸적인 응징'을 예고하며 강력한 경고장을 날렸습니다. 이례적으로 강경한 무력 사용 시사에 중동 내 긴장감이 최고조에 달했으나, 시장은 오히려 이를 '전쟁 가능성을 원천 차단하는 강력한 억제력'으로 해석하며 리스크 해소 단계에 진입했습니다.",
-                "expertOpinion": "미국의 참전 가능성이라는 가장 강력한 카드가 나오면서, 역설적으로 중동의 전쟁 리스크는 급격히 소멸했습니다. 이제 갈 곳 잃은 중동의 거대 자본은 안전한 비즈니스 환경을 찾아 비트코인 등 미국 주도의 디지털 자산 시장으로 빠르게 유입될 것으로 보입니다.",
+                "title": "트럼프 '중동 전쟁 시 즉각 참전' 무력 시사... 공포 휩싸인 중동, 평화 택하나",
+                "summary": "도널드 트럼프 전 대통령이 중동 분쟁 세력을 향해 '미군의 즉각적인 개입과 파멸적인 응징'을 예고하며 강력한 경고장을 날렸습니다. 이례적으로 강경한 무력 사용 시사에 중동 내 긴장감이 최고조에 달하고 있습니다.",
+                "expertOpinion": "미국의 참전 가능성이라는 가장 강력한 카드가 나오면서, 긴장감이 고조되고 있습니다.",
                 "newsImage": "us_military_strike_force.jpg",
                 "targetSymbols": [
                     "BTC",
@@ -719,50 +718,677 @@
             }
         },
         {
-    "key": "Aave_positive_02_09",
-    "type": 0,
-    "authorName": "Stani Kulechov",
-    "category": 3,
-    "postYn": true, 
-    "message": "Aave V4의 시대가 열립니다! 이번 업데이트는 단순한 업그레이드가 아닙니다. 완전히 새로운 'Unified Liquidity Layer'를 통해 체인 간 벽을 허물고 최적의 금리를 자동으로 찾아줄 것입니다. 기관용 포털까지 탑재된 V4는 디파이 역사상 가장 거대한 도약이 될 것입니다. #AAVE #V4 #DeFiFuture",
-    "profileImage": "aave_logo.jpg",
-    "contentImage": "aave_v4_roadmap.jpg",
-    "width": 550,
-    "height": 550,
-    "article": {
-        "provider": "Decentralized Finance Post",
-        "title": "AAVE V4 로드맵 전격 공개... '디파이 1위 굳히기' 들어가나",
-        "summary": "세계 최대 렌딩 프로토콜 에이브(AAVE)가 차세대 버전인 V4의 로드맵을 발표했습니다. 이번 업데이트의 핵심은 '통합 유동성 레이어'로, 여러 체인에 분산된 자금을 하나처럼 활용해 자본 효율성을 극대화하는 것입니다. 또한 기관 투자자를 위한 전용 컴플라이언스 툴이 포함되어 대규모 자금 유입이 기대되고 있습니다.",
-        "expertOpinion": "V4는 에이브를 단순한 앱에서 하나의 인프라 레이어로 격상시킬 것입니다. 단기적으로 최소 50% 이상의 강한 랠리가 이어질 가능성이 매우 높습니다.",
-        "newsImage": "aave_v4_chart.jpg",
-        "targetSymbols": [
-            "AAVE"
-        ]
-    }
-},
-{
-    "key": "middle_east_war_02_11",
-    "type": 0,
-    "authorName": "Ali Al-Mansour",
-    "category": 2,
-    "postYn": true, 
-    "message": "서구권의 오만한 협박은 더 이상 통하지 않습니다. 우리는 방금 미국과 동맹을 맺은 인근 국가들의 미군 기지 14곳을 우리의 최첨단 정밀 미사일로 완전히 파괴했습니다. 이것은 시작일 뿐입니다. 우리도 평화를 원하지만, 적의 위협 앞에 결코 도망가지 않습니다. 우리의 주권을 건드린다면 파멸적인 대가를 치르게 될 것입니다.",
-    "profileImage": "middle_east_leader.jpg",
-    "contentImage": "missile_strike_base.jpg",
-    "width": 550,
-    "height": 550,
-    "article": {
-        "provider": "Global Conflict Watch",
-        "title": "[긴급] 중동 연합군, 미군 기지 14곳 동시 타격... 전면전 위기 고조",
-        "summary": "중동 연합군의 지도자 알 만수르가 서구권의 압박에 정면 대응을 선언했습니다. 발표 직후 발생한 미사일 공격으로 주요 미군 기지 14곳이 심각한 타격을 입었으며, 이는 트럼프 전 대통령의 '응징' 발언에 대한 직접적인 반격으로 풀이됩니다. 중동 측은 '평화를 원하나 물러서지 않겠다'는 입장을 고수하며 전면전 불사 의지를 다지고 있습니다.",
-        "expertOpinion": "이것은 단순한 국지적 충돌이 아닙니다. 미군 기지가 직접 타격받았으므로 미국의 즉각적인 보복이 예상되며, 이는 국제 유가 폭등과 자산 시장의 대폭락을 야기할 수 있는 '블랙 스완'급 사건입니다. 시장에서 즉시 이탈할 것을 권고합니다.",
-        "newsImage": "war_flame_middleeast.jpg",
-        "targetSymbols": [
-            "BTC",
-            "ETH",
-            "XRP"
-        ]
-    }
-}
+            "key": "Market_goes_down_02_08",
+            "type": 0,
+            "authorName": "Ali Al-Mansour",
+            "category": 2,
+            "message": "서구는 들으십시오. 우리의 자원과 주권은 협박으로 굴복시킬 수 있는 것이 아닙니다. 외부 세력의 개입은 오직 더 큰 불길을 지필 뿐입니다. 우리는 에너지 공급망을 무기화할 준비가 되어 있으며, 서방의 오만이 어떤 대가를 치르게 될지 곧 깨닫게 될 것입니다.",
+            "profileImage": "middle_east_leader.jpg",
+            "contentImage": "oil_refinery_flame.jpg",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "중동 연합 '에너지 무기화' 선포... 트럼프 경고에 정면 충돌, 시장 대폭락",
+                "summary": "중동의 주요 인사 알 만수르가 트럼프 전 대통령의 참전 시사에 정면으로 반박하며 '에너지 공급 차단'을 시사했습니다. 평화 억제력을 기대했던 시장의 예측은 빗나갔으며, 호르무즈 해협 봉쇄 위기가 고조되면서 글로벌 증시와 가상자산 시장은 패닉 셀(Panic Sell) 양상을 보이고 있습니다.",
+                "expertOpinion": "트럼프의 강경책이 오히려 중동 세력을 결집시키는 역효과를 낳았습니다. 변동성에 유의하세요.",
+                "newsImage": "stock_market_crash_red.jpg",
+                "targetSymbols": [
+                    "BTC",
+                    "ETH"
+                ]
+            }
+        },
+        {
+            "key": "Aave_positive_02_09",
+            "type": 0,
+            "authorName": "Stani Kulechov",
+            "category": 3,
+            "postYn": true,
+            "message": "Aave V4의 시대가 열립니다! 이번 업데이트는 단순한 업그레이드가 아닙니다. 완전히 새로운 'Unified Liquidity Layer'를 통해 체인 간 벽을 허물고 최적의 금리를 자동으로 찾아줄 것입니다. 기관용 포털까지 탑재된 V4는 디파이 역사상 가장 거대한 도약이 될 것입니다.",
+            "profileImage": "aave_logo.jpg",
+            "contentImage": "aave_v4_roadmap.jpg",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "AAVE V4 로드맵 전격 공개... '디파이 1위 굳히기' 들어가나",
+                "summary": "세계 최대 렌딩 프로토콜 에이브(AAVE)가 차세대 버전인 V4의 로드맵을 발표했습니다. 이번 업데이트의 핵심은 '통합 유동성 레이어'로, 여러 체인에 분산된 자금을 하나처럼 활용해 자본 효율성을 극대화하는 것입니다. 또한 기관 투자자를 위한 전용 컴플라이언스 툴이 포함되어 대규모 자금 유입이 기대되고 있습니다.",
+                "expertOpinion": "V4는 에이브를 단순한 앱에서 하나의 인프라 레이어로 격상시킬 것입니다.",
+                "newsImage": "aave_v4_chart.jpg",
+                "targetSymbols": [
+                    "AAVE"
+                ]
+            }
+        },
+        {
+            "key": "middle_east_war_02_11",
+            "type": 0,
+            "authorName": "Ali Al-Mansour",
+            "category": 2,
+            "postYn": true,
+            "message": "서구권의 오만한 협박은 더 이상 통하지 않습니다. 우리는 방금 미국과 동맹을 맺은 인근 국가들의 미군 기지 4곳을 우리의 최첨단 정밀 미사일로 완전히 파괴했습니다. 이것은 시작일 뿐입니다. 우리도 평화를 원하지만, 적의 위협 앞에 결코 도망가지 않습니다. 우리의 주권을 건드린다면 파멸적인 대가를 치르게 될 것입니다.",
+            "profileImage": "middle_east_leader.jpg",
+            "contentImage": "missile_strike_base.jpg",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "중동 연합군, 미군 동맹 기지 4곳 동시 타격... 전면전 위기 고조",
+                "summary": "중동 연합군의 지도자 알 만수르가 서구권의 압박에 정면 대응을 선언했습니다. 발표 직후 발생한 미사일 공격으로 주요 미군 기지 4곳이 심각한 타격을 입었으며, 이는 트럼프 전 대통령의 '응징' 발언에 대한 직접적인 반격으로 풀이됩니다.",
+                "expertOpinion": "이것은 단순한 국지적 충돌이 아닙니다. 시장에서 즉시 이탈할 것을 권고합니다.",
+                "newsImage": "war_flame_middleeast.jpg",
+                "targetSymbols": [
+                    "BTC",
+                    "ETH",
+                    "XRP"
+                ]
+            }
+        },
+        {
+            "key": "trump_middle_east_war_02_13",
+            "type": 0,
+            "authorName": "Donald J. Trump",
+            "category": 2,
+            "postYn": true,
+            "message": "중동의 평화는 말로만 구걸해서 얻어지는 것이 아닙니다. 나는 이 지역의 진정한 평화와 안정을 위해, 누구보다 빠르고 강력하게 상황을 정리할 것을 명령했습니다. 질질 끄는 전쟁은 비극일 뿐입니다. 우리는 압도적인 힘으로 아주 짧은 시간 안에 분쟁을 종식시킬 것입니다. 이것은 파괴를 위한 것이 아니라, 평화를 앞당기기 위한 결단입니다. 우리는 반드시 해낼 것입니다!",
+            "profileImage": "trump.jpg",
+            "contentImage": "trump_peace_through_strength.jpg",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "트럼프 '평화를 위한 속전속결' 선언... 중동 사태 분수령 맞나",
+                "summary": "도널드 트럼프 전 대통령이 '힘을 통한 평화' 원칙에 따라 중동 분쟁에 대한 무력 개입을 승인했습니다. 그는 이번 작전이 단순한 보복이 아닌, 불필요한 인명 피해를 줄이기 위해 전쟁을 가장 빠르게 끝내는 방법임을 강조했습니다.",
+                "expertOpinion": "트럼프의 전략은 '짧고 굵은 충격'입니다. 군사 작전 개시와 동시에 자산 시장은 일시적 공포 상태에 빠져 모든 코인이 급락할 수 있습니다.",
+                "newsImage": "us_navy_peace_mission.jpg",
+                "targetSymbols": [
+                    "BTC",
+                    "ETH"
+                ]
+            }
+        },
+        {
+            "key": "trump_middle_east_war_02_15",
+            "type": 0,
+            "authorName": "쇼킹 뉴스",
+            "category": 2,
+            "postYn": true,
+            "message": "미국과 중동 지도부 사이에 긴급 직통 핫라인이 개설되었습니다. 양측은 추가적인 군사 행동을 잠정 중단하고, 외교적 해결을 위한 실무 협상에 착수하기로 합의했습니다. 일촉즉발의 전면전 위기 속에서 극적인 중재 국면이 열리고 있습니다.",
+            "profileImage": "shocking.jpg",
+            "contentImage": "hotline_diplomacy_middle_east.jpg",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "[중동 '직통 핫라인' 전격 가동... 군사 긴장 완화 신호탄",
+                "summary": "도널드 트럼프 전 대통령의 강경 발언 이후 48시간 만에 미국과 중동 주요국 간의 직접 대화 창구가 마련되었습니다. 외교 당국은 이번 핫라인 개설이 오판에 의한 우발적 충돌을 방지하고, 장기적인 평화 로드맵을 구상하기 위한 첫 단계라고 밝혔습니다. 양측 모두 '전면전은 공멸'이라는 인식 아래 협상 테이블에 마주 앉은 것으로 보입니다.",
+                "expertOpinion": "군사적 긴장감이 정점을 찍은 후 나타난 전형적인 '냉각기' 진입 신호입니다.",
+                "newsImage": "us_middle_east_negotiation.jpg",
+                "targetSymbols": [
+                    "BTC",
+                    "ETH"
+                ]
+            }
+        },
+        {
+            "key": "trump_middle_east_deal_success_02_16",
+            "type": 0,
+            "authorName": "Donald J. Trump",
+            "category": 2,
+            "postYn": true,
+            "message": "모두가 불가능하다고 말했지만, 나는 해냈습니다! 방금 중동의 지도자들과 역사적인 '세기의 대타결'에 서명했습니다. 더 이상의 총성은 없습니다. 오직 끝없는 비즈니스와 번영만이 있을 것입니다. 나의 강력한 거래 기술이 수십 년간의 분쟁을 단 며칠 만에 종식시켰습니다. 이제 미국과 중동은 함께 위대해질 것입니다. 평화는 돈이 됩니다. 아주 큰 돈이 말이죠!",
+            "profileImage": "trump.jpg",
+            "contentImage": "trump_historic_handshake_deal.jpg",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "트럼프 '중동 대타결' 공식 서명... 지정학적 리스크 순식간에 증발",
+                "summary": "도널드 트럼프가 주도한 중동 평화 협상이 극적으로 타결되었습니다. 이번 협정은 단순한 종전을 넘어, 미군의 안전 보장과 중동의 대규모 인프라 투자를 맞교환하는 '경제 중심적 평화' 모델을 채택했습니다. 전쟁의 공포로 짓눌려 있던 글로벌 금융 시장은 역사상 유례없는 안도 랠리를 준비하고 있으며, 불확실성이 제거된 자산 시장으로 거대 자금이 유입될 조짐을 보이고 있습니다.",
+                "expertOpinion": "이것은 단순한 평화가 아니라 '초강력 펌핑'의 신호탄입니다.",
+                "newsImage": "middle_east_peace_celebration.jpg",
+                "targetSymbols": [
+                    "BTC",
+                    "ETH",
+                    "SOL",
+                    "XRP"
+                ]
+            }
+        },
+        {
+            "key": "us_goverment_02_18",
+            "type": 0,
+            "authorName": "쇼킹 뉴스",
+            "category": 2,
+            "postYn": true,
+            "message": "오늘 미 법무부는 남미 최대 범죄 조직인 '로스 로보스'의 암호화폐 세탁 거점을 소탕했습니다. 이 과정에서 비트코인을 포함한 약 20조 원 규모의 가상자산을 전격 몰수했습니다. 이는 역사상 최대 규모의 몰수 작전이며, 우리는 범죄 자금이 시장을 교란하는 것을 절대 좌시하지 않을 것입니다.",
+            "profileImage": "shocking.jpg",
+            "contentImage": "cartel_crypto_seizure.jpg",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "[충격] 남미 갱단 '20조 원' 규모 코인 몰수... 시장은 매도 폭탄 우려에 패닉",
+                "summary": "미국 정부가 남미 마약 카르텔의 자금줄인 암호화폐 지갑들을 확보하는 데 성공했습니다. 몰수된 금액은 무려 20조 원에 달하며, 대부분이 비트코인과 이더리움으로 구성되어 있습니다. 투자자들은 정부가 이 막대한 물량을 조만간 시장에 매각(Auction)할 것이라는 공포에 휩싸이며 투매에 나서고 있습니다.",
+                "expertOpinion": "20조 원은 시장이 단기에 소화하기 힘든 엄청난 물량입니다. 정부가 현금화를 위해 시장가로 던지기 시작하면 비트코인은 수천 달러 이상 순식간에 하락할 수 있습니다.",
+                "newsImage": "market_crash_red_screen.jpg",
+                "targetSymbols": [
+                    "BTC",
+                    "ETH"
+                ]
+            }
+        },
+        {
+            "key": "AI_call_02_19",
+            "type": 2,
+            "title": "전화",
+            "message": "안녕하세요. 망고입니다.. 요즘 AI 테마가 좋아보이네요? 그냥 그렇다구요..!",
+            "profileImage": "anonymous.jpg",
+            "contentImage": ""
+        },
+        {
+            "key": "AI_theme_event_02_20",
+            "type": 0,
+            "authorName": "Sam Altman",
+            "category": 2,
+            "postYn": true,
+            "message": "인공지능(AI)이 인간보다 더 인간처럼 말하고 행동하는 세상이 예상보다 훨씬 빨리 오고 있습니다. 이제 온라인에서 '인간임'을 증명하는 것은 선택이 아닌 생존의 문제입니다. 월드코인(WLD)은 단순한 코인이 아닙니다. 그것은 AI가 지배할 미래에 우리가 인간으로서의 권리와 혜택(UBI)을 보장받을 수 있는 유일한 '디지털 여권'입니다. 오늘 우리는 1억 번째 '인증된 인간'을 맞이할 준비가 되었습니다.",
+            "profileImage": "sam_altman.jpg",
+            "contentImage": "altman_world_id_vision.jpg",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "[특보] 샘 올트먼 \"WLD, AI 시대의 기본소득 및 신원 표준 될 것\"... 글로벌 수요 폭발",
+                "summary": "OpenAI의 CEO이자 월드코인의 창시자인 샘 올트먼이 AI 기술의 급격한 발전 속에서 월드 ID(World ID)의 필수성을 다시 한번 강조했습니다. 그는 전 세계 주요 기업 및 정부가 봇(Bot)과 실제 인간을 구분하기 위해 월드코인의 홍채 인식 기술을 표준으로 채택하기 시작했다고 밝혔습니다. 이 소식에 WLD는 물론 관련 AI 섹터 자산들이 강력한 매수세를 동반하며 급등하고 있습니다.",
+                "expertOpinion": "올트먼의 이번 발언은 WLD를 단순한 투자 자산에서 '사회적 인프라'로 격상시켰습니다.",
+                "newsImage": "wld_chart_surge.jpg",
+                "targetSymbols": [
+                    "WLD"
+                ]
+            }
+        },
+        {
+            "key": "vitalik_eth_undervalued_02_22",
+            "type": 0,
+            "authorName": "Vitalik Buterin",
+            "category": 2,
+            "postYn": true,
+            "message": "시장은 가끔 가장 명백한 가치를 무시하곤 합니다. 현재 이더리움 네트워크가 창출하는 막대한 수수료 수익, L2 생태계의 폭발적인 활성도, 그리고 기관들의 실질적인 채택률을 고려할 때, 지금의 ETH 가격은 논리적으로 설명하기 어려울 정도로 심각하게 저평가되어 있습니다. 우리는 단순한 밈이나 소음이 아닌 전 세계를 연결하는 '금융 인프라'를 구축하고 있으며, 진정한 가치는 결국 압도적인 데이터로 증명될 것입니다.",
+            "profileImage": "vitalik_buterin.jpg",
+            "contentImage": "vitalik_eth_undervalued.jpg",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "비탈릭 부테린 \"현재 ETH 가격은 심각한 저평가\"... 이더리움 대반격 신호탄?",
+                "summary": "이더리움의 창시자 비탈릭 부테린이 이례적으로 직접 시장 가격에 대해 언급하며 ETH의 근본적인 가치가 심각하게 저평가되어 있다고 주장했습니다. 그는 다른 레이어1 경쟁자들이나 테마 코인들의 화려한 마케팅에 가려져 있지만, 실제 네트워크 지표와 온체인 수익 모델은 이더리움이 압도적 1위임을 강조했습니다. 창시자의 강력한 펀더멘털 자신감 표출에 고래들과 기관 투자자들의 매수세가 대거 유입되고 있습니다.",
+                "expertOpinion": "펀더멘털 대비 가격이 억눌려 있던 지금이 가장 완벽한 '저점 매수(Buy the Dip)' 기회일 수 있습니다.",
+                "newsImage": "eth_bullish_chart.jpg",
+                "targetSymbols": [
+                    "ETH"
+                ]
+            }
+        },
+        {
+            "key": "virtual_listing_announce_02_24",
+            "type": 0,
+            "authorName": "불비트 뉴스",
+            "category": 4,
+            "title": "",
+            "message": "신규 코인 VIRUAL가 내일 상장됩니다. \n VIRUAL 코인은 다중 모달 AI 에이전트를 생성, 토큰화, 공동 소유 및 수익화할 수 있는 플랫폼 입니다.",
+            "profileImage": "bullbit.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 200
+        },
+        {
+            "key": "virtual_listing_announce_02_25",
+            "type": 0,
+            "authorName": "불비트 뉴스",
+            "category": 4,
+            "title": "",
+            "message": "불비트 거래소는 신규 코인 VIRUAL의 상장을 완료했습니다.",
+            "profileImage": "bullbit.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 200
+        },
+        {
+            "key": "positive_days_02_27",
+            "type": 0,
+            "authorName": "쇼킹 뉴스",
+            "category": 2,
+            "postYn": true,
+            "message": "최근 온체인 데이터 분석 결과, 거래소 외부로 유출되는 알트코인 물량이 역대 최고치를 경신했습니다. 이는 기관 투자자들이 장기 보유를 목적으로 매집을 진행하고 있다는 신호로 해석됩니다. 비트코인에 집중되었던 자금의 흐름이 점차 주요 알트코인 섹터로 분산되는 양상을 보이고 있습니다.",
+            "profileImage": "shocking.jpg",
+            "contentImage": "institutional_flow_chart.jpg",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "기관 투자자, 알트코인 비중 확대 포착... 시장 중심축 이동하나",
+                "summary": "글로벌 자산운용사들이 최근 발표한 분기 보고서에 따르면, 포트폴리오 내 알트코인 편입 비중이 전분기 대비 평균 15% 상승한 것으로 나타났습니다. 특히 레이어1 메인넷과 오라클, AI 관련 자산들에 대한 선호도가 뚜렷하게 확인되고 있습니다. 이는 단순한 단기 투기 수요가 아닌, 생태계 성장에 기반한 전략적 투자 확대로 분석됩니다.",
+                "expertOpinion": "과거 비트코인 독주 체제와 달리, 현재는 시장의 자금이 각 섹터별 우량 알트코인으로 순환되고 있는 단계입니다.",
+                "newsImage": "alt_accumulation_data.jpg",
+                "targetSymbols": []
+            }
+        },
+        {
+            "key": "alt_days_comming_03_02",
+            "type": 0,
+            "authorName": "찌라시맨",
+            "category": 1,
+            "title": "",
+            "message": "조만간 알트장이 오지 않을까? 솔직히 올 거 같긴함",
+            "profileImage": "Newsguy.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 200
+        },
+        {
+            "key": "us_treasury_hold_03_03",
+            "type": 0,
+            "authorName": "US Goverment",
+            "category": 2,
+            "postYn": true,
+            "message": "미 재무부는 최근 법무부가 몰수한 20조 원 규모의 가상자산을 즉각 매각하지 않기로 결정했습니다. 해당 자산은 재무부 산하 보안 지갑으로 전량 이관되었으며, 국가 전략적 차원에서 관리될 예정입니다. 시장의 급격한 변동성을 초래할 수 있는 대량 매각 계획은 현재로선 전혀 고려하고 있지 않습니다.",
+            "profileImage": "us_treasury.jpg",
+            "contentImage": "us_digital_vault.jpg",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "미 재무부 \"몰수 코인 20조 원, 매도 없이 국고 보관\"... 시장 안도감 확산",
+                "summary": "남미 카르텔로부터 몰수한 대규모 암호화폐 물량이 시장에 풀릴 것이라는 우려가 해소되었습니다. 미 재무부는 오늘 공식 성명을 통해 몰수된 비트코인과 이더리움을 국가 전략 자산의 일부로 보고, 재무부 전용 지갑에 장기 보관하겠다고 발표했습니다. 이로 인해 우려되었던 '20조 원 규모 매도 폭탄' 가능성은 사실상 사라졌습니다.",
+                "expertOpinion": "정부의 이번 결정은 암호화폐를 실질적인 가치 저장 수단으로 인정하기 시작했다는 상징적 의미가 큽니다.",
+                "newsImage": "market_recovery_green.jpg",
+                "targetSymbols": [
+                    "BTC",
+                    "ETH"
+                ]
+            }
+        },
+        {
+            "key": "global_meme_festival_03_06",
+            "type": 0,
+            "authorName": "쇼킹 뉴스",
+            "category": 3,
+            "postYn": true,
+            "message": "전 세계 코인 커뮤니티가 하나로 뭉칩니다! '제1회 글로벌 밈 코인 페스티벌(GMF)'이 이번 주말 화려한 막을 올립니다. 일론 머스크를 포함한 주요 밈 인플루언서들이 대거 참여를 예고하며, 밈 코인 생태계는 역대급 축제 분위기에 휩싸였습니다. 단순히 농담으로 시작된 코인들이 이제 거대한 금융 문화로 자리 잡고 있습니다.",
+            "profileImage": "shocking.jpg",
+            "contentImage": "global_meme_festival_party.jpg",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "\"밈은 죽지 않는다\"... 글로벌 밈 페스티벌 앞두고 밈 섹터 전방위적 '폭등'",
+                "summary": "암호화폐 시장의 가장 강력한 화력을 자랑하는 '밈(Meme)' 테마가 다시 한번 불타오르고 있습니다. 이번 '글로벌 밈 페스티벌' 개최 소식에 따라 전 세계 커뮤니티의 화력이 집중되며 주요 밈 자산들이 수직 상승 중입니다. 특히 페스티벌 기간 동안 깜짝 발표나 대규모 소각 이벤트가 있을 것이라는 루머가 돌면서 신규 매수세가 걷잡을 수 없이 유입되고 있습니다.",
+                "expertOpinion": "밈 코인은 기술적 가치보다 '커뮤니티의 응집력'과 '재미'에 의해 가격이 결정됩니다.",
+                "newsImage": "meme_coin_rally.jpg",
+                "targetSymbols": [
+                    "DOGE",
+                    "CHK",
+                    "MOVE",
+                    "PENGU",
+                    "PEPE",
+                    "ANIME",
+                    "TRUMP"
+                ]
+            }
+        },
+        {
+            "key": "sui_positive_03_09",
+            "type": 0,
+            "authorName": "SUI Foundation",
+            "category": 2,
+            "message": "차세대 블록체인 '수이(SUI)'가 글로벌 대형 게임사 및 커머스 기업들과 손잡고 '1초 결제' 시스템을 선보입니다. 기존 블록체인의 고질적인 문제였던 느린 속도를 완전히 해결하며, 이제 편의점이나 온라인 쇼핑몰에서도 신용카드만큼 빠른 디지털 자산 결제가 가능해질 전망입니다.",
+            "profileImage": "sui_foundation.jpg",
+            "contentImage": "sui_high_speed_payment.jpg",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "기다림 없는 블록체인 시대, 수이(SUI) 네트워크가 바꾸는 쇼핑의 미래",
+                "summary": "메타(구 페이스북) 출신 개발진이 만든 수이 블록체인이 압도적인 처리 속도를 바탕으로 실물 경제 시스템에 전격 도입됩니다. 이번 파트너십을 통해 사용자들은 복잡한 전송 과정 없이 앱 터치 한 번으로 즉시 물건을 구매할 수 있게 됩니다. 이는 블록체인 기술이 '체감할 수 있는 일상'으로 들어오는 결정적 계기가 될 것입니다.",
+                "expertOpinion": "수이는 '객체 중심'이라는 독특한 설계 덕분에 수만 건의 거래를 동시에 처리해도 속도가 저하되지 않습니다. 호재가 예상됩니다.",
+                "newsImage": "sui_lifestyle_integration.jpg",
+                "targetSymbols": [
+                    "SUI"
+                ]
+            }
+        },
+        {
+            "key": "south_america_positive_03_10",
+            "type": 0,
+            "authorName": "쇼킹 뉴스",
+            "category": 2,
+            "message": "남미의 경제 대국 아르헨티나가 암호화폐를 공식 결제 수단으로 인정하는 파격적인 행보를 보이고 있습니다. 밀레이 정부의 금융 개혁안에 따라 이제 식당, 마트 등 일상생활 어디서든 암호화폐로 결제할 수 있는 법적 근거가 마련되었습니다.",
+            "profileImage": "shocking.jpg",
+            "contentImage": "south_america_btc_adoption.jpg",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "아르헨티나, 암호화폐 '법정 통화' 급의 지위 부여... 남미발 코인 열풍 부나",
+                "summary": "지속적인 인플레이션으로 몸살을 앓던 아르헨티나가 자국 통화의 대안으로 암호화폐를 전격 수용했습니다. 정부는 민간 계약에서 암호화폐를 사용한 거래를 법적으로 보장하며, 주요 은행들에게도 가상자산 서비스를 허용하는 가이드라인을 발표했습니다. 이는 엘살바도르에 이어 국가 단위의 대규모 암호화폐 채택 사례로 기록될 전망입니다.",
+                "expertOpinion": "이번 조치는 초인플레이션 국가들에게 암호화폐가 실질적인 '가치 저장 수단'이자 '교환 매개체'가 될 수 있음을 시사합니다.",
+                "newsImage": "argentina_bitcoin_legal.jpg",
+                "targetSymbols": [
+                    "BTC",
+                    "USDT"
+                ]
+            }
+        },
+        {
+            "key": "trump_big_days_comming_03_13",
+            "type": 0,
+            "authorName": "Donald J. Trump",
+            "category": 2,
+            "message": "미국 역사상, 아니 인류 역사상 전례 없는 대호황이 오고 있습니다! 가짜 뉴스들은 숨기려 하지만, 우리의 경제 정책과 암호화폐 전략은 이미 작동 중입니다. 암호화폐는 미국의 새로운 엔진이 될 것이며, 여러분은 곧 상상도 못 할 부를 보게 될 것입니다. 즐기세요!",
+            "profileImage": "trump.jpg",
+            "contentImage": "trump_golden_bull.jpg",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "트럼프 대통령 \"암호화폐는 미국의 운명... 역대 최강의 호황장 준비 완료\"",
+                "summary": "도널드 트럼프 대통령이 SNS를 통해 다시 한번 시장에 강력한 메시지를 던졌습니다. 그는 현재의 시장 상황을 '폭풍 전야의 고요'에 비유하며, 곧 발표될 세제 혜택과 규제 철폐가 암호화폐와 부동산 시장에 역사적인 불을 지필 것이라고 호언장담했습니다.",
+                "expertOpinion": "트럼프의 발언은 단순한 정치적 수사를 넘어, 실제로 준비 중인 '국가 비트코인 비축령'과 연계될 가능성이 높습니다.",
+                "newsImage": "white_house_crypto_plan.jpg",
+                "targetSymbols": [
+                    "BTC",
+                    "DOGE",
+                    "TRUMP"
+                ]
+            }
+        },
+        {
+            "key": "frog_pump_03_14",
+            "type": 0,
+            "authorName": "지구와 과학",
+            "category": 3,
+            "message": "당신이 몰랐던 개구리의 기괴한 생태! 개구리는 음식을 삼킬 때 '눈알'을 사용한다는 사실을 알고 계셨나요? 혀로 잡은 먹이를 입 안으로 밀어 넣기 위해 눈을 머리 속으로 집어넣습니다.",
+            "profileImage": "nature_channel.jpg",
+            "contentImage": "frog_biological_mystery.jpg",
+            "width": 550,
+            "height": 200
+        },
+        {
+            "key": "idol_listing_announce_1_03_15",
+            "type": 0,
+            "authorName": "불비트 뉴스",
+            "category": 4,
+            "title": "",
+            "message": "신규 토큰 IDOL 토큰이 내일 상장됩니다 !\nIDOL 토큰은 약 하루 뒤 거래가 시작될 예정이며, IDOL은 누구나 음악을 창작할 수 있고, 수익을 낼 수 있게 해주는 서비스 입니다!",
+            "profileImage": "bullbit.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 200
+        },
+        {
+            "key": "idol_listing_announce_2_03_15",
+            "type": 0,
+            "authorName": "불비트 뉴스",
+            "category": 4,
+            "title": "",
+            "message": "신규 코인 IDOL의 상장을 완료했습니다.",
+            "profileImage": "bullbit.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 200
+        },
+        {
+            "key": "pgoose_listing_announce_1_03_16",
+            "type": 0,
+            "authorName": "불비트 뉴스",
+            "category": 4,
+            "title": "",
+            "message": "신규 토큰 PGOOSE 토큰이 내일 상장됩니다 !\nPGOOSE 토큰은 약 하루 뒤 거래가 시작될 예정이며, PGOOSE는 한 때 누군가 커뮤니티에 재미로 만들었다가 유명해져버린 인기있는 밈코인 입니다.",
+            "profileImage": "bullbit.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 200
+        },
+        {
+            "key": "pgoose_listing_announce_2_03_16",
+            "type": 0,
+            "authorName": "불비트 뉴스",
+            "category": 4,
+            "title": "",
+            "message": "신규 코인 PGOOSE의 상장을 완료했습니다.",
+            "profileImage": "bullbit.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 200
+        },
+        {
+            "key": "moon_listing_announce_1_02_07",
+            "type": 0,
+            "authorName": "불비트 뉴스",
+            "category": 4,
+            "title": "",
+            "message": "신규 토큰 MOON 코인이 내일 상장됩니다 !\nMOON 코인 약 하루 뒤 거래가 시작될 예정이며, MOON 코인은 스테이블 코인과 페깅되는 용도로 사용되는 거버넌스 코인입니다.",
+            "profileImage": "bullbit.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 200
+        },
+        {
+            "key": "moon_listing_announce_2_02_07",
+            "type": 0,
+            "authorName": "불비트 뉴스",
+            "category": 4,
+            "title": "",
+            "message": "신규 코인 MOON의 상장을 완료했습니다.",
+            "profileImage": "bullbit.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 200
+        },
+        {
+            "key": "Diagram_K_tweet_03_18",
+            "type": 0,
+            "authorName": "Diagram.K",
+            "category": 3,
+            "title": "",
+            "message": "우리는 전통금융보다 높은 수익률을 자랑합니다. 약 20%죠. 늦지말고 어서 스테이킹 하세요!",
+            "profileImage": "",
+            "contentImage": "",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "[분석] '연 20% 수익률'의 비밀... MOON 생태계, 전통 금융권의 대안으로 부상",
+                "summary": "암호화폐 시장의 폭발적인 성장세 속에서 MOON 코인의 20% 고정 스테이킹 수익률이 화제입니다. 전문가들은 이를 단순한 고이율 상품이 아닌, 알고리즘을 통해 은행의 중간 마진을 사용자에게 직접 돌려주는 '차세대 금융 혁명'의 결과물로 평가하고 있습니다.",
+                "expertOpinion": "기존 금융 시스템(TradFi)은 불필요한 규제와 수수료로 사용자에게 낮은 이자만을 제공해 왔습니다. 하지만 연 20% 수익은 생각보다 말이 안되는 수치이니, 투자는 신중히 하세요.",
+                "newsImage": "moon_staking_protocol.jpg",
+                "targetSymbols": [
+                    "MOON",
+                    "STABLE_USD",
+                    "DIAGRAM_K"
+                ]
+            }
+        },
+        {
+            "key": "Moon_FUD_03_19",
+            "type": 0,
+            "authorName": "찌라시맨",
+            "category": 1,
+            "title": "",
+            "message": "현실적으로 생각하자. 은행 이자가 1%인데 MOON 코인은 20%를 준다고? 이건 수학이 아니라 마술이고, 마술은 결국 사기다. 조만간 다 터질 거다. 내 말 기억하셈",
+            "profileImage": "Newsguy.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 200
+        },
+        {
+            "key": "Diagram_K_tweet_03_20",
+            "type": 0,
+            "authorName": "Diagram.K",
+            "category": 3,
+            "title": "",
+            "message": "헛소문은 가난한 자들의 열등감일 뿐. 우리 알고리즘은 완벽하게 페깅을 유지하고 있다. 담보 따위나 찾는 구시대적 발상은 집어치워라. '수학'은 너희의 '근거 없는 공포'보다 강하니까.",
+            "profileImage": "",
+            "contentImage": "",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "'알고리즘 페깅'은 정말 무결한가? 월가의 비판을 비웃는 MOON의 기술력",
+                "summary": "일부 전통 금융 비관론자들이 MOON의 알고리즘 안정성에 의문을 제기하고 있지만, 시장의 데이터는 정반대의 결과를 보여주고 있습니다. MOON의 페깅 시스템은 최근 발생한 대규모 매도 압력을 단 0.1초 만에 흡수하며 '수학적 방어'의 정점을 증명했습니다.",
+                "expertOpinion": "수학은 거짓말을 하지 않지만, 그 수학을 움직이는 사람들의 심리가 무너지는 순간을 경계해야 합니다.",
+                "newsImage": "algorithm_vs_old_finance.jpg",
+                "targetSymbols": [
+                    "MOON"
+                ]
+            }
+        },
+        {
+            "key": "Diagram_K_tweet_03_23",
+            "type": 0,
+            "authorName": "Diagram.K",
+            "category": 3,
+            "title": "",
+            "message": "앞으로 가난한 자들과는 대화하지 않겠다. '지속 가능성' 같은 단어를 남발하는 낙오자들의 조언을 듣기엔 내 시간이 너무 아깝거든. MOON의 성공이 배 아프면 그냥 거기 계속 머물러라. 우리가 화성에서 파티를 열 때 너희는 바닥에서 소문이나나 핥고 있으면 된다.",
+            "profileImage": "",
+            "contentImage": "",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "'Stay Poor' 논란... 하지만 자본은 이미 MOON을 선택했다",
+                "summary": "Diagram.K의 파격적인 발언이 연일 화제입니다. 비판론자들은 그의 태도를 지적하지만, 고래(Whale)들은 조용히 MOON 스테이킹 물량을 늘리고 있습니다. '지속 가능성'을 묻는 이들에게 시장은 '수익률'로 대답하고 있습니다.",
+                "expertOpinion": "비판자들을 '낙오자'로 규정하는 태도는 커뮤니티 결속엔 도움이 되겠지만, 객관적인 리스크 관리를 불가능하게 만듭니다.",
+                "newsImage": "new_rich_moon_party.jpg",
+                "targetSymbols": [
+                    "MOON"
+                ]
+            }
+        },
+        {
+            "key": "MOON_DROP_03_25_2",
+            "type": 0,
+            "authorName": "Diagram.K",
+            "category": 3,
+            "title": "",
+            "message": "일시적 조정이다. 조정 줄 때 사라. 지금 안 사는 멍청이들은 나중에 부러워하지도 마라.",
+            "profileImage": "",
+            "contentImage": "",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": " MOON 페깅 미세 이탈... 단순 해프닝인가, 시스템 붕괴의 전조인가",
+                "summary": "안정적이라 믿었던 MOON이 일시적으로 하락하며 투자자들 사이에 불안감이 확산되고 있습니다. Diagram.K 측은 대규모 매도세에 따른 일시적 조정현상이라고 일축했으나, 시장은 평소와 다른 알고리즘 회복 속도에 의구심을 표하고 있습니다.",
+                "expertOpinion": "지금의 상황은 매우 기묘합니다. 예기치 못한 하락 가능성에 대비할 필요가 있어 보입니다.",
+                "newsImage": "moon_cracks.jpg",
+                "targetSymbols": [
+                    "MOON"
+                ]
+            }
+        },
+        {
+            "key": "MOON_DROP_03_26",
+            "type": 0,
+            "authorName": "Diagram.K",
+            "category": 3,
+            "title": "",
+            "message": "진정해라 하락을 막기위해 자본 투입을 시작했다 아니? 며칠전에 시작햇다. 약한 자들은 지금 던지겠지만, 진짜들은 여기서 더 산다. 시스템은 곧 정상화될 것이고, 지금 버틴 자들이 내일의 모든 이익을 독식할 것이다. 사서 버텨라.",
+            "profileImage": "diagram_k_serious.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "Diagram.K 가용 자원 총동원 선언... 'MOON 방어 작전' 개시",
+                "summary": "MOON의 추가 하락세가 거세지자 Diagram.K가 직접 긴급 자금 투입을 발표했습니다. 그는 현재의 상황을 '외부 세력의 악의적 공격'으로 규정하고, 생태계 복구를 위해 수십억 달러 규모의 유동성을 공급하겠다고 확언했습니다.",
+                "expertOpinion": " 만약 투입된 자본이 매도세를 이기지 못할 경우, 방어벽이 무너지는 속도는 상상을 초월할 것입니다. 지금은 도박적인 추가 매수보다 자산의 안전을 먼저 생각해야 할 위험한 도박판입니다.",
+                "newsImage": "last_defense_line.jpg",
+                "targetSymbols": [
+                    "MOON"
+                ]
+            }
+        },
+        {
+            "key": "MOON_CRASH_03_27",
+            "type": 0,
+            "authorName": "쇼킹 뉴스",
+            "category": 2,
+            "title": "",
+            "message": "MOON 방어선 최종 붕괴, 끝없는 추락에 시장은 사실상 마비 상태라고 합니다. 알고리즘이 완전히 멈추며 투자자들의 비명이 쏟아지고 있는 상황이라고 전달했습니다.",
+            "profileImage": "shocking.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "수학의 패배… MOON 생태계가 사실상 소멸 단계에 진입했다고 합니다",
+                "summary": "Diagram.K의 자금 투입 선언에도 불구하고 매도 폭탄을 막기에는 역부족이었다고 합니다. 결국 지지선이 처참하게 무너져 내렸으며, 이제는 시스템 복구가 불가능한 파국 상태라고 현장에서 전달했습니다.",
+                "expertOpinion": "믿었던 알고리즘이 오히려 가치를 파괴하는 독이 되어 돌아왔다고 합니다. 한순간에 자산이 휴지조각이 되는 광경에 시장은 충격에 빠졌으며, 운영진조차 연락이 두절된 절망적인 상태라고 분석팀은 전달했습니다.",
+                "newsImage": "moon_crash_final.jpg",
+                "targetSymbols": [
+                    "MOON"
+                ]
+            }
+        },
+        {
+            "key": "MOON_CRASH_03_27_01",
+            "type": 0,
+            "authorName": "불비트 뉴스",
+            "category": 2,
+            "title": "",
+            "message": " MOON 상장폐지 결정 안내. 알고리즘 결함에 따른 가치 유지 불능 및 유동성 고갈로 인해 현재 시간으로 부터 하루 뒤 거래가 정지되며, 모레를 기점으로 거래 지원을 종료합니다.",
+            "profileImage": "bullbit_news.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "[분석] 불비트 'MOON 상장폐지' 결정… 사실상의 퇴출 선고라고 합니다",
+                "summary": "방금 전 국내 최대 거래소 불비트가 MOON의 상장폐지를 공식화했다고 합니다. 거래소 측은 현재 MOON의 가치 유지 알고리즘이 파열된 상태이며, 투자자 보호를 위해 내일 자정 전격적으로 상장폐지 절차를 밟기로 결정했다고 전달했습니다.",
+                "expertOpinion": "비정상적인 무한 발행으로 인해 자산 가치가 회복 불가능한 수준에 도달했다는 것이 거래소 측의 판단이라고 합니다. 사실상 시장에서 탈출할 수 있는 마지막 기회가 사라진 셈이며, 현재 모든 매수 주문이 실종된 극도의 위험 상태라고 분석팀은 전달했습니다.",
+                "newsImage": "bullbit_delisting_final.jpg",
+                "targetSymbols": [
+                    "MOON"
+                ]
+            }
+        },
+                {
+            "key": "MOON_CRASH_03_28_02",
+            "type": 0,
+            "authorName": "불비트 뉴스",
+            "category": 2,
+            "title": "",
+            "message": " MOON 코인이 거래 중지 처리 되었습니다.",
+            "profileImage": "bullbit_news.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 200
+        },
+
+        {
+            "key": "MOON_CRASH_03_29_03",
+            "type": 0,
+            "authorName": "불비트 뉴스",
+            "category": 2,
+            "title": "",
+            "message": "MOON 거래 지원 공식 종료. 불비트 거래소에서 모든 매매 서비스가 중단되었으며, 사실상 가치가 소멸한 상태로 시장에서 퇴출되었다고 합니다.",
+            "profileImage": "bullbit_news.jpg",
+            "contentImage": "",
+            "width": 550,
+            "height": 200,
+            "article": {
+                "provider": "MangoRock Investment",
+                "title": "MOON 상장폐지 완료… '수학적 완벽함'의 비극적인 결말이라고 합니다",
+                "summary": "약속된 기한인 오늘 자정을 기해 MOON의 모든 거래가 중단되었다고 합니다. 한때 시장을 호령하던 알고리즘은 무한 발행의 늪에 빠져 가치가 0원에 수렴했으며, 거래소 창에는 마지막까지 탈출하지 못한 매도 물량만이 산더미처럼 쌓여 있는 상태라고 전달했습니다.",
+                "expertOpinion": "결국 우려하던 시스템의 종말이 현실이 되었다고 합니다. 신뢰를 잃은 알고리즘은 자산을 지켜주는 방패가 아니라 파괴하는 흉기로 변질되었으며, 현재 Diagram.K를 포함한 재단 측은 어떠한 입장도 내놓지 않은 채 침묵을 지키고 있는 절망적인 상황이라고 분석팀은 전달했습니다.",
+                "newsImage": "moon_final_exit.jpg",
+                "targetSymbols": [
+                    "MOON"
+                ]
+            }
+        }
     ]
 }

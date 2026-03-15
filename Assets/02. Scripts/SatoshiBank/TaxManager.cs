@@ -124,9 +124,6 @@ public class TaxManager : MonoBehaviour {
 
         if (TaxPanel.Instance != null) TaxPanel.Instance.RefreshTaxUI();
     }
-
-    // ★ [정상 납부] 유저가 버튼 눌러서 자진 납부할 때 호출
-    // TaxPanel.cs에서 돈 빼는 로직 대신 이 함수를 부르게 수정하면 완벽합니다.
     public bool PayTax() {
         if (unpaidTaxAmount <= 0) return false;
 
@@ -138,8 +135,12 @@ public class TaxManager : MonoBehaviour {
         // 1. 돈 차감
         PlayerManager.Instance.ChangeSatoshiMoney(-unpaidTaxAmount);
 
-        // 2. ★ [기록] 정상 납부 기록 (여기 추가했습니다!)
-        TransactionManager.Instance.AddRecord("소득세", unpaidTaxAmount, "출금", "사토시 현금");
+        // 2. ★ [기록] 정상 납부 기록 현지화
+        string logTax = LocalizationManager.GetText("LOG_TAX");
+        string logType = LocalizationManager.GetText("LOG_WITHDRAW"); // "출금"
+        string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH"); // "사토시 현금"
+
+        TransactionManager.Instance.AddRecord(logTax, unpaidTaxAmount, logType, logAsset);
 
         Debug.Log($"[Tax] 정상 납부 완료: {unpaidTaxAmount:N0}원");
 
@@ -147,8 +148,6 @@ public class TaxManager : MonoBehaviour {
         ClearTax();
         return true;
     }
-
-    // [강제 징수] 기한 넘겨서 털릴 때
     private void EnforceTaxCollection() {
         double penaltyTax = unpaidTaxAmount * 1.1; // 10% 가산세
 
@@ -158,8 +157,12 @@ public class TaxManager : MonoBehaviour {
             // 1. 돈 차감 (마통 가능)
             PlayerManager.Instance.ChangeSatoshiMoney(-penaltyTax);
 
-            // 2. ★ [기록] 강제 징수 기록 (이미 잘 넣으셨습니다!)
-            TransactionManager.Instance.AddRecord("소득세(강제징수)", penaltyTax, "출금", "사토시 현금");
+            // 2. ★ [기록] 강제 징수 기록 현지화
+            string logTaxEnforced = LocalizationManager.GetText("LOG_TAX_ENFORCED");
+            string logType = LocalizationManager.GetText("LOG_WITHDRAW");
+            string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH");
+
+            TransactionManager.Instance.AddRecord(logTaxEnforced, penaltyTax, logType, logAsset);
         }
 
         ClearTax();

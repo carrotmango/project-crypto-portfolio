@@ -98,7 +98,10 @@ public class AppSelectorController : MonoBehaviour {
     // ========================================================
 
     public void OpenBullbitApp() {
-        if (marketTabLabel != null) marketTabLabel.text = "불비트";
+        // "현물 거래소" 대신 키값 사용
+        if (marketTabLabel != null)
+            marketTabLabel.text = LocalizationManager.GetText("LBL_SPOT_EXCHANGE");
+
         if (coinManager != null) {
             coinManager.currentApp = AppType.Bullbit;
             coinManager.UpdateCashText();
@@ -128,11 +131,10 @@ public class AppSelectorController : MonoBehaviour {
         if (coinManager != null) coinManager.currentApp = AppType.Bullbit;
     }
 
-    // [수정됨] 부동산 앱 열기 (잠금 체크 추가)
     public void OpenEstateApp() {
         // 1. 해금 여부 체크
         if (OfficeManager.Instance != null && !OfficeManager.Instance.IsRealEstateUnlocked()) {
-            UIManager.Instance.ShowConfirm("자본주의 대리 직급 이상\n이용 가능합니다.");
+            UIManager.Instance.ShowConfirm(LocalizationManager.GetText("LBL_REALESTATE_UNLOCK_REQ"));
             return; // 열지 않고 리턴
         }
 
@@ -165,8 +167,13 @@ public class AppSelectorController : MonoBehaviour {
     public void OpenFourNance() {
         // 1. 해금 여부 체크
         if (OfficeManager.Instance != null && !OfficeManager.Instance.IsFuturesUnlocked()) {
-            UIManager.Instance.ShowConfirm("납입왕 차장 직급 이상\n이용 가능합니다.");
-            return; // 열지 않고 리턴
+            UIManager.Instance.ShowConfirm(LocalizationManager.GetText("LBL_FUTURES_UNLOCK_REQ"));
+            return;
+        }
+
+        // [추가] 라벨 텍스트를 현재 언어의 "선물 거래소"로 변경
+        if (marketTabLabel != null) {
+            marketTabLabel.text = LocalizationManager.GetText("LBL_PERPETUAL_EXCHANGE");
         }
 
         // 2. 해금되었으면 오픈
@@ -175,6 +182,12 @@ public class AppSelectorController : MonoBehaviour {
         }
         if (PerpPanel != null) {
             PerpPanel.SetActive(true);
+
+            // 선물 거래소로 앱 타입 변경 및 UI 갱신 (TabPanelController 로직과 동기화)
+            if (coinManager != null) {
+                coinManager.currentApp = AppType.Perp;
+                coinManager.UpdateCashText();
+            }
         }
     }
 
@@ -186,19 +199,19 @@ public class AppSelectorController : MonoBehaviour {
 
     public void OpenGhostWallet() {
         if (UIManager.Instance != null) {
-            UIManager.Instance.ShowConfirm("지갑 컨텐츠 개발 중!");
+            UIManager.Instance.ShowConfirm(LocalizationManager.GetText("LBL_DEV_WALLET"));
         }
     }
 
     public void OpenMangoSwap() {
         if (UIManager.Instance != null) {
-            UIManager.Instance.ShowConfirm("망고 스왑 DEX 거래소 개발 중!");
+            UIManager.Instance.ShowConfirm(LocalizationManager.GetText("LBL_DEV_MANGOSWAP"));
         }
     }
 
     public void OpenOpenLake() {
         if (UIManager.Instance != null) {
-            UIManager.Instance.ShowConfirm("OPENLAKE NFT 거래소 개발 중!");
+            UIManager.Instance.ShowConfirm(LocalizationManager.GetText("LBL_DEV_OPENLAKE"));
         }
     }
 }

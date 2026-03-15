@@ -15,6 +15,7 @@ public class NewsLoader : MonoBehaviour {
 
     public GameObject contentImageContainer;
     public Image contentImage;
+    public GameObject newBadgeDot;
 
     //[Header("Buttons")]
     //public Button likeButton;
@@ -25,7 +26,7 @@ public class NewsLoader : MonoBehaviour {
     // =========================
     // 외부에서 호출
     // =========================
-    public void Load(UIEventData data, DateTime eventTime) {
+    public void Load(UIEventData data, DateTime eventTime, bool isRead = true) {
 
         eventKey = data.key;
 
@@ -38,12 +39,22 @@ public class NewsLoader : MonoBehaviour {
         TrySetSpriteOrHide(profileImage, "image/profile", data.profileImage, null);
         TrySetSpriteOrHide(contentImage, "image/content", data.contentImage, contentImageContainer);
 
+        if (newBadgeDot != null) {
+            newBadgeDot.SetActive(!isRead);
+        }
+
         // 버튼 리스너 중복 방지
         //likeButton.onClick.RemoveAllListeners();
         //dislikeButton.onClick.RemoveAllListeners();
 
         //likeButton.onClick.AddListener(OnLike);
         //dislikeButton.onClick.AddListener(OnDislike);
+    }
+
+    public void SetBadge(bool isShow) {
+        if (newBadgeDot != null) {
+            newBadgeDot.SetActive(isShow);
+        }
     }
 
     // =========================
@@ -56,6 +67,7 @@ public class NewsLoader : MonoBehaviour {
     void OnDislike() {
         Debug.Log($"[News] Dislike: {eventKey}");
     }
+
 
     // =========================
     // 유틸

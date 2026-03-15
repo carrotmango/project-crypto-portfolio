@@ -178,18 +178,31 @@ public class ResearchDetailController : MonoBehaviour {
             lockupInfoPanel.Setup(currentCoin, meta, isUsd);
         }
 
+        // 언어 설정 불러오기
+        string formatStyle = LocalizationManager.GetText("FORMAT_STYLE");
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+        string lblPrice = LocalizationManager.GetText("LBL_PRICE");
+        string lblChange = LocalizationManager.GetText("LBL_CHANGE");
+
         if (coinIcon != null) coinIcon.sprite = Resources.Load<Sprite>($"Coins/{currentCoin.Symbol}");
         if (nameAndSymbolTopText != null) nameAndSymbolTopText.text = $"{currentCoin.Name}\n({currentCoin.Symbol})";
 
+        // 1. 현재 가격 포맷
         if (currentPriceText != null) {
-            currentPriceText.text = isUsd
-                ? $"가격\n{GetFormattedPriceUSD(currentCoin.CurrentPrice)}"
-                : $"가격\n{currentCoin.GetFormattedPriceKRW().Replace("₩", "")} 원";
+            if (isUsd) {
+                currentPriceText.text = $"{lblPrice}\n{GetFormattedPriceUSD(currentCoin.CurrentPrice)}";
+            } else {
+                string rawPriceStr = currentCoin.GetFormattedPriceKRW().Replace("₩", "").Trim();
+                currentPriceText.text = (formatStyle == "EN")
+                    ? $"{lblPrice}\n₩{rawPriceStr}"
+                    : $"{lblPrice}\n{rawPriceStr}{unit}";
+            }
         }
 
+        // 2. 등락률 포맷
         double change = currentCoin.InitialPrice > 0 ? ((currentCoin.CurrentPrice - currentCoin.InitialPrice) / currentCoin.InitialPrice) * 100.0 : 0;
         if (changePercentText != null) {
-            changePercentText.text = $"등락률\n{change:+0.##;-0.##}%";
+            changePercentText.text = $"{lblChange}\n{change:+0.##;-0.##}%";
             changePercentText.color = change > 0 ? activeTabColor : (change < 0 ? Color.red : Color.white);
         }
 
@@ -203,11 +216,16 @@ public class ResearchDetailController : MonoBehaviour {
             if (currentCirculatingSupplyText != null) currentCirculatingSupplyText.text = $"{currentCoin.Symbol} {currentCoin.CirculatingSupply:N0}";
             if (totalSupplyText != null) totalSupplyText.text = $"{currentCoin.Symbol} {currentCoin.MaxSupply:N0}";
 
-            if (athText != null)
-                athText.text = isUsd ? GetFormattedPriceUSD(currentCoin.AllTimeHigh) : $"{currentCoin.AllTimeHigh:N0} 원";
+            // 3. 최고점(ATH) / 최저점(ATL) 포맷
+            if (athText != null) {
+                if (isUsd) athText.text = GetFormattedPriceUSD(currentCoin.AllTimeHigh);
+                else athText.text = (formatStyle == "EN") ? $"₩{currentCoin.AllTimeHigh:N0}" : $"{currentCoin.AllTimeHigh:N0}{unit}";
+            }
 
-            if (atlText != null)
-                atlText.text = isUsd ? GetFormattedPriceUSD(currentCoin.AllTimeLow) : $"{currentCoin.AllTimeLow:N0} 원";
+            if (atlText != null) {
+                if (isUsd) atlText.text = GetFormattedPriceUSD(currentCoin.AllTimeLow);
+                else atlText.text = (formatStyle == "EN") ? $"₩{currentCoin.AllTimeLow:N0}" : $"{currentCoin.AllTimeLow:N0}{unit}";
+            }
 
             if (titleNameSymbolText != null) titleNameSymbolText.text = $"{currentCoin.Name} ({currentCoin.Symbol})";
             if (descriptionText != null) descriptionText.text = meta.Description;
@@ -215,36 +233,40 @@ public class ResearchDetailController : MonoBehaviour {
             if (proofTypeText != null) proofTypeText.text = $"[{meta.Proof.ToString()}]";
             if (riskGradeText != null) riskGradeText.text = meta.GetRiskGrade();
 
-            //   여기서 호출되는 함수
-            if (categoryText != null) categoryText.text = GetThemeNameKR(meta.Theme);
+            if (categoryText != null) categoryText.text = GetThemeName(meta.Theme);
         }
     }
 
     public string FormatCurrency(double krwAmount, bool isUsd) {
+        string formatStyle = LocalizationManager.GetText("FORMAT_STYLE");
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+
         if (isUsd) {
+            // [달러 모드]
             double usdAmount = krwAmount / GlobalEconomyManager.UsdToKrw;
-
-            // 달러($) 단위 확장: T(조), B(십억)를 넘어 Q(경)까지
-            if (usdAmount >= 1_000_000_000_000_000d) return $"${(usdAmount / 1_000_000_000_000_000d):F2}Q"; // Quadrillion (경)
-            if (usdAmount >= 1_000_000_000_000d) return $"${(usdAmount / 1_000_000_000_000d):F2}T";      // Trillion (조)
-            if (usdAmount >= 1_000_000_000d) return $"${(usdAmount / 1_000_000_000d):F2}B";           // Billion (십억)
-            if (usdAmount >= 1_000_000d) return $"${(usdAmount / 1_000_000d):F2}M";                // Million (백만)
-            if (usdAmount >= 1_000d) return $"${(usdAmount / 1_000d):F2}K";                        // Thousand (천)
+            if (usdAmount >= 1_000_000_000_000_000d) return $"${(usdAmount / 1_000_000_000_000_000d):F2}Q";
+            if (usdAmount >= 1_000_000_000_000d) return $"${(usdAmount / 1_000_000_000_000d):F2}T";
+            if (usdAmount >= 1_000_000_000d) return $"${(usdAmount / 1_000_000_000d):F2}B";
+            if (usdAmount >= 1_000_000d) return $"${(usdAmount / 1_000_000d):F2}M";
+            if (usdAmount >= 1_000d) return $"${(usdAmount / 1_000d):F2}K";
             return $"${usdAmount:N2}";
+        } else if (formatStyle == "EN") {
+            // [영문 + 원화 모드] (단위 Q 추가)
+            if (krwAmount >= 1_000_000_000_000_000d) return $"₩{(krwAmount / 1_000_000_000_000_000d):F2}Q";
+            if (krwAmount >= 1_000_000_000_000d) return $"₩{(krwAmount / 1_000_000_000_000d):F2}T";
+            if (krwAmount >= 1_000_000_000d) return $"₩{(krwAmount / 1_000_000_000d):F2}B";
+            if (krwAmount >= 1_000_000d) return $"₩{(krwAmount / 1_000_000d):F2}M";
+            if (krwAmount >= 1_000d) return $"₩{(krwAmount / 1_000d):F2}K";
+            return $"₩{krwAmount:N0}";
         } else {
-            // 원화(₩) 단위 확장: 조(兆)를 넘어 경(京), 해(垓)까지
-            // 해(垓) = 10의 20승 (1,0000 * 경)
-            if (krwAmount >= 1_0000_0000_0000_0000_0000d) return $"{(krwAmount / 1_0000_0000_0000_0000_0000d):F2}해 원";
-            // 경(京) = 10의 16승 (1,0000 * 조)
-            if (krwAmount >= 1_0000_0000_0000_0000d) return $"{(krwAmount / 1_0000_0000_0000_0000d):F2}경 원";
-            // 조(兆) = 10의 12승 (1,0000 * 억)
-            if (krwAmount >= 1_0000_0000_0000d) return $"{(krwAmount / 1_0000_0000_0000d):F2}조 원";
-            // 억(億) = 10의 8승
-            if (krwAmount >= 1_0000_0000d) return $"{(krwAmount / 1_0000_0000d):F2}억 원";
-            // 만(萬) = 10의 4승
-            if (krwAmount >= 1_0000d) return $"{(krwAmount / 1_0000d):F2}만 원";
+            // [한글 + 원화 모드]
+            if (krwAmount >= 1_0000_0000_0000_0000_0000d) return $"{(krwAmount / 1_0000_0000_0000_0000_0000d):F2}해{unit}";
+            if (krwAmount >= 1_0000_0000_0000_0000d) return $"{(krwAmount / 1_0000_0000_0000_0000d):F2}경{unit}";
+            if (krwAmount >= 1_0000_0000_0000d) return $"{(krwAmount / 1_0000_0000_0000d):F2}조{unit}";
+            if (krwAmount >= 1_0000_0000d) return $"{(krwAmount / 1_0000_0000d):F2}억{unit}";
+            if (krwAmount >= 1_0000d) return $"{(krwAmount / 1_0000d):F2}만{unit}";
 
-            return $"{krwAmount:N0} 원";
+            return $"{krwAmount:N0}{unit}";
         }
     }
 
@@ -256,16 +278,16 @@ public class ResearchDetailController : MonoBehaviour {
     }
 
     //   에러 원인 해결: 테마 이름을 가져오는 함수 추가
-    private string GetThemeNameKR(CoinTheme theme) {
+    private string GetThemeName(CoinTheme theme) {
         return theme switch {
-            CoinTheme.Layer1 => "레이어 1",
-            CoinTheme.Layer2 => "레이어 2",
-            CoinTheme.Meme => "밈",
-            CoinTheme.AI => "AI / 인공지능",
-            CoinTheme.RWA => "RWA",
-            CoinTheme.ZK => "ZK",
-            CoinTheme.DeFi => "디파이",
-            CoinTheme.Stable => "스테이블",
+            CoinTheme.Layer1 => LocalizationManager.GetText("THEME_LAYER1"),
+            CoinTheme.Layer2 => LocalizationManager.GetText("THEME_LAYER2"),
+            CoinTheme.Meme => LocalizationManager.GetText("THEME_MEME"),
+            CoinTheme.AI => LocalizationManager.GetText("THEME_AI"),
+            CoinTheme.RWA => LocalizationManager.GetText("THEME_RWA"),
+            CoinTheme.ZK => LocalizationManager.GetText("THEME_ZK"),
+            CoinTheme.DeFi => LocalizationManager.GetText("THEME_DEFI"),
+            CoinTheme.Stable => LocalizationManager.GetText("THEME_STABLE"),
             _ => theme.ToString()
         };
     }

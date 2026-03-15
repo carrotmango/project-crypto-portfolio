@@ -19,10 +19,14 @@ public class FuturePositionUI : MonoBehaviour {
 
     private FutureChartRenderer.FuturePosition data;
     private FutureChartRenderer manager;
+    private CoinData coinData; // 클릭 이동을 위해 코인 데이터 저장
 
     public void Setup(FutureChartRenderer.FuturePosition posData, FutureChartRenderer renderer) {
         data = posData;
         manager = renderer;
+
+        // 심볼을 바탕으로 코인 데이터를 찾아 저장해둡니다.
+        coinData = CoinManager.Instance.coins.Find(c => c.Symbol == data.Symbol);
 
         // 1. 심볼 텍스트 설정 (예: BTCUSD)
         if (symbolText != null) {
@@ -43,7 +47,23 @@ public class FuturePositionUI : MonoBehaviour {
             closeBtn.onClick.AddListener(() => manager.ClosePositionMarket(data, isLiquidated: false));
         }
 
+        //  4. 프리팹 클릭 이벤트 연결
+        Button btn = GetComponent<Button>();
+        if (btn != null) {
+            btn.onClick.RemoveAllListeners();
+            btn.onClick.AddListener(OnClickPosition);
+        }
+
         UpdateRealtime();
+    }
+
+    // 프리팹 클릭 시 실행되는 함수
+    private void OnClickPosition() {
+        // manager와 coinData가 둘 다 있어야 차트를 이동시킬 수 있음
+        if (manager != null && coinData != null) {
+            manager.SelectCoin(coinData); // 부모 렌더러에게 차트 열기 지시
+            Debug.Log($"[{data.Symbol}USD] 선물 차트로 이동합니다.");
+        }
     }
 
     public void UpdateRealtime() {

@@ -31,6 +31,9 @@ public class CommunityManager : MonoBehaviour {
     private Dictionary<string, DateTime> lastAuthorTime = new Dictionary<string, DateTime>();
     private HashSet<string> usedOneTimePosts = new HashSet<string>();
 
+    public int maxPostCount = 10;          // 최대 보관할 게시글 수 
+    public double deleteOldDays = 5.0;
+
     private void Start() {
         if (coinManager != null) coinManager.OnMarketUpdated += OnTick;
         // 시작하자마자 글 뜨는거 방지하려면 아래 주석 해제
@@ -90,6 +93,10 @@ public class CommunityManager : MonoBehaviour {
 
             foreach (var c in selectedCoins) UpdateCooltime(lastCoinReactedTime, c.Symbol, now);
         }
+
+        if (newsRepo != null) newsRepo.CleanUpOldNews(now, deleteOldDays, maxPostCount);
+        if (newsPanel != null) newsPanel.CleanUpUI(maxPostCount);
+
     }
 
     private List<PostTemplate> GetFilteredTemplates(CommunityPostDB db, List<CoinData> coins, DateTime now, double changeRate, int coinCount) {

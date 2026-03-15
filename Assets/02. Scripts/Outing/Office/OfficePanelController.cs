@@ -172,17 +172,23 @@ public class OfficePanelController : MonoBehaviour {
         if (OfficeManager.Instance == null || PlayerManager.Instance == null) return;
 
         OfficeManager office = OfficeManager.Instance;
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY"); // 공통 화폐 단위 (Won)
 
         // 1. 사원 정보
-        if (homeNameLabel != null) homeNameLabel.text = $"이름: {PlayerManager.Instance.playerName}";
-        if (homeTitleLabel != null) homeTitleLabel.text = $"직급: {PlayerManager.Instance.PlayerTitle}";
+        if (homeNameLabel != null)
+            homeNameLabel.text = string.Format(LocalizationManager.GetText("LBL_OFFICE_NAME"), PlayerManager.Instance.playerName);
+        if (homeTitleLabel != null)
+            homeTitleLabel.text = string.Format(LocalizationManager.GetText("LBL_OFFICE_TITLE"), PlayerManager.Instance.PlayerTitle);
 
         // 2. 급여 정보
-        if (homeCurrentSalary != null) homeCurrentSalary.text = $"현재 급여: {office.currentMonthlySalary:N0} 원";
-        if (homeSalaryCycle != null) homeSalaryCycle.text = $"급여 지급 주기: {office.GetSalaryCycleDays()}일";
+        if (homeCurrentSalary != null)
+            homeCurrentSalary.text = string.Format(LocalizationManager.GetText("LBL_OFFICE_SALARY"), office.currentMonthlySalary.ToString("N0"), unit);
+        if (homeSalaryCycle != null)
+            homeSalaryCycle.text = string.Format(LocalizationManager.GetText("LBL_OFFICE_SALARY_CYCLE"), office.GetSalaryCycleDays());
+
         if (homeNextSalaryDay != null) {
             int dDay = Mathf.CeilToInt(office.GetDaysUntilNextSalary());
-            homeNextSalaryDay.text = $"다음 급여일까지: D-{dDay}";
+            homeNextSalaryDay.text = string.Format(LocalizationManager.GetText("LBL_OFFICE_NEXT_SALARY"), dDay);
         }
 
         // 3. 자본 납입 진척도
@@ -193,37 +199,39 @@ public class OfficePanelController : MonoBehaviour {
         if (!isMaxLevel) {
             float progress = (float)currentCap / nextGoal;
             if (homeDepositBar != null) homeDepositBar.fillAmount = progress;
-            if (homeDepositPercent != null) homeDepositPercent.text = $"납입율: {progress * 100:F0}%";
-            if (homeNextTitleLabel != null) homeNextTitleLabel.text = $"납입 등급: {office.GetCurrentTitle()}";
+            if (homeDepositPercent != null)
+                homeDepositPercent.text = string.Format(LocalizationManager.GetText("LBL_OFFICE_DEPOSIT_RATE"), (progress * 100).ToString("F0"));
+            if (homeNextTitleLabel != null)
+                homeNextTitleLabel.text = string.Format(LocalizationManager.GetText("LBL_OFFICE_DEPOSIT_RANK"), office.GetCurrentTitle());
         } else {
             if (homeDepositBar != null) homeDepositBar.fillAmount = 1f;
-            if (homeDepositPercent != null) homeDepositPercent.text = "졸업 (MAX)";
-            if (homeNextTitleLabel != null) homeNextTitleLabel.text = "현재 등급: 경제적 자유인";
+            if (homeDepositPercent != null)
+                homeDepositPercent.text = LocalizationManager.GetText("LBL_OFFICE_MAX_GRAD");
+            if (homeNextTitleLabel != null)
+                homeNextTitleLabel.text = LocalizationManager.GetText("LBL_OFFICE_CURRENT_RANK_MAX");
         }
 
         // 4. 역량 정보 (Skill 1)
-        if (homeSkillLevel != null) homeSkillLevel.text = $"업무 효율 Lv.{office.SalarySkillLevel}";
-        if (homeSkillEffect != null) homeSkillEffect.text = $"급여 상승률: {office.GetSalaryEfficiencyPercent():F1}%";
+        if (homeSkillLevel != null)
+            homeSkillLevel.text = string.Format(LocalizationManager.GetText("LBL_OFFICE_SKILL1_LV"), office.SalarySkillLevel);
+        if (homeSkillEffect != null)
+            homeSkillEffect.text = string.Format(LocalizationManager.GetText("LBL_OFFICE_SKILL1_EFF"), office.GetSalaryEfficiencyPercent().ToString("F1"));
 
-        // ==========================================
-        // [NEW] 5. 역량 정보 (Skill 2) - 추가됨
-        // ==========================================
+        // 5. 역량 정보 (Skill 2)
         if (homeSkill2Level != null)
-            homeSkill2Level.text = $"대박 성과 Lv.{office.CriticalSkillLevel}";
+            homeSkill2Level.text = string.Format(LocalizationManager.GetText("LBL_OFFICE_SKILL2_LV"), office.CriticalSkillLevel);
 
         if (homeSkill2Effect != null) {
             float chance = office.GetCriticalChance();
             long multiplier = office.GetCurrentCritMultiplier();
+            string chanceStr = (chance >= 100f) ? "100%" : $"{chance:F1}%";
 
-            // 텍스트 표시: "N배 확률: X%"
-            if (chance >= 100f)
-                homeSkill2Effect.text = $"{multiplier}배 확률: 100%";
-            else
-                homeSkill2Effect.text = $"{multiplier}배 확률: {chance:F1}%";
+            homeSkill2Effect.text = string.Format(LocalizationManager.GetText("LBL_OFFICE_SKILL2_EFF"), multiplier, chanceStr);
         }
 
         // 6. 추가 임무
-        if (homeQuestText != null) homeQuestText.text = "현재 추가임무 없음";
+        if (homeQuestText != null)
+            homeQuestText.text = LocalizationManager.GetText("LBL_OFFICE_NO_QUEST");
     }
 
     // 랜덤 메시지
@@ -231,21 +239,26 @@ public class OfficePanelController : MonoBehaviour {
         if (PlayerManager.Instance == null || welcomeMessage == null) return;
 
         string pName = PlayerManager.Instance.playerName;
-        if (string.IsNullOrWhiteSpace(pName)) pName = "사원";
-        string pTitle = PlayerManager.Instance.PlayerTitle;
+        if (string.IsNullOrWhiteSpace(pName))
+            pName = LocalizationManager.GetText("LBL_OFFICE_DEFAULT_EMP");
 
-        string[] quotes = {
-            $"어서오세요, {pTitle} {pName}님.\n오늘도 미친듯이 벌어서 자본을 납입하십시오.",
-            $"{pTitle} {pName}, 쉬고 있습니까?\n당신이 쉴 때도 이자는 쌓입니다.",
-            $"자본주의의 꽃은 납입입니다.\n{pTitle}의 품격에 맞는 자본금을 기대하겠습니다.",
-            $"일 하십시오 {pName}.\n회사는 당신을 기억하지 않지만, 납입금은 기억합니다."
-        };
+        string pTitle = PlayerManager.Instance.PlayerTitle;
+        string[] quotes;
 
         if (OfficeManager.Instance != null && OfficeManager.Instance.currentRankIndex >= 6) {
+            // 만렙 멘트
             quotes = new string[] {
-                $"경제적 자유를 얻으셨군요, {pName}님.\n이제 당신이 곧 법입니다.",
-                $"더 이상 납입할 곳이 없습니다.\n이제 이 세계를 즐기십시오.",
-                $"존경합니다. {pTitle}님.\n하지만 일은 계속 하셔야 합니다?"
+                string.Format(LocalizationManager.GetText("QUOTE_MAX_1"), pName),
+                LocalizationManager.GetText("QUOTE_MAX_2"),
+                string.Format(LocalizationManager.GetText("QUOTE_MAX_3"), pTitle)
+            };
+        } else {
+            // 일반 멘트
+            quotes = new string[] {
+                string.Format(LocalizationManager.GetText("QUOTE_NORMAL_1"), pTitle, pName),
+                string.Format(LocalizationManager.GetText("QUOTE_NORMAL_2"), pTitle, pName),
+                string.Format(LocalizationManager.GetText("QUOTE_NORMAL_3"), pTitle),
+                string.Format(LocalizationManager.GetText("QUOTE_NORMAL_4"), pName)
             };
         }
 

@@ -43,8 +43,10 @@ public class ProductManager : MonoBehaviour {
     [Header("Cancel Panel UI")]
     public GameObject cancelConfirmPanel;       // "정말 해지하시겠습니까?" 팝업 패널
     public TextMeshProUGUI cancelDescriptionText; // 해지 경고 문구용 텍스트
+    public TextMeshProUGUI bankCashText;
 
     private long currentLimit = 10_000_000;
+    private bool isWarningActive = false;
 
     private void Awake() {
         if (Instance == null) Instance = this;
@@ -60,6 +62,13 @@ public class ProductManager : MonoBehaviour {
         StartCoroutine(CheckDepositExpiryRoutine());
     }
 
+    private void Update() {
+        if (bankCashText != null && PlayerManager.Instance != null) {   
+            string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+            bankCashText.text = string.Format(LocalizationManager.GetText("LBL_BANK_BALANCE_SIMPLE"), PlayerManager.Instance.satoshiBankCash.ToString("N0"), unit);
+        }
+    }
+
     // 예금 한도 갱신: 직급 및 회사 자본금 기반
     public void RefreshDepositLimit() {
         long baseLimit = 10_000_000;
@@ -68,7 +77,10 @@ public class ProductManager : MonoBehaviour {
 
         currentLimit = baseLimit + rankBonus + capitalBonus;
 
-        depositLimitText.text = $"예금 한도: {currentLimit:N0}원";
+        // [수정] 예금 한도 텍스트 현지화
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+        depositLimitText.text = string.Format(LocalizationManager.GetText("LBL_DEPOSIT_LIMIT"), currentLimit.ToString("N0"), unit);
+
         amountSlider.maxValue = currentLimit;
         amountSlider.minValue = 0;
     }
@@ -76,14 +88,13 @@ public class ProductManager : MonoBehaviour {
     public void OpenCancelConfirmPanel() {
         if (myDeposits.Count <= 0) return;
 
-        // 현재 가입된 첫 번째 예금 기준으로 정보 표시 (복수 예금일 경우 index 처리가 필요할 수 있음)
         var deposit = myDeposits[0];
         long refundAmount = (long)(deposit.principal * 0.9f);
 
         if (cancelDescriptionText != null) {
-            cancelDescriptionText.text = $"정말 상품을 중도해지하시겠습니까?\n\n" +
-                                         $"<color=#FF5555>해지 시 예금 이자는 돌려받지 못하며\n" +
-                                         $"가입 금액의 90%인 </color><color=#00FF00>{refundAmount:N0}원</color><color=#FF5555>만 환불 됩니다.</color>";
+            // [수정] 해지 경고 팝업 문구 현지화
+            string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+            cancelDescriptionText.text = string.Format(LocalizationManager.GetText("MSG_CANCEL_DEPOSIT_DESC"), refundAmount.ToString("N0"), unit);
         }
 
         cancelConfirmPanel.SetActive(true);
@@ -93,28 +104,23 @@ public class ProductManager : MonoBehaviour {
         if (myDeposits.Count <= 0) return;
 
         DepositData target = myDeposits[0];
-
-        // --- 수정된 부분: 90% 계산 시 오차 방지 ---
-        // principal이 long이므로 0.9m(decimal)을 곱해 정확한 금액 산출 후 반올림
         long refundAmount = (long)Math.Round((decimal)target.principal * 0.9m);
-        // ------------------------------------------
 
-        // 자금 환급 및 기록
         PlayerManager.Instance.satoshiBankCash += (double)refundAmount;
-        TransactionManager.Instance.AddRecord("예금 중도해지", refundAmount, "입금", "사토시 현금");
 
-        // 데이터 삭제 및 UI 갱신
+        // [수정] 거래 내역 로그 현지화
+        string logDesc = LocalizationManager.GetText("LOG_CANCEL_DEPOSIT");
+        string logType = LocalizationManager.GetText("LOG_DEPOSIT"); // "입금"
+        string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH");
+        TransactionManager.Instance.AddRecord(logDesc, refundAmount, logType, logAsset);
+
         myDeposits.RemoveAt(0);
         RefreshProductUI();
 
-        if (SatoshiBankPanel.Instance != null) {
-            SatoshiBankPanel.Instance.RefreshDepositStatus();
-        }
+        if (SatoshiBankPanel.Instance != null) SatoshiBankPanel.Instance.RefreshDepositStatus();
 
         CoinManager.Instance.UpdateCashText();
         cancelConfirmPanel.SetActive(false);
-
-        Debug.Log($"예금 해지 완료: {refundAmount:N0}원 환불됨 (원금의 90%)");
     }
 
     // 3. 해지 취소 (팝업 내 '취소' 버튼에 연결)
@@ -153,75 +159,79 @@ public class ProductManager : MonoBehaviour {
     }
 
     public void OnSliderChanged() {
-        long val = (long)(amountSlider.value / 10000) * 10000; // 1만원 단위 절삭
+        double currentBankCash = PlayerManager.Instance.satoshiBankCash;
+
+        // 슬라이더 값이 은행 잔액을 초과할 경우
+        if (amountSlider.value > currentBankCash) {
+            // 슬라이더 값을 현재 잔액으로 강제 고정
+            amountSlider.SetValueWithoutNotify((float)currentBankCash);
+
+            // 경고 팝업 띄우기 (중복 실행 방지)
+            if (!isWarningActive) {
+                StopCoroutine("ShowWarningRoutine");
+                StartCoroutine(ShowWarningRoutine("사토시 은행 잔액이 부족합니다!"));
+            }
+        }
+
+        // 1만원 단위 절삭
+        long val = (long)(amountSlider.value / 10000) * 10000;
         currentSelectAmountText.text = $"{val:N0}원";
         UpdateDepositUI();
     }
 
     private void UpdateDepositUI() {
         long amount = (long)(amountSlider.value / 10000) * 10000;
-        double marketRate = GlobalEconomyManager.BaseInterestRate; // 시장 금리 참조
+        double marketRate = GlobalEconomyManager.BaseInterestRate;
 
-        // 기간별 텍스트 라인 갱신
-        line1Month.text = FormatDepositLine(1, marketRate + 0.5, amount);
-        line3Month.text = FormatDepositLine(3, marketRate * 1.5, amount);
-        line6Month.text = FormatDepositLine(6, marketRate * 2.2, amount);
-        line12Month.text = FormatDepositLine(12, marketRate * 3.5, amount);
+        // [수정] 각 개월 라인에 들어갈 텍스트 포맷 시 단위 전달
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+        line1Month.text = FormatDepositLine(1, marketRate + 0.5, amount, unit);
+        line3Month.text = FormatDepositLine(3, marketRate * 1.5, amount, unit);
+        line6Month.text = FormatDepositLine(6, marketRate * 2.2, amount, unit);
+        line12Month.text = FormatDepositLine(12, marketRate * 3.5, amount, unit);
     }
 
     // 대시(-) 개수 조절 및 포맷팅
-    private string FormatDepositLine(int month, double rate, long amount) {
-        // 1. UI에 표시될 금리와 동일하게 소수점 첫째 자리에서 반올림 처리
-        // 예: 14.887% -> 14.9%
+    private string FormatDepositLine(int month, double rate, long amount, string unit) {
         double roundedRate = Math.Round(rate, 1);
-
-        // 2. 반올림된 금리를 기준으로 수익 계산 (decimal을 써서 오차 차단)
-        // 수익금 = (금액 * 반올림된 이율 / 100) * (개월수 / 12)
         decimal annualProfit = (decimal)amount * (decimal)roundedRate / 100m;
         long expectedProfit = (long)Math.Round((double)annualProfit * (month / 12.0));
 
-        // 3. 텍스트 포맷팅
-        string profitStr = $"+{expectedProfit:N0}원";
+        string profitStr = $"+{expectedProfit:N0}{unit}"; // [수정] 원 -> unit 적용
 
-        // 자릿수에 따른 가변 대시 로직 
         int dashCount = 20 - (profitStr.Length - 5);
         dashCount = Mathf.Max(dashCount, 5);
 
         string dashes = new string('-', dashCount);
-        string monthLabel = month >= 12 ? "12개월" : $"{month}개월";
 
-        // roundedRate를 사용하여 텍스트 표기 (F1)
+        // [수정] 개월 라벨 현지화
+        string monthLabel = string.Format(LocalizationManager.GetText("LBL_MONTH_LABEL"), month);
+
         return $"{monthLabel} ({roundedRate:F1}%) {dashes} {profitStr}";
     }
-
-    // [버튼 클릭 이벤트 연결용 함수]
-    // [버튼 클릭 이벤트 연결용 함수]
     public void JoinDeposit(int month) {
         long amount = (long)(amountSlider.value / 10000) * 10000;
 
-        // 1. 가입 조건 체크
         if (amount < 100_000) {
-            StopAllCoroutines();
-            StartCoroutine(ShowWarningRoutine());
+            StopCoroutine("ShowWarningRoutine");
+            StartCoroutine(ShowWarningRoutine(LocalizationManager.GetText("MSG_WARN_MIN_DEPOSIT")));
             return;
         }
 
         if (PlayerManager.Instance.satoshiBankCash < amount) {
-            Debug.Log("사토시 은행 잔고가 부족합니다.");
+            StopCoroutine("ShowWarningRoutine");
+            StartCoroutine(ShowWarningRoutine(LocalizationManager.GetText("MSG_WARN_LACK_BALANCE")));
             return;
         }
 
-        // 2. 실제 가입 데이터 생성 및 저장 (이 부분이 핵심!)
         double marketRate = GlobalEconomyManager.BaseInterestRate;
         double currentRate = 0;
 
-        // 기간별 금리 계산 로직 (UpdateDepositUI와 동일하게 맞춤)
         if (month == 1) currentRate = marketRate + 0.5;
         else if (month == 3) currentRate = marketRate * 1.5;
         else if (month == 6) currentRate = marketRate * 2.2;
         else if (month == 12) currentRate = marketRate * 3.5;
 
-        // 화면에 보이는 것과 똑같이 반올림 적용
         currentRate = Math.Round(currentRate, 1);
 
         DepositData newDeposit = new DepositData {
@@ -229,34 +239,34 @@ public class ProductManager : MonoBehaviour {
             durationMonth = month,
             interestRate = currentRate,
             joinDate = CoinManager.Instance.CurrentDateTime,
-            // 한 달을 30일로 계산하여 만기일 설정
             expireDate = CoinManager.Instance.CurrentDateTime.AddDays(month * 30)
         };
 
-        // 리스트에 추가 (이제 기록이 남습니다!)
         myDeposits.Add(newDeposit);
-
-        // 3. 자금 차감 및 기록
         PlayerManager.Instance.satoshiBankCash -= amount;
-        TransactionManager.Instance.AddRecord($"{month}개월 예금 가입", amount, "출금", "사토시 현금");
 
-        // 4. UI 갱신 및 패널 닫기
-        if (SatoshiBankPanel.Instance != null) {
-            SatoshiBankPanel.Instance.RefreshDepositStatus();
-        }
+        // [수정] 가입 로그 현지화
+        string logDesc = string.Format(LocalizationManager.GetText("LOG_JOIN_DEPOSIT"), month);
+        string logType = LocalizationManager.GetText("LOG_WITHDRAW"); // "출금"
+        string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH");
+        TransactionManager.Instance.AddRecord(logDesc, amount, logType, logAsset);
+
+        if (SatoshiBankPanel.Instance != null) SatoshiBankPanel.Instance.RefreshDepositStatus();
 
         CoinManager.Instance.UpdateCashText();
         RefreshProductUI();
         ClosePanel();
-
-        Debug.Log($"{month}개월 예금 {amount:N0}원 가입 성공! (이율: {currentRate}%)");
     }
-
-    private IEnumerator ShowWarningRoutine() {
-        warningPopupText.text = "최소 예금 금액은 10만원입니다."; // 경고 문구 설정
+    private IEnumerator ShowWarningRoutine(string message) {
+        isWarningActive = true;
+        warningPopupText.text = message;
         warningPopupText.canvasRenderer.SetAlpha(1f);
-        yield return new WaitForSecondsRealtime(2f); // 현실 시간 2초 대기
+
+        yield return new WaitForSecondsRealtime(1.5f); // 1.5초간 유지
+
         warningPopupText.CrossFadeAlpha(0f, 0.5f, true);
+        yield return new WaitForSecondsRealtime(0.5f);
+        isWarningActive = false;
     }
 
     public void ClosePanel() {
@@ -293,7 +303,6 @@ public class ProductManager : MonoBehaviour {
     private void ProcessDepositExpiry(int index) {
         DepositData deposit = myDeposits[index];
 
-        // 1. 만기 이자 계산 (정확한 금액을 위해 decimal 사용)
         decimal rate = (decimal)deposit.interestRate;
         decimal principal = (decimal)deposit.principal;
         decimal annualProfit = principal * rate / 100m;
@@ -301,39 +310,44 @@ public class ProductManager : MonoBehaviour {
 
         long totalPayout = deposit.principal + interestProfit;
 
-        // 2. 입금 처리
         PlayerManager.Instance.satoshiBankCash += (double)totalPayout;
-        TransactionManager.Instance.AddRecord($"{deposit.durationMonth}개월 상품 만기", totalPayout, "입금", "사토시 현금");
 
-        // 3. SMS 알림 구성
-        string fullBody = "[상품 만기 완료]\n\n" +
-                          $"{deposit.durationMonth}개월 상품이 정산되었습니다.\n\n" +
-                          $"■ 가입 원금: {deposit.principal:N0}원\n" +
-                          $"■ 확정 이자: +{interestProfit:N0}원\n" +
-                          $"■ 총 입금액: {totalPayout:N0}원\n";
+        // [수정] 만기 로그 현지화
+        string logDesc = string.Format(LocalizationManager.GetText("LOG_EXPIRE_DEPOSIT"), deposit.durationMonth);
+        string logType = LocalizationManager.GetText("LOG_DEPOSIT"); // "입금"
+        string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH");
+        TransactionManager.Instance.AddRecord(logDesc, totalPayout, logType, logAsset);
+
+        // [수정] 만기 문자 및 팝업 알림 현지화
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+        string fullBody = string.Format(
+            LocalizationManager.GetText("SMS_DEPOSIT_EXPIRE_BODY"),
+            deposit.durationMonth,
+            deposit.principal.ToString("N0"),
+            unit,
+            interestProfit.ToString("N0"),
+            totalPayout.ToString("N0")
+        );
+
+        string smsSender = string.Format(LocalizationManager.GetText("SMS_DEPOSIT_EXPIRE_SENDER"), fullBody);
+        string notiTitle = LocalizationManager.GetText("SMS_NOTI_TITLE");
+        string notiMsg = string.Format(LocalizationManager.GetText("SMS_NOTI_MSG"), deposit.durationMonth, totalPayout.ToString("N0"), unit);
 
         if (GlobalNotificationManager.Instance != null) {
             GlobalNotificationManager.Instance.ShowNotification(
-                "Bank",
-                "예금 만기 완료",
-                $"{deposit.durationMonth}개월 예금이 만기되어 {totalPayout:N0}원이 입금되었습니다.",
+                "Bank", notiTitle, notiMsg,
                 () => {
                     if (UIManager.Instance != null) {
-                        UIManager.Instance.ShowSMSResult($"발신인: 사토시 은행\n\n{fullBody}");
+                        UIManager.Instance.ShowSMSResult(smsSender);
                     }
                 }
             );
         }
 
-        // 4. 데이터 삭제 및 UI 갱신
         myDeposits.RemoveAt(index);
-        RefreshProductUI(); // 메인 화면 버튼 다시 활성화 및 알파값 복구
+        RefreshProductUI();
 
-        if (SatoshiBankPanel.Instance != null) {
-            SatoshiBankPanel.Instance.RefreshDepositStatus();
-        }
-
+        if (SatoshiBankPanel.Instance != null) SatoshiBankPanel.Instance.RefreshDepositStatus();
         CoinManager.Instance.UpdateCashText();
-        Debug.Log($"{deposit.durationMonth}개월 예금 만기 처리 완료: {totalPayout:N0}원 입금");
     }
 }

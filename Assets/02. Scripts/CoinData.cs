@@ -24,6 +24,8 @@ public class CoinData {
     public bool IsActiveListed;
     public double AllTimeHigh;
     public double AllTimeLow;
+    public bool IsTradingSuspended = false;
+    public CoinAlertType AlertType = CoinAlertType.None;
 
     public const int MaxCandleHistory = 35;
     public MarketPhase CurrentPhaseOverride = MarketPhase.Sideways;
@@ -54,14 +56,25 @@ public class CoinData {
         CurrentRuntimeCandle.Start(startPrice);
     }
 
+    public void MarkTradeOnCurrentCandle(TradeType tradeType) {
+        if (CurrentRuntimeCandle != null) {
+            // 비트 연산으로 누적 (현물 매수와 선물 매수가 한 캔들에 동시에 있을 수도 있으므로)
+            CurrentRuntimeCandle.TradeFlag |= tradeType;
+            Debug.Log($"[{Symbol}] 런타임 캔들에 {tradeType} 마커 기록 완료!");
+        }
+    }
+
     public void CloseRuntimeCandle() {
         if (CurrentRuntimeCandle == null || CurrentRuntimeCandle.IsClosed) return;
         CurrentRuntimeCandle.CloseCandle();
+
         CandleHistory.Add(new ChartRenderer.CandleData {
-            open = CurrentRuntimeCandle.Open,
-            high = CurrentRuntimeCandle.High,
-            low = CurrentRuntimeCandle.Low,
-            close = CurrentRuntimeCandle.Close
+            open = (float)CurrentRuntimeCandle.Open,
+            high = (float)CurrentRuntimeCandle.High,
+            low = (float)CurrentRuntimeCandle.Low,
+            close = (float)CurrentRuntimeCandle.Close,
+            TradeFlag = CurrentRuntimeCandle.TradeFlag,
+            Timestamp = CurrentRuntimeCandle.Timestamp
         });
         CurrentRuntimeCandle = null;
     }
@@ -112,6 +125,12 @@ public class CoinData {
     // ===== 가격 생성 로직 (30분 틱 밸런스 조정 및 락업 병합) =====
     public void GenerateNextPrice(MarketPhase inputPhase, int volatilityLevel = 1, float maxChangePct = 1f, float externalBias = 0f, DateTime now = default) {
         if (IsDelisted) return;
+
+        if (IsTradingSuspended) {
+            OnPriceUpdate(CurrentPrice);
+            PriceHistory.Add(CurrentPrice);
+            return;
+        }
 
         if (Type == CoinType.Stable) {
             // 스테이블도 너무 일자면 재미없으니 노이즈를 아주 살짝 키움 (0.0005 -> 0.0015)

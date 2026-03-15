@@ -24,11 +24,11 @@ public class FearIndexManager : MonoBehaviour {
     public int GetFearIndex() => fearIndex;
 
     public string GetFearLabel() {
-        if (fearIndex <= 20) return "매우 공포";
-        if (fearIndex <= 40) return "공포";
-        if (fearIndex <= 60) return "중립";
-        if (fearIndex <= 80) return "탐욕";
-        return "매우 탐욕";
+        if (fearIndex <= 20) return LocalizationManager.GetText("FEAR_EXTREME");
+        if (fearIndex <= 40) return LocalizationManager.GetText("FEAR_NORMAL");
+        if (fearIndex <= 60) return LocalizationManager.GetText("FEAR_NEUTRAL");
+        if (fearIndex <= 80) return LocalizationManager.GetText("FEAR_GREED");
+        return LocalizationManager.GetText("FEAR_EXTREME_GREED");
     }
 
     // 하루 1회 (전날 장 방향성 기준)

@@ -15,6 +15,7 @@ public class MainUIManager : MonoBehaviour {
     public BuyPanelController buyPanelController;
     public SellPanelController sellPanelController;
     public ChartPanelController chartPanelController;
+    public BullBitDetailTradeManager detailTradeManager;
 
     [Header("Sort Buttons")]
     public Button symbolButton;
@@ -93,14 +94,15 @@ public class MainUIManager : MonoBehaviour {
         List<(string Name, CoinTheme Theme)> tempThemes = new List<(string, CoinTheme)>();
 
         foreach (CoinTheme theme in Enum.GetValues(typeof(CoinTheme))) {
-            tempThemes.Add((GetThemeNameKR(theme), theme));
+            tempThemes.Add((GetThemeName(theme), theme));
         }
 
         // 2. [핵심] 한글 이름 기준으로 오름차순 정렬 (가나다 순)
         tempThemes.Sort((a, b) => a.Name.CompareTo(b.Name));
 
         // 3. 드롭다운 옵션 구성 (맨 위는 '전체보기')
-        List<string> displayOptions = new List<string> { "전체보기" };
+        string allLabel = LocalizationManager.GetText("LBL_THEME_ALL");
+        List<string> displayOptions = new List<string> { allLabel };
 
         foreach (var item in tempThemes) {
             displayOptions.Add(item.Name);
@@ -114,18 +116,18 @@ public class MainUIManager : MonoBehaviour {
         themeDropdown.onValueChanged.AddListener((idx) => RefreshCoinRows());
     }
 
-    private string GetThemeNameKR(CoinTheme theme) {
-        switch (theme) {
-            case CoinTheme.Layer1: return "레이어 1";
-            case CoinTheme.Layer2: return "레이어 2";
-            case CoinTheme.Meme: return "밈";
-            case CoinTheme.AI: return "AI / 인공지능";
-            case CoinTheme.RWA: return "RWA";
-            case CoinTheme.ZK: return "ZK";
-            case CoinTheme.DeFi: return "디파이";
-            case CoinTheme.Stable: return "스테이블";
-            default: return theme.ToString();
-        }
+    private string GetThemeName(CoinTheme theme) {
+        return theme switch {
+            CoinTheme.Layer1 => LocalizationManager.GetText("THEME_LAYER1"),
+            CoinTheme.Layer2 => LocalizationManager.GetText("THEME_LAYER2"),
+            CoinTheme.Meme => LocalizationManager.GetText("THEME_MEME"),
+            CoinTheme.AI => LocalizationManager.GetText("THEME_AI"),
+            CoinTheme.RWA => LocalizationManager.GetText("THEME_RWA"),
+            CoinTheme.ZK => LocalizationManager.GetText("THEME_ZK"),
+            CoinTheme.DeFi => LocalizationManager.GetText("THEME_DEFI"),
+            CoinTheme.Stable => LocalizationManager.GetText("THEME_STABLE"),
+            _ => theme.ToString()
+        };
     }
 
     private void HandleMarketUpdated() {
@@ -157,6 +159,11 @@ public class MainUIManager : MonoBehaviour {
 
             if (coin == null || coin.IsDelisted) continue;
 
+            Transform alertObj = row.transform.Find("IconImage/Alert");
+            if (alertObj != null) {
+                // 코인의 AlertType이 Danger(2)일 때만 SetActive(true)가 됩니다.
+                alertObj.gameObject.SetActive(coin.AlertType == CoinAlertType.Danger);
+            }
             row.transform.Find("PriceText")
                 .GetComponent<TextMeshProUGUI>()
                 .text = coin.GetFormattedPriceKRW();
@@ -317,6 +324,16 @@ public class MainUIManager : MonoBehaviour {
 
         row.transform.Find("NameText")
             .GetComponent<TextMeshProUGUI>().text = coin.Name;
+
+        Button rowButton = row.GetComponent<Button>();
+        if (rowButton != null) {
+            rowButton.onClick.RemoveAllListeners();
+            rowButton.onClick.AddListener(() => {
+                if (detailTradeManager != null) {
+                    detailTradeManager.OpenDetailPanel(coin);
+                }
+            });
+        }
 
         Image icon = row.transform.Find("IconImage")?.GetComponent<Image>();
         if (icon != null) {

@@ -210,7 +210,7 @@ public class GambleMonster : MonoBehaviour {
 
         if (resultDetailText != null)
             resultDetailText.text =
-                $"처치한 고블린: {score}\n" +
+                $"얻은 코인: {score}\n" +
                 $"획득 금액: {reward:N0} 원";
     }
 

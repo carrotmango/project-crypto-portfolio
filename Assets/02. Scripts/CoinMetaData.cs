@@ -90,6 +90,7 @@ public enum CoinTheme {
     ZK,
     DeFi,
     Stable,
+    Governance
 }
 
 public static class CoinMetaDatabase {
@@ -98,11 +99,11 @@ public static class CoinMetaDatabase {
         // =========================================================
         // 1. [확정 상장] 메이저 8종 
         // =========================================================
-        new("비트코인", "BTC", 111000000.0, 19600000, 21000000, CoinTheme.Layer1, ProofType.PoW, CoinClass.Major, 1,
+        new("비트코인", "BTC", 50000000, 19600000, 21000000, CoinTheme.Layer1, ProofType.PoW, CoinClass.Major, 1,
             4, 0, 500, "중앙은행 없이 블록체인 기술로 운영되는 가장 안전한 디지털 금", "Native", fournanceListed: true, isDefaultListed: true),
 
-        new("이더리움", "ETH", 4000000, 115000000, 115000000, CoinTheme.Layer1, ProofType.PoS, CoinClass.Alt, 2,
-            0, 0, 0, "스마트 컨트랙트 표준", "Native", fournanceListed: true, isDefaultListed: true),
+        new("이더리움", "ETH", 1000000, 115000000, 115000000, CoinTheme.Layer1, ProofType.PoS, CoinClass.Alt, 2,
+            0, 0, 0, "스마트 컨트랙트를 지원하는 프로그래밍 가능 블록체인 플랫폼", "Native", fournanceListed: true, isDefaultListed: true),
 
         new("리플", "XRP", 300, 7000000000, 10000000000, CoinTheme.Layer1, ProofType.PoS, CoinClass.Alt, 2,
             0, 0, 0, "국제 송금 프로젝트", "Native", isDefaultListed: true),
@@ -123,13 +124,14 @@ public static class CoinMetaDatabase {
             0, 0, 0, "투명한 담보 스테이블", "0xA0b...eb6", bullbitListed: true, isDefaultListed: true),
 
         new("무브먼트", "MOVE", 578.5, 20000000, 115000000, CoinTheme.Meme, ProofType.Token,CoinClass.Alt,
-            5, 0, 2, 0, "M2E 프로젝트", "0x771...bc2", bullbitListed: true, isDefaultListed: true),
+            5, 0, 2, 0, "Move-to-Earn 개념의 운동 기반 보상 토큰", "0x771...bc2", bullbitListed: true, isDefaultListed: true),
 
         new("페페", "PEPE", 0.18, 115000000, 115000000, CoinTheme.Meme, ProofType.Token,CoinClass.Alt, 4, 0, 0, 0, "개구리 밈 코인", "0x698...92c",  bullbitListed: true, isDefaultListed: true),
-        new("솔라나", "SOL", 130000.0, 85000000, 115000000, CoinTheme.Layer1, ProofType.PoS,CoinClass.Alt, 3, 0, 0, 500, "고성능 레이어1", "Native", bullbitListed: true, isDefaultListed: true),
+        new("솔라나", "SOL", 130000.0, 85000000, 115000000, CoinTheme.Layer1, ProofType.PoS,CoinClass.Alt, 3, 0, 0, 500, "고성능 처리 속도를 자랑하는 차세대 레이어1 블록체인", "Native", bullbitListed: true, isDefaultListed: true),
         new("애니메코인", "ANIME", 80.0, 90000000, 115000000, CoinTheme.Meme, ProofType.Token,CoinClass.Alt, 4, 0, 0, 0, "서브컬쳐 NFT", "0x882...fa1", bullbitListed: true, isDefaultListed: true),
-        new("아비트럼", "ARB", 345, 250000000, 1000000000, CoinTheme.Layer2, ProofType.Token,CoinClass.Alt, 4, 0, 2, 0, "이더리움 레이어2", "0x912...62b", bullbitListed: true, isDefaultListed: true),
-        new("에이브", "AAVE", 180000.0, 115000000, 115000000, CoinTheme.DeFi, ProofType.PoS,CoinClass.Alt, 3, 0, 0, 0, "탈중앙 대출", "Native", bullbitListed: true, isDefaultListed: true),
+        new("아비트럼", "ARB", 345, 250000000, 1000000000, CoinTheme.Layer2, ProofType.Token,CoinClass.Alt, 4, 0, 2, 0, "이더리움의 확장성을 높이는 주요 레이어2 솔루션", "0x912...62b", bullbitListed: true, isDefaultListed: true),
+        new("월드코인", "WLD", 500, 250000000, 1000000000, CoinTheme.AI, ProofType.Token,CoinClass.Alt, 4, 0, 2, 0, "글로벌 디지털 ID와 기본소득을 위한 AI 연동 프로젝트", "0x163...54q", bullbitListed: true, isDefaultListed: true),
+        new("에이브", "AAVE", 180000.0, 115000000, 115000000, CoinTheme.DeFi, ProofType.PoS,CoinClass.Alt, 3, 0, 0, 0, "탈중앙화 대출 및 예금을 제공하는 DeFi 프로토콜", "Native", bullbitListed: true, isDefaultListed: true),
 
         // =========================================================
         // 2. [랜덤 상장] - isDefaultListed: false 추가
@@ -143,9 +145,13 @@ public static class CoinMetaDatabase {
         // =========================================================
         // 3. [이벤트 전용] - bullbitListed: false, isDefaultListed: false 추가
         // =========================================================
-        new("앱토스", "APT", 1000, 15000000, 115000000, CoinTheme.Layer1, ProofType.PoS,CoinClass.Alt, 3, 0, 1, 0, "차세대 메인넷", "Native", bullbitListed: false, isDefaultListed: false),
-        new("수이", "SUI", 300, 12000000, 115000000, CoinTheme.Layer1, ProofType.PoS,CoinClass.Alt, 3, 0, 1, 0, "무브 언어 체인", "Native", bullbitListed: false, isDefaultListed: false),
+        new("앱토스", "APT", 1000, 15000000, 115000000, CoinTheme.Layer1, ProofType.PoS,CoinClass.Alt, 3, 0, 1, 0, "메타의 Diem 프로젝트 출신 개발자가 만든 차세대 메인넷", "Native", bullbitListed: false, isDefaultListed: false),
+        new("수이", "SUI", 300, 12000000, 115000000, CoinTheme.Layer1, ProofType.PoS,CoinClass.Alt, 3, 0, 1, 0, "Move 프로그래밍 언어를 사용한 고성능 레이어1 블록체인", "Native", bullbitListed: false, isDefaultListed: false),
         new("펭구코인", "PENGU", 10.0, 5000000, 115000000, CoinTheme.Meme, ProofType.Token,CoinClass.Alt, 4, 0, 2, 0, "귀여운 펭구", "6tzX...k5L", bullbitListed: false, isDefaultListed: false),
-        new("초코코인", "CHK", 300, 20000000, 115000000, CoinTheme.Meme, ProofType.Token, CoinClass.Alt,4, 0, 3, 0, "인기있는 밈코인", "4vcX...zLq", bullbitListed: false, isDefaultListed: false)
+        new("초코코인", "CHK", 300, 20000000, 115000000, CoinTheme.Meme, ProofType.Token, CoinClass.Alt,4, 0, 3, 0, "인기있는 밈코인", "4vcX...zLq", bullbitListed: false, isDefaultListed: false),
+        new("버츄얼 프로토콜", "VIRTUAL", 1200, 250000000, 1000000000, CoinTheme.AI, ProofType.Token, CoinClass.Alt, 3, 0, 2, 0, "다중 모달 AI 에이전트를 생성, 토큰화, 공동 소유 및 수익화할 수 있는 플랫폼", "0x52a1...3wE", bullbitListed: false, isDefaultListed: false),
+        new("아이돌", "IDOL", 1000, 50000000, 115000000, CoinTheme.RWA, ProofType.Token,CoinClass.Alt, 5, 0, 2, 0, "누구나 음악을 만들고, 수익을 내게 만들어 주는 토큰", "0x742...1e3", bullbitListed: false, isDefaultListed: false),
+        new("보라거위", "PGOOSE", 150, 500000000, 1000000000, CoinTheme.Meme, ProofType.Token,CoinClass.Alt, 5, 0, 2, 0, "커뮤니티 문화로 성장한 보라색 거위 밈 코인", "4vzX...bqm", bullbitListed: false, isDefaultListed: false),
+        new("달", "MOON", 1500, 5206000000, 5206000000, CoinTheme.Governance, ProofType.Token,CoinClass.Alt, 5, 0, 2, 0, "스테이블 코인과 연동되어 있는 거버넌스 코인", "Native", bullbitListed: false, isDefaultListed: false),
     };
 }

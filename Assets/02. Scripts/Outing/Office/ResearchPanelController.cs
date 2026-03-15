@@ -1,13 +1,13 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Linq;
 using System;
 
-// Á¤·Ä ¿É¼Ç¿¡ 'MarketCap' Ãß°¡
+// ì •ë ¬ ì˜µì…˜ì— 'MarketCap' ì¶”ê°€
 public enum ResearchSortType { None, Name, Price, Change, MarketCap }
-// 2. »çÀÌÅ¬À» À§ÇÑ Order È®Àå
+// 2. ì‚¬ì´í´ì„ ìœ„í•œ Order í™•ì¥
 public enum ResearchSortOrder { Normal, NameAsc, NameDesc, SymbolAsc, SymbolDesc }
 
 public class ResearchPanelController : MonoBehaviour {
@@ -17,20 +17,20 @@ public class ResearchPanelController : MonoBehaviour {
 
     public ResearchDetailController detailController;
 
-    // [NEW] »ó¼¼ ÆĞ³Î ÄÁÆ®·Ñ·¯ ¿¬°á¿ë (³ªÁß¿¡ ±¸Çö)
+    // [NEW] ìƒì„¸ íŒ¨ë„ ì»¨íŠ¸ë¡¤ëŸ¬ ì—°ê²°ìš© (ë‚˜ì¤‘ì— êµ¬í˜„)
     // public ResearchDetailController detailController; 
 
     [Header("Sort Buttons")]
     public Button nameButton;
     public Button priceButton;
     public Button changeButton;
-    public Button marketCapButton; // [NEW] ½ÃÃÑ Á¤·Ä ¹öÆ°
+    public Button marketCapButton; // [NEW] ì‹œì´ ì •ë ¬ ë²„íŠ¼
     public Button resetButton;
 
     public TextMeshProUGUI nameLabel;
     public TextMeshProUGUI priceLabel;
     public TextMeshProUGUI changeLabel;
-    public TextMeshProUGUI marketCapLabel; // [NEW] ½ÃÃÑ ¶óº§
+    public TextMeshProUGUI marketCapLabel; // [NEW] ì‹œì´ ë¼ë²¨
 
     private List<GameObject> coinRows = new();
     private Dictionary<GameObject, CoinData> rowDataMap = new();
@@ -43,22 +43,22 @@ public class ResearchPanelController : MonoBehaviour {
     private bool suppressRowUpdateThisFrame = false;
 
     [Header("Filter UI")]
-    public Toggle wishlistToggle; // °ü½ÉÁ¾¸ñ ÇÊÅÍ
-    public TMP_Dropdown themeDropdown; // Å×¸¶ ÇÊÅÍ
+    public Toggle wishlistToggle; // ê´€ì‹¬ì¢…ëª© í•„í„°
+    public TMP_Dropdown themeDropdown; // í…Œë§ˆ í•„í„°
 
     [Header("Currency Settings")]
-    public Toggle usdToggle; // ÀÎ½ºÆåÅÍ¿¡¼­ ´Ş·¯ Ç¥½Ã Ã¼Å©¹Ú½º ¿¬°á
-    private bool showInUsd = false; // ÇöÀç ´Ş·¯ Ç¥½Ã ¸ğµåÀÎÁö ¿©ºÎ
+    public Toggle usdToggle; // ì¸ìŠ¤í™í„°ì—ì„œ ë‹¬ëŸ¬ í‘œì‹œ ì²´í¬ë°•ìŠ¤ ì—°ê²°
+    private bool showInUsd = false; // í˜„ì¬ ë‹¬ëŸ¬ í‘œì‹œ ëª¨ë“œì¸ì§€ ì—¬ë¶€
 
     [Header("Main/Analysis Tabs")]
-    public GameObject mainPanel;      // Total News And Exchange ¿ÀºêÁ§Æ®
-    public GameObject analysisPanel;  // CoinSelect ¿ÀºêÁ§Æ®
-    public Button mainTabButton;      // '¸ŞÀÎ' ¹öÆ°
-    public Button analysisTabButton;  // 'ºĞ¼®' ¹öÆ°
+    public GameObject mainPanel;      // Total News And Exchange ì˜¤ë¸Œì íŠ¸
+    public GameObject analysisPanel;  // CoinSelect ì˜¤ë¸Œì íŠ¸
+    public Button mainTabButton;      // 'ë©”ì¸' ë²„íŠ¼
+    public Button analysisTabButton;  // 'ë¶„ì„' ë²„íŠ¼
 
     [Header("Tab Button Labels")]
-    public TextMeshProUGUI mainTabText;     // '¸ŞÀÎ' ¹öÆ°ÀÇ ±ÛÀÚ
-    public TextMeshProUGUI analysisTabText; // 'ºĞ¼®' ¹öÆ°ÀÇ ±ÛÀÚ
+    public TextMeshProUGUI mainTabText;     // 'ë©”ì¸' ë²„íŠ¼ì˜ ê¸€ì
+    public TextMeshProUGUI analysisTabText; // 'ë¶„ì„' ë²„íŠ¼ì˜ ê¸€ì
 
     private bool filterWishlistOnly = false;
     private HashSet<string> wishlistedSymbols = new HashSet<string>();
@@ -67,17 +67,17 @@ public class ResearchPanelController : MonoBehaviour {
     private List<CoinTheme> sortedThemeMap = new List<CoinTheme>();
 
     private Color32 tabActiveColor = new Color32(20, 255, 8, 255); // #14FF08
-    private Color32 tabNormalColor = Color.white;                  // ºñÈ°¼º ½Ã Èò»ö
+    private Color32 tabNormalColor = Color.white;                  // ë¹„í™œì„± ì‹œ í°ìƒ‰
 
     void Start() {
         LoadWishlist();
         SetupThemeDropdown();
 
-        // Á¤·Ä ¹öÆ° ÀÌº¥Æ® ¿¬°á
+        // ì •ë ¬ ë²„íŠ¼ ì´ë²¤íŠ¸ ì—°ê²°
         AddButtonListener(nameButton, ResearchSortType.Name);
         AddButtonListener(priceButton, ResearchSortType.Price);
         AddButtonListener(changeButton, ResearchSortType.Change);
-        AddButtonListener(marketCapButton, ResearchSortType.MarketCap); // [NEW] ½ÃÃÑ Á¤·Ä
+        AddButtonListener(marketCapButton, ResearchSortType.MarketCap); // [NEW] ì‹œì´ ì •ë ¬
         if (resetButton != null) resetButton.onClick.AddListener(ResetFiltersAndSort);
 
         if (wishlistToggle != null) {
@@ -90,85 +90,85 @@ public class ResearchPanelController : MonoBehaviour {
         if (mainTabButton != null) mainTabButton.onClick.AddListener(ShowMainPanel);
         if (analysisTabButton != null) analysisTabButton.onClick.AddListener(ShowAnalysisPanel);
 
-        // ½ÃÀÛ ½Ã ±âº» È­¸é ¼³Á¤ (¸ŞÀÎ ÆĞ³Î ¿ÀÇÂ)
+        // ì‹œì‘ ì‹œ ê¸°ë³¸ í™”ë©´ ì„¤ì • (ë©”ì¸ íŒ¨ë„ ì˜¤í”ˆ)
         ShowMainPanel();
         RefreshCoinRows();
     }
 
-    // ¸ŞÀÎ ÆĞ³Î(´º½º/È¯À²) º¸¿©ÁÖ±â
+    // ë©”ì¸ íŒ¨ë„(ë‰´ìŠ¤/í™˜ìœ¨) ë³´ì—¬ì£¼ê¸°
     public void ShowMainPanel() {
-        // 1. ¸¸¾à »ó¼¼ ÆĞ³ÎÀÌ ÄÑÁ® ÀÖ´Ù¸é ´İ±â (µÚ·Î°¡±â ·ÎÁ÷ ½ÇÇà)
+        // 1. ë§Œì•½ ìƒì„¸ íŒ¨ë„ì´ ì¼œì ¸ ìˆë‹¤ë©´ ë‹«ê¸° (ë’¤ë¡œê°€ê¸° ë¡œì§ ì‹¤í–‰)
         if (detailController != null && detailController.detailPanel.activeSelf) {
             detailController.OnClickBack();
         }
 
-        // 2. ÆĞ³Î ÀüÈ¯
+        // 2. íŒ¨ë„ ì „í™˜
         mainPanel.SetActive(true);
         analysisPanel.SetActive(false);
 
-        // 3. ¶óº§ »ö»ó º¯°æ
+        // 3. ë¼ë²¨ ìƒ‰ìƒ ë³€ê²½
         if (mainTabText != null) mainTabText.color = tabActiveColor;
         if (analysisTabText != null) analysisTabText.color = tabNormalColor;
 
-        Debug.Log("¸®¼­Ä¡: ¸ŞÀÎ ÅÇ È°¼ºÈ­ (»ó¼¼ÆĞ³Î Á¾·á Æ÷ÇÔ)");
+        Debug.Log("ë¦¬ì„œì¹˜: ë©”ì¸ íƒ­ í™œì„±í™” (ìƒì„¸íŒ¨ë„ ì¢…ë£Œ í¬í•¨)");
     }
 
-    // ºĞ¼® ÆĞ³Î(ÄÚÀÎ ¸®½ºÆ®) º¸¿©ÁÖ±â
+    // ë¶„ì„ íŒ¨ë„(ì½”ì¸ ë¦¬ìŠ¤íŠ¸) ë³´ì—¬ì£¼ê¸°
     public void ShowAnalysisPanel() {
-        // 1. ¸¸¾à »ó¼¼ ÆĞ³ÎÀÌ ÄÑÁ® ÀÖ´Ù¸é ´İ±â
+        // 1. ë§Œì•½ ìƒì„¸ íŒ¨ë„ì´ ì¼œì ¸ ìˆë‹¤ë©´ ë‹«ê¸°
         if (detailController != null && detailController.detailPanel.activeSelf) {
             detailController.OnClickBack();
         }
 
-        // 2. ÆĞ³Î ÀüÈ¯
+        // 2. íŒ¨ë„ ì „í™˜
         mainPanel.SetActive(false);
         analysisPanel.SetActive(true);
 
-        // 3. ¶óº§ »ö»ó º¯°æ
+        // 3. ë¼ë²¨ ìƒ‰ìƒ ë³€ê²½
         if (mainTabText != null) mainTabText.color = tabNormalColor;
         if (analysisTabText != null) analysisTabText.color = tabActiveColor;
 
         RefreshCoinRows();
-        Debug.Log("¸®¼­Ä¡: ºĞ¼® ÅÇ È°¼ºÈ­ (»ó¼¼ÆĞ³Î Á¾·á Æ÷ÇÔ)");
+        Debug.Log("ë¦¬ì„œì¹˜: ë¶„ì„ íƒ­ í™œì„±í™” (ìƒì„¸íŒ¨ë„ ì¢…ë£Œ í¬í•¨)");
     }
-    public bool ShowInUsd => showInUsd; // ÀÚ½ÄµéÀÌ ÀĞ¾î°¥ ¼ö ÀÖµµ·Ï ÇÁ·ÎÆÛÆ¼ ³ëÃâ
+    public bool ShowInUsd => showInUsd; // ìì‹ë“¤ì´ ì½ì–´ê°ˆ ìˆ˜ ìˆë„ë¡ í”„ë¡œí¼í‹° ë…¸ì¶œ
 
     public void ToggleCurrencyMode(bool isUsd) {
         showInUsd = isUsd;
-        RefreshCoinRows(); // ¸®½ºÆ® °»½Å
+        RefreshCoinRows(); // ë¦¬ìŠ¤íŠ¸ ê°±ì‹ 
 
-        // ¸¸¾à »ó¼¼ ÆĞ³ÎÀÌ ¿­·ÁÀÖ´Ù¸é »ó¼¼ ÆĞ³Îµµ Áï½Ã °»½Å
+        // ë§Œì•½ ìƒì„¸ íŒ¨ë„ì´ ì—´ë ¤ìˆë‹¤ë©´ ìƒì„¸ íŒ¨ë„ë„ ì¦‰ì‹œ ê°±ì‹ 
         if (detailController != null && detailController.detailPanel.activeSelf) {
             detailController.RefreshTextUI();
         }
     }
 
     public void ResetFiltersAndSort() {
-        // A. Á¤·Ä ÃÊ±âÈ­
+        // A. ì •ë ¬ ì´ˆê¸°í™”
         currentSortType = ResearchSortType.None;
         currentSortOrder = ResearchSortOrder.Normal;
 
-        // B. ÇÊÅÍ ÃÊ±âÈ­
+        // B. í•„í„° ì´ˆê¸°í™”
         if (wishlistToggle != null) wishlistToggle.isOn = false;
         if (usdToggle != null) usdToggle.isOn = false;
-        if (themeDropdown != null) themeDropdown.value = 0; // "ÀüÃ¼º¸±â"·Î º¯°æ
+        if (themeDropdown != null) themeDropdown.value = 0; // "ì „ì²´ë³´ê¸°"ë¡œ ë³€ê²½
         filterWishlistOnly = false;
 
-        // C. ¶óº§ ÅØ½ºÆ® ¹× ÄÃ·¯ ¿øº¹
-        nameLabel.text = "ÀÌ¸§";
-        UpdateLabelColors(); // ¸ğµç ÄÃ·¯¸¦ Normal·Î µÇµ¹¸²
+        // C. ë¼ë²¨ í…ìŠ¤íŠ¸ ë° ì»¬ëŸ¬ ì›ë³µ
+        nameLabel.text = "ì´ë¦„";
+        UpdateLabelColors(); // ëª¨ë“  ì»¬ëŸ¬ë¥¼ Normalë¡œ ë˜ëŒë¦¼
 
-        // D. ¸®½ºÆ® °»½Å
+        // D. ë¦¬ìŠ¤íŠ¸ ê°±ì‹ 
         RefreshCoinRows();
 
-        Debug.Log("¸ğµç ÇÊÅÍ¿Í Á¤·ÄÀÌ ÃÊ±âÈ­µÇ¾ú½À´Ï´Ù.");
+        Debug.Log("ëª¨ë“  í•„í„°ì™€ ì •ë ¬ì´ ì´ˆê¸°í™”ë˜ì—ˆìŠµë‹ˆë‹¤.");
     }
 
     void OnEnable() {
         if (CoinManager.Instance != null) {
             CoinManager.Instance.OnMarketUpdated += HandleMarketUpdated;
         }
-        RefreshCoinRows(); // ÆĞ³Î ¿­¸± ¶§¸¶´Ù °»½Å
+        RefreshCoinRows(); // íŒ¨ë„ ì—´ë¦´ ë•Œë§ˆë‹¤ ê°±ì‹ 
     }
 
     void OnDisable() {
@@ -177,7 +177,7 @@ public class ResearchPanelController : MonoBehaviour {
         }
     }
 
-    // --- Å×¸¶ µå·Ó´Ù¿î ¹× À§½Ã¸®½ºÆ® ·ÎÁ÷Àº ±âÁ¸ MainUIManager¿Í 100% µ¿ÀÏÇÏ¹Ç·Î »ı·« ¾øÀÌ ³Ö¾ú½À´Ï´Ù ---
+    // --- í…Œë§ˆ ë“œë¡­ë‹¤ìš´ ë° ìœ„ì‹œë¦¬ìŠ¤íŠ¸ ë¡œì§ì€ ê¸°ì¡´ MainUIManagerì™€ 100% ë™ì¼í•˜ë¯€ë¡œ ìƒëµ ì—†ì´ ë„£ì—ˆìŠµë‹ˆë‹¤ ---
     private void SetupThemeDropdown() {
         if (themeDropdown == null) return;
         themeDropdown.ClearOptions();
@@ -185,11 +185,12 @@ public class ResearchPanelController : MonoBehaviour {
 
         List<(string Name, CoinTheme Theme)> tempThemes = new List<(string, CoinTheme)>();
         foreach (CoinTheme theme in Enum.GetValues(typeof(CoinTheme))) {
-            tempThemes.Add((GetThemeNameKR(theme), theme));
+            tempThemes.Add((GetThemeName(theme), theme));
         }
 
         tempThemes.Sort((a, b) => a.Name.CompareTo(b.Name));
-        List<string> displayOptions = new List<string> { "ÀüÃ¼º¸±â" };
+        string allLabel = LocalizationManager.GetText("LBL_THEME_ALL");
+        List<string> displayOptions = new List<string> { allLabel };
 
         foreach (var item in tempThemes) {
             displayOptions.Add(item.Name);
@@ -201,16 +202,16 @@ public class ResearchPanelController : MonoBehaviour {
         themeDropdown.onValueChanged.AddListener((idx) => RefreshCoinRows());
     }
 
-    private string GetThemeNameKR(CoinTheme theme) {
+    private string GetThemeName(CoinTheme theme) {
         return theme switch {
-            CoinTheme.Layer1 => "·¹ÀÌ¾î 1",
-            CoinTheme.Layer2 => "·¹ÀÌ¾î 2",
-            CoinTheme.Meme => "¹Ò",
-            CoinTheme.AI => "AI / ÀÎ°øÁö´É",
-            CoinTheme.RWA => "RWA",
-            CoinTheme.ZK => "ZK",
-            CoinTheme.DeFi => "µğÆÄÀÌ",
-            CoinTheme.Stable => "½ºÅ×ÀÌºí",
+            CoinTheme.Layer1 => LocalizationManager.GetText("THEME_LAYER1"),
+            CoinTheme.Layer2 => LocalizationManager.GetText("THEME_LAYER2"),
+            CoinTheme.Meme => LocalizationManager.GetText("THEME_MEME"),
+            CoinTheme.AI => LocalizationManager.GetText("THEME_AI"),
+            CoinTheme.RWA => LocalizationManager.GetText("THEME_RWA"),
+            CoinTheme.ZK => LocalizationManager.GetText("THEME_ZK"),
+            CoinTheme.DeFi => LocalizationManager.GetText("THEME_DEFI"),
+            CoinTheme.Stable => LocalizationManager.GetText("THEME_STABLE"),
             _ => theme.ToString()
         };
     }
@@ -236,18 +237,18 @@ public class ResearchPanelController : MonoBehaviour {
             CoinData coin = kvp.Value;
             if (coin == null || coin.IsDelisted) continue;
 
-            // 1. °¡°İ ¾÷µ¥ÀÌÆ® (¼Ò¼öÁ¡ Á¤¹Ğµµ À¯Áö)
+            // 1. ê°€ê²© ì—…ë°ì´íŠ¸ (ì†Œìˆ˜ì  ì •ë°€ë„ ìœ ì§€)
             var priceTxt = row.transform.Find("PriceText").GetComponent<TextMeshProUGUI>();
             if (showInUsd) {
                 double priceInUsd = coin.CurrentPrice / GlobalEconomyManager.UsdToKrw;
                 if (priceInUsd >= 1.0) priceTxt.text = $"${priceInUsd:N2}";
                 else if (priceInUsd >= 0.001) priceTxt.text = $"${priceInUsd:N4}";
-                else priceTxt.text = $"${priceInUsd:F6}"; // ÆäÆä µî ¹ÒÄÚÀÎ ´ëÀÀ
+                else priceTxt.text = $"${priceInUsd:F6}"; // í˜í˜ ë“± ë°ˆì½”ì¸ ëŒ€ì‘
             } else {
                 priceTxt.text = coin.GetFormattedPriceKRW();
             }
 
-            // 2. µî¶ô·ü ¾÷µ¥ÀÌÆ®
+            // 2. ë“±ë½ë¥  ì—…ë°ì´íŠ¸
             var changeText = row.transform.Find("ChangeText").GetComponent<TextMeshProUGUI>();
             if (!marketInitialized || coin.InitialPrice <= 0) {
                 changeText.text = "-";
@@ -266,13 +267,8 @@ public class ResearchPanelController : MonoBehaviour {
                 if (meta != null) {
                     double marketCap = coin.CurrentPrice * meta.CirculatingSupply;
 
-                    if (showInUsd) {
-                        // ´Ş·¯ È¯»ê ÈÄ ¿µ¹® ´ÜÀ§(B, M, K) Àû¿ë
-                        mcapText.text = FormatMarketCapUSD(marketCap / GlobalEconomyManager.UsdToKrw);
-                    } else {
-                        // ±âÁ¸ ÇÑ±¹¾î ´ÜÀ§ Àû¿ë
-                        mcapText.text = FormatMarketCap(marketCap);
-                    }
+                    // [ìˆ˜ì •] í†µí•© í•¨ìˆ˜ í˜¸ì¶œ (ê¸ˆì•¡ê³¼ USD í† ê¸€ ìƒíƒœë¥¼ ë„˜ê¹€)
+                    mcapText.text = FormatMarketCap(marketCap, showInUsd);
                 }
             }
         }
@@ -283,37 +279,64 @@ public class ResearchPanelController : MonoBehaviour {
         }
     }
 
-    // [NEW] ½Ã°¡ÃÑ¾× ÇÑ±Û ´ÜÀ§ ÆÄ½Ì (Á¶, ¾ï, ¸¸)
+    // [NEW] ì‹œê°€ì´ì•¡ í•œê¸€ ë‹¨ìœ„ íŒŒì‹± (ì¡°, ì–µ, ë§Œ)
     private string FormatMarketCap(double amount) {
-        if (amount >= 1_0000_0000_0000) // 1Á¶ ÀÌ»ó
-            return $"{(amount / 1_0000_0000_0000):F2}Á¶";
-        else if (amount >= 1_0000_0000) // 1¾ï ÀÌ»ó
-            return $"{(amount / 1_0000_0000):F0}¾ï";
-        else if (amount >= 1_0000) // 1¸¸ ÀÌ»ó
-            return $"{(amount / 1_0000):F0}¸¸";
+        if (amount >= 1_0000_0000_0000) // 1ì¡° ì´ìƒ
+            return $"{(amount / 1_0000_0000_0000):F2}ì¡°";
+        else if (amount >= 1_0000_0000) // 1ì–µ ì´ìƒ
+            return $"{(amount / 1_0000_0000):F0}ì–µ";
+        else if (amount >= 1_0000) // 1ë§Œ ì´ìƒ
+            return $"{(amount / 1_0000):F0}ë§Œ";
         else
             return $"{amount:N0}";
     }
 
+    private string FormatMarketCap(double amount, bool isUsd) {
+        double displayAmount = isUsd ? (amount / GlobalEconomyManager.UsdToKrw) : amount;
+        string formatStyle = LocalizationManager.GetText("FORMAT_STYLE");
+
+        if (isUsd) {
+            // [ë‹¬ëŸ¬ ëª¨ë“œ] ë¬´ì¡°ê±´ $ ê¸°í˜¸ì™€ ì„œì–‘ì‹ ë‹¨ìœ„
+            if (displayAmount >= 1_000_000_000_000) return $"${(displayAmount / 1_000_000_000_000):F2}T";
+            else if (displayAmount >= 1_000_000_000) return $"${(displayAmount / 1_000_000_000):F2}B";
+            else if (displayAmount >= 1_000_000) return $"${(displayAmount / 1_000_000):F2}M";
+            else if (displayAmount >= 1_000) return $"${(displayAmount / 1_000):F2}K";
+            else return $"${displayAmount:N2}";
+        } else if (formatStyle == "EN") {
+            // [ì˜ë¬¸ + ì›í™” ëª¨ë“œ] í—·ê°ˆë¦¬ì§€ ì•Šê²Œ â‚© ê¸°í˜¸ì™€ ì„œì–‘ì‹ ë‹¨ìœ„
+            if (displayAmount >= 1_000_000_000_000) return $"â‚©{(displayAmount / 1_000_000_000_000):F2}T";
+            else if (displayAmount >= 1_000_000_000) return $"â‚©{(displayAmount / 1_000_000_000):F2}B";
+            else if (displayAmount >= 1_000_000) return $"â‚©{(displayAmount / 1_000_000):F2}M";
+            else if (displayAmount >= 1_000) return $"â‚©{(displayAmount / 1_000):F2}K";
+            else return $"â‚©{displayAmount:N0}";
+        } else {
+            // [í•œê¸€ + ì›í™” ëª¨ë“œ] í•œêµ­ì¸ë“¤ì—ê²Œ ìµìˆ™í•œ ì¡°, ì–µ, ë§Œ
+            if (displayAmount >= 1_0000_0000_0000) return $"{(displayAmount / 1_0000_0000_0000):F2}ì¡°";
+            else if (displayAmount >= 1_0000_0000) return $"{(displayAmount / 1_0000_0000):F0}ì–µ";
+            else if (displayAmount >= 1_0000) return $"{(displayAmount / 1_0000):F0}ë§Œ";
+            else return $"{displayAmount:N0}";
+        }
+    }
+
     public void OnSortClick(ResearchSortType type) {
         if (type == ResearchSortType.Name) {
-            // ÀÌ¸§ ¶óº§Àº 4´Ü°è »çÀÌÅ¬: NameAsc -> NameDesc -> SymbolAsc -> SymbolDesc -> NameAsc...
+            // ì´ë¦„ ë¼ë²¨ì€ 4ë‹¨ê³„ ì‚¬ì´í´: NameAsc -> NameDesc -> SymbolAsc -> SymbolDesc -> NameAsc...
             if (currentSortType != ResearchSortType.Name) {
                 currentSortType = ResearchSortType.Name;
                 currentSortOrder = ResearchSortOrder.NameAsc;
             } else {
-                // »çÀÌÅ¬ ·ÎÁ÷ (1~4¹ø ¼øÈ¯)
+                // ì‚¬ì´í´ ë¡œì§ (1~4ë²ˆ ìˆœí™˜)
                 int nextOrder = (int)currentSortOrder + 1;
                 if (nextOrder > (int)ResearchSortOrder.SymbolDesc) nextOrder = (int)ResearchSortOrder.NameAsc;
                 currentSortOrder = (ResearchSortOrder)nextOrder;
             }
         } else {
-            // ´Ù¸¥ ¹öÆ°(°¡°İ, ½ÃÃÑ µî)Àº ±âÁ¸Ã³·³ 2´Ü°è »çÀÌÅ¬ (³»¸²Â÷¼ø -> ¿À¸§Â÷¼ø)
+            // ë‹¤ë¥¸ ë²„íŠ¼(ê°€ê²©, ì‹œì´ ë“±)ì€ ê¸°ì¡´ì²˜ëŸ¼ 2ë‹¨ê³„ ì‚¬ì´í´ (ë‚´ë¦¼ì°¨ìˆœ -> ì˜¤ë¦„ì°¨ìˆœ)
             if (currentSortType == type) {
                 currentSortOrder = (currentSortOrder == ResearchSortOrder.NameAsc) ? ResearchSortOrder.NameDesc : ResearchSortOrder.NameAsc;
             } else {
                 currentSortType = type;
-                currentSortOrder = ResearchSortOrder.NameAsc; // Ã¹ Å¬¸¯ ½Ã ³ôÀº ¼ø
+                currentSortOrder = ResearchSortOrder.NameAsc; // ì²« í´ë¦­ ì‹œ ë†’ì€ ìˆœ
             }
         }
 
@@ -322,13 +345,13 @@ public class ResearchPanelController : MonoBehaviour {
     }
 
     private string FormatMarketCapUSD(double amount) {
-        if (amount >= 1_000_000_000_000) // 1Á¶ ´Ş·¯ ÀÌ»ó (Trillion)
+        if (amount >= 1_000_000_000_000) // 1ì¡° ë‹¬ëŸ¬ ì´ìƒ (Trillion)
             return $"{(amount / 1_000_000_000_000):F2}T";
-        else if (amount >= 1_000_000_000) // 10¾ï ´Ş·¯ ÀÌ»ó (Billion)
+        else if (amount >= 1_000_000_000) // 10ì–µ ë‹¬ëŸ¬ ì´ìƒ (Billion)
             return $"{(amount / 1_000_000_000):F2}B";
-        else if (amount >= 1_000_000) // 100¸¸ ´Ş·¯ ÀÌ»ó (Million)
+        else if (amount >= 1_000_000) // 100ë§Œ ë‹¬ëŸ¬ ì´ìƒ (Million)
             return $"{(amount / 1_000_000):F2}M";
-        else if (amount >= 1_000) // 1,000 ´Ş·¯ ÀÌ»ó (K)
+        else if (amount >= 1_000) // 1,000 ë‹¬ëŸ¬ ì´ìƒ (K)
             return $"{(amount / 1_000):F2}K";
         else
             return $"{amount:N2}";
@@ -338,30 +361,33 @@ public class ResearchPanelController : MonoBehaviour {
         Color32 normal = Color.white;
         Color32 active = new Color32(20, 255, 8, 255);
 
-        // ¸ğµç ¶óº§ ÄÃ·¯ ÃÊ±âÈ­
         nameLabel.color = priceLabel.color = changeLabel.color = marketCapLabel.color = normal;
 
-        // ¸¸¾à Á¤·ÄÀÌ ¾ø´Â »óÅÂ(ÃÊ±âÈ­ ÈÄ)¶ó¸é ÅØ½ºÆ®¸¸ º¹±¸ÇÏ°í ¸®ÅÏ
         if (currentSortOrder == ResearchSortOrder.Normal) {
-            nameLabel.text = "ÀÌ¸§";
+            nameLabel.text = LocalizationManager.GetText("LBL_SORT_NAME");
             return;
         }
 
         if (currentSortType == ResearchSortType.Name) {
             nameLabel.color = active;
             switch (currentSortOrder) {
-                case ResearchSortOrder.NameAsc: nameLabel.text = "ÀÌ¸§ ¡ã"; break;
-                case ResearchSortOrder.NameDesc: nameLabel.text = "ÀÌ¸§ ¡å"; break;
-                case ResearchSortOrder.SymbolAsc: nameLabel.text = "ÀÌ¸§(½Éº¼) ¡ã"; break;
-                case ResearchSortOrder.SymbolDesc: nameLabel.text = "ÀÌ¸§(½Éº¼) ¡å"; break;
+                case ResearchSortOrder.NameAsc: nameLabel.text = LocalizationManager.GetText("LBL_SORT_NAME_ASC"); break;
+                case ResearchSortOrder.NameDesc: nameLabel.text = LocalizationManager.GetText("LBL_SORT_NAME_DESC"); break;
+                case ResearchSortOrder.SymbolAsc: nameLabel.text = LocalizationManager.GetText("LBL_SORT_SYMBOL_ASC"); break;
+                case ResearchSortOrder.SymbolDesc: nameLabel.text = LocalizationManager.GetText("LBL_SORT_SYMBOL_DESC"); break;
             }
         } else {
-            nameLabel.text = "ÀÌ¸§"; // ÀÌ¸§ Á¤·ÄÀÌ ¾Æ´Ò ¶© ¿øº¹
+            nameLabel.text = LocalizationManager.GetText("LBL_SORT_NAME");
             switch (currentSortType) {
                 case ResearchSortType.Price: priceLabel.color = active; break;
                 case ResearchSortType.Change: changeLabel.color = active; break;
                 case ResearchSortType.MarketCap: marketCapLabel.color = active; break;
             }
+        }
+
+        if (marketCapLabel != null) {
+            string mcapKey = showInUsd ? "LBL_MARKET_CAP_USD" : "LBL_MARKET_CAP_KRW";
+            marketCapLabel.text = LocalizationManager.GetText(mcapKey);
         }
     }
 
@@ -388,11 +414,11 @@ public class ResearchPanelController : MonoBehaviour {
             }
         }
 
-        // Á¤·Ä ·ÎÁ÷
-        // [¼öÁ¤] Á¤·Ä ·ÎÁ÷
+        // ì •ë ¬ ë¡œì§
+        // [ìˆ˜ì •] ì •ë ¬ ë¡œì§
         if (currentSortOrder != ResearchSortOrder.Normal) {
             switch (currentSortType) {
-                // 1. ÀÌ¸§/½Éº¼ »çÀÌÅ¬ Á¤·Ä (4´Ü°è)
+                // 1. ì´ë¦„/ì‹¬ë³¼ ì‚¬ì´í´ ì •ë ¬ (4ë‹¨ê³„)
                 case ResearchSortType.Name:
                     list = currentSortOrder switch {
                         ResearchSortOrder.NameAsc => list.OrderBy(c => c.Name).ToList(),
@@ -403,15 +429,15 @@ public class ResearchPanelController : MonoBehaviour {
                     };
                     break;
 
-                // 2. °¡°İ Á¤·Ä (2´Ü°è: ³ôÀº ¼ø / ³·Àº ¼ø)
+                // 2. ê°€ê²© ì •ë ¬ (2ë‹¨ê³„: ë†’ì€ ìˆœ / ë‚®ì€ ìˆœ)
                 case ResearchSortType.Price:
-                    // NameAsc¸¦ '³ôÀº ¼ø(Desc)'À¸·Î, NameDesc¸¦ '³·Àº ¼ø(Asc)'À¸·Î È°¿ë
+                    // NameAscë¥¼ 'ë†’ì€ ìˆœ(Desc)'ìœ¼ë¡œ, NameDescë¥¼ 'ë‚®ì€ ìˆœ(Asc)'ìœ¼ë¡œ í™œìš©
                     list = (currentSortOrder == ResearchSortOrder.NameAsc)
                         ? list.OrderByDescending(c => c.CurrentPrice).ToList()
                         : list.OrderBy(c => c.CurrentPrice).ToList();
                     break;
 
-                // 3. ½Ã°¡ÃÑ¾× Á¤·Ä (2´Ü°è: ³ôÀº ¼ø / ³·Àº ¼ø)
+                // 3. ì‹œê°€ì´ì•¡ ì •ë ¬ (2ë‹¨ê³„: ë†’ì€ ìˆœ / ë‚®ì€ ìˆœ)
                 case ResearchSortType.MarketCap:
                     list = (currentSortOrder == ResearchSortOrder.NameAsc)
                         ? list.OrderByDescending(c => {
@@ -424,7 +450,7 @@ public class ResearchPanelController : MonoBehaviour {
                         }).ToList();
                     break;
 
-                // 4. µî¶ô·ü Á¤·Ä (2´Ü°è)
+                // 4. ë“±ë½ë¥  ì •ë ¬ (2ë‹¨ê³„)
                 case ResearchSortType.Change:
                     list = (currentSortOrder == ResearchSortOrder.NameAsc)
                         ? list.OrderByDescending(c => c.InitialPrice > 0 ? (c.CurrentPrice - c.InitialPrice) / c.InitialPrice : 0).ToList()
@@ -433,7 +459,7 @@ public class ResearchPanelController : MonoBehaviour {
             }
         }
 
-        // Row »ı¼º ¹× °ü¸®
+        // Row ìƒì„± ë° ê´€ë¦¬
         for (int i = 0; i < list.Count; i++) {
             var coin = list[i];
             GameObject row = rowDataMap.FirstOrDefault(x => x.Value == coin).Key;
@@ -462,7 +488,7 @@ public class ResearchPanelController : MonoBehaviour {
             if (sprite != null) icon.sprite = sprite;
         }
 
-        // °ü½É Á¾¸ñ ¹öÆ°
+        // ê´€ì‹¬ ì¢…ëª© ë²„íŠ¼
         Transform starTr = row.transform.Find("WishlistBtn");
         if (starTr != null) {
             Button starBtn = starTr.GetComponent<Button>();
@@ -472,17 +498,17 @@ public class ResearchPanelController : MonoBehaviour {
             starBtn.onClick.AddListener(() => OnStarClicked(coin, starImg));
         }
 
-        // [NEW] º¸±â ¹öÆ° (»ó¼¼ ÆĞ³Î ¿­±â)
+        // [NEW] ë³´ê¸° ë²„íŠ¼ (ìƒì„¸ íŒ¨ë„ ì—´ê¸°)
         var viewBtn = row.transform.Find("DetailButton")?.GetComponent<Button>();
         if (viewBtn != null) {
             viewBtn.onClick.AddListener(() => {
-                Debug.Log($"[{coin.Name}] »ó¼¼ ¸®¼­Ä¡ ÆĞ³Î ¿­±â ½Ãµµ!");
+                Debug.Log($"[{coin.Name}] ìƒì„¸ ë¦¬ì„œì¹˜ íŒ¨ë„ ì—´ê¸° ì‹œë„!");
                 detailController.OpenPanel(coin);
             });
         }
     }
 
-    // --- °ü½ÉÁ¾¸ñ ÀúÀå/·Îµå ·ÎÁ÷ µ¿ÀÏ ---
+    // --- ê´€ì‹¬ì¢…ëª© ì €ì¥/ë¡œë“œ ë¡œì§ ë™ì¼ ---
     private void OnStarClicked(CoinData coin, Image starImg) {
         if (wishlistedSymbols.Contains(coin.Symbol)) {
             wishlistedSymbols.Remove(coin.Symbol);
@@ -497,12 +523,12 @@ public class ResearchPanelController : MonoBehaviour {
 
     private void SaveWishlist() {
         string data = string.Join(",", wishlistedSymbols);
-        PlayerPrefs.SetString("UserWishlist_Research", data); // Å°°ª ºĞ¸® ÃßÃµ
+        PlayerPrefs.SetString("UserWishlist_Research", data); // í‚¤ê°’ ë¶„ë¦¬ ì¶”ì²œ
         PlayerPrefs.Save();
     }
 
     private void LoadWishlist() {
-        string data = PlayerPrefs.GetString("UserWishlist_Research", ""); // ºÒºñÆ®¶û °øÀ¯ÇÒ°Å¸é Å°¸¦ ¸ÂÃß¼¼¿ä
+        string data = PlayerPrefs.GetString("UserWishlist_Research", ""); // ë¶ˆë¹„íŠ¸ë‘ ê³µìœ í• ê±°ë©´ í‚¤ë¥¼ ë§ì¶”ì„¸ìš”
         if (!string.IsNullOrEmpty(data)) {
             string[] symbols = data.Split(',');
             foreach (var s in symbols) {

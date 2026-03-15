@@ -36,6 +36,10 @@ public class CoinManager : MonoBehaviour
     public TextMeshProUGUI lobbySatoshiText;
 
     public TimeSpeed currentSpeed = TimeSpeed.Normal;
+    private TimeSpeed lastSpeedBeforePause = TimeSpeed.Normal;
+    private float spacePressedTime = 0f;
+    private bool isLongPress = false;
+    private bool startedAsPaused = false;
 
     public List<CoinData> coins = new();
     public MarketPhase CurrentMarket = MarketPhase.Sideways;
@@ -125,6 +129,62 @@ public class CoinManager : MonoBehaviour
     {
         StartCoroutine(InitializeRoutine());
         StartCoroutine(RealtimeUIUpdateRoutine());
+    }
+
+    void Update() {
+        // 1. 은행 잔액 실시간 업데이트
+        //if (bankCashText != null && PlayerManager.Instance != null) {
+        //    bankCashText.text = $"은행 잔액: {PlayerManager.Instance.satoshiBankCash:N0}원";
+        //}
+
+        // 2. 스페이스바 스마트 조작
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            spacePressedTime = Time.unscaledTime;
+            isLongPress = false;
+            // 누르는 시점의 상태를 저장
+            startedAsPaused = (currentSpeed == TimeSpeed.Paused);
+        }
+
+        // 꾹 누르고 있는 동안
+        if (Input.GetKey(KeyCode.Space)) {
+            float duration = Time.unscaledTime - spacePressedTime;
+
+            // 정지 상태가 아니었을 때만 배속 활성화
+            if (duration > 0.2f && !startedAsPaused) {
+                isLongPress = true;
+                if (currentSpeed != TimeSpeed.Double) {
+                    SetTimeSpeed(TimeSpeed.Double);
+                }
+            }
+        }
+
+        // 뗐을 때
+        if (Input.GetKeyUp(KeyCode.Space)) {
+            // 시나리오 1: 흐르는 중에 꾹 눌렀다 뗀 경우 -> 일반 속도로 복귀
+            if (isLongPress && !startedAsPaused) {
+                SetTimeSpeed(TimeSpeed.Normal);
+            }
+            // 시나리오 2: 정지 상태에서 꾹 눌렀다 뗀 경우 -> 아무것도 안 함 (정지 유지)
+            else if (startedAsPaused && (Time.unscaledTime - spacePressedTime > 0.2f)) {
+                // 꾹 누른 것이 확인되면 정지 상태를 유지 (TogglePause 호출 안 함)
+                Debug.Log("[시간] 정지 중 롱프레스 감지: 정지 유지");
+            }
+            // 시나리오 3: 짧게 클릭한 경우 -> 토글 스왑
+            else {
+                TogglePause();
+            }
+
+            isLongPress = false;
+            startedAsPaused = false;
+        }
+    }
+
+    public void TogglePause() {
+        if (currentSpeed == TimeSpeed.Paused) {
+            SetTimeSpeed(TimeSpeed.Normal);
+        } else {
+            SetTimeSpeed(TimeSpeed.Paused);
+        }
     }
 
     IEnumerator RealtimeUIUpdateRoutine() {
@@ -329,11 +389,15 @@ public class CoinManager : MonoBehaviour
 
         // 3. 급등 (+15% 이상)
         if (changeRate >= 15.0) {
-            SendAlert(coin, "Bullbit", "[급등]", $"'{coin.Symbol}' 현재 {changeRate:F2}% 급등 중!");
+            string title = LocalizationManager.GetText("LBL_ALERT_SURGE_TITLE");
+            string msg = string.Format(LocalizationManager.GetText("LBL_ALERT_SURGE_MSG"), coin.Symbol, changeRate.ToString("F2"));
+            SendAlert(coin, "Bullbit", title, msg);
         }
         // 4. 급락 (-15% 이하)
         else if (changeRate <= -15.0) {
-            SendAlert(coin, "Bullbit", "[급락]", $"'{coin.Symbol}'현재 {changeRate:F2}% 급락 중!");
+            string title = LocalizationManager.GetText("LBL_ALERT_PLUNGE_TITLE");
+            string msg = string.Format(LocalizationManager.GetText("LBL_ALERT_PLUNGE_MSG"), coin.Symbol, changeRate.ToString("F2"));
+            SendAlert(coin, "Bullbit", title, msg);
         }
     }
     // [신규] 매수 시 호출: 이미 변동폭이 큰 코인이면 알림 스킵 처리
@@ -361,10 +425,16 @@ public class CoinManager : MonoBehaviour
         dailySurgeAlerts.Add(coin.Symbol);
     }
 
-    void UpdateDateText()
-    {
-        string dateStr = currentDateTime.ToString("MM/dd/yyyy  HH:mm");
-        dateText.text = $"{dateStr} {survivalDays}일차";
+    void UpdateDateText() {
+        // 날짜/시간 포맷은 MM/dd/yyyy HH:mm 형식을 유지 (만약 이 포맷도 바꾸고 싶다면 키로 뺄 수 있습니다)
+        string dateStr = currentDateTime.ToString("MM/dd/yyyy HH:mm");
+
+        // 생존 일수 로컬라이징 적용
+        string daysFormat = LocalizationManager.GetText("LBL_SURVIVAL_DAYS");
+        string daysStr = string.Format(daysFormat, survivalDays);
+
+        // 결과: "03/15/2026 09:23 10일차" (KR) / "03/15/2026 09:23 Day 10" (EN)
+        dateText.text = $"{dateStr} {daysStr}";
     }
 
     public double GetBullbitAsset()
@@ -392,34 +462,42 @@ public class CoinManager : MonoBehaviour
         double bank = GetSatoshiBankAsset();
         double satoshiCash = GetStashoCash();
 
+        // 공통 단위 (Won)
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+
         if (fournanceManager != null && fournanceManager.gameObject.activeInHierarchy) {
             fournanceManager.RefreshUI();
         }
 
-        // [기존] 불비트 자산
-        if (cashText != null)
-            cashText.text = $"불비트 자산: {bullbit:N0}원";
+        // 1. 불비트 자산
+        if (cashText != null) {
+            string format = LocalizationManager.GetText("LBL_BULLBIT_ASSET");
+            cashText.text = string.Format(format, bullbit.ToString("N0"), unit);
+        }
 
-        // [기존] 사토시 뱅크 앱을 켰을 때만 보이는 텍스트
+        // 2. 사토시 뱅크 (앱 내부 텍스트)
         if (bankCashText != null) {
             if (currentApp == AppType.SatoshiBank) {
-                bankCashText.text = $"₩{bank:N0}원";
+                // 이 부분은 ₩ 기호가 하드코딩 되어있어서 유지하시거나, UNIT_CURRENCY로 대체 가능합니다.
+                bankCashText.text = $"₩{bank:N0}{unit}";
             }
         }
 
-    
+        // 3. 사토시 은행 잔고 (로비/메인 텍스트)
         if (lobbySatoshiText != null) {
-            lobbySatoshiText.text = $"사토시 은행 잔고 {bank:N0}원"; 
+            string format = LocalizationManager.GetText("LBL_BANK_BALANCE");
+            lobbySatoshiText.text = string.Format(format, bank.ToString("N0"), unit);
         }
 
-        // [기존] 망고 캐시
+        // 4. 망고 캐시 (카지노 등)
         if (mangoCashText != null) {
-            mangoCashText.text = $"{statusPanelController.playerNameText.text}님의 잔액: {satoshiCash:N0}원";
+            string format = LocalizationManager.GetText("LBL_MANGO_BALANCE");
+            // {0}: 이름, {1}: 금액, {2}: 단위
+            mangoCashText.text = string.Format(format, PlayerManager.Instance.playerName, satoshiCash.ToString("N0"), unit);
         }
     }
 
-    public void SetTimeSpeed(TimeSpeed speed)
-    {
+    public void SetTimeSpeed(TimeSpeed speed) {
         currentSpeed = speed;
         UpdateSpeedButtonVisuals();
     }
@@ -441,7 +519,7 @@ public class CoinManager : MonoBehaviour
         {
             TimeSpeed.Paused => float.MaxValue,
             TimeSpeed.Normal => 1f,
-            TimeSpeed.Double => 0.2f,
+            TimeSpeed.Double => 0.4f,
             TimeSpeed.test => 0.01f,
             _ => 2f
         };
@@ -615,8 +693,10 @@ public class CoinManager : MonoBehaviour
     public void RenderBankCashOnce() {
         if (bankCashText == null) return;
 
+        // [수정] "원" 하드코딩 제거 후 언어팩 단위(unit) 사용
         double bank = PlayerManager.Instance.satoshiBankCash;
-        bankCashText.text = $"₩{bank:N0}원";
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+        bankCashText.text = $"₩{bank:N0}{unit}";
     }
 
     bool IsFourHourBoundary(DateTime time) {

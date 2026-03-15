@@ -164,6 +164,15 @@ public class EffectManager : MonoBehaviour {
                 }
             }
 
+            if (group.targetTheme >= 0) {
+                var themeSymbols = GetSymbolsByTheme(group.targetTheme);
+                foreach (var s in themeSymbols) {
+                    if (!targetSymbols.Contains(s)) targetSymbols.Add(s);
+                }
+                Debug.Log($"[Effect] 테마 타겟팅(Index:{group.targetTheme}): {themeSymbols.Count}개 코인 추가됨.");
+            }
+
+
             // 아무 타겟도 없을 때의 기본 처리 (Stable/Trash 제외 전체)
             if (targetSymbols.Count == 0 && group.targetSegment == TargetSegment.None) {
                 targetSymbols = coinManager.coins
@@ -212,6 +221,25 @@ public class EffectManager : MonoBehaviour {
                         case CoinEventType.Rename:
                             Debug.Log($"[Effect] Rename 이벤트 (미구현): {symbol}");
                             continue;
+
+                        case CoinEventType.Halt:
+                            var haltCoin = coinManager.coins.FirstOrDefault(c => c.Symbol == symbol);
+                            if (haltCoin != null) haltCoin.IsTradingSuspended = true;
+                            Debug.Log($"[Effect] 거래 정지 처리: {symbol}");
+                            continue;
+
+                        case CoinEventType.Resume:
+                            var resumeCoin = coinManager.coins.FirstOrDefault(c => c.Symbol == symbol);
+                            if (resumeCoin != null) resumeCoin.IsTradingSuspended = false;
+                            Debug.Log($"[Effect] 거래 재개 처리: {symbol}");
+                            continue;
+                    }
+                }
+                if (group.coinAlertType > 0) { // <--- 여기 부등호 주의!
+                    var targetCoin = coinManager.coins.FirstOrDefault(c => c.Symbol == symbol);
+                    if (targetCoin != null) {
+                        targetCoin.AlertType = (CoinAlertType)group.coinAlertType;
+                        Debug.Log($"[Effect] {symbol} 종목 Alert 상태 변경: {targetCoin.AlertType}");
                     }
                 }
 
@@ -283,7 +311,7 @@ public class EffectManager : MonoBehaviour {
     private double GetDefaultMultiplier(MarketPhase phase) {
         return phase switch {
             MarketPhase.MegaBull => 1.50,  // +50%
-            MarketPhase.SuperBull => 1.30, // +30% (행님 요구사항)
+            MarketPhase.SuperBull => 1.30, // +30% 
             MarketPhase.BigBull => 1.15,   // +15%
             MarketPhase.Bull => 1.08,      // +8%
             MarketPhase.Sideways => 1.0,   // 0%
@@ -293,6 +321,31 @@ public class EffectManager : MonoBehaviour {
             MarketPhase.MegaBear => 0.30,  // -70%
             _ => 1.0
         };
+    }
+
+    private List<string> GetSymbolsByTheme(int themeIndex) {
+        List<string> result = new List<string>();
+
+        // Enum에 정의된 인덱스인지 안전 검사
+        if (!Enum.IsDefined(typeof(CoinTheme), themeIndex)) {
+            Debug.LogWarning($"[Effect] 유효하지 않은 테마 인덱스입니다: {themeIndex}");
+            return result;
+        }
+
+        CoinTheme targetTheme = (CoinTheme)themeIndex;
+
+        // 현재 매니저에 등록된 활성 코인들 기준
+        var activeCoins = coinManager.coins.Where(c => c.IsListed && !c.IsDelisted).ToList();
+
+        foreach (var coin in activeCoins) {
+            // DB에서 해당 코인의 메타데이터를 찾아 테마 확인
+            var meta = CoinMetaDatabase.AllCoins.FirstOrDefault(m => m.Symbol == coin.Symbol);
+            if (meta != null && meta.Theme == targetTheme) {
+                result.Add(coin.Symbol);
+            }
+        }
+
+        return result;
     }
 
     // [헬퍼 함수 추가] 변동성 적용

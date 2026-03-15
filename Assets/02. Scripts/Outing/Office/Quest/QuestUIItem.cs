@@ -15,60 +15,73 @@ public class QuestUIItem : MonoBehaviour {
     private QuestProgress _progress;
 
     [Header("색상 설정")]
-    public Color normalColor = Color.white;      // 진행 중일 때 색상
-    public Color completedColor = Color.green;   // 보상 받을 수 있을 때 색상 (선택 사항)
-    public Color claimedColor = Color.gray;      // 보상 받은 후(완료) 색상
+    public Color normalColor = Color.white;
+    public Color completedColor = Color.green;
+    public Color claimedColor = Color.gray;
 
     public void Setup(QuestSO so, QuestProgress progress) {
         _so = so;
         _progress = progress;
 
-        titleText.text = _so.title;
-
-        if (descriptionText != null) {
-            descriptionText.text = _so.description;
-        }
-
-        // [수정] 보상 리스트가 있을 때 처리
-        if (_so.rewards != null && _so.rewards.Count > 0) {
-            // 첫 번째 보상 가져오기
-            var firstReward = _so.rewards[0];
-
-            // ★ 내부 ID를 화면용 이름으로 변환 (Bullbit -> 원)
-            string displayName = GetRewardDisplayName(firstReward);
-
-            // 금액 + 변환된 이름 조합 (예: "500,000 원")
-            string displayStr = $"{firstReward.amount:N0} {displayName}";
-
-            // 보상이 2개 이상이면 "외 N건" 추가
-            if (_so.rewards.Count > 1) {
-                displayStr += $" 외 {_so.rewards.Count - 1}건";
-            }
-            rewardText.text = displayStr;
-        } else {
-            rewardText.text = "보상 없음";
-        }
-
-        UpdateUI();
+        // [수정] 글자 세팅하는 부분을 통째로 분리해서 호출!
+        RefreshLanguage();
 
         rewardButton.onClick.RemoveAllListeners();
         rewardButton.onClick.AddListener(() => QuestManager.Instance.ClaimReward(_so.questID));
     }
 
-    // [추가] 내부 ID를 플레이어가 보는 이름으로 바꿔주는 함수
+    // ==========================================
+    // [NEW] 패널이 화면에 켜질 때마다 현재 언어로 새로고침!
+    // ==========================================
+    private void OnEnable() {
+        if (_so != null && _progress != null) {
+            RefreshLanguage();
+        }
+    }
+
+    // ==========================================
+    // [NEW] 텍스트만 싹 다시 입혀주는 전용 함수
+    // ==========================================
+    public void RefreshLanguage() {
+        titleText.text = LocalizationManager.GetText(_so.title);
+
+        if (descriptionText != null) {
+            descriptionText.text = LocalizationManager.GetText(_so.description);
+        }
+
+        // 보상 리스트 텍스트 처리
+        if (_so.rewards != null && _so.rewards.Count > 0) {
+            var firstReward = _so.rewards[0];
+            string displayName = GetRewardDisplayName(firstReward);
+            string displayStr = $"{firstReward.amount:N0} {displayName}";
+
+            if (_so.rewards.Count > 1) {
+                int extraCount = _so.rewards.Count - 1;
+                string extraFormat = LocalizationManager.GetText("LBL_REWARD_EXTRA");
+                displayStr += string.Format(extraFormat, extraCount);
+            }
+            rewardText.text = displayStr;
+        } else {
+            rewardText.text = LocalizationManager.GetText("LBL_REWARD_NONE");
+        }
+
+        UpdateUI();
+    }
+
+    // 내부 ID를 플레이어가 보는 이름으로 바꿔주는 함수
     private string GetRewardDisplayName(QuestReward reward) {
-        // 1. 현금인 경우
+        string defaultUnit = LocalizationManager.GetText("UNIT_CURRENCY");
+        string usdUnit = LocalizationManager.GetText("CURRENCY_USD");
+
         if (reward.type == RewardType.Cash) {
             switch (reward.targetID) {
-                case "Bullbit": return "원";           // 불비트 예수금 -> "원"
-                case "Satoshi": return "원";    // 사토시 은행 -> "원 (예금)"
-                case "FourNance": return "USD";      // 선물 거래소 -> "USDT"
-                default: return "원";               // 그 외
+                case "Bullbit": return defaultUnit;
+                case "Satoshi": return defaultUnit;
+                case "FourNance": return usdUnit;
+                default: return defaultUnit;
             }
-        }
-        // 2. 코인인 경우 (보통 ID가 곧 이름이므로 그대로 씀)
-        else if (reward.type == RewardType.Crypto) {
-            return reward.targetID; // BTC, DOGE 등은 그대로 표시
+        } else if (reward.type == RewardType.Crypto) {
+            return reward.targetID;
         }
 
         return reward.targetID;
@@ -77,36 +90,24 @@ public class QuestUIItem : MonoBehaviour {
     public void UpdateUI() {
         progressText.text = $"{_progress.currentCount:N0} / {_so.targetCount:N0}";
 
-        // 1. 이미 보상을 받은 상태 (완료 & 수령)
         if (_progress.isClaimed) {
             rewardButton.interactable = false;
-            buttonText.text = "완료됨";
-
-            // [추가] 텍스트 색상을 회색으로 변경
+            buttonText.text = LocalizationManager.GetText("BTN_QUEST_COMPLETED");
             SetTextColor(claimedColor);
-        }
-        // 2. 목표는 달성했지만 아직 보상을 안 받은 상태
-        else if (_progress.IsCompleted(_so.targetCount)) {
+        } else if (_progress.IsCompleted(_so.targetCount)) {
             rewardButton.interactable = true;
-            buttonText.text = "보상 받기";
-
-            // [추가] 눈에 띄게 초록색 등으로 (선택)
+            buttonText.text = LocalizationManager.GetText("BTN_QUEST_CLAIM");
             SetTextColor(completedColor);
-        }
-        // 3. 진행 중
-        else {
+        } else {
             rewardButton.interactable = false;
-            buttonText.text = "진행 중";
-
-            // [추가] 기본 색상
+            buttonText.text = LocalizationManager.GetText("BTN_QUEST_ONGOING");
             SetTextColor(normalColor);
         }
     }
 
-    // 텍스트 색깔을 한꺼번에 바꿔주는 함수
     private void SetTextColor(Color color) {
         titleText.color = color;
-        descriptionText.color = color;
+        if (descriptionText != null) descriptionText.color = color;
         progressText.color = color;
         rewardText.color = color;
     }

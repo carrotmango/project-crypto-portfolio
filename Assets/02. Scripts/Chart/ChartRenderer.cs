@@ -12,6 +12,8 @@ public class ChartRenderer : MonoBehaviour {
         public double close;
         public double high;
         public double low;
+        public TradeType TradeFlag;
+        public DateTime Timestamp;
     }
 
     [Header("References")]

@@ -27,6 +27,10 @@ public class SellPanelController : MonoBehaviour {
     private double owned;
 
     public void OpenPanel(CoinData coin) {
+        if (coin.IsTradingSuspended) {
+            UIManager.Instance.ShowConfirm("현재 거래가 정지된 종목입니다.");
+            return; // 패널을 열지 않고 즉시 종료
+        }
         currentCoinData = coin;
         panel.SetActive(true);
         Time.timeScale = 0;
@@ -51,8 +55,6 @@ public class SellPanelController : MonoBehaviour {
         panel.SetActive(false);
         Time.timeScale = 1;
     }
-
-    // ... (OnOrderAmountChanged, OnTotalCostChanged, OnPercentButtonClicked, OnResetClicked 등 중간 생략 - 기존과 동일) ...
 
     public void OnOrderAmountChanged(string input) {
         if (isUpdating) return;
@@ -140,8 +142,8 @@ public class SellPanelController : MonoBehaviour {
             Debug.Log($"[매도 체결] {lastSelectedSymbol} | 수수료: {fee:N0} | 입금액: {net:N0}");
 
             // 차트에 매도(S) 마크 찍기
-            if (chartRenderer != null) {
-                chartRenderer.RegisterTrade(currentCoinData, false);
+            if (currentCoinData != null) {
+                currentCoinData.MarkTradeOnCurrentCandle(TradeType.SpotSell);
             }
 
             ClosePanel();

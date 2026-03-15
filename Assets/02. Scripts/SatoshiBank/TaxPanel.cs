@@ -45,6 +45,8 @@ public class TaxPanel : MonoBehaviour {
         bool hasTax = currentTax > 0;
         bool isBillIssued = TaxManager.Instance.isTaxBillIssued;
 
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY"); // 공통 화폐 단위
+
         // ★ 세금이 있고 + 고지서가 발행된 상태여야 버튼과 경고문을 보여줌
         bool showActiveUI = hasTax && isBillIssued;
 
@@ -54,25 +56,25 @@ public class TaxPanel : MonoBehaviour {
 
             if (showActiveUI) {
                 // [세금이 있을 때]
-                taxAmountText.text = $"세금 : {currentTax:N0}원";
+                taxAmountText.text = string.Format(LocalizationManager.GetText("LBL_TAX_AMOUNT"), currentTax.ToString("N0"), unit);
                 taxAmountText.color = Color.white;
             } else {
                 // [세금이 없을 때]
-                taxAmountText.text = "납부해야할 세금이 없습니다.";
+                taxAmountText.text = LocalizationManager.GetText("LBL_TAX_NO_DUE");
                 taxAmountText.color = Color.gray;
             }
         }
 
         // 2. 세율 표시
         if (taxRateText != null) {
-            taxRateText.text = $"(소득세: {currentRate:F0}%)";
+            taxRateText.text = string.Format(LocalizationManager.GetText("LBL_TAX_RATE"), currentRate.ToString("F0"));
         }
 
         // 3. 납부 기한 표시 (이제 날짜만 깔끔하게 표시)
         if (dueDateText != null) {
             if (showActiveUI) {
                 string dateStr = TaxManager.Instance.taxDueDate.ToString("MM/dd/yyyy");
-                dueDateText.text = $"납부기한 {dateStr} 까지";
+                dueDateText.text = string.Format(LocalizationManager.GetText("LBL_TAX_DUE_DATE"), dateStr);
             } else {
                 dueDateText.text = " "; // 안 보일 땐 공란
             }
@@ -100,7 +102,8 @@ public class TaxPanel : MonoBehaviour {
             confirmPopupPanel.SetActive(true);
 
             if (confirmMsgText != null) {
-                confirmMsgText.text = $"납부해야할 세금\n<color=#00FF00>{TaxManager.Instance.unpaidTaxAmount:N0}원</color>을\n납부하시겠습니까?";
+                string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+                confirmMsgText.text = string.Format(LocalizationManager.GetText("MSG_TAX_CONFIRM_PAY"), TaxManager.Instance.unpaidTaxAmount.ToString("N0"), unit);
             }
         }
     }
@@ -129,7 +132,8 @@ public class TaxPanel : MonoBehaviour {
     private IEnumerator ShowWarningRoutine() {
         if (warningPopupText == null) yield break;
 
-        warningPopupText.text = "계좌 잔액이 부족합니다.";
+        // [수정] 잔액 부족 경고 메시지 현지화
+        warningPopupText.text = LocalizationManager.GetText("MSG_INSUFFICIENT_FUNDS_2");
         warningPopupText.canvasRenderer.SetAlpha(1f);
         yield return new WaitForSecondsRealtime(2f);
         warningPopupText.CrossFadeAlpha(0f, 0.5f, true);

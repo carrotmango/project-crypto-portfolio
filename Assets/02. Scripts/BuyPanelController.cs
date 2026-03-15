@@ -30,6 +30,10 @@ public class BuyPanelController : MonoBehaviour {
     private string lastSelectedSymbol = "";
 
     public void OpenPanel(CoinData coin) {
+        if (coin.IsTradingSuspended) {
+            UIManager.Instance.ShowConfirm("현재 거래가 정지된 종목입니다.");
+            return; // 패널을 열지 않고 즉시 종료
+        }
         currentCoinData = coin;
         price = coin.CurrentPrice;
         availableCash = PlayerManager.Instance.bullbitCash;
@@ -161,8 +165,8 @@ public class BuyPanelController : MonoBehaviour {
         Debug.Log($"[매수 체결] {lastSelectedSymbol} {price} x {amount} = {FormatKRW(baseCost)} + 수수료 {FormatKRW(fee)} → 총 {FormatKRW(totalCost)} (잔액: {FormatKRW(PlayerManager.Instance.bullbitCash)})");
 
         // [수정] 클래스 이름(LiveChartRenderer) 대신 연결된 변수(chartRenderer)를 사용해야 합니다.
-        if (chartRenderer != null) {
-            chartRenderer.RegisterTrade(currentCoinData, true);// true = 매수(Buy)
+        if (currentCoinData != null) {
+            currentCoinData.MarkTradeOnCurrentCandle(TradeType.SpotBuy);
         }
 
         ClosePanel();

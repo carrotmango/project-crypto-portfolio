@@ -17,12 +17,17 @@ public class BullbitLabels : MonoBehaviour {
         }
     }
 
+    // 이름 갱신 (안녕하세요, OOO님 / Hello, OOO)
     void RefreshName() {
-        userNameLabel.text = $"안녕하세요, {PlayerManager.Instance.playerName}님";
+        string format = LocalizationManager.GetText("LBL_BULLBIT_WELCOME");
+        userNameLabel.text = string.Format(format, PlayerManager.Instance.playerName);
     }
 
     void Update() {
         double cash = PlayerManager.Instance.bullbitCash;
-        cashLabel.text = $"{cash:N0}원";
+
+        // "원" 또는 " Won"을 가져와서 숫자 뒤에 붙임
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+        cashLabel.text = $"{cash:N0}{unit}";
     }
 }

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 using System.Runtime.CompilerServices;
 
 /// <summary>
-/// ¼±¹° °Å·¡¼Ò¿ë Â÷Æ® ·»´õ·¯ (´ÙÁß Æ÷Áö¼Ç, ´Ş·¯ Ç¥½Ã, Ã»»ê ·ÎÁ÷ ÅëÇÕ)
+/// ì„ ë¬¼ ê±°ë˜ì†Œìš© ì°¨íŠ¸ ë Œë”ëŸ¬ (ë‹¤ì¤‘ í¬ì§€ì…˜, ë‹¬ëŸ¬ í‘œì‹œ, ì²­ì‚° ë¡œì§ í†µí•©)
 /// </summary>
 public class FutureChartRenderer : LiveChartRenderer {
 
@@ -21,7 +21,7 @@ public class FutureChartRenderer : LiveChartRenderer {
     public class FuturePosition {
         public string Symbol;
         public bool IsLong;
-        public MarginMode Mode; // ÀÌ Æ÷Áö¼ÇÀÌ ¾î¶² ¸ğµå·Î ÀâÇû´ÂÁö ÀúÀå
+        public MarginMode Mode; // ì´ í¬ì§€ì…˜ì´ ì–´ë–¤ ëª¨ë“œë¡œ ì¡í˜”ëŠ”ì§€ ì €ì¥
         public double EntryPriceUSD;
         public double Quantity;
         public double MarginUSD;
@@ -35,8 +35,8 @@ public class FutureChartRenderer : LiveChartRenderer {
     public GameObject coinRowPrefab;
 
     [Header("Margin Mode UI")]
-    public Button modeButton;       // Cross/Isolated ÀüÈ¯ ¹öÆ°
-    public TextMeshProUGUI modeText; // ¹öÆ° ÅØ½ºÆ®
+    public Button modeButton;       // Cross/Isolated ì „í™˜ ë²„íŠ¼
+    public TextMeshProUGUI modeText; // ë²„íŠ¼ í…ìŠ¤íŠ¸
 
     [Header("Selected Coin Display")]
     public TextMeshProUGUI selectedCoinNameText;
@@ -70,14 +70,17 @@ public class FutureChartRenderer : LiveChartRenderer {
 
     [Header("Leverage UI System")]
     public GameObject leveragePanelObj;
-    public Button openLeveragePanelButton;      // ¸ŞÀÎ È­¸éÀÇ [ 5x ] ¹öÆ°
-    public TextMeshProUGUI mainLeverageText;    // ¹öÆ° ¾ÈÀÇ ÅØ½ºÆ® ("5x")
-    public LeverageSelectorUI leveragePanelScript; // ¹æ±İ ¸¸µç ÆĞ³Î ½ºÅ©¸³Æ® ¿¬°á
+    public Button openLeveragePanelButton;      // ë©”ì¸ í™”ë©´ì˜ [ 5x ] ë²„íŠ¼
+    public TextMeshProUGUI mainLeverageText;    // ë²„íŠ¼ ì•ˆì˜ í…ìŠ¤íŠ¸ ("5x")
+    public LeverageSelectorUI leveragePanelScript; // ë°©ê¸ˆ ë§Œë“  íŒ¨ë„ ìŠ¤í¬ë¦½íŠ¸ ì—°ê²°
 
     [Header("Chart Info Header")]
     public TextMeshProUGUI headerCurrentPriceText;
 
-    // [ÇÙ½É] ´ÙÁß Æ÷Áö¼Ç °ü¸®
+    private float lastClickTime = 0f;
+    private const float doubleClickThreshold = 0.3f;
+
+    // [í•µì‹¬] ë‹¤ì¤‘ í¬ì§€ì…˜ ê´€ë¦¬
     private List<FuturePosition> activePositions = new List<FuturePosition>();
     private Dictionary<FuturePosition, FuturePositionUI> uiMap = new Dictionary<FuturePosition, FuturePositionUI>();
 
@@ -88,6 +91,7 @@ public class FutureChartRenderer : LiveChartRenderer {
     private double lastHeaderPrice = 0;
     private const double TRADING_FEE_RATE = 0.00036;
     public double TradingFeeRate => TRADING_FEE_RATE;
+    protected override TradeType AllowedMarkerTypes => TradeType.FutureBuy | TradeType.FutureSell;
 
     private class FutureRowRef {
         public TextMeshProUGUI priceText;
@@ -98,15 +102,15 @@ public class FutureChartRenderer : LiveChartRenderer {
     private void Awake() {
         Instance = this;
 
-        // 1. ·Õ/¼ô ¹öÆ° ¿¬°á
+        // 1. ë¡±/ìˆ ë²„íŠ¼ ì—°ê²°
         if (btnLong != null) btnLong.onClick.AddListener(() => OpenPosition(true));
         if (btnShort != null) btnShort.onClick.AddListener(() => OpenPosition(false));
 
-        // 2. ¸ğµå ÀüÈ¯ ¹öÆ°
+        // 2. ëª¨ë“œ ì „í™˜ ë²„íŠ¼
         if (modeButton != null) modeButton.onClick.AddListener(OnClickToggleMode);
 
-        // [Áß¿ä ¼öÁ¤] ºÎ¸ğÀÇ Awake°¡ °¡·ÁÁ®¼­ ½ÇÇàµÇÁö ¾ÊÀ¸¹Ç·Î, ¿©±â¼­ Â÷Æ® ¹öÆ°À» Á÷Á¢ ¿¬°áÇØ¾ß ÇÕ´Ï´Ù.
-        // LiveChartRenderer¿¡ Á¤ÀÇµÈ btn4H, btn1D¸¦ »ç¿ëÇÕ´Ï´Ù.
+        // [ì¤‘ìš” ìˆ˜ì •] ë¶€ëª¨ì˜ Awakeê°€ ê°€ë ¤ì ¸ì„œ ì‹¤í–‰ë˜ì§€ ì•Šìœ¼ë¯€ë¡œ, ì—¬ê¸°ì„œ ì°¨íŠ¸ ë²„íŠ¼ì„ ì§ì ‘ ì—°ê²°í•´ì•¼ í•©ë‹ˆë‹¤.
+        // LiveChartRendererì— ì •ì˜ëœ btn4H, btn1Dë¥¼ ì‚¬ìš©í•©ë‹ˆë‹¤.
         if (btn4H != null) {
             btn4H.onClick.RemoveAllListeners();
             btn4H.onClick.AddListener(() => SwitchInterval(ChartInterval._4H));
@@ -115,7 +119,7 @@ public class FutureChartRenderer : LiveChartRenderer {
             btn1D.onClick.RemoveAllListeners();
             btn1D.onClick.AddListener(() => SwitchInterval(ChartInterval._1D));
         }
-        // ÁÜ ¹öÆ° µî ºÎ¸ğ ±â´Éµµ ¿©±â¼­ ¿¬°á
+        // ì¤Œ ë²„íŠ¼ ë“± ë¶€ëª¨ ê¸°ëŠ¥ë„ ì—¬ê¸°ì„œ ì—°ê²°
         if (btnZoomIn != null) btnZoomIn.onClick.AddListener(OnZoomInBtn);
         if (btnZoomOut != null) btnZoomOut.onClick.AddListener(OnZoomOutBtn);
         if (btnHLine != null) btnHLine.onClick.AddListener(ToggleHLineMode);
@@ -141,42 +145,42 @@ public class FutureChartRenderer : LiveChartRenderer {
             orderPercentageSlider.wholeNumbers = true;
             orderPercentageSlider.onValueChanged.AddListener(OnSliderValueChanged);
         }
-        UpdateModeUI(); // ÃÊ±â UI ¼³Á¤
+        UpdateModeUI(); // ì´ˆê¸° UI ì„¤ì •
         UpdateLeverageButtonText();
     }
 
     public void OnClickToggleMode() {
-        // Æ÷Áö¼ÇÀÌ ÇÏ³ª¶óµµ ÀÖÀ¸¸é º¯°æ ºÒ°¡ (¾ÈÀüÀåÄ¡)
+        // í¬ì§€ì…˜ì´ í•˜ë‚˜ë¼ë„ ìˆìœ¼ë©´ ë³€ê²½ ë¶ˆê°€ (ì•ˆì „ì¥ì¹˜)
         if (activePositions.Count > 0) return;
 
         currentMarginMode = (currentMarginMode == MarginMode.Cross) ? MarginMode.Isolated : MarginMode.Cross;
         UpdateModeUI();
     }
 
-    // [½Å±Ô] ·¹¹ö¸®Áö ÆĞ³Î ¿­±â
+    // [ì‹ ê·œ] ë ˆë²„ë¦¬ì§€ íŒ¨ë„ ì—´ê¸°
     public void OpenLeveragePanel() {
         if (activePositions.Count > 0) {
-            Debug.LogWarning("Æ÷Áö¼Ç º¸À¯ Áß¿¡´Â ·¹¹ö¸®Áö¸¦ º¯°æÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("í¬ì§€ì…˜ ë³´ìœ  ì¤‘ì—ëŠ” ë ˆë²„ë¦¬ì§€ë¥¼ ë³€ê²½í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
-        // 1. ÆĞ³Î ¿ÀºêÁ§Æ®¸¦ °­Á¦·Î ÄÕ´Ï´Ù.
+        // 1. íŒ¨ë„ ì˜¤ë¸Œì íŠ¸ë¥¼ ê°•ì œë¡œ ì¼­ë‹ˆë‹¤.
         if (leveragePanelObj != null) {
             leveragePanelObj.SetActive(true);
         }
 
-        // 2. ±× ´ÙÀ½ ½ºÅ©¸³Æ® ÃÊ±âÈ­ ÇÔ¼ö¸¦ ºÎ¸¨´Ï´Ù.
+        // 2. ê·¸ ë‹¤ìŒ ìŠ¤í¬ë¦½íŠ¸ ì´ˆê¸°í™” í•¨ìˆ˜ë¥¼ ë¶€ë¦…ë‹ˆë‹¤.
         if (leveragePanelScript != null) {
             leveragePanelScript.Show(this, currentLeverage);
         }
     }
 
-    // [½Å±Ô] ÆĞ³Î¿¡¼­ È£ÃâÇÒ ÇÔ¼ö (°ª Àû¿ë)
+    // [ì‹ ê·œ] íŒ¨ë„ì—ì„œ í˜¸ì¶œí•  í•¨ìˆ˜ (ê°’ ì ìš©)
     public void SetLeverage(float newLev) {
         currentLeverage = newLev;
         UpdateLeverageButtonText();
 
-        // ¿Ï·á ´©¸£¸é ÆĞ³Î ²ô±â (È¤½Ã LeverageSelectorUI¿¡¼­ ¾È ²ø±îºÁ ¿©±â¼­µµ Ã³¸®)
+        // ì™„ë£Œ ëˆ„ë¥´ë©´ íŒ¨ë„ ë„ê¸° (í˜¹ì‹œ LeverageSelectorUIì—ì„œ ì•ˆ ëŒê¹Œë´ ì—¬ê¸°ì„œë„ ì²˜ë¦¬)
         if (leveragePanelObj != null) leveragePanelObj.SetActive(false);
     }
 
@@ -186,18 +190,18 @@ public class FutureChartRenderer : LiveChartRenderer {
         }
     }
 
-    // [½Å±Ô] ¸ğµå UI °»½Å
+    // [ì‹ ê·œ] ëª¨ë“œ UI ê°±ì‹ 
     private void UpdateModeUI() {
         if (modeText != null) {
             modeText.text = currentMarginMode.ToString();
         }
-        // Æ÷Áö¼ÇÀÌ ÀÖÀ¸¸é ¹öÆ° ºñÈ°¼ºÈ­, ¾øÀ¸¸é È°¼ºÈ­
+        // í¬ì§€ì…˜ì´ ìˆìœ¼ë©´ ë²„íŠ¼ ë¹„í™œì„±í™”, ì—†ìœ¼ë©´ í™œì„±í™”
         if (modeButton != null) {
             modeButton.interactable = (activePositions.Count == 0);
         }
     }
 
-    // ÇïÆÛ: Å¸°Ù ÄÚÀÎ ´Ş·¯°¡ °¡Á®¿À±â
+    // í—¬í¼: íƒ€ê²Ÿ ì½”ì¸ ë‹¬ëŸ¬ê°€ ê°€ì ¸ì˜¤ê¸°
     public double GetCurrentTargetPriceUSD(string symbol) {
         var coin = CoinManager.Instance.coins.Find(c => c.Symbol == symbol);
         return (coin != null) ? coin.CurrentPrice / GlobalEconomyManager.UsdToKrw : 0;
@@ -219,12 +223,12 @@ public class FutureChartRenderer : LiveChartRenderer {
         double liqPrice = 0;
 
         if (mode == MarginMode.Isolated) {
-            // [Isolated] °İ¸®: Áõ°Å±İÀÇ 90% ¼Õ½Ç ½Ã Ã»»ê (±âÁ¸ µ¿ÀÏ)
+            // [Isolated] ê²©ë¦¬: ì¦ê±°ê¸ˆì˜ 90% ì†ì‹¤ ì‹œ ì²­ì‚° (ê¸°ì¡´ ë™ì¼)
             double priceDiff = (entryPrice / currentLeverage) * 0.9;
             liqPrice = isLong ? (entryPrice - priceDiff) : (entryPrice + priceDiff);
         } else {
-            // [Cross] ±³Â÷: (³²Àº ÀÜ°í + ÇöÀç Æ÷Áö¼Ç Áõ°Å±İ) Àü¾×À» ÀÒÀ» ¶§±îÁö ¹öÆÀ
-            // *¼öÁ¤µÊ*: walletBalance(ÀÜ°í) + usedMargin(Áõ°Å±İ) = ÃÑ ´ãº¸
+            // [Cross] êµì°¨: (ë‚¨ì€ ì”ê³  + í˜„ì¬ í¬ì§€ì…˜ ì¦ê±°ê¸ˆ) ì „ì•¡ì„ ìƒì„ ë•Œê¹Œì§€ ë²„íŒ€
+            // *ìˆ˜ì •ë¨*: walletBalance(ì”ê³ ) + usedMargin(ì¦ê±°ê¸ˆ) = ì´ ë‹´ë³´
             double totalCollateral = walletBalance + usedMargin;
             double priceDiff = totalCollateral / quantity;
 
@@ -284,7 +288,7 @@ public class FutureChartRenderer : LiveChartRenderer {
                     double priceDiff = pos.IsLong ? (currentPrice - pos.EntryPriceUSD) : (pos.EntryPriceUSD - currentPrice);
                     double grossPnL = priceDiff * pos.Quantity;
 
-                    // Equity °è»ê ½Ã¿¡µµ ¿¹»ó Á¾·á ¼ö¼ö·á¸¦ ¹Ì¸® »®´Ï´Ù (Net PnL)
+                    // Equity ê³„ì‚° ì‹œì—ë„ ì˜ˆìƒ ì¢…ë£Œ ìˆ˜ìˆ˜ë£Œë¥¼ ë¯¸ë¦¬ ëºë‹ˆë‹¤ (Net PnL)
                     double estimatedExitFee = (pos.Quantity * currentPrice) * TRADING_FEE_RATE;
 
                     equity += (grossPnL - estimatedExitFee);
@@ -300,23 +304,23 @@ public class FutureChartRenderer : LiveChartRenderer {
 
         double buyingPower = GetBuyingPower();
 
-        // 1. ÅõÀÔ ¿¹Á¤ ÃÑ ±İ¾× (Áö°©¿¡¼­ ºüÁ®³ª°¥ µ·)
+        // 1. íˆ¬ì… ì˜ˆì • ì´ ê¸ˆì•¡ (ì§€ê°‘ì—ì„œ ë¹ ì ¸ë‚˜ê°ˆ ëˆ)
         double inputTotalUsd = buyingPower * (value / 100.0);
 
-        // [¼öÁ¤] 2. ¼ö¼ö·á ¿ª»ê (Fee Inclusive)
-        // °ø½Ä: ÅõÀÔ±İ = ½ÇÁ¦Áõ°Å±İ + (½ÇÁ¦Áõ°Å±İ * ·¹¹ö¸®Áö * ¼ö¼ö·áÀ²)
+        // [ìˆ˜ì •] 2. ìˆ˜ìˆ˜ë£Œ ì—­ì‚° (Fee Inclusive)
+        // ê³µì‹: íˆ¬ì…ê¸ˆ = ì‹¤ì œì¦ê±°ê¸ˆ + (ì‹¤ì œì¦ê±°ê¸ˆ * ë ˆë²„ë¦¬ì§€ * ìˆ˜ìˆ˜ë£Œìœ¨)
         double actualMargin = inputTotalUsd / (1.0 + currentLeverage * TRADING_FEE_RATE);
 
-        // ¿¹»ó ÁøÀÔ ¼ö¼ö·á
+        // ì˜ˆìƒ ì§„ì… ìˆ˜ìˆ˜ë£Œ
         double estimatedEntryFee = inputTotalUsd - actualMargin;
 
         double totalOrderValueUsd = actualMargin * currentLeverage;
         double currentPriceUsd = targetCoin.CurrentPrice / GlobalEconomyManager.UsdToKrw;
         double orderQty = (currentPriceUsd > 0) ? (totalOrderValueUsd / currentPriceUsd) : 0;
 
-        // ºñ¿ë°ú ¼ö¼ö·á¸¦ °°ÀÌ º¸¿©ÁÜ
+        // ë¹„ìš©ê³¼ ìˆ˜ìˆ˜ë£Œë¥¼ ê°™ì´ ë³´ì—¬ì¤Œ
         if (costText != null)
-            costText.text = $"COST: ${inputTotalUsd:N2} (¼ö¼ö·á: ${estimatedEntryFee:N2})";
+            costText.text = $"COST: ${inputTotalUsd:N2} (ìˆ˜ìˆ˜ë£Œ: ${estimatedEntryFee:N2})";
 
         if (maxQtyText != null)
             maxQtyText.text = $"Size: {orderQty:F4} {targetCoin.Symbol}";
@@ -328,9 +332,9 @@ public class FutureChartRenderer : LiveChartRenderer {
         double buyingPower = GetBuyingPower();
         double inputTotalUsd = buyingPower * (orderPercentageSlider.value / 100.0);
 
-        // ÃÖ¼Ò 1´Ş·¯´Â ÀÖ¾î¾ß ÁøÀÔ
+        // ìµœì†Œ 1ë‹¬ëŸ¬ëŠ” ìˆì–´ì•¼ ì§„ì…
         if (inputTotalUsd <= 1.0) {
-            Debug.LogWarning("ÁÖ¹® ±İ¾×ÀÌ ³Ê¹« Àû½À´Ï´Ù.");
+            Debug.LogWarning("ì£¼ë¬¸ ê¸ˆì•¡ì´ ë„ˆë¬´ ì ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -338,7 +342,7 @@ public class FutureChartRenderer : LiveChartRenderer {
         if (currentEntryPrice <= 0) return;
 
         // -----------------------------------------------------------
-        // [ÇÙ½É] ¼ö¼ö·á ¸ÕÀú ¶¼±â (Fee Inclusive)
+        // [í•µì‹¬] ìˆ˜ìˆ˜ë£Œ ë¨¼ì € ë–¼ê¸° (Fee Inclusive)
         // -----------------------------------------------------------
         double actualMargin = inputTotalUsd / (1.0 + currentLeverage * TRADING_FEE_RATE);
         double entryFee = inputTotalUsd - actualMargin;
@@ -346,35 +350,39 @@ public class FutureChartRenderer : LiveChartRenderer {
         double totalValueUsd = actualMargin * currentLeverage;
         double quantity = totalValueUsd / currentEntryPrice;
 
-        // Áö°©¿¡¼­´Â '¼ö¼ö·á Æ÷ÇÔµÈ ±İ¾×' Â÷°¨
+        // ì§€ê°‘ì—ì„œëŠ” 'ìˆ˜ìˆ˜ë£Œ í¬í•¨ëœ ê¸ˆì•¡' ì°¨ê°
         PlayerManager.Instance.fournanceCash -= inputTotalUsd;
+
+        if (targetCoin != null) {
+            targetCoin.MarkTradeOnCurrentCandle(isLong ? TradeType.FutureBuy : TradeType.FutureSell);
+        }
 
         FuturePosition existingPos = activePositions.Find(p => p.Symbol == targetCoin.Symbol);
 
         if (existingPos != null) {
-            // [¹°Å¸±â ·ÎÁ÷]
+            // [ë¬¼íƒ€ê¸° ë¡œì§]
             if (existingPos.IsLong != isLong) {
-                Debug.LogError($"[One-Way] ¹İ´ë Æ÷Áö¼Ç º¸À¯ Áß.");
-                PlayerManager.Instance.fournanceCash += inputTotalUsd; // È¯ºÒ
+                Debug.LogError($"[One-Way] ë°˜ëŒ€ í¬ì§€ì…˜ ë³´ìœ  ì¤‘.");
+                PlayerManager.Instance.fournanceCash += inputTotalUsd; // í™˜ë¶ˆ
                 return;
             }
 
-            // Æò´Ü°¡ °»½Å
+            // í‰ë‹¨ê°€ ê°±ì‹ 
             double oldVal = existingPos.Quantity * existingPos.EntryPriceUSD;
             double addVal = quantity * currentEntryPrice;
             existingPos.EntryPriceUSD = (oldVal + addVal) / (existingPos.Quantity + quantity);
 
             existingPos.Quantity += quantity;
-            existingPos.MarginUSD += actualMargin; // ¼ö¼ö·á ¶¾ '¾Ë¸ÍÀÌ'¸¸ Ãß°¡
+            existingPos.MarginUSD += actualMargin; // ìˆ˜ìˆ˜ë£Œ ë—€ 'ì•Œë§¹ì´'ë§Œ ì¶”ê°€
 
-            // Ã»»ê°¡ °»½Å
+            // ì²­ì‚°ê°€ ê°±ì‹ 
             existingPos.LiquidationPriceUSD = CalculateLiquidationPrice(
                 existingPos.EntryPriceUSD, existingPos.Quantity, PlayerManager.Instance.fournanceCash, existingPos.MarginUSD, isLong, currentMarginMode
             );
 
             if (uiMap.TryGetValue(existingPos, out var ui)) ui.UpdateRealtime();
         } else {
-            // [½Å±Ô ÁøÀÔ]
+            // [ì‹ ê·œ ì§„ì…]
             double liqPrice = CalculateLiquidationPrice(
                 currentEntryPrice, quantity, PlayerManager.Instance.fournanceCash, actualMargin, isLong, currentMarginMode
             );
@@ -385,13 +393,13 @@ public class FutureChartRenderer : LiveChartRenderer {
                 Mode = currentMarginMode,
                 EntryPriceUSD = currentEntryPrice,
                 Quantity = quantity,
-                MarginUSD = actualMargin, // ¼ö¼ö·á ¶¾ ±İ¾×
+                MarginUSD = actualMargin, // ìˆ˜ìˆ˜ë£Œ ë—€ ê¸ˆì•¡
                 Leverage = currentLeverage,
                 LiquidationPriceUSD = liqPrice
             };
 
             activePositions.Add(newPos);
-            double tradeVolume = totalValueUsd; // ·¹¹ö¸®Áö Æ÷ÇÔ ÃÑ ÁøÀÔ °¡Ä¡
+            double tradeVolume = totalValueUsd; // ë ˆë²„ë¦¬ì§€ í¬í•¨ ì´ ì§„ì… ê°€ì¹˜
             PlayerManager.Instance.fournanceTotalVolume += tradeVolume;
             PlayerManager.Instance.fournanceTotalFee += entryFee;
 
@@ -405,50 +413,50 @@ public class FutureChartRenderer : LiveChartRenderer {
         RefreshPositionLines();
         UpdateModeUI();
 
-        Debug.Log($"[ÁøÀÔ] ÁöÃâ: ${inputTotalUsd:F2} (¼ö¼ö·á: -${entryFee:F2} / Áõ°Å±İ: ${actualMargin:F2})");
+        Debug.Log($"[ì§„ì…] ì§€ì¶œ: ${inputTotalUsd:F2} (ìˆ˜ìˆ˜ë£Œ: -${entryFee:F2} / ì¦ê±°ê¸ˆ: ${actualMargin:F2})");
     }
 
     public void ClosePositionMarket(FuturePosition pos, bool isLiquidated = false) {
-        // 1. ¾ÈÀüÀåÄ¡: ÀÌ¹Ì ¸®½ºÆ®¿¡ ¾øÀ¸¸é Áß´Ü
+        // 1. ì•ˆì „ì¥ì¹˜: ì´ë¯¸ ë¦¬ìŠ¤íŠ¸ì— ì—†ìœ¼ë©´ ì¤‘ë‹¨
         if (!activePositions.Contains(pos)) return;
 
-        // 2. ÇöÀç°¡ È®ÀÎ
+        // 2. í˜„ì¬ê°€ í™•ì¸
         double currentPriceUsd = GetCurrentTargetPriceUSD(pos.Symbol);
 
-        // 3. ¼ø¼ö Â÷Æ® ¼ÕÀÍ (Gross PnL) °è»ê
+        // 3. ìˆœìˆ˜ ì°¨íŠ¸ ì†ìµ (Gross PnL) ê³„ì‚°
         double priceDiff = pos.IsLong ? (currentPriceUsd - pos.EntryPriceUSD) : (pos.EntryPriceUSD - currentPriceUsd);
         double grossPnL = priceDiff * pos.Quantity;
 
-        // 4. [ÇÙ½É] Á¾·á ¼ö¼ö·á °è»ê (Exit Fee)
-        // °ø½Ä: Á¾·á ½ÃÁ¡ÀÇ Æ÷Áö¼Ç ÃÑ °¡Ä¡ * ¼ö¼ö·áÀ²(0.036%)
+        // 4. [í•µì‹¬] ì¢…ë£Œ ìˆ˜ìˆ˜ë£Œ ê³„ì‚° (Exit Fee)
+        // ê³µì‹: ì¢…ë£Œ ì‹œì ì˜ í¬ì§€ì…˜ ì´ ê°€ì¹˜ * ìˆ˜ìˆ˜ë£Œìœ¨(0.036%)
         double exitPositionValue = pos.Quantity * currentPriceUsd;
         double exitFee = exitPositionValue * TRADING_FEE_RATE; // 0.00036
 
-        // 5. Ã»»ê ¿©ºÎ¿¡ µû¸¥ ºĞ±â Ã³¸®
+        // 5. ì²­ì‚° ì—¬ë¶€ì— ë”°ë¥¸ ë¶„ê¸° ì²˜ë¦¬
         if (isLiquidated) {
-            // [°­Á¦ Ã»»ê] - ¼ö¼ö·á°í ¹¹°í Àü¾× ¸ô¼öÀÌ¹Ç·Î º°µµ °è»ê ¾È ÇÔ
+            // [ê°•ì œ ì²­ì‚°] - ìˆ˜ìˆ˜ë£Œê³  ë­ê³  ì „ì•¡ ëª°ìˆ˜ì´ë¯€ë¡œ ë³„ë„ ê³„ì‚° ì•ˆ í•¨
             double currentCash = PlayerManager.Instance.fournanceCash;
             double actualLoss = 0;
 
             if (pos.Mode == MarginMode.Cross) {
-                // Cross: ÁøÀÔÇÑ Áõ°Å±İ + ³²Àº Áö°© ÀÜ°í ÀüºÎ ¸ô¼ö (ÆÄ»ê)
+                // Cross: ì§„ì…í•œ ì¦ê±°ê¸ˆ + ë‚¨ì€ ì§€ê°‘ ì”ê³  ì „ë¶€ ëª°ìˆ˜ (íŒŒì‚°)
                 actualLoss = pos.MarginUSD + currentCash;
                 PlayerManager.Instance.fournanceCash = 0;
-                Debug.LogError($"[Cross Ã»»ê] {pos.Symbol} ÆÄ»ê! ÃÑ ¼Õ½Ç: -${actualLoss:N2}");
+                Debug.LogError($"[Cross ì²­ì‚°] {pos.Symbol} íŒŒì‚°! ì´ ì†ì‹¤: -${actualLoss:N2}");
             } else {
-                // Isolated: ÁøÀÔÇÑ Áõ°Å±İ¸¸ ¸ô¼ö (Áö°© ÀÜ°í´Â ¾ÈÀü)
+                // Isolated: ì§„ì…í•œ ì¦ê±°ê¸ˆë§Œ ëª°ìˆ˜ (ì§€ê°‘ ì”ê³ ëŠ” ì•ˆì „)
                 actualLoss = pos.MarginUSD;
-                Debug.LogError($"[Isolated Ã»»ê] {pos.Symbol} Áõ°Å±İ -${actualLoss:N2} Àü¾× ¼Ò¸ê.");
+                Debug.LogError($"[Isolated ì²­ì‚°] {pos.Symbol} ì¦ê±°ê¸ˆ -${actualLoss:N2} ì „ì•¡ ì†Œë©¸.");
             }
 
-            // ¾Ë¸² ¹ß¼Û
+            // ì•Œë¦¼ ë°œì†¡
             if (GlobalNotificationManager.Instance != null) {
                 string sender = "Fournance Risk Team";
-                string shortMsg = $"[¾Ë¸²] {pos.Symbol}USD Æ÷Áö¼ÇÀÌ °­Á¦ Ã»»êµÇ¾ú½À´Ï´Ù.";
+                string shortMsg = $"[ì•Œë¦¼] {pos.Symbol}USD í¬ì§€ì…˜ì´ ê°•ì œ ì²­ì‚°ë˜ì—ˆìŠµë‹ˆë‹¤.";
 
-                string fullBody = $"[Ã»»ê] {pos.Symbol}USD ({(pos.IsLong ? "Long" : "Short")})\n";
-                fullBody += $"ÁøÀÔ ${pos.EntryPriceUSD:N4} / Ã»»ê ${pos.LiquidationPriceUSD:N4}\n";
-                fullBody += $"¼Õ½Ç -${actualLoss:N2} (ÀÜ°í ${PlayerManager.Instance.fournanceCash:N2})";
+                string fullBody = $"[ì²­ì‚°] {pos.Symbol}USD ({(pos.IsLong ? "Long" : "Short")})\n";
+                fullBody += $"ì§„ì… ${pos.EntryPriceUSD:N4} / ì²­ì‚° ${pos.LiquidationPriceUSD:N4}\n";
+                fullBody += $"ì†ì‹¤ -${actualLoss:N2} (ì”ê³  ${PlayerManager.Instance.fournanceCash:N2})";
 
                 GlobalNotificationManager.Instance.ShowNotification(
                     "Bullbit",
@@ -456,53 +464,58 @@ public class FutureChartRenderer : LiveChartRenderer {
                     shortMsg,
                     () => {
                         if (UIManager.Instance != null) {
-                            UIManager.Instance.ShowSMSResult($"¹ß½ÅÀÎ: {sender}\n\n{fullBody}");
+                            UIManager.Instance.ShowSMSResult($"ë°œì‹ ì¸: {sender}\n\n{fullBody}");
                         }
                     }
                 );
             }
 
             // =========================================================
-            // [Ãß°¡] Åë°è µ¥ÀÌÅÍ ±â·Ï
+            // [ì¶”ê°€] í†µê³„ ë°ì´í„° ê¸°ë¡
             // =========================================================
 
-            // 1. °Å·¡·® ´©Àû (Á¾·á ½ÃÁ¡ÀÇ ÃÑ °¡Ä¡)
+            // 1. ê±°ë˜ëŸ‰ ëˆ„ì  (ì¢…ë£Œ ì‹œì ì˜ ì´ ê°€ì¹˜)
             double exitVol = pos.Quantity * currentPriceUsd;
             PlayerManager.Instance.fournanceTotalVolume += exitVol;
 
-            // 2. ½ÇÇö ¼ÕÀÍ & ¼ö¼ö·á ´©Àû
+            // 2. ì‹¤í˜„ ì†ìµ & ìˆ˜ìˆ˜ë£Œ ëˆ„ì 
             if (isLiquidated) {
-                // [°­Á¦ Ã»»ê]
-                // Cross¸é (Áõ°Å±İ + ³²ÀºÀÜ°í), Isolated¸é (Áõ°Å±İ) ¸¸Å­ ¼Õ½Ç È®Á¤
+                // [ê°•ì œ ì²­ì‚°]
+                // Crossë©´ (ì¦ê±°ê¸ˆ + ë‚¨ì€ì”ê³ ), Isolatedë©´ (ì¦ê±°ê¸ˆ) ë§Œí¼ ì†ì‹¤ í™•ì •
                 double lossAmount = (pos.Mode == MarginMode.Cross) ? (pos.MarginUSD + PlayerManager.Instance.fournanceCash) : pos.MarginUSD;
 
-                // ½ÇÇö ¼ÕÀÍ ±ğ±â
+                // ì‹¤í˜„ ì†ìµ ê¹ê¸°
                 PlayerManager.Instance.fournanceRealizedPnL -= lossAmount;
 
-                // Ã»»êÀº º¸Åë ¼ö¼ö·áº¸´Ù´Â º¸Çè±â±İÀ¸·Î °¡Áö¸¸, Åë°è»ó ¼ö¼ö·á¿¡ Æ÷ÇÔ½ÃÅ³Áö ¿©ºÎ´Â ¼±ÅÃ (¿©±â¼± ÆĞ½º)
+                // ì²­ì‚°ì€ ë³´í†µ ìˆ˜ìˆ˜ë£Œë³´ë‹¤ëŠ” ë³´í—˜ê¸°ê¸ˆìœ¼ë¡œ ê°€ì§€ë§Œ, í†µê³„ìƒ ìˆ˜ìˆ˜ë£Œì— í¬í•¨ì‹œí‚¬ì§€ ì—¬ë¶€ëŠ” ì„ íƒ (ì—¬ê¸°ì„  íŒ¨ìŠ¤)
             }
 
 
         } else {
-            // [Á¤»ó Á¾·á] (ÀÍÀı/¼ÕÀı)
-            // °ø½Ä: µ¹·Á¹ŞÀ» µ· = ³» ¿ø±İ(Áõ°Å±İ) + Â÷Æ®¼öÀÍ(GrossPnL) - Á¾·á¼ö¼ö·á(ExitFee)
+            // [ì •ìƒ ì¢…ë£Œ] (ìµì ˆ/ì†ì ˆ)
+            // ê³µì‹: ëŒë ¤ë°›ì„ ëˆ = ë‚´ ì›ê¸ˆ(ì¦ê±°ê¸ˆ) + ì°¨íŠ¸ìˆ˜ìµ(GrossPnL) - ì¢…ë£Œìˆ˜ìˆ˜ë£Œ(ExitFee)
             double returnAmount = pos.MarginUSD + grossPnL - exitFee;
 
             PlayerManager.Instance.fournanceCash += returnAmount;
 
-            double netPnL = grossPnL - exitFee; // ¼ø¼öÀÍ (¼ö¼ö·á »«°Å)
-            PlayerManager.Instance.fournanceRealizedPnL += netPnL; // ´©Àû!
+            double netPnL = grossPnL - exitFee; // ìˆœìˆ˜ìµ (ìˆ˜ìˆ˜ë£Œ ëº€ê±°)
+            PlayerManager.Instance.fournanceRealizedPnL += netPnL; // ëˆ„ì !
 
-            // ¼ö¼ö·áµµ ´©Àû
+            // ìˆ˜ìˆ˜ë£Œë„ ëˆ„ì 
             PlayerManager.Instance.fournanceTotalFee += exitFee;
 
-            Debug.Log($"[Á¾·á] Â÷Æ®¼ÕÀÍ: ${grossPnL:F2} | ¼ö¼ö·á: -${exitFee:F2} | ÃÖÁ¾Á¤»ê±İ: ${returnAmount:F2}");
+            Debug.Log($"[ì¢…ë£Œ] ì°¨íŠ¸ì†ìµ: ${grossPnL:F2} | ìˆ˜ìˆ˜ë£Œ: -${exitFee:F2} | ìµœì¢…ì •ì‚°ê¸ˆ: ${returnAmount:F2}");
         }
 
-        // 6. ÆÄ»ê ¹æ¾î (ºÎµ¿¼Ò¼öÁ¡ ¿ÀÂ÷·Î -0.000001 °°Àº°Å ¹æÁö)
+        // 6. íŒŒì‚° ë°©ì–´ (ë¶€ë™ì†Œìˆ˜ì  ì˜¤ì°¨ë¡œ -0.000001 ê°™ì€ê±° ë°©ì§€)
         if (PlayerManager.Instance.fournanceCash < 0.0001) PlayerManager.Instance.fournanceCash = 0;
 
-        // 7. UI ¹× µ¥ÀÌÅÍ Á¤¸®
+        CoinData coinToMark = CoinManager.Instance.coins.Find(c => c.Symbol == pos.Symbol);
+        if (coinToMark != null) {
+            coinToMark.MarkTradeOnCurrentCandle(pos.IsLong ? TradeType.FutureSell : TradeType.FutureBuy);
+        }
+
+        // 7. UI ë° ë°ì´í„° ì •ë¦¬
         if (uiMap.TryGetValue(pos, out var ui)) {
             Destroy(ui.gameObject);
             uiMap.Remove(pos);
@@ -522,7 +535,7 @@ public class FutureChartRenderer : LiveChartRenderer {
             double priceDiff = pos.IsLong ? (currentPrice - pos.EntryPriceUSD) : (pos.EntryPriceUSD - currentPrice);
             double grossPnL = priceDiff * pos.Quantity;
 
-            // ÃÑ PnLµµ ¼ö¼ö·á Â÷°¨ ÈÄ °è»ê (Net PnL)
+            // ì´ PnLë„ ìˆ˜ìˆ˜ë£Œ ì°¨ê° í›„ ê³„ì‚° (Net PnL)
             double estimatedExitFee = (pos.Quantity * currentPrice) * TRADING_FEE_RATE;
             totalNetPnL += (grossPnL - estimatedExitFee);
         }
@@ -530,27 +543,27 @@ public class FutureChartRenderer : LiveChartRenderer {
     }
 
     private void RefreshPositionLines() {
-        // ±âÁ¸ ¼±µé ½Ï Áö¿ì°í ½ÃÀÛ
+        // ê¸°ì¡´ ì„ ë“¤ ì‹¹ ì§€ìš°ê³  ì‹œì‘
         if (activeLiqLine != null) Destroy(activeLiqLine);
         if (activeEntryLine != null) Destroy(activeEntryLine);
 
         if (targetCoin == null) return;
 
-        // ÇöÀç º¸°í ÀÖ´Â ÄÚÀÎÀÇ ³» Æ÷Áö¼Ç Ã£±â
+        // í˜„ì¬ ë³´ê³  ìˆëŠ” ì½”ì¸ì˜ ë‚´ í¬ì§€ì…˜ ì°¾ê¸°
         var myPos = activePositions.FindLast(p => p.Symbol == targetCoin.Symbol);
 
         if (myPos != null) {
-            // 1. Ã»»ê°¡ ¶óÀÎ (»¡°­)
+            // 1. ì²­ì‚°ê°€ ë¼ì¸ (ë¹¨ê°•)
             CreateHorizontalLine(myPos.LiquidationPriceUSD, Color.red, ref activeLiqLine);
 
-            // 2. [Ãß°¡µÊ] ÁøÀÔ°¡ ¶óÀÎ (ÃÊ·Ï)
+            // 2. [ì¶”ê°€ë¨] ì§„ì…ê°€ ë¼ì¸ (ì´ˆë¡)
             CreateHorizontalLine(myPos.EntryPriceUSD, new Color32(0, 255, 0, 255), ref activeEntryLine);
         }
     }
 
 
     private void CreateHorizontalLine(double priceUsd, Color color, ref GameObject lineObj) {
-        if (hLinePrefab != null && crosshairV != null) { // hLinePrefabÀº ºÎ¸ğ Å¬·¡½º¿¡ ÀÖÀ½
+        if (hLinePrefab != null && crosshairV != null) { // hLinePrefabì€ ë¶€ëª¨ í´ë˜ìŠ¤ì— ìˆìŒ
             GameObject go = Instantiate(hLinePrefab, crosshairV.parent);
             HorizontalLineView view = go.GetComponent<HorizontalLineView>();
             if (view != null) {
@@ -594,13 +607,22 @@ public class FutureChartRenderer : LiveChartRenderer {
             if (EventSystem.current.IsPointerOverGameObject()) UpdateListOnly();
         }
 
+        if (Input.GetMouseButtonDown(0)) {
+            float timeSinceLastClick = Time.time - lastClickTime;
+
+            if (timeSinceLastClick <= doubleClickThreshold) {
+                CheckAndRemoveHorizontalLineViaRaycast(); // âœ¨ ë ˆì´ìºìŠ¤íŠ¸ ì‚­ì œ ë°©ì‹ í˜¸ì¶œ
+            }
+            lastClickTime = Time.time;
+        }
+
         base.Update();
         UpdateHeaderPriceText();
 
 
         // ------------------------------------------------------------------
-        // [ÇÙ½É] ÇöÀç ³» 'Âğ' ÀüÀç»ê(Equity) °è»ê
-        // Çö±İÀÌ ¸¶ÀÌ³Ê½º¿©µµ PnLÀÌ ÇÃ·¯½º¸é Equity´Â ÇÃ·¯½ºÀÓ.
+        // [í•µì‹¬] í˜„ì¬ ë‚´ 'ì°' ì „ì¬ì‚°(Equity) ê³„ì‚°
+        // í˜„ê¸ˆì´ ë§ˆì´ë„ˆìŠ¤ì—¬ë„ PnLì´ í”ŒëŸ¬ìŠ¤ë©´ EquityëŠ” í”ŒëŸ¬ìŠ¤ì„.
         // ------------------------------------------------------------------
         double currentEquity = 0;
         if (activePositions.Count > 0) {
@@ -619,31 +641,31 @@ public class FutureChartRenderer : LiveChartRenderer {
             double realTimeLiqPrice = pos.LiquidationPriceUSD;
 
             if (pos.Mode == MarginMode.Cross) {
-                // [¼öÁ¤µÊ] PlayerManager.fournanceCash ´ë½Å currentEquity »ç¿ë
-                // °ø½Ä: ÀüÀç»ê(Equity)ÀÌ 0ÀÌ µÇ´Â °¡°İÀ» Ã£À½
-                // Equity°¡ °ğ ³ªÀÇ ÃÑ¾Ë(Total Collateral)ÀÓ
+                // [ìˆ˜ì •ë¨] PlayerManager.fournanceCash ëŒ€ì‹  currentEquity ì‚¬ìš©
+                // ê³µì‹: ì „ì¬ì‚°(Equity)ì´ 0ì´ ë˜ëŠ” ê°€ê²©ì„ ì°¾ìŒ
+                // Equityê°€ ê³§ ë‚˜ì˜ ì´ì•Œ(Total Collateral)ì„
 
-                // ³» ÀüÀç»ê(Equity)À» Æ÷Áö¼Ç ¼ö·®À¸·Î ³ª´©¸é -> "°¡°İÀÌ ¾ó¸¶³ª º¯ÇØ¾ß ³» µ· ´Ù ÀÒ³ª?"°¡ ³ª¿È
+                // ë‚´ ì „ì¬ì‚°(Equity)ì„ í¬ì§€ì…˜ ìˆ˜ëŸ‰ìœ¼ë¡œ ë‚˜ëˆ„ë©´ -> "ê°€ê²©ì´ ì–¼ë§ˆë‚˜ ë³€í•´ì•¼ ë‚´ ëˆ ë‹¤ ìƒë‚˜?"ê°€ ë‚˜ì˜´
                 double priceRoom = currentEquity / pos.Quantity;
 
                 if (pos.IsLong) {
-                    // ·Õ: ÇöÀç°¡¿¡¼­ ¿©À¯ºĞ¸¸Å­ ¶³¾îÁø °÷ÀÌ Ã»»ê°¡
-                    // (ÁÖÀÇ: EntryPrice°¡ ¾Æ´Ï¶ó CurrentPrice ±âÁØÀÌ¾î¾ß ½Ç½Ã°£ Equity ¹İ¿µÀÌ Á¤È®ÇÔ)
+                    // ë¡±: í˜„ì¬ê°€ì—ì„œ ì—¬ìœ ë¶„ë§Œí¼ ë–¨ì–´ì§„ ê³³ì´ ì²­ì‚°ê°€
+                    // (ì£¼ì˜: EntryPriceê°€ ì•„ë‹ˆë¼ CurrentPrice ê¸°ì¤€ì´ì–´ì•¼ ì‹¤ì‹œê°„ Equity ë°˜ì˜ì´ ì •í™•í•¨)
                     realTimeLiqPrice = currentPriceUsd - priceRoom;
                     if (realTimeLiqPrice < 0) realTimeLiqPrice = 0;
                 } else {
-                    // ¼ô: ÇöÀç°¡¿¡¼­ ¿©À¯ºĞ¸¸Å­ ¿À¸¥ °÷ÀÌ Ã»»ê°¡
+                    // ìˆ: í˜„ì¬ê°€ì—ì„œ ì—¬ìœ ë¶„ë§Œí¼ ì˜¤ë¥¸ ê³³ì´ ì²­ì‚°ê°€
                     realTimeLiqPrice = currentPriceUsd + priceRoom;
                 }
 
-                // UI Ç¥±â¿ë ¾÷µ¥ÀÌÆ®
+                // UI í‘œê¸°ìš© ì—…ë°ì´íŠ¸
                 pos.LiquidationPriceUSD = realTimeLiqPrice;
             }
 
-            // Ã»»ê Ã¼Å©
+            // ì²­ì‚° ì²´í¬
             bool isLiq = pos.IsLong ? (currentPriceUsd <= realTimeLiqPrice) : (currentPriceUsd >= realTimeLiqPrice);
 
-            // [Ãß°¡ ¾ÈÀüÀåÄ¡] Equity°¡ 0 ÀÌÇÏ¸é °¡°İ »ó°ü¾øÀÌ Áï½Ã Ã»»ê (ÆÄ»ê)
+            // [ì¶”ê°€ ì•ˆì „ì¥ì¹˜] Equityê°€ 0 ì´í•˜ë©´ ê°€ê²© ìƒê´€ì—†ì´ ì¦‰ì‹œ ì²­ì‚° (íŒŒì‚°)
             if (pos.Mode == MarginMode.Cross && currentEquity <= 0.0001) {
                 isLiq = true;
             }
@@ -660,10 +682,34 @@ public class FutureChartRenderer : LiveChartRenderer {
         UpdateGridBackgroundUV();
     }
 
+
+    private void CheckAndRemoveHorizontalLineViaRaycast() {
+        if (activeHLines == null || activeHLines.Count == 0) return;
+
+        PointerEventData pointerData = new PointerEventData(EventSystem.current) {
+            position = Input.mousePosition
+        };
+
+        List<RaycastResult> raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, raycastResults);
+
+        foreach (RaycastResult result in raycastResults) {
+            // ë§ˆìš°ìŠ¤ì— ê±¸ë¦° ëª¨ë“  UI ì˜¤ë¸Œì íŠ¸ ì¤‘ì— HorizontalLineViewê°€ ë‹¬ë ¤ìˆëŠ” ë†ˆì´ ìˆë‹¤ë©´!
+            HorizontalLineView clickedLine = result.gameObject.GetComponentInParent<HorizontalLineView>();
+
+            if (clickedLine != null) {
+                // ë¶€ëª¨ í´ë˜ìŠ¤ì˜ ì œê±° í•¨ìˆ˜ í˜¸ì¶œ
+                RemoveHorizontalLine(clickedLine);
+                Debug.Log("[ì‹œìŠ¤í…œ] UI ê´€í†µ ë ˆì´ìºìŠ¤íŠ¸: ìˆ˜í‰ì„  ì‚­ì œ ì„±ê³µ!");
+                return; // í•˜ë‚˜ ì§€ì› ìœ¼ë©´ ë
+            }
+        }
+    }
+
     protected override void UpdateHorizontalLines() {
         base.UpdateHorizontalLines();
 
-        // 1. Ã»»ê°¡ ¶óÀÎ À§Ä¡ °»½Å
+        // 1. ì²­ì‚°ê°€ ë¼ì¸ ìœ„ì¹˜ ê°±ì‹ 
         if (activeLiqLine != null && activePositions.Count > 0 && targetCoin != null) {
             var currentPos = activePositions.FindLast(p => p.Symbol == targetCoin.Symbol);
             if (currentPos != null) {
@@ -673,7 +719,7 @@ public class FutureChartRenderer : LiveChartRenderer {
             }
         }
 
-        // 2. [Ãß°¡µÊ] ÁøÀÔ°¡ ¶óÀÎ À§Ä¡ °»½Å
+        // 2. [ì¶”ê°€ë¨] ì§„ì…ê°€ ë¼ì¸ ìœ„ì¹˜ ê°±ì‹ 
         if (activeEntryLine != null && activePositions.Count > 0 && targetCoin != null) {
             var currentPos = activePositions.FindLast(p => p.Symbol == targetCoin.Symbol);
             if (currentPos != null) {
@@ -837,43 +883,43 @@ public class FutureChartRenderer : LiveChartRenderer {
         SetupFutureIndicator(lowPriceText, lowIndex, lowPriceKrw, false);
     }
 
-    // »ó´Ü ÅØ½ºÆ® °»½Å ÇÔ¼ö
+    // ìƒë‹¨ í…ìŠ¤íŠ¸ ê°±ì‹  í•¨ìˆ˜
     private void UpdateHeaderPriceText() {
         if (headerCurrentPriceText != null && targetCoin != null) {
             double currentPriceUsd = targetCoin.CurrentPrice / GlobalEconomyManager.UsdToKrw;
 
-            // °¡°İ º¯È­°¡ ¾øÀ¸¸é ±»ÀÌ ÅØ½ºÆ®/»ö»ó °»½Å ¾È ÇÔ (ÃÖÀûÈ­)
+            // ê°€ê²© ë³€í™”ê°€ ì—†ìœ¼ë©´ êµ³ì´ í…ìŠ¤íŠ¸/ìƒ‰ìƒ ê°±ì‹  ì•ˆ í•¨ (ìµœì í™”)
             if (System.Math.Abs(currentPriceUsd - lastHeaderPrice) < 0.0000001) return;
 
             headerCurrentPriceText.text = FormatPriceUSD(currentPriceUsd);
 
-            // ÀÌÀü °¡°İÀÌ 0ÀÌ ¾Æ´Ò ¶§¸¸ ºñ±³ (Ã³À½ ÄÑÁú ¶© Èò»ö À¯Áö)
+            // ì´ì „ ê°€ê²©ì´ 0ì´ ì•„ë‹ ë•Œë§Œ ë¹„êµ (ì²˜ìŒ ì¼œì§ˆ ë• í°ìƒ‰ ìœ ì§€)
             if (lastHeaderPrice > 0) {
                 if (currentPriceUsd > lastHeaderPrice) {
-                    // »ó½Â: ÃÊ·Ï (#32D695) -> RGB(50, 214, 149)
+                    // ìƒìŠ¹: ì´ˆë¡ (#32D695) -> RGB(50, 214, 149)
                     headerCurrentPriceText.color = new Color32(50, 214, 149, 255);
                 } else if (currentPriceUsd < lastHeaderPrice) {
-                    // ÇÏ¶ô: »¡°­ (#E63C3C) -> RGB(230, 60, 60)
+                    // í•˜ë½: ë¹¨ê°• (#E63C3C) -> RGB(230, 60, 60)
                     headerCurrentPriceText.color = new Color32(230, 60, 60, 255);
                 }
             } else {
-                // Ã³À½¿£ Èò»ö
+                // ì²˜ìŒì—” í°ìƒ‰
                 headerCurrentPriceText.color = Color.white;
             }
 
-            // ÇöÀç °¡°İ ÀúÀå
+            // í˜„ì¬ ê°€ê²© ì €ì¥
             lastHeaderPrice = currentPriceUsd;
         }
     }
 
     public double GetBuyingPower() {
-        // 1. ±³Â÷ ¸ğµå ±âÁØ ÃÑ ´ãº¸ °¡Ä¡ (Cash + Cross Margin + Cross PnL)
-        // ¿©±â¿¡´Â Isolated Æ÷Áö¼ÇÀÇ PnLÀÌ Æ÷ÇÔµÇÁö ¾ÊÀ½ (À§¿¡¼­ ¼öÁ¤ÇßÀ¸¹Ç·Î)
+        // 1. êµì°¨ ëª¨ë“œ ê¸°ì¤€ ì´ ë‹´ë³´ ê°€ì¹˜ (Cash + Cross Margin + Cross PnL)
+        // ì—¬ê¸°ì—ëŠ” Isolated í¬ì§€ì…˜ì˜ PnLì´ í¬í•¨ë˜ì§€ ì•ŠìŒ (ìœ„ì—ì„œ ìˆ˜ì •í–ˆìœ¼ë¯€ë¡œ)
         double totalCrossEquity = GetCrossMarginEquity();
 
-        // 2. [ÇÙ½É ¼öÁ¤] ÀÌ¹Ì »ç¿ë ÁßÀÎ Áõ°Å±İÀ» »¬ ¶§µµ "Cross Æ÷Áö¼Ç" °Í¸¸ »©¾ß ÇÔ.
-        // ¿Ö³Ä? Isolated Áõ°Å±İÀº ÀÌ¹Ì fournanceCash¿¡¼­ ¿µ±¸ Â÷°¨µÇ¾ú°í, 
-        // totalCrossEquity °è»êÇÒ ¶§ ´õÇØÁÖÁöµµ ¾Ê¾ÒÀ¸´Ï, ¿©±â¼­ ¶Ç »©¸é ÀÌÁß Â÷°¨ÀÌ µÊ.
+        // 2. [í•µì‹¬ ìˆ˜ì •] ì´ë¯¸ ì‚¬ìš© ì¤‘ì¸ ì¦ê±°ê¸ˆì„ ëº„ ë•Œë„ "Cross í¬ì§€ì…˜" ê²ƒë§Œ ë¹¼ì•¼ í•¨.
+        // ì™œëƒ? Isolated ì¦ê±°ê¸ˆì€ ì´ë¯¸ fournanceCashì—ì„œ ì˜êµ¬ ì°¨ê°ë˜ì—ˆê³ , 
+        // totalCrossEquity ê³„ì‚°í•  ë•Œ ë”í•´ì£¼ì§€ë„ ì•Šì•˜ìœ¼ë‹ˆ, ì—¬ê¸°ì„œ ë˜ ë¹¼ë©´ ì´ì¤‘ ì°¨ê°ì´ ë¨.
 
         double usedCrossMargin = 0;
         foreach (var pos in activePositions) {
@@ -882,8 +928,8 @@ public class FutureChartRenderer : LiveChartRenderer {
             }
         }
 
-        // 3. ±¸¸Å·Â = (Cash + Cross PnL)
-        // ¼ö½Ä: (Cash + CrossMargin + CrossPnL) - CrossMargin
+        // 3. êµ¬ë§¤ë ¥ = (Cash + Cross PnL)
+        // ìˆ˜ì‹: (Cash + CrossMargin + CrossPnL) - CrossMargin
         double buyingPower = totalCrossEquity - usedCrossMargin;
 
         return buyingPower > 0 ? buyingPower : 0;
@@ -892,26 +938,26 @@ public class FutureChartRenderer : LiveChartRenderer {
     public void OnClickCloseAll() {
         if (activePositions.Count == 0) return;
 
-        // [Áß¿ä] ¸®½ºÆ® ¿ä¼Ò¸¦ »èÁ¦ÇÏ´Â ·ÎÁ÷ÀÌ¹Ç·Î, ¹İµå½Ã '¿ª¼ø(µÚ¿¡¼­ºÎÅÍ)'À¸·Î µ¹·Á¾ß ÇÔ
-        // ¾Õ¿¡¼­ºÎÅÍ(0ºÎÅÍ) Áö¿ì¸é ÀÎµ¦½º°¡ ¹Ğ·Á¼­ ¿¡·¯ ³ª°Å³ª °Ç³Ê¶Ü
+        // [ì¤‘ìš”] ë¦¬ìŠ¤íŠ¸ ìš”ì†Œë¥¼ ì‚­ì œí•˜ëŠ” ë¡œì§ì´ë¯€ë¡œ, ë°˜ë“œì‹œ 'ì—­ìˆœ(ë’¤ì—ì„œë¶€í„°)'ìœ¼ë¡œ ëŒë ¤ì•¼ í•¨
+        // ì•ì—ì„œë¶€í„°(0ë¶€í„°) ì§€ìš°ë©´ ì¸ë±ìŠ¤ê°€ ë°€ë ¤ì„œ ì—ëŸ¬ ë‚˜ê±°ë‚˜ ê±´ë„ˆëœ€
         int count = activePositions.Count;
 
         for (int i = count - 1; i >= 0; i--) {
             var pos = activePositions[i];
 
-            // ±âÁ¸¿¡ Àß ¸¸µé¾îµĞ 'ClosePositionMarket' ÇÔ¼ö ÀçÈ°¿ë
-            // isLiquidated = false (Á¤»ó Á¾·á)
+            // ê¸°ì¡´ì— ì˜ ë§Œë“¤ì–´ë‘” 'ClosePositionMarket' í•¨ìˆ˜ ì¬í™œìš©
+            // isLiquidated = false (ì •ìƒ ì¢…ë£Œ)
             ClosePositionMarket(pos, isLiquidated: false);
         }
 
-        Debug.Log($"[½Ã½ºÅÛ] Æ÷Áö¼Ç {count}°³ ÀÏ°ı Á¾·á ¿Ï·á");
+        Debug.Log($"[ì‹œìŠ¤í…œ] í¬ì§€ì…˜ {count}ê°œ ì¼ê´„ ì¢…ë£Œ ì™„ë£Œ");
 
-        // (¼±ÅÃ»çÇ×) "¸ğµç Æ÷Áö¼ÇÀÌ Á¤¸®µÇ¾ú½À´Ï´Ù" ¾Ë¸² ¶ç¿ì±â
+        // (ì„ íƒì‚¬í•­) "ëª¨ë“  í¬ì§€ì…˜ì´ ì •ë¦¬ë˜ì—ˆìŠµë‹ˆë‹¤" ì•Œë¦¼ ë„ìš°ê¸°
         if (GlobalNotificationManager.Instance != null) {
             GlobalNotificationManager.Instance.ShowNotification(
                 "Bullbit",
                 "Fournance",
-                "¸ğµç Æ÷Áö¼ÇÀ» ½ÃÀå°¡·Î Á¾·áÇß½À´Ï´Ù.",
+                "ëª¨ë“  í¬ì§€ì…˜ì„ ì‹œì¥ê°€ë¡œ ì¢…ë£Œí–ˆìŠµë‹ˆë‹¤.",
                 null
             );
         }
@@ -919,56 +965,63 @@ public class FutureChartRenderer : LiveChartRenderer {
     private void CreateProceduralGridTexture() {
         if (gridBackground == null) return;
 
-        // 1. ÅØ½ºÃ³ »ı¼º
+        // 1. í…ìŠ¤ì²˜ ìƒì„±
         Texture2D texture = new Texture2D(gridWidth, gridHeight, TextureFormat.ARGB32, false);
         texture.filterMode = FilterMode.Point;
         texture.wrapMode = TextureWrapMode.Repeat;
 
-        // 2. ÃÊ±âÈ­ (Åõ¸íÇÏ°Ô)
+        // 2. ì´ˆê¸°í™” (íˆ¬ëª…í•˜ê²Œ)
         Color[] cols = new Color[gridWidth * gridHeight];
         for (int i = 0; i < cols.Length; i++) {
             cols[i] = Color.clear;
         }
 
-        // 3. ½Ç¼± ±×¸®±â (Á¶°Ç¹® »èÁ¦)
+        // 3. ì‹¤ì„  ê·¸ë¦¬ê¸° (ì¡°ê±´ë¬¸ ì‚­ì œ)
 
-        // [°¡·Î¼± ±×¸®±â] ¸Ç ¾Æ·¡ (y=0) ¶óÀÎ ½Ï ´Ù Ä¥ÇÏ±â
+        // [ê°€ë¡œì„  ê·¸ë¦¬ê¸°] ë§¨ ì•„ë˜ (y=0) ë¼ì¸ ì‹¹ ë‹¤ ì¹ í•˜ê¸°
         for (int x = 0; x < gridWidth; x++) {
             cols[x] = gridColor;
         }
 
-        // [¼¼·Î¼± ±×¸®±â] ¸Ç ¿ŞÂÊ (x=0) ¶óÀÎ ½Ï ´Ù Ä¥ÇÏ±â
+        // [ì„¸ë¡œì„  ê·¸ë¦¬ê¸°] ë§¨ ì™¼ìª½ (x=0) ë¼ì¸ ì‹¹ ë‹¤ ì¹ í•˜ê¸°
         for (int y = 0; y < gridHeight; y++) {
-            // ÀÎµ¦½º = y * °¡·Î±æÀÌ
+            // ì¸ë±ìŠ¤ = y * ê°€ë¡œê¸¸ì´
             cols[y * gridWidth] = gridColor;
         }
 
-        // 4. Àû¿ë
+        // 4. ì ìš©
         texture.SetPixels(cols);
         texture.Apply();
 
         gridBackground.texture = texture;
 
-        // 5. UV ¼¼ÆÃ
+        // 5. UV ì„¸íŒ…
         float repeatX = viewport.rect.width / gridWidth;
         float repeatY = viewport.rect.height / gridHeight;
         gridBackground.uvRect = new Rect(0, 0, repeatX, repeatY);
 
-        // *Áß¿ä* ½ºÅ©·Ñ µ¿±âÈ­ º¯¼ö ¾÷µ¥ÀÌÆ®
+        // *ì¤‘ìš”* ìŠ¤í¬ë¡¤ ë™ê¸°í™” ë³€ìˆ˜ ì—…ë°ì´íŠ¸
         gridTextureWidth = gridWidth;
     }
 
     private void UpdateGridBackgroundUV() {
         if (gridBackground == null || gridTextureWidth <= 0) return;
 
-        // 1. Â÷Æ®ÀÇ ÇöÀç ½ºÅ©·Ñ À§Ä¡(X)¸¦ °İÀÚ ³Êºñ·Î ³ª´²¼­ ÀÌµ¿·® °è»ê
+        // 1. ì°¨íŠ¸ì˜ í˜„ì¬ ìŠ¤í¬ë¡¤ ìœ„ì¹˜(X)ë¥¼ ê²©ì ë„ˆë¹„ë¡œ ë‚˜ëˆ ì„œ ì´ë™ëŸ‰ ê³„ì‚°
         float uvX = -(chartContent.anchoredPosition.x / gridTextureWidth);
 
-        // 2. È­¸é(Viewport) ³Êºñ ´ëºñ ¹İº¹ È½¼ö °è»ê
+        // 2. í™”ë©´(Viewport) ë„ˆë¹„ ëŒ€ë¹„ ë°˜ë³µ íšŸìˆ˜ ê³„ì‚°
         float uvWidth = viewport.rect.width / gridTextureWidth;
-        float uvHeight = viewport.rect.height / gridHeight; // ³ôÀÌµµ °è»ê
+        float uvHeight = viewport.rect.height / gridHeight; // ë†’ì´ë„ ê³„ì‚°
 
-        // 3. RawImageÀÇ UV »ç°¢Çü °»½Å (¹è°æ ÀÌµ¿)
+        // 3. RawImageì˜ UV ì‚¬ê°í˜• ê°±ì‹  (ë°°ê²½ ì´ë™)
         gridBackground.uvRect = new Rect(uvX, 0f, uvWidth, uvHeight);
+    }
+    protected override string FormatTooltipPrice(double priceKrw) {
+        // 1. ìº”ë“¤ì— ì €ì¥ëœ ì›í™”(KRW) ê°€ê²©ì„ ë‹¬ëŸ¬(USD)ë¡œ ë³€í™˜
+        double priceUsd = priceKrw / GlobalEconomyManager.UsdToKrw;
+
+        // 2. í˜•ë‹˜ì´ ì´ë¯¸ ì˜ ë§Œë“¤ì–´ë‘ì‹  ë‹¬ëŸ¬ í¬ë§· í•¨ìˆ˜ ì¬í™œìš©!
+        return FormatPriceUSD(priceUsd);
     }
 }

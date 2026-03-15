@@ -33,6 +33,39 @@ public class CapitalDepositPanel : MonoBehaviour {
 
     private void Awake() {
         parentController = FindFirstObjectByType<OfficePanelController>(FindObjectsInactive.Include);
+
+        if (inputField != null) {
+            inputField.onValueChanged.AddListener(OnInputAmountChanged);
+        }
+    }
+
+    public void OnInputAmountChanged(string input) {
+        if (string.IsNullOrEmpty(input)) return;
+
+        // 1. 콤마 제거 후 숫자로 변환
+        string raw = input.Replace(",", "");
+        if (!long.TryParse(raw, out long enteredAmount)) return;
+
+        // 2. 제한값(Limit) 계산
+        // A: 내 사토시 은행 잔고
+        long myCash = (long)PlayerManager.Instance.satoshiBankCash;
+
+        // B: 졸업까지 남은 금액 (최종 목표 - 현재 납입금)
+        long finalGoal = 10_000_000_000; // 기본 100억
+        if (OfficeManager.Instance.capitalMilestones != null && OfficeManager.Instance.capitalMilestones.Length > 0) {
+            finalGoal = OfficeManager.Instance.capitalMilestones[OfficeManager.Instance.capitalMilestones.Length - 1];
+        }
+        long spaceLeft = finalGoal - OfficeManager.Instance.companyCapital;
+
+        // 3. 둘 중 더 작은 값을 최대 한도로 설정 (내 돈 vs 필요한 돈)
+        long maxLimit = Math.Max(0, Math.Min(myCash, spaceLeft));
+
+        // 4. 입력값이 한도를 넘으면 즉시 최대치로 보정
+        if (enteredAmount > maxLimit) {
+            inputField.text = maxLimit.ToString("N0");
+            inputField.caretPosition = inputField.text.Length;
+            Debug.Log($"[자본납입] 입력 제한: 최대 {maxLimit:N0}원");
+        }
     }
 
     private void OnEnable() {
@@ -60,6 +93,7 @@ public class CapitalDepositPanel : MonoBehaviour {
         long currentCap = office.companyCapital;
         long nextGoal = office.GetNextCapitalMilestone();
         int myRankIndex = office.currentRankIndex;
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY"); // 공통 화폐 단위
 
         // [MAX 체크] 목표 금액이 -1(없음)이나 0 이하로 나오면 최종 단계임
         bool isMaxLevel = (nextGoal <= 0);
@@ -67,31 +101,37 @@ public class CapitalDepositPanel : MonoBehaviour {
         // 1. UI 상태 처리 (진행중 vs 졸업)
         if (isMaxLevel) {
             // == [졸업: 경제적 자유인] ==
-            if (rankLabel != null) rankLabel.text = "현재 등급: 경제적 자유인";
+            if (rankLabel != null)
+                rankLabel.text = LocalizationManager.GetText("LBL_OFFICE_CURRENT_RANK_MAX");
 
             if (depositButton != null) depositButton.interactable = false;
             if (inputField != null) {
-                inputField.text = "자유를 얻었습니다.";
+                inputField.text = LocalizationManager.GetText("LBL_DEPOSIT_FREE");
                 inputField.interactable = false;
             }
 
-            if (targetCapitalLabel != null) targetCapitalLabel.text = "모든 목표 달성";
+            if (targetCapitalLabel != null)
+                targetCapitalLabel.text = LocalizationManager.GetText("LBL_DEPOSIT_ALL_CLEARED");
+
             if (progressBar != null) progressBar.fillAmount = 0f;
             if (percentLabel != null) percentLabel.text = "MAX";
 
             myRankIndex = 999; // 시각적 올 클리어 처리
         } else {
             // == [진행 중] ==
-            if (rankLabel != null) rankLabel.text = $"현재 등급: {office.GetCurrentTitle()}";
+            if (rankLabel != null)
+                rankLabel.text = string.Format(LocalizationManager.GetText("LBL_OFFICE_DEPOSIT_RANK"), office.GetCurrentTitle());
 
             if (depositButton != null) depositButton.interactable = true;
             if (inputField != null) inputField.interactable = true;
 
-            if (targetCapitalLabel != null) targetCapitalLabel.text = $"목표금액: {nextGoal:N0}";
+            if (targetCapitalLabel != null)
+                targetCapitalLabel.text = string.Format(LocalizationManager.GetText("LBL_DEPOSIT_TARGET_CASH"), nextGoal.ToString("N0"));
 
             float progress = (float)currentCap / nextGoal;
             if (progressBar != null) progressBar.fillAmount = progress;
-            if (percentLabel != null) percentLabel.text = $"납입율: {progress * 100:F0}%";
+            if (percentLabel != null)
+                percentLabel.text = string.Format(LocalizationManager.GetText("LBL_OFFICE_DEPOSIT_RATE"), (progress * 100).ToString("F0"));
         }
 
         // 2. 등급 박스 색칠
@@ -110,8 +150,11 @@ public class CapitalDepositPanel : MonoBehaviour {
             }
         }
 
-        if (availableCashLabel != null) availableCashLabel.text = $"가능: {myCash:N0}원";
-        if (currentCapitalLabel != null) currentCapitalLabel.text = $"납입금액: {currentCap:N0}";
+        // 4. 보유 현금 및 현재 납입 금액 갱신
+        if (availableCashLabel != null)
+            availableCashLabel.text = string.Format(LocalizationManager.GetText("LBL_DEPOSIT_AVAILABLE"), myCash.ToString("N0"), unit);
+        if (currentCapitalLabel != null)
+            currentCapitalLabel.text = string.Format(LocalizationManager.GetText("LBL_DEPOSIT_CURRENT_CAP"), currentCap.ToString("N0"));
     }
 
     void OnClickDeposit() {
@@ -129,7 +172,6 @@ public class CapitalDepositPanel : MonoBehaviour {
 
         // 1. 최종 목표 금액 (100억) 가져오기
         long finalGoal = 10_000_000_000;
-        // (안전하게 매니저 배열의 마지막 값을 가져옵니다)
         if (OfficeManager.Instance.capitalMilestones != null && OfficeManager.Instance.capitalMilestones.Length > 0) {
             finalGoal = OfficeManager.Instance.capitalMilestones[OfficeManager.Instance.capitalMilestones.Length - 1];
         }
@@ -150,14 +192,19 @@ public class CapitalDepositPanel : MonoBehaviour {
         // 4. 내 지갑 잔액 체크 (잘린 amount 기준으로 체크)
         if (amount > PlayerManager.Instance.satoshiBankCash) {
             Debug.LogWarning("잔액이 부족합니다.");
-            // (선택사항) 여기서도 잔액만큼만 최대로 넣게 하려면: amount = (long)PlayerManager.Instance.satoshiBankCash;
             return;
         }
 
         // 5. 실제 처리
         PlayerManager.Instance.satoshiBankCash -= amount;
         OfficeManager.Instance.AddCapital(amount);
-        TransactionManager.Instance.AddRecord("자본투입", amount, "출금", "사토시 현금");
+
+        // [수정] 거래 내역 현지화
+        string logDesc = LocalizationManager.GetText("LOG_CAPITAL_INJECT");
+        string logType = LocalizationManager.GetText("LOG_WITHDRAW");
+        string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH");
+
+        TransactionManager.Instance.AddRecord(logDesc, amount, logType, logAsset);
 
         RefreshUI();
         inputField.text = ""; // 입력창 비움

@@ -15,7 +15,8 @@
       "prerequisitesSymbols": [],
       "prerequisites": [],
       "outcomes": [],
-      "uiKey": "welcome_to_project_crypto"
+      "uiKey": "welcome_to_project_crypto",
+      "effectKey": "welcome_to_project_crypto"
     },
     {
       "key": "trump_president",
@@ -1014,6 +1015,49 @@
       "uiKey": "middle_east_trump_02_06",
       "outcomes": []
     },
+                {
+      "key": "moon_listing_announce_1_02_07",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-02-07 10:00",
+      "endDate": "2020-02-07 22:00",
+      "prerequisitesSymbols": [],
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "uiKey": "moon_listing_announce_1_02_07",
+      "outcomes": [
+        {
+          "key": "moon_listing_announce_2_02_07",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "key": "moon_listing_announce_2_02_07",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "moon_listing_announce_1_02_07"
+      ],
+      "dayOffset": {
+        "type": 1,
+        "days": 1
+      },
+      "timeRule": {
+        "type": 1,
+        "hour": 10,
+        "minute": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "effectKey": "moon_listing_announce_2_02_07",
+      "uiKey": "moon_listing_announce_2_02_07",
+      "outcomes": []
+    },
     {
       "key": "Market_goes_down_02_08",
       "authorId": "system",
@@ -1027,6 +1071,7 @@
       "repeatType": 1,
       "gate": true,
       "prerequisitesSymbols": [],
+      "uiKey": "Market_goes_down_02_08",
       "effectKey": "Market_goes_down_02_08",
       "outcomes": []
     },
@@ -1063,6 +1108,591 @@
       "effectKey": "middle_east_war_02_11",
       "uiKey": "middle_east_war_02_11",
       "outcomes": []
-    }
+    },
+    {
+      "key": "trump_middle_east_war_02_13",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-02-13 12:00",
+      "endDate": "2020-02-13 14:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "trump_middle_east_war_02_13",
+      "uiKey": "trump_middle_east_war_02_13",
+      "outcomes": []
+    },
+        {
+      "key": "trump_middle_east_war_02_15",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-02-15 12:00",
+      "endDate": "2020-02-15 14:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "trump_middle_east_war_02_15",
+      "uiKey": "trump_middle_east_war_02_15",
+      "outcomes": []
+    },
+    {
+      "key": "trump_middle_east_deal_success_02_16",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-02-16 14:00",
+      "endDate": "2020-02-16 15:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "trump_middle_east_deal_success_02_16",
+      "uiKey": "trump_middle_east_deal_success_02_16",
+      "outcomes": []
+    },
+        {
+      "key": "us_goverment_02_18",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-02-18 15:00",
+      "endDate": "2020-02-18 17:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "us_goverment_02_18",
+      "uiKey": "us_goverment_02_18",
+      "outcomes": []
+    },
+            {
+      "key": "AI_call_02_19",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-02-19 10:00",
+      "endDate": "2020-02-19 11:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "AI_call_02_19",
+      "outcomes": []
+    },
+    {
+      "key": "AI_theme_event_02_20",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-02-20 10:00",
+      "endDate": "2020-02-20 11:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "AI_theme_event_02_20",
+      "uiKey": "AI_theme_event_02_20",
+      "outcomes": []
+    },
+    {
+      "key": "vitalik_eth_undervalued_02_22",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-02-22 17:00",
+      "endDate": "2020-02-22 19:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "vitalik_eth_undervalued_02_22",
+      "uiKey": "vitalik_eth_undervalued_02_22",
+      "outcomes": []
+    },
+    {
+    "key": "virtual_listing_announce_02_24",
+    "authorId": "system",
+    "executionMode": 1,
+    "startDate": "2020-02-24 10:00",
+    "endDate": "2020-02-24 11:00",
+    "prerequisitesSymbols": [],
+    "timeRule": {
+      "type": 0
+    },
+    "probability": 1.0,
+    "repeatType": 1,
+    "gate": true,
+    "uiKey": "virtual_listing_announce_02_24",
+    "outcomes": [
+      {
+        "key": "virtual_listing_announce_02_25",
+        "weight": 1.0
+      }
+    ]
+  },
+    {
+      "key": "virtual_listing_announce_02_25",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "virtual_listing_announce_02_24"
+      ],
+      "dayOffset": {
+        "type": 1,
+        "days": 1
+      },
+      "timeRule": {
+        "type": 1,
+        "hour": 10,
+        "minute": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "effectKey": "virtual_listing_announce_02_25",
+      "uiKey": "virtual_listing_announce_02_25",
+      "outcomes": []
+    },
+    {
+      "key": "positive_days_02_27",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-02-27 14:00",
+      "endDate": "2020-02-27 15:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "positive_days_02_27",
+      "uiKey": "positive_days_02_27",
+      "outcomes": []
+    },
+    {
+      "key": "alt_days_comming_03_02",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-02 14:00",
+      "endDate": "2020-03-02 15:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "alt_days_comming_03_02",
+      "outcomes": []
+    },
+    {
+      "key": "us_treasury_hold_03_03",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-03 11:00",
+      "endDate": "2020-03-03 16:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "us_treasury_hold_03_03",
+      "effectKey": "us_treasury_hold_03_03",
+      "outcomes": []
+    },
+    {
+      "key": "global_meme_festival_03_06",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-06 11:00",
+      "endDate": "2020-03-06 16:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "global_meme_festival_03_06",
+      "effectKey": "global_meme_festival_03_06",
+      "outcomes": []
+    },
+    {
+      "key": "positive_days_03_08",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-08 09:00",
+      "endDate": "2020-03-08 10:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "positive_days_03_08",
+      "effectKey": "positive_days_03_08",
+      "outcomes": []
+    },
+    {
+      "key": "sui_positive_03_09",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-09 11:00",
+      "endDate": "2020-03-09 14:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "sui_positive_03_09",
+      "effectKey": "sui_positive_03_09",
+      "outcomes": []
+    },
+    {
+      "key": "south_america_positive_03_10",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-10 11:00",
+      "endDate": "2020-03-10 14:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "south_america_positive_03_10",
+      "effectKey": "south_america_positive_03_10",
+      "outcomes": []
+    },
+    {
+      "key": "trump_big_days_comming_03_13",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-13 11:00",
+      "endDate": "2020-03-13 14:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "trump_big_days_comming_03_13",
+      "effectKey": "trump_big_days_comming_03_13",
+      "outcomes": []
+    },
+    {
+      "key": "frog_pump_03_14",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-14 15:00",
+      "endDate": "2020-03-14 16:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "frog_pump_03_14",
+      "effectKey": "frog_pump_03_14",
+      "outcomes": []
+    },
+        {
+      "key": "idol_listing_announce_1_03_15",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-15 10:00",
+      "endDate": "2020-03-15 22:00",
+      "prerequisitesSymbols": [],
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "uiKey": "idol_listing_announce_1_03_15",
+      "outcomes": [
+        {
+          "key": "idol_listing_announce_2_03_15",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "key": "idol_listing_announce_2_03_15",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "idol_listing_announce_1_03_15"
+      ],
+      "dayOffset": {
+        "type": 1,
+        "days": 1
+      },
+      "timeRule": {
+        "type": 1,
+        "hour": 10,
+        "minute": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "effectKey": "idol_listing_announce_2_03_15",
+      "uiKey": "idol_listing_announce_2_03_15",
+      "outcomes": []
+    },
+            {
+      "key": "pgoose_listing_announce_1_03_16",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-16 10:00",
+      "endDate": "2020-03-16 22:00",
+      "prerequisitesSymbols": [],
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "uiKey": "pgoose_listing_announce_1_03_16",
+      "outcomes": [
+        {
+          "key": "pgoose_listing_announce_2_03_16",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "key": "pgoose_listing_announce_2_03_16",
+      "authorId": "system",
+      "executionMode": 2,
+      "prerequisites": [
+        "pgoose_listing_announce_1_03_16"
+      ],
+      "dayOffset": {
+        "type": 1,
+        "days": 1
+      },
+      "timeRule": {
+        "type": 1,
+        "hour": 10,
+        "minute": 0
+      },
+      "repeatType": 1,
+      "gate": true,
+      "effectKey": "pgoose_listing_announce_2_03_16",
+      "uiKey": "pgoose_listing_announce_2_03_16",
+      "outcomes": []
+    },
+    {
+      "key": "Diagram_K_tweet_03_18",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-18 11:00",
+      "endDate": "2020-03-18 14:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "Diagram_K_tweet_03_18",
+      "effectKey": "Diagram_K_tweet_03_18",
+      "outcomes": []
+    },
+    {
+      "key": "Moon_FUD_03_19",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-19 12:00",
+      "endDate": "2020-03-19 15:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "Moon_FUD_03_19",
+      "effectKey": "Moon_FUD_03_19",
+      "outcomes": []
+    },
+    {
+      "key": "Diagram_K_tweet_03_20",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-20 17:00",
+      "endDate": "2020-03-20 21:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "Diagram_K_tweet_03_20",
+      "effectKey": "Diagram_K_tweet_03_20",
+      "outcomes": []
+    },
+    {
+      "key": "Diagram_K_tweet_03_23",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-23 17:00",
+      "endDate": "2020-03-23 21:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "Diagram_K_tweet_03_23",
+      "effectKey": "Diagram_K_tweet_03_23",
+      "outcomes": []
+    },
+        {
+      "key": "MOON_DROP_03_25",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-25 00:00",
+      "endDate": "2020-03-25 02:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "MOON_DROP_03_25",
+      "outcomes": []
+    },
+    {
+      "key": "MOON_DROP_03_25_2",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-25 12:00",
+      "endDate": "2020-03-25 14:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "MOON_DROP_03_25_2",
+      "outcomes": []
+    },
+    {
+      "key": "MOON_DROP_03_26",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-26 00:00",
+      "endDate": "2020-03-26 02:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "MOON_DROP_03_26",
+      "uiKey": "MOON_DROP_03_26",
+      "outcomes": []
+    },
+    {
+      "key": "MOON_CRASH_03_27",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-27 00:00",
+      "endDate": "2020-03-27 02:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "MOON_CRASH_03_27",
+      "uiKey": "MOON_CRASH_03_27",
+      "outcomes": []
+    },
+    {
+      "key": "MOON_CRASH_03_27_01",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-27 09:00",
+      "endDate": "2020-03-27 10:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "MOON_CRASH_03_27_01",
+      "effectKey": "MOON_CRASH_03_27_01",
+      "outcomes": []
+    },
+        {
+      "key": "MOON_CRASH_03_28_02",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-28 09:00",
+      "endDate": "2020-03-28 10:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "uiKey": "MOON_CRASH_03_28_02",
+      "effectKey": "MOON_CRASH_03_28_02",
+      "outcomes": []
+    },
+        {
+      "key": "MOON_CRASH_03_29_03",
+      "authorId": "system",
+      "executionMode": 1,
+      "startDate": "2020-03-29 09:00",
+      "endDate": "2020-03-29 10:00",
+      "timeRule": {
+        "type": 0
+      },
+      "probability": 1.0,
+      "repeatType": 1,
+      "gate": true,
+      "prerequisitesSymbols": [],
+      "effectKey": "MOON_CRASH_03_29_03",
+      "uiKey": "MOON_CRASH_03_29_03",
+      "outcomes": []
+    }                                                      
   ]
+ 
 }

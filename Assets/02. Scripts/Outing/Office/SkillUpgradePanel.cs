@@ -49,6 +49,9 @@ public class SkillUpgradePanel : MonoBehaviour {
         if (OfficeManager.Instance == null) return;
         OfficeManager office = OfficeManager.Instance;
 
+        // 공통 화폐 단위 (원 / Won)
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+
         // ------------------------------------------------
         // 1. Skill 1: 업무 효율
         // ------------------------------------------------
@@ -57,16 +60,21 @@ public class SkillUpgradePanel : MonoBehaviour {
         int cost1 = office.GetSkillUpgradeCost();
         bool isMax1 = (lv1 >= OfficeManager.MAX_SALARY_SKILL_LEVEL);
 
-        if (skillNameLabel != null) skillNameLabel.text = $"업무 효율 Lv.{lv1}";
-        if (skillEffectLabel != null) skillEffectLabel.text = $"급여 상승률: <color=#00FF00>+{eff1:F1}%</color>";
+        if (skillNameLabel != null)
+            skillNameLabel.text = string.Format(LocalizationManager.GetText("LBL_SKILL1_NAME"), lv1);
+
+        if (skillEffectLabel != null)
+            skillEffectLabel.text = string.Format(LocalizationManager.GetText("LBL_SKILL1_EFFECT"), eff1.ToString("F1"));
 
         if (isMax1) {
-            if (costLabel != null) costLabel.text = "최고 레벨";
-            if (buttonText != null) buttonText.text = "MAX";
+            if (costLabel != null) costLabel.text = LocalizationManager.GetText("LBL_SKILL_MAX_LV");
+            if (buttonText != null) buttonText.text = LocalizationManager.GetText("BTN_SKILL_MAX");
             if (upgradeButton != null) upgradeButton.interactable = false;
         } else {
-            if (costLabel != null) costLabel.text = $"비용: {cost1:N0}원";
-            if (buttonText != null) buttonText.text = "강화";
+            if (costLabel != null)
+                costLabel.text = string.Format(LocalizationManager.GetText("LBL_SKILL_COST"), cost1.ToString("N0"), unit);
+            if (buttonText != null)
+                buttonText.text = LocalizationManager.GetText("BTN_SKILL_UPGRADE");
             if (upgradeButton != null) upgradeButton.interactable = true;
         }
 
@@ -83,31 +91,30 @@ public class SkillUpgradePanel : MonoBehaviour {
         bool isMax2 = (lv2 >= OfficeManager.MAX_CRIT_LEVEL);
 
         if (skill2NameLabel != null)
-            skill2NameLabel.text = $"대박 성과 Lv.{lv2}";
+            skill2NameLabel.text = string.Format(LocalizationManager.GetText("LBL_SKILL2_NAME"), lv2);
 
         // ★ 텍스트 표시 로직 변경 ("2배" 고정 -> "{multiplier}배" 동적 표시)
         if (skill2EffectLabel != null) {
-
-            // 배율에 따라 색상을 다르게 주면 더 멋집니다
             string colorCode = "#FFAA00"; // 기본 주황 (2배)
             if (multiplier == 3) colorCode = "#FF5500"; // 진한 주황 (3배)
             if (multiplier == 4) colorCode = "#FF0000"; // 빨강 (4배)
             if (multiplier >= 5) colorCode = "#FF00FF"; // 보라/마젠타 (5배)
 
-            // 만렙(100%)일 때
-            if (chance2 >= 100f)
-                skill2EffectLabel.text = $"{multiplier}배 획득 확률: <color={colorCode}>100%</color>";
-            else
-                skill2EffectLabel.text = $"{multiplier}배 획득 확률: <color={colorCode}>{chance2:F1}%</color>";
+            string chanceStr = (chance2 >= 100f) ? "100%" : $"{chance2:F1}%";
+
+            // Format: {0} = 배율, {1} = 색상코드, {2} = 확률문자열
+            skill2EffectLabel.text = string.Format(LocalizationManager.GetText("LBL_SKILL2_EFFECT"), multiplier, colorCode, chanceStr);
         }
 
         if (isMax2) {
-            if (skill2CostLabel != null) skill2CostLabel.text = "최고 레벨";
-            if (skill2ButtonText != null) skill2ButtonText.text = "MAX";
+            if (skill2CostLabel != null) skill2CostLabel.text = LocalizationManager.GetText("LBL_SKILL_MAX_LV");
+            if (skill2ButtonText != null) skill2ButtonText.text = LocalizationManager.GetText("BTN_SKILL_MAX");
             if (skill2UpgradeButton != null) skill2UpgradeButton.interactable = false;
         } else {
-            if (skill2CostLabel != null) skill2CostLabel.text = $"비용: {cost2:N0}원";
-            if (skill2ButtonText != null) skill2ButtonText.text = "강화";
+            if (skill2CostLabel != null)
+                skill2CostLabel.text = string.Format(LocalizationManager.GetText("LBL_SKILL_COST"), cost2.ToString("N0"), unit);
+            if (skill2ButtonText != null)
+                skill2ButtonText.text = LocalizationManager.GetText("BTN_SKILL_UPGRADE");
             if (skill2UpgradeButton != null) skill2UpgradeButton.interactable = true;
         }
     }
@@ -119,7 +126,7 @@ public class SkillUpgradePanel : MonoBehaviour {
         // 1. 돈 확인
         if (!OfficeManager.Instance.CanUpgradeSalarySkill()) {
             if (UIManager.Instance != null) {
-                UIManager.Instance.ShowConfirm("자금이 부족합니다.");
+                UIManager.Instance.ShowConfirm(LocalizationManager.GetText("MSG_INSUFFICIENT_FUNDS"));
             }
             return;
         }
@@ -143,7 +150,7 @@ public class SkillUpgradePanel : MonoBehaviour {
         // PlayerManager의 돈을 확인해야 함
         if (PlayerManager.Instance.satoshiBankCash < cost) {
             if (UIManager.Instance != null) {
-                UIManager.Instance.ShowConfirm("자금이 부족합니다.\n(열심히 클릭하세요!)");
+                UIManager.Instance.ShowConfirm(LocalizationManager.GetText("MSG_INSUFFICIENT_FUNDS"));
             }
             return;
         }

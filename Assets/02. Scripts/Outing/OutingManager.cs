@@ -66,7 +66,7 @@ public class OutingManager : MonoBehaviour {
 
     public void EnterConv() {
         if (conv != null) {
-            conv.SetActive(true);
+            //conv.SetActive(true);
         }
     }
 

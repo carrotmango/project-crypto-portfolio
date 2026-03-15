@@ -279,7 +279,7 @@ public class CoinEventScenarioManager : MonoBehaviour {
                 profileImage = "bullbit.png",
                 contentImage = "",
                 width = 550,
-                height = 300
+                height = 200
             };
             EventUIManager.Instance.Show(newsData);
         } else if (GlobalNotificationManager.Instance != null) {

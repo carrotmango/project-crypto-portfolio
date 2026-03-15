@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestSO
   category: 2
   questID: 0_0011
-  title: "\uB9CE\uC774 \uC0AC\uBA74 \uB9CE\uC774 \uBC88\uB2E4 3"
-  description: "\uBD88\uBE44\uD2B8 \uAC70\uB798\uB300\uAE08 5000\uB9CC\uC6D0"
+  title: Q_005_TITLE
+  description: Q_005_DESC
   type: 2
   targetCount: 50000000
   useThemeCondition: 0

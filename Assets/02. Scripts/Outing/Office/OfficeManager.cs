@@ -115,7 +115,13 @@ public class OfficeManager : MonoBehaviour {
 
         PlayerManager.Instance.satoshiBankCash -= cost;
         CriticalSkillLevel++;
-        TransactionManager.Instance.AddRecord("스킬강화", cost, "출금", "사토시 현금");
+
+        // [수정] 거래 내역 한글 하드코딩 제거
+        string logDesc = LocalizationManager.GetText("LOG_SKILL_UPGRADE");
+        string logType = LocalizationManager.GetText("LOG_WITHDRAW");
+        string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH");
+        TransactionManager.Instance.AddRecord(logDesc, cost, logType, logAsset);
+
         return true;
     }
 
@@ -174,16 +180,11 @@ public class OfficeManager : MonoBehaviour {
     public string GetCurrentTitle() => GetTitleName(currentRankIndex);
 
     public string GetTitleName(int index) {
-        switch (index) {
-            case 0: return "인턴노예";
-            case 1: return "정규직 주임";
-            case 2: return "자본주의 대리";
-            case 3: return "납입왕 차장";
-            case 4: return "보이지 않는 손 부장";
-            case 5: return "이사회 멤버";
-            case 6: return "경제적 자유인";
-            default: return "경제적 자유인";
-        }
+        // [수정] switch 문 대신 JSON Key 조합으로 맵핑
+        // index가 0~6 사이일 테니 "TITLE_RANK_0" ~ "TITLE_RANK_6" 키를 호출합니다.
+        int safeIndex = Mathf.Clamp(index, 0, 6);
+        string key = $"TITLE_RANK_{safeIndex}";
+        return LocalizationManager.GetText(key);
     }
 
     public long GetNextCapitalMilestone() {
@@ -253,7 +254,13 @@ public class OfficeManager : MonoBehaviour {
         PlayerManager.Instance.satoshiBankCash -= cost;
         salarySkillLevel++;
         RecalculateSalary();
-        TransactionManager.Instance.AddRecord("스킬강화", cost, "출금", "사토시 현금");
+
+        // [수정] 거래 내역 한글 하드코딩 제거
+        string logDesc = LocalizationManager.GetText("LOG_SKILL_UPGRADE");
+        string logType = LocalizationManager.GetText("LOG_WITHDRAW");
+        string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH");
+        TransactionManager.Instance.AddRecord(logDesc, cost, logType, logAsset);
+
         return true;
     }
 
@@ -281,14 +288,12 @@ public class OfficeManager : MonoBehaviour {
                 long multiplier = 1;
 
                 // 2. 크리티컬(스킬2) 확률 적용
-                float chance = GetCriticalChance(); // 현재 확률 (0~100%)
+                float chance = GetCriticalChance();
 
-                // 확률이 0보다 클 때만 계산
                 if (chance > 0) {
-                    // 100% 이상(만렙)이거나, 운 좋게 당첨된 경우
                     if (chance >= 100f || UnityEngine.Random.Range(0f, 100f) < chance) {
                         isJackpot = true;
-                        multiplier = GetCurrentCritMultiplier(); // 2배~5배 가져오기
+                        multiplier = GetCurrentCritMultiplier();
                         finalPay = currentMonthlySalary * multiplier;
                     }
                 }
@@ -297,11 +302,17 @@ public class OfficeManager : MonoBehaviour {
                 PlayerManager.Instance.satoshiBankCash += finalPay;
 
                 // 4. 로그 및 기록 (대박 여부에 따라 텍스트 다르게)
-                string logTitle = isJackpot ? $"★급여 대박!({multiplier}배)★" : "대표 급여";
+                // [수정] 로그 제목 현지화 적용
+                string logTitle;
+                if (isJackpot) {
+                    logTitle = string.Format(LocalizationManager.GetText("LOG_SALARY_JACKPOT"), multiplier);
+                } else {
+                    logTitle = LocalizationManager.GetText("LOG_SALARY_NORMAL");
+                }
+
                 DailyIncomeManager.Instance.AddSalary(finalPay, logTitle);
                 PlayerManager.Instance.AddSalary(finalPay);
 
-                // (선택) 대박 터지면 콘솔에 로그 띄우기
                 if (isJackpot) {
                     Debug.Log($"<color=red><b>[JACKPOT] 월급 {multiplier}배 당첨! : {finalPay:N0}원</b></color>");
                 }

@@ -19,6 +19,7 @@ public class LoanManager : MonoBehaviour {
     public GameObject loanRequestGroup;
     public GameObject loanRepayGroup;
     public TMP_InputField repayInputField;
+    public Button allInRepayButton;
 
     [Header("Text UI")]
     [SerializeField] private TextMeshProUGUI requestDescriptionText;
@@ -32,6 +33,36 @@ public class LoanManager : MonoBehaviour {
 
     private void Awake() {
         if (Instance == null) Instance = this;
+
+        // [추가] 인풋필드 값이 변할 때마다 체크하는 이벤트 리스너 등록
+        if (repayInputField != null) {
+            repayInputField.onValueChanged.AddListener(OnRepayInputChanged);
+        }
+    }
+
+    public void OnRepayInputChanged(string input) {
+        if (string.IsNullOrEmpty(input)) return;
+
+        // 1. 콤마 제거 후 숫자로 변환
+        string raw = input.Replace(",", "");
+        if (!long.TryParse(raw, out long enteredAmount)) return;
+
+        // 2. 내 현재 은행 잔고 확인
+        long myMaxCash = (long)PlayerManager.Instance.satoshiBankCash;
+
+        // 3. 갚아야 할 총 부채 확인
+        long totalDebt = GetTotalDebtAmount();
+
+        // 4. 입력값이 내 잔고 혹은 빚 총액보다 크다면 보정
+        long limit = Math.Min(myMaxCash, totalDebt);
+
+        if (enteredAmount > limit) {
+            // 제한값으로 다시 설정 (천단위 콤마 포함)
+            repayInputField.text = limit.ToString("N0");
+
+            // 커서가 맨 뒤로 가게 설정 (입력 편의성)
+            repayInputField.caretPosition = repayInputField.text.Length;
+        }
     }
 
     public long GetMaxLoanLimit() {
@@ -80,7 +111,12 @@ public class LoanManager : MonoBehaviour {
         nextPaymentDate = CoinManager.Instance.CurrentDateTime.AddDays(30);
 
         PlayerManager.Instance.satoshiBankCash += (double)amount;
-        TransactionManager.Instance.AddRecord("대출실행", amount, "입금", "사토시 현금");
+
+        // [수정] 대출 실행 기록 현지화
+        string logDesc = LocalizationManager.GetText("LOG_LOAN_ISSUE");
+        string logType = LocalizationManager.GetText("LOG_DEPOSIT"); // "입금"
+        string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH");
+        TransactionManager.Instance.AddRecord(logDesc, amount, logType, logAsset);
 
         RefreshLoanUI();
         RefreshSatoshiBankUI();
@@ -100,42 +136,44 @@ public class LoanManager : MonoBehaviour {
 
         double myCash = PlayerManager.Instance.satoshiBankCash;
 
-        // 1. 현재 갚아야 할 페널티 이자 계산
         long penaltyInterest = 0;
         if (!hasPaidFirstInterest) {
             double monthlyRate = GetCurrentAnnualRate() / 12.0 / 100.0;
             penaltyInterest = (long)(currentLoanPrincipal * monthlyRate);
         }
 
-        // 2. 실제 상환 로직 결정
-        // 유저가 입력한 금액에서 이자를 먼저 까고 남은 걸 원금에서 뺍니다.
         long actualRepayTotal = (long)Math.Min((double)requestAmount, myCash);
 
-        // 상환액이 이자보다 적으면 상환 불가 (최소 이자는 내야 함)
         if (!hasPaidFirstInterest && actualRepayTotal < penaltyInterest) {
             Debug.LogWarning("상환 금액이 최소 이자보다 적습니다.");
             return;
         }
 
-        // 3. 지불 처리
+        string logTypeWithdraw = LocalizationManager.GetText("LOG_WITHDRAW"); // "출금"
+        string logAssetCash = LocalizationManager.GetText("LOG_SATOSHI_CASH");
+
         if (!hasPaidFirstInterest) {
-            // 이자 먼저 처리
             PlayerManager.Instance.satoshiBankCash -= penaltyInterest;
-            TransactionManager.Instance.AddRecord("대출이자(조기상환)", penaltyInterest, "출금", "사토시 현금");
+
+            // [수정] 대출 이자 (조기 상환) 기록 현지화
+            string logPenaltyDesc = LocalizationManager.GetText("LOG_LOAN_EARLY_FEE");
+            TransactionManager.Instance.AddRecord(logPenaltyDesc, penaltyInterest, logTypeWithdraw, logAssetCash);
+
             actualRepayTotal -= penaltyInterest;
             hasPaidFirstInterest = true;
         }
 
-        // 남은 금액으로 원금 상환
         long repayToPrincipal = (long)Math.Min((double)actualRepayTotal, currentLoanPrincipal);
         PlayerManager.Instance.satoshiBankCash -= repayToPrincipal;
         currentLoanPrincipal -= repayToPrincipal;
-        TransactionManager.Instance.AddRecord("대출상환", repayToPrincipal, "출금", "사토시 현금");
+
+        // [수정] 대출 원금 상환 기록 현지화
+        string logRepayDesc = LocalizationManager.GetText("LOG_LOAN_REPAY");
+        TransactionManager.Instance.AddRecord(logRepayDesc, repayToPrincipal, logTypeWithdraw, logAssetCash);
 
         if (currentLoanPrincipal <= 0) {
             overdueCount = 0;
             hasPaidFirstInterest = false;
-            Debug.Log("대출 전액 상환 완료");
         }
 
         RefreshLoanUI();
@@ -177,24 +215,28 @@ public class LoanManager : MonoBehaviour {
     }
 
     private void UpdateUITexts(bool hasLoan) {
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY"); // 공통 단위
+
         if (!hasLoan) {
             if (requestDescriptionText != null) {
                 float rate = GetCurrentAnnualRate();
                 long limit = GetMaxLoanLimit();
-                requestDescriptionText.text = $"대출 금리 <color=#FFD700>{rate:F1}%</color>로 <color=#00FF00>{limit:N0}원</color>을 대출 받으시겠습니까?\n\n" +
-                                              "대출 이자는 다음달부터 사토시 은행으로 자동 청구 됩니다.";
+                // [수정] 대출 안내 문구 현지화
+                requestDescriptionText.text = string.Format(LocalizationManager.GetText("MSG_LOAN_DESC"), rate.ToString("F1"), limit.ToString("N0"), unit);
             }
         } else {
             if (currentDebtText != null) {
-                // ★ 합산된 총 대출금 가져오기
                 long totalDebt = GetTotalDebtAmount();
                 long penalty = totalDebt - (long)currentLoanPrincipal;
 
-                string extraMsg = penalty > 0
-                    ? $"\n<size=70%><color=#FF0000>(조기 완납 이자 {penalty:N0}원 포함)</color></size>"
-                    : "";
+                // [수정] 조기 완납 이자 문구 현지화
+                string extraMsg = "";
+                if (penalty > 0) {
+                    extraMsg = string.Format(LocalizationManager.GetText("LBL_LOAN_EARLY_FEE"), penalty.ToString("N0"), unit);
+                }
 
-                currentDebtText.text = $"현재 남은 대출금: <color=#FF5555>{totalDebt:N0}원</color>{extraMsg}";
+                // [수정] 현재 남은 대출금 문구 현지화
+                currentDebtText.text = string.Format(LocalizationManager.GetText("LBL_LOAN_REMAINING_DEBT"), totalDebt.ToString("N0"), unit, extraMsg);
             }
         }
     }
@@ -217,10 +259,18 @@ public class LoanManager : MonoBehaviour {
         PlayerManager.Instance.satoshiBankCash -= interest;
         hasPaidFirstInterest = true;
 
-        string notiTitle = "대출 이자 정산";
-        string notiMsg = $"이자 {interest:N0}원이 정산되었습니다.";
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
 
-        TransactionManager.Instance.AddRecord("대출이자", interest, "출금", "사토시 현금");
+        // [수정] 대출 이자 정산 알림 현지화
+        string notiTitle = LocalizationManager.GetText("SMS_NOTI_LOAN_TITLE");
+        string notiMsg = string.Format(LocalizationManager.GetText("SMS_NOTI_LOAN_MSG"), interest.ToString("N0"), unit);
+
+        // [수정] 거래 내역 로그 현지화
+        string logDesc = LocalizationManager.GetText("LOG_LOAN_INTEREST");
+        string logType = LocalizationManager.GetText("LOG_WITHDRAW");
+        string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH");
+
+        TransactionManager.Instance.AddRecord(logDesc, interest, logType, logAsset);
 
         if (GlobalNotificationManager.Instance != null) {
             GlobalNotificationManager.Instance.ShowNotification("Bank", notiTitle, notiMsg, null);
@@ -240,5 +290,28 @@ public class LoanManager : MonoBehaviour {
     private void RefreshSatoshiBankUI() {
         SatoshiBankPanel bankPanel = FindAnyObjectByType<SatoshiBankPanel>();
         if (bankPanel != null) bankPanel.RefreshLoanStatus();
+    }
+
+    public void OnAllInRepayClick() {
+        if (currentLoanPrincipal <= 0 || repayInputField == null) return;
+
+        // 1. 내가 갚아야 할 총액 (원금 + 필요시 조기상환 이자)
+        long totalDebt = GetTotalDebtAmount();
+
+        // 2. 사토시 은행 내 잔고
+        long myCash = (long)PlayerManager.Instance.satoshiBankCash;
+
+        // 3. 둘 중 작은 금액을 선택 (빚보다 돈이 많으면 빚만큼만, 돈이 적으면 전재산만큼)
+        long finalAmount = Math.Min(totalDebt, myCash);
+
+        if (finalAmount <= 0) {
+            Debug.LogWarning("상환할 수 있는 잔액이 없습니다.");
+            return;
+        }
+
+        // 4. 인풋필드에 값 넣기 (천단위 콤마 포함)
+        repayInputField.text = finalAmount.ToString("N0");
+
+        Debug.Log($"[대출상환] 자동 입력 완료: {finalAmount:N0}원 (잔고: {myCash:N0}원)");
     }
 }
