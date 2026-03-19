@@ -1,0 +1,100 @@
+{
+  "events": [
+    {
+      "id": "lost_phone",
+      "title": "Bad Luck",
+      "description": "You lost your phone. Fortunately, your insurance covered most of it, but you were charged 50,000 Won.",
+      "satoshiBankChange": -50000,
+      "bullbitChange": 0,
+      "coins": null,
+      "allowUnlistedAirdrop": false
+    },
+    {
+      "id": "side_job_bonus",
+      "title": "Lucky",
+      "description": "You're in luck! You found 30,000 Won on the street.",
+      "satoshiBankChange": 30000,
+      "bullbitChange": 0,
+      "coins": null,
+      "allowUnlistedAirdrop": false
+    },
+    {
+      "id": "bullbit_fee",
+      "title": "Lost",
+      "description": "You lost 20,000 Won while out for a walk.",
+      "satoshiBankChange": -20000,
+      "bullbitChange": 0,
+      "coins": null,
+      "allowUnlistedAirdrop": false
+    },
+    {
+      "id": "btc_small_airdrop",
+      "title": "Winner",
+      "description": "You received a small amount of Bitcoin as a reward for participating in a past event.",
+      "satoshiBankChange": 0,
+      "bullbitChange": 0,
+      "coins": [
+        { "symbol": "BTC", "amount": 0.002 }
+      ],
+      "allowUnlistedAirdrop": false
+    },
+    {
+      "id": "lucky_day_1",
+      "title": "Lucky",
+      "description": "While organizing your old clothes, you found 60,000 Won in a pocket.",
+      "satoshiBankChange": 60000,
+      "bullbitChange": 0,
+      "coins": null,
+      "allowUnlistedAirdrop": false
+    },
+    {
+      "id": "early_test_airdrop",
+      "title": "Winner",
+      "description": "You won an event and received an airdrop of 10,000 PENGU coins.",
+      "satoshiBankChange": 0,
+      "bullbitChange": 0,
+      "coins": [
+        { "symbol": "PENGU", "amount": 10000 }
+      ],
+      "allowUnlistedAirdrop": true
+    },
+    {
+      "id": "sui_early_airdrop",
+      "title": "Reward",
+      "description": "You received a SUI airdrop as an early network participation reward.",
+      "satoshiBankChange": 0,
+      "bullbitChange": 0,
+      "coins": [
+        { "symbol": "SUI", "amount": 300 }
+      ],
+      "allowUnlistedAirdrop": true
+    },
+    {
+      "id": "missed_bus",
+      "title": "Late",
+      "description": "You missed the bus and had to take a taxi. Unexpected expenses incurred.",
+      "satoshiBankChange": -12000,
+      "bullbitChange": 0,
+      "coins": null,
+      "allowUnlistedAirdrop": false
+    },
+    {
+      "id": "friend_repay",
+      "title": "Loyalty",
+      "description": "A friend paid back the money they borrowed a while ago.",
+      "satoshiBankChange": 40000,
+      "bullbitChange": 0,
+      "coins": null,
+      "allowUnlistedAirdrop": false
+    },
+    {
+      "id": "market_coupon",
+      "title": "Lucky",
+      "description": "You received a cash reward by using a Bullbit event coupon.",
+      "satoshiBankChange": 0,
+      "bullbitChange": 25000,
+      "coins": null,
+      "allowUnlistedAirdrop": false
+    }
+  ]
+}

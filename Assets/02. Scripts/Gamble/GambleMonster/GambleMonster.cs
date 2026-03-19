@@ -92,8 +92,10 @@ public class GambleMonster : MonoBehaviour {
         gameTimerText.gameObject.SetActive(true);
 
         countdownText.text = "";
-        gameTimerText.text = $"Time: {spawnDuration}s";
-        scoreText.text = "Score: 0";
+
+        // [수정] 타이머, 스코어 현지화
+        gameTimerText.text = string.Format(LocalizationManager.GetText("LBL_GAMBLE_TIME"), spawnDuration);
+        scoreText.text = string.Format(LocalizationManager.GetText("LBL_GAMBLE_SCORE"), 0);
 
         StartCoroutine(CountdownAndStart());
     }
@@ -105,7 +107,9 @@ public class GambleMonster : MonoBehaviour {
         yield return new WaitForSeconds(1f);
         countdownText.text = "1";
         yield return new WaitForSeconds(1f);
-        countdownText.text = "Start!";
+
+        // [수정] Start 텍스트 현지화
+        countdownText.text = LocalizationManager.GetText("LBL_GAMBLE_START");
         yield return new WaitForSeconds(0.5f);
 
         countdownText.gameObject.SetActive(false);
@@ -157,8 +161,10 @@ public class GambleMonster : MonoBehaviour {
     }
 
     private void UpdateScoreUI() {
-        if (scoreText != null)
-            scoreText.text = $"Score: {score}";
+        if (scoreText != null) {
+            // [수정] 스코어 현지화
+            scoreText.text = string.Format(LocalizationManager.GetText("LBL_GAMBLE_SCORE"), score);
+        }
     }
 
     // =========================
@@ -168,8 +174,10 @@ public class GambleMonster : MonoBehaviour {
         float timeLeft = spawnDuration;
 
         while (timeLeft > 0f) {
-            if (gameTimerText != null)
-                gameTimerText.text = $"Time: {Mathf.CeilToInt(timeLeft)}s";
+            if (gameTimerText != null) {
+                // [수정] 타이머 현지화
+                gameTimerText.text = string.Format(LocalizationManager.GetText("LBL_GAMBLE_TIME"), Mathf.CeilToInt(timeLeft));
+            }
 
             yield return new WaitForSeconds(1f);
             timeLeft -= 1f;
@@ -193,25 +201,25 @@ public class GambleMonster : MonoBehaviour {
 
         ShowResultPanel();
     }
-
-
-
     private void ShowResultPanel() {
         if (resultPanel == null || gambleManager == null) return;
 
         resultPanel.SetActive(true);
 
         long bet = gambleManager.currentBetAmount;
-        long unit = gambleManager.GetGambleMonsterUnit(bet);
-        long reward = score * unit;
+        long unitRate = gambleManager.GetGambleMonsterUnit(bet);
+        long reward = score * unitRate;
 
-        if (resultTitleText != null)
-            resultTitleText.text = "게임 결과";
+        // [수정] 결과창 타이틀 현지화
+        if (resultTitleText != null) {
+            resultTitleText.text = LocalizationManager.GetText("LBL_RESULT_TITLE");
+        }
 
-        if (resultDetailText != null)
-            resultDetailText.text =
-                $"얻은 코인: {score}\n" +
-                $"획득 금액: {reward:N0} 원";
+        // [수정] 결과창 세부 내용 현지화
+        if (resultDetailText != null) {
+            string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+            resultDetailText.text = string.Format(LocalizationManager.GetText("LBL_RESULT_MONSTER_DETAIL"), score, reward.ToString("N0"), unit);
+        }
     }
 
 

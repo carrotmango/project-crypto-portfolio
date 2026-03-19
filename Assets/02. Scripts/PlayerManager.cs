@@ -341,7 +341,6 @@ public class PlayerManager : MonoBehaviour {
     }
     public void SellAllListedCoins() {
         // 1. 매도할 코인 목록을 먼저 따로 빼둡니다. 
-        // (딕셔너리를 순회하면서 동시에 값을 지우면 에러가 날 수 있기 때문)
         List<string> symbolsToSell = new List<string>();
 
         foreach (var kvp in holdings) {
@@ -358,24 +357,47 @@ public class PlayerManager : MonoBehaviour {
             }
         }
 
-        // 3. 타겟으로 잡힌 코인들을 '최소 거래 금액' 등의 조건 무시하고 강제로 전부 매도 처리
+        // 전체 통계 누적용 변수
+        double totalNetValue = 0;
+        double totalProfit = 0;
+        double totalFee = 0;
+        double totalVolume = 0;
+
+        // 3. 타겟으로 잡힌 코인들을 전부 정식 매도 처리 (수수료, PNL 계산 포함)
         foreach (string symbol in symbolsToSell) {
             double amountToSell = holdings[symbol];
             CoinData coin = CoinManager.Instance.coins.Find(c => c.Symbol == symbol);
 
-            // 현재가 기준으로 수익 계산
-            double revenue = coin.CurrentPrice * amountToSell;
+            double sellPrice = coin.CurrentPrice;
+            double totalValue = sellPrice * amountToSell;
 
-            // 플레이어 현금에 더하기 (수수료 로직이 있다면 여기서 빼주세요)
-            bullbitCash += revenue;
+            // 수수료 0.05% 적용 (형님 게임 설정값 기준)
+            double fee = totalValue * 0.0005;
+            double netValue = totalValue - fee;
 
-            // 보유량 0으로 초기화
+            // 수익 계산 (매도가 - 평단가)
+            double avgPrice = GetAvgPrice(symbol);
+            double profit = (sellPrice - avgPrice) * amountToSell;
+
+            // 통계 데이터 누적
+            totalNetValue += netValue;
+            totalProfit += (profit - fee);
+            totalFee += fee;
+            totalVolume += totalValue;
+
+
             holdings[symbol] = 0;
+            if (totalBuyAmount.ContainsKey(symbol)) totalBuyAmount[symbol] = 0;
+            if (totalBuyQuantity.ContainsKey(symbol)) totalBuyQuantity[symbol] = 0;
 
-            // (선택) 매수 평단가 기록이 딕셔너리에 따로 있다면 그것도 0으로 초기화
-            // avgPriceDict[symbol] = 0; 
         }
 
-        Debug.Log($"총 {symbolsToSell.Count}개 종목의 전액 매도가 강제 완료되었습니다.");
+        // 4. 플레이어 자산 및 글로벌 통계에 한 번에 업데이트
+        this.bullbitCash += totalNetValue;
+        this.realizedProfit += totalProfit;
+        this.totalFeePaid += totalFee;
+        this.totalTradeVolume += totalVolume;
+
+        Debug.Log($"총 {symbolsToSell.Count}개 종목의 전액 매도가 완료되었습니다. (입금액: {totalNetValue:N0} / 순이익: {totalProfit:N0})");
     }
 }

@@ -1,134 +1,113 @@
-using UnityEngine;
-using TMPro;
+ï»¿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.EventSystems; // Å¬¸¯ °¨Áö¿ë
 using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour {
-    public List<TextMeshProUGUI> menuTexts;
+    [Header("Menu Images for Flashing")]
+    public List<Image> menuImages; // ë°˜ì§ì´ íš¨ê³¼ë¥¼ ì¤„ ì´ë¯¸ì§€ë“¤
     public float flashSpeed = 0.5f;
 
     [Header("UI Panels")]
     public GameObject settingsPanel;
-    public GameObject mainMenuPanel;    // Ãß°¡: ¸ŞÀÎ ¸Ş´ºÀÇ ÀüÃ¼ ºÎ¸ğ ÆĞ³Î
-    public GameObject characterPanel;   // Ãß°¡: Ä³¸¯ÅÍ ¼±ÅÃ ÆĞ³Î
+    public GameObject mainMenuPanel;
+    public GameObject characterPanel;
 
     private Dictionary<int, Coroutine> activeFlashRoutines = new Dictionary<int, Coroutine>();
-    // Ãß°¡: °¢ ¸Ş´ºÀÇ Àá±İ »óÅÂ¸¦ ÀúÀå (µ¹¾Æ¿ÔÀ» ¶§ º¹±¸ÇÏ±â À§ÇÔ)
     private List<bool> lockStates = new List<bool>();
 
     void Awake() {
-        // ¸Ş´º °³¼ö¸¸Å­ »óÅÂ ¸®½ºÆ® ÃÊ±âÈ­
-        for (int i = 0; i < menuTexts.Count; i++) {
-            lockStates.Add(false);
+        if (menuImages != null) {
+            for (int i = 0; i < menuImages.Count; i++) lockStates.Add(false);
+            if (lockStates.Count > 1) lockStates[1] = true; // ë¡œë“œê²Œì„ ê¸°ë³¸ ì ê¸ˆ
         }
-        lockStates[1] = true; // ·Îµå°ÔÀÓÀº Ã³À½¿¡ Àá±İ
     }
 
     void Start() {
         if (settingsPanel != null) settingsPanel.SetActive(false);
-
-        // Start ´ë½Å OnEnable¿¡¼­ ½ÇÇàµÇ¹Ç·Î ¿©±â¼­´Â »ı·« °¡´ÉÇÏÁö¸¸, 
-        // ÃÊ±â Å¬¸¯ ÀÌº¥Æ® µî·ÏÀ» À§ÇØ µÓ´Ï´Ù.
-        for (int i = 0; i < menuTexts.Count; i++) {
-            AddClickEvent(i);
-        }
     }
 
-    // ÆĞ³ÎÀÌ SetActive(true) µÉ ¶§¸¶´Ù ÀÚµ¿À¸·Î ½ÇÇàµÊ
     private void OnEnable() {
-        if (menuTexts == null || menuTexts.Count == 0) return;
-
-        // ±âÁ¸ ·çÆ¾ Á¤¸®
+        if (menuImages == null || menuImages.Count == 0) return;
         StopAllCoroutines();
         activeFlashRoutines.Clear();
+        for (int i = 0; i < menuImages.Count; i++) StartFlashing(i, lockStates[i]);
+    }
 
-        // ÀúÀåµÈ »óÅÂ´ë·Î ´Ù½Ã ±ôºıÀÓ ½ÃÀÛ
-        for (int i = 0; i < menuTexts.Count; i++) {
-            StartFlashing(i, lockStates[i]);
+    // --- ê°œë³„ ì‹¤í–‰ í•¨ìˆ˜ (ì¸ìŠ¤í™í„°ì—ì„œ ë²„íŠ¼ì— ì§ì ‘ ì—°ê²°í•˜ì„¸ìš”) ---
+
+    public void OnNewGameClick() {
+        Debug.Log("[MainMenu] New Game ë²„íŠ¼ í´ë¦­ë¨!");
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
+
+        // ìºë¦­í„° íŒ¨ë„ì„ ì—¬ê¸°ì„œ ì§ì ‘ ì¼œê±°ë‚˜ LobbyManagerë¥¼ í˜¸ì¶œ
+        LobbyManager lobby = FindAnyObjectByType<LobbyManager>();
+        if (lobby != null) {
+            lobby.OnNewGameClicked();
+        } else if (characterPanel != null) {
+            characterPanel.SetActive(true);
         }
     }
 
-    public void BackToMainMenu() {
-        Debug.Log("°ÔÀÓÀ» ¿ÏÀüÈ÷ ¸®¼ÂÇÏ¿© ·Îºñ·Î µ¹¾Æ°©´Ï´Ù.");
-
-        // ·Îºñ¸Å´ÏÀúÀÇ RestartGame ·ÎÁ÷°ú µ¿ÀÏÇÏ°Ô ¾ÀÀ» ´Ù½Ã ·ÎµåÇÕ´Ï´Ù.
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-
-
-    // ÅØ½ºÆ® Å¬¸¯ ½Ã ½ÇÇà
-    public void OnMenuClick(int index) {
-        if (menuTexts[index].raycastTarget == false) return;
-
-        switch (index) {
-            case 0: // NEW GAME
-                    // ¸ŞÀÎ ¸Ş´º¸¦ ²ô°í Ä³¸¯ÅÍ ÆĞ³ÎÀÌ ¿­¸®µµ·Ï Ã³¸® (LobbyManager¿¡¼­ ¿­°ÚÁö¸¸ ¿©±â¼­ ²¨ÁÖ´Â °Ô È®½ÇÇÔ)
-                if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
-
-                LobbyManager lobby = FindAnyObjectByType<LobbyManager>();
-                if (lobby != null) {
-                    lobby.OnNewGameClicked();
-                }
-                break;
-            case 2: // SETTINGS (¼³Á¤ ¹öÆ° ÀÎµ¦½º¿¡ ¸Â°Ô ¼öÁ¤ÇÏ¼¼¿ä)
-                if (settingsPanel != null) settingsPanel.SetActive(true);
-                break;
-            case 4: // EXIT
-                Application.Quit();
-                break;
+    public void OnSettingsClick() {
+        Debug.Log("[MainMenu] Settings ë²„íŠ¼ í´ë¦­ë¨!");
+        if (settingsPanel != null) {
+            settingsPanel.SetActive(true);
+        } else {
+            Debug.LogError("Settings Panelì´ ì¸ìŠ¤í™í„°ì— í• ë‹¹ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤!");
         }
     }
 
-    // --- ´İ±â ¹öÆ°¿ë ÇÔ¼ö (ÀÎ½ºÆåÅÍ ¿¬°á¿ë) ---
+    public void OnExitClick() {
+        Debug.Log("[MainMenu] Exit ë²„íŠ¼ í´ë¦­ë¨!");
+        Application.Quit();
+    }
+
     public void CloseSettings() {
         if (settingsPanel != null) settingsPanel.SetActive(false);
     }
 
-    // --- ÀÌÇÏ ±âÁ¸ ¹İÂ¦ÀÌ ·ÎÁ÷ µ¿ÀÏ ---
+    // --- ë°˜ì§ì´ ë¡œì§ (ê¸°ì¡´ ìœ ì§€) ---
+
     public void SetMenuLock(int index, bool isLocked) {
-        if (index < 0 || index >= menuTexts.Count) return;
-
-        lockStates[index] = isLocked; // »óÅÂ ÀúÀå
-
+        if (index < 0 || index >= menuImages.Count) return;
+        lockStates[index] = isLocked;
         if (activeFlashRoutines.ContainsKey(index)) {
-            if (activeFlashRoutines[index] != null)
-                StopCoroutine(activeFlashRoutines[index]);
+            if (activeFlashRoutines[index] != null) StopCoroutine(activeFlashRoutines[index]);
             activeFlashRoutines.Remove(index);
         }
-
-        // ÀÌ ½ºÅ©¸³Æ®°¡ È°¼ºÈ­ »óÅÂÀÏ ¶§¸¸ ·çÆ¾ ½ÃÀÛ
-        if (gameObject.activeInHierarchy) {
-            StartFlashing(index, isLocked);
-        }
+        if (gameObject.activeInHierarchy) StartFlashing(index, isLocked);
     }
 
     private void StartFlashing(int index, bool isLocked) {
-        menuTexts[index].raycastTarget = !isLocked;
-        // WaitForSecondsRealtime ´öºĞ¿¡ TimeScale 0¿¡¼­µµ ÀÛµ¿ÇÔ
-        activeFlashRoutines[index] = StartCoroutine(FlashRoutine(menuTexts[index], isLocked));
+        menuImages[index].raycastTarget = !isLocked;
+        activeFlashRoutines[index] = StartCoroutine(FlashRoutine(menuImages[index], isLocked));
     }
 
-    IEnumerator FlashRoutine(TextMeshProUGUI text, bool isLocked) {
-        Color bright = isLocked ? new Color(0.4f, 0.4f, 0.4f, 1f) : Color.white;
-        Color dimmed = isLocked ? new Color(0.15f, 0.15f, 0.15f, 1f) : new Color(0.5f, 0.5f, 0.5f, 1f);
+    IEnumerator FlashRoutine(Image image, bool isLocked) {
+        Color origin = image.color;
+        float bAlpha = isLocked ? 0.4f : origin.a;
+        float dAlpha = isLocked ? 0.15f : origin.a * 0.5f;
+        Color bCol = new Color(origin.r, origin.g, origin.b, bAlpha);
+        Color dCol = new Color(origin.r, origin.g, origin.b, dAlpha);
 
         while (true) {
-            text.color = dimmed;
+            image.color = dCol;
             yield return new WaitForSecondsRealtime(flashSpeed);
-            text.color = bright;
+            image.color = bCol;
             yield return new WaitForSecondsRealtime(flashSpeed);
         }
     }
+        public void BackToMainMenu() {
 
-    private void AddClickEvent(int index) {
-        GameObject obj = menuTexts[index].gameObject;
-        EventTrigger trigger = obj.GetComponent<EventTrigger>() ?? obj.AddComponent<EventTrigger>();
-        EventTrigger.Entry entry = new EventTrigger.Entry();
-        entry.eventID = EventTriggerType.PointerClick;
-        entry.callback.AddListener((data) => { OnMenuClick(index); });
-        trigger.triggers.Add(entry);
+        Debug.Log("ê²Œì„ì„ ì™„ì „íˆ ë¦¬ì…‹í•˜ì—¬ ë¡œë¹„ë¡œ ëŒì•„ê°‘ë‹ˆë‹¤.");
+
+
+
+        // ë¡œë¹„ë§¤ë‹ˆì €ì˜ RestartGame ë¡œì§ê³¼ ë™ì¼í•˜ê²Œ ì”¬ì„ ë‹¤ì‹œ ë¡œë“œí•©ë‹ˆë‹¤.
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
     }
 }

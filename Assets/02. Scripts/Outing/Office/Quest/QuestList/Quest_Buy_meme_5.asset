@@ -22,6 +22,6 @@ MonoBehaviour:
   targetTheme: 2
   rewards:
   - type: 1
-    targetID: SOL
+    targetID: SNA
     amount: 5
   prerequisiteQuestID: 

@@ -23,7 +23,6 @@ public class RealEstatePanelController : MonoBehaviour {
     private bool isTransitioning = false;
     DateTime Now => CoinManager.Instance.CurrentDateTime;
     DateTime lastUIRefreshDate;
-    //DateTime lastIncomeProcessDate = DateTime.MinValue;
 
     public static RealEstatePanelController Instance { get; private set; }
 
@@ -36,26 +35,32 @@ public class RealEstatePanelController : MonoBehaviour {
         Instance = this;
     }
 
-
     void Start() {
+        // [핵심 수정] 번역기가 켜질 시간을 벌기 위해 코루틴으로 지연 실행
+        StartCoroutine(InitDataRoutine());
+    }
+
+    IEnumerator InitDataRoutine() {
+        yield return null; // 1프레임 대기 (언어 매니저 로딩 확보)
+
         LoadTestData();
         CreateCards();
         RefreshPage();
     }
 
     void Update() {
-        //CheckEstateIncome();
+        if (dataList == null) return; // 데이터 로딩 전 에러 방지
+
         CheckEstatePrice();
         CheckUIRefreshByDay();
     }
-
 
     void LoadTestData() {
         dataList = new List<RealEstateData>()
         {
         new RealEstateData {
             id = "room_001",
-            name = "작은 원룸",
+            name = LocalizationManager.GetText("ESTATE_NAME_001"),
             price = 5000000,
             monthlyYield = 0.033f,
             owned = false,
@@ -63,63 +68,55 @@ public class RealEstatePanelController : MonoBehaviour {
         },
         new RealEstateData {
             id = "room_002",
-            name = "안산시 원룸",
+            name = LocalizationManager.GetText("ESTATE_NAME_002"),
             price = 10000000,
             monthlyYield = 0.037f,
             owned = false,
             imageKey = "estate_1000"
         },
-                new RealEstateData {
-            id = "room_002",
-            name = "오이도 쓰리룸",
+        new RealEstateData {
+            id = "room_003_oido",
+            name = LocalizationManager.GetText("ESTATE_NAME_003"),
             price = 70000000,
             monthlyYield = 0.031f,
             owned = false,
             imageKey = "estate_7000"
         },
         new RealEstateData {
-            id = "room_003",
-            name = "구로동 원룸",
+            id = "room_004_guro",
+            name = LocalizationManager.GetText("ESTATE_NAME_004"),
             price = 50000000,
             monthlyYield = 0.042f,
             owned = false,
             imageKey = "estate_5000"
         },
         new RealEstateData {
-            id = "room_004",
-            name = "성산동 원룸",
+            id = "room_005_seongsan",
+            name = LocalizationManager.GetText("ESTATE_NAME_005"),
             price = 100000000,
             monthlyYield = 0.045f,
             owned = false,
             imageKey = "estate_10000"
         },
          new RealEstateData {
-            id = "room_005",
-            name = "롯데캐슬 잠실 (166m²)",
+            id = "room_006_lotte",
+            name = LocalizationManager.GetText("ESTATE_NAME_006"),
             price = 3000000000,
             monthlyYield = 0.073f,
             owned = false,
             imageKey = "estate_3B"
-        },
-        //new RealEstateData {
-        //    id = "room_005",
-        //    name = "한남 더 힐",
-        //    price = 11000000000,
-        //    monthlyYield = 0.045f,
-        //    owned = false,
-        //    imageKey = "estate_10B"
-        //}
+        }
     };
 
         LoadImages();
     }
 
+    // ... (아래 LoadImages 부터 끝까지는 이전과 완전히 동일합니다. 그대로 쓰시면 됩니다.) ...
+
     void LoadImages() {
         foreach (var data in dataList) {
             if (!string.IsNullOrEmpty(data.imageKey)) {
-                data.image = Resources.Load<Sprite>(
-                    $"Image/estates/{data.imageKey}"
-                );
+                data.image = Resources.Load<Sprite>($"Image/estates/{data.imageKey}");
 
                 if (data.image == null) {
                     Debug.LogWarning($"부동산 이미지 로드 실패: {data.imageKey}");
@@ -127,7 +124,6 @@ public class RealEstatePanelController : MonoBehaviour {
             }
         }
     }
-
 
     void CreateCards() {
         for (int i = 0; i < ITEMS_PER_PAGE; i++) {
@@ -144,7 +140,6 @@ public class RealEstatePanelController : MonoBehaviour {
             BuyEstate(data);
     }
 
-
     public void RefreshPage() {
         int startIndex = currentPage * ITEMS_PER_PAGE;
 
@@ -160,6 +155,7 @@ public class RealEstatePanelController : MonoBehaviour {
         }
         UpdateArrowState();
     }
+
     public void OnClickNext() {
         if (isTransitioning)
             return;
@@ -178,7 +174,6 @@ public class RealEstatePanelController : MonoBehaviour {
             StartCoroutine(ChangePage(currentPage - 1));
         }
     }
-
 
     void UpdateArrowState() {
         int maxPage = (dataList.Count - 1) / ITEMS_PER_PAGE;
@@ -220,24 +215,28 @@ public class RealEstatePanelController : MonoBehaviour {
         if (data.owned)
             return;
 
-        if (PlayerManager.Instance.satoshiBankCash < data.price)
+        if (PlayerManager.Instance.satoshiBankCash < data.price) {
             if (UIManager.Instance != null) {
-                UIManager.Instance.ShowConfirm("잔액이 부족합니다.");
-                return; // 마통 불가
+                UIManager.Instance.ShowConfirm(LocalizationManager.GetText("MSG_INSUFFICIENT_FUNDS"));
+                return;
             }
+        }
 
         PlayerManager.Instance.satoshiBankCash -= data.price;
 
         data.owned = true;
-        data.ownedText = "보유중";
+        data.ownedText = LocalizationManager.GetText("LBL_ESTATE_OWNED");
         data.buyDate = Now;
         data.purchasePrice = data.price;
         data.nextIncomeDate = Now.AddDays(7);
 
+        // [핵심 수정] 기록은 무조건 한글 원본 데이터 고정! (출금)
         TransactionManager.Instance.AddRecord("부동산", data.price, "출금", "사토시 현금");
+
         RefreshPage();
         OnRealEstateChanged?.Invoke();
     }
+
     public void SellEstate(RealEstateData data) {
         if (!data.owned)
             return;
@@ -245,86 +244,39 @@ public class RealEstatePanelController : MonoBehaviour {
         PlayerManager.Instance.satoshiBankCash += data.price;
 
         data.owned = false;
-        data.ownedText = "미보유";
+        data.ownedText = LocalizationManager.GetText("LBL_ESTATE_NOT_OWNED");
 
+        // [핵심 수정] 기록은 무조건 한글 원본 데이터 고정! (입금)
         TransactionManager.Instance.AddRecord("부동산", data.price, "입금", "사토시 현금");
+
         RefreshPage();
         OnRealEstateChanged?.Invoke();
     }
 
-    //void CheckEstateIncome() {
-
-    //    // 오늘 이미 정산했으면 중단
-    //    if (lastIncomeProcessDate.Date == Now.Date)
-    //        return;
-
-    //    lastIncomeProcessDate = Now.Date;
-
-    //    int totalIncome = 0;
-
-    //    foreach (var data in dataList) {
-    //        if (!data.owned)
-    //            continue;
-
-    //        if (Now.Date >= data.nextIncomeDate.Date) {
-    //            int income = Mathf.RoundToInt(data.price * data.monthlyYield);
-    //            totalIncome += income;
-
-    //            // 테스트용 3일 주기
-    //            data.nextIncomeDate = data.nextIncomeDate.AddDays(3);
-
-    //            float drift = UnityEngine.Random.Range(-0.0015f, 0.0015f);
-    //            data.monthlyYield = Mathf.Clamp(
-    //                data.monthlyYield + drift,
-    //                0.01f,
-    //                0.03f
-    //            );
-
-    //            Debug.Log($"[부동산] {data.name} 월세 +{income}");
-    //        }
-    //    }
-
-    //    if (totalIncome > 0) {
-    //        PlayerManager.Instance.satoshiBankCash += totalIncome;
-    //        Debug.Log($"[부동산] 오늘 월세 총 정산 +{totalIncome}");
-    //        RefreshPage();
-    //    }
-    //}
-
     void CheckEstatePrice() {
         foreach (var data in dataList) {
-            // 초기화 안됐으면 현재 시간으로 설정
             if (data.lastPriceUpdateDate == default)
                 data.lastPriceUpdateDate = Now;
 
             int days = (Now - data.lastPriceUpdateDate).Days;
 
-            // 랜덤하게 3~6일 지났는지 체크
             if (days >= UnityEngine.Random.Range(3, 6)) {
 
-                // 변동폭 계산 (-0.4% ~ +0.4%)
                 float change = UnityEngine.Random.Range(-0.004f, 0.004f);
-
-                // [수정 포인트 1] 계산을 double로 정밀하게 하고 long으로 변환
                 double newPrice = data.price * (1.0 + change);
-
-                // [수정 포인트 2] long으로 변환 (Mathf.RoundToInt 쓰면 안됨!)
                 data.price = (long)System.Math.Round(newPrice);
 
-                // [수정 포인트 3] 가격이 너무 떨어져서 0원이나 음수가 되는 것 방지 (최소값 설정)
-                // 예: 원래 가격의 10% 밑으로는 절대 안 떨어지게 하거나, 최소 100만원 고정 등
-                long minPrice = 1000000; // 최소 100만원
+                long minPrice = 1000000;
                 if (data.price < minPrice) {
                     data.price = minPrice;
                 }
 
                 data.lastPriceUpdateDate = Now;
                 OnRealEstateChanged?.Invoke();
-                // 디버그용: 가격 변동 로그
-                // Debug.Log($"[시세변동] {data.name}: {change*100:F2}% 변동 -> {data.price:N0}원");
             }
         }
     }
+
     void CheckUIRefreshByDay() {
         if (lastUIRefreshDate.Date != Now.Date) {
             lastUIRefreshDate = Now.Date;
@@ -334,6 +286,7 @@ public class RealEstatePanelController : MonoBehaviour {
             RefreshPage();
         }
     }
+
     public void ProcessDailyEstateIncome(DateTime now) {
         long totalIncome = 0;
 
@@ -350,24 +303,26 @@ public class RealEstatePanelController : MonoBehaviour {
             }
         }
 
-
         if (totalIncome > 0) {
-            // [핵심 수정]
             if (GlobalNotificationManager.Instance != null) {
 
-                string message = $"{totalIncome:N0}원이 입금되었습니다.";
-                string fullDetail = $"[부동산 임대료 입금]\n\n보유하신 부동산에서 수익이 발생하여 계좌로 입금되었습니다.\n\n입금액: +{totalIncome:N0}원";
+                string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+                string message = string.Format(LocalizationManager.GetText("MSG_ESTATE_INCOME"), totalIncome.ToString("N0"), unit);
+                string fullDetail = string.Format(LocalizationManager.GetText("SMS_ESTATE_INCOME_DETAIL"), totalIncome.ToString("N0"), unit);
+
+                // [핵심 수정] 기록은 무조건 한글 원본 데이터 고정! (입금)
                 TransactionManager.Instance.AddRecord("부동산", totalIncome, "입금", "사토시 현금");
 
+                string notiTitle = LocalizationManager.GetText("NOTI_ESTATE_INCOME_TITLE");
+
                 GlobalNotificationManager.Instance.ShowNotification(
-                    "RealEstate",   // 타입 (초록색 or 파란색)
-                    "수익 입금",     // 제목
-                    message,        // 내용
-                    () => {         // [클릭 이벤트]
+                    "RealEstate",
+                    notiTitle,
+                    message,
+                    () => {
                         if (UIManager.Instance != null) {
-                            UIManager.Instance.ShowSMSResult(
-                                $"발신인: 부동산 관리인\n\n{fullDetail}"
-                            );
+                            string senderMsg = string.Format(LocalizationManager.GetText("SMS_ESTATE_SENDER"), fullDetail);
+                            UIManager.Instance.ShowSMSResult(senderMsg);
                         }
                     }
                 );
@@ -375,6 +330,7 @@ public class RealEstatePanelController : MonoBehaviour {
             Debug.Log($"[부동산] 수익 총 정산 +{totalIncome}");
         }
     }
+
     public List<RealEstateData> GetAllEstates() {
         return dataList;
     }

@@ -1,6 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems; // [추가] 인풋필드 포커스 체크용
 using static CoinManager;
 
 public class TabPanelController : MonoBehaviour {
@@ -56,6 +57,39 @@ public class TabPanelController : MonoBehaviour {
         ShowMarketPanel();
     }
 
+    // ========================================================
+    // ★ [핵심] 단축키 입력 처리
+    // ========================================================
+    void Update() {
+        // 1. 유저가 인풋필드(금액 입력 등)에 타이핑 중인지 체크합니다.
+        if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null) {
+            if (EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() != null) {
+                return;
+            }
+        }
+
+        // ★ [추가된 부분] 미니게임(도박, 알바) 진행 중일 때는 단축키 작동을 완전히 막습니다!
+        // (알바에서 A, D 누를 때 화면 넘어가는 버그 방지)
+        if (gamblePanel != null && gamblePanel.activeInHierarchy) return;
+        if (partimeJob != null && partimeJob.activeInHierarchy) return;
+
+        // 2. 단축키 매핑
+        if (Input.GetKeyDown(KeyCode.Q)) {
+            ToggleStatusPanel();            // 업무
+        } else if (Input.GetKeyDown(KeyCode.W)) {
+            OpenMarketViaButton();          // 현물 및 선물 거래소
+        } else if (Input.GetKeyDown(KeyCode.E)) {
+            OpenXbirdPanel();               // 피드 (Xbird)
+        } else if (Input.GetKeyDown(KeyCode.A)) {
+            ShowAppPanel();                 // 앱
+        } else if (Input.GetKeyDown(KeyCode.S)) {
+            ShowAssetPanel();               // 자산관리
+        } else if (Input.GetKeyDown(KeyCode.D)) {
+            ShowOutingPanel();              // 외출
+        }
+    }
+    // ========================================================
+
     public void OnGoout() => ShowOutingPanel();
 
     public void ShowAssetPanel() {
@@ -63,15 +97,21 @@ public class TabPanelController : MonoBehaviour {
         totalAssetPanel.SetActive(true);
         if (BgmPlayer.Instance != null) BgmPlayer.Instance.PlayTradingBgm();
     }
+
+    // [추가] 피드(Xbird)를 단축키로 열기 위한 전용 함수
+    public void OpenXbirdPanel() {
+        if (coinManager != null) {
+            coinManager.currentApp = AppType.Xbird;
+        }
+        ShowMarketPanel();
+    }
+
     public void OpenMarketViaButton() {
         bool isFuturesUnlocked = OfficeManager.Instance != null && OfficeManager.Instance.IsFuturesUnlocked();
 
-        // [수정] 단순히 패널이 activeSelf 인지만 보는 게 아니라, 
-        // 입금 패널(withdrawPanel)이 켜져 있는지도 확인해야 합니다.
         bool isWithdrawOpen = withdrawPanelController != null && withdrawPanelController.IsOpen();
         bool isAnyMarketOpen = coinScrollView.activeSelf || perpPanel.activeSelf;
 
-        // 1. 거래소가 이미 떠 있고 + 입금 패널 같은 방해 요소가 없을 때만 토글!
         if (isAnyMarketOpen && !isWithdrawOpen) {
             if (isFuturesUnlocked) {
                 coinManager.currentApp = (coinManager.currentApp == AppType.Bullbit)
@@ -90,20 +130,15 @@ public class TabPanelController : MonoBehaviour {
             }
         }
 
-        // 3. 만약 입금 패널이 켜져 있었다면 끄고 거래소 진입
         if (withdrawPanelController != null) withdrawPanelController.ClosePanel();
 
         UpdateMarketUI();
     }
 
     private void UpdateMarketUI() {
-        // 1. 텍스트 변경
         if (marketTabLabel != null) {
-            // 이전에 등록하신 Key 활용
             marketTabLabel.text = (coinManager.currentApp == AppType.Perp) ? LocalizationManager.GetText("LBL_PERPETUAL_EXCHANGE") : LocalizationManager.GetText("LBL_SPOT_EXCHANGE");
         }
-
-        // 2. 패널 갱신 (이미 작성하신 ShowMarketPanel 호출)
         ShowMarketPanel();
     }
 
@@ -112,10 +147,8 @@ public class TabPanelController : MonoBehaviour {
         totalAssetPanel.SetActive(false);
         appPanel.SetActive(false);
 
-        // 우선순위: 1. 인자로 넘어온 앱, 2. 현재 설정된 앱
         AppType appToShow = overrideApp ?? coinManager.currentApp;
 
-        // [수정] 조건문 순서를 명확하게 분리합니다.
         if (appToShow == AppType.Bullbit) {
             if (coinScrollView != null) coinScrollView.SetActive(true);
         } else if (appToShow == AppType.Perp) {
@@ -128,7 +161,7 @@ public class TabPanelController : MonoBehaviour {
             if (gamblePanel != null) gamblePanel.SetActive(true);
         }
         if (BgmPlayer.Instance != null) BgmPlayer.Instance.PlayTradingBgm();
-        // 불비트 버튼 전용 플래그 리셋 (이제 필요 없으면 삭제해도 무방)
+
         isBullbitButtonClicked = false;
     }
 
@@ -139,32 +172,22 @@ public class TabPanelController : MonoBehaviour {
     }
 
     void CloseSubPanelsIfOpen() {
-        // 1. 외부 컨트롤러 정리
         if (assetPanelController != null) assetPanelController.ClosePortfolioPanels();
         if (withdrawPanelController != null && withdrawPanelController.IsOpen()) withdrawPanelController.ClosePanel();
 
         if (newsDetailPopup != null && newsDetailPopup.gameObject.activeSelf) {
-            // 애니메이션 없이 즉시 끄는 게 전환 시에는 더 깔끔합니다.
             newsDetailPopup.gameObject.SetActive(false);
         }
 
-        // 2. 오피스 하위 패널들 직접 리셋
         if (statusPanel != null) statusPanel.SetActive(false);
         if (glossaryPanel != null) glossaryPanel.SetActive(false);
         if (glossaries != null) glossaries.SetActive(false);
         if (capitalDeposit != null) capitalDeposit.SetActive(false);
         if (skillUpgrade != null) skillUpgrade.SetActive(false);
-
-        // 차트
         if (chartPanel != null) chartPanel.SetActive(false);
-
-        // 디테일 패널
         if (detailTradingPanel != null) detailTradingPanel.SetActive(false);
-
-        // 메인 버튼은 일단 꺼둡니다
         if (officeButtons != null) officeButtons.SetActive(false);
 
-        // 3. 모든 메인 탭 패널들 끄기
         if (officePanel != null) officePanel.SetActive(false);
         if (xbirdPanel != null) xbirdPanel.SetActive(false);
         if (gamblePanel != null) gamblePanel.SetActive(false);
@@ -176,9 +199,8 @@ public class TabPanelController : MonoBehaviour {
         if (partimeJob != null) partimeJob.SetActive(false);
         if (realEstatePanel != null) realEstatePanel.SetActive(false);
         if (convPanel != null) convPanel.SetActive(false);
-        if (perpPanel !=null) perpPanel.SetActive(false);
+        if (perpPanel != null) perpPanel.SetActive(false);
     }
-
 
     public void ToggleStatusPanel() {
         CloseSubPanelsIfOpen();
@@ -189,16 +211,12 @@ public class TabPanelController : MonoBehaviour {
             if (officeButtons != null)
                 officeButtons.SetActive(true);
 
-            // GetComponent를 쓰지 않고, 직접 연결된 변수를 사용합니다.
             if (officeController != null) {
-                // 이제 무조건 실행됩니다.
                 officeController.EnterOffice();
-            } else {
             }
         }
         if (BgmPlayer.Instance != null) BgmPlayer.Instance.PlayTradingBgm();
     }
-
 
     public void ShowOutingPanel() {
         CloseSubPanelsIfOpen();

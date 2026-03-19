@@ -30,10 +30,12 @@ public class RealEstateCard : MonoBehaviour {
 
     public void SetData(RealEstateData newData) {
         data = newData;
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
 
-        nameText.text = data.name;
-        priceText.text = $"{data.price:N0}원";
-        yieldText.text = $"건물 수익: {data.monthlyYield * 100f:F1}%";
+        // [수정] 텍스트 현지화
+        nameText.text = data.name; // Controller에서 이미 번역된 값을 줌
+        priceText.text = $"{data.price:N0} {unit}";
+        yieldText.text = string.Format(LocalizationManager.GetText("LBL_YIELD"), (data.monthlyYield * 100f).ToString("F1"));
 
         if (estateImage != null) {
             estateImage.sprite = data.image;
@@ -49,14 +51,16 @@ public class RealEstateCard : MonoBehaviour {
 
             var btnText = buyButton.GetComponentInChildren<TextMeshProUGUI>();
             if (btnText != null) {
-                btnText.text = data.owned ? "매각" : "매입";
+                // [수정] 매각/매입 버튼 텍스트 현지화
+                btnText.text = data.owned ? LocalizationManager.GetText("BTN_SELL_ESTATE") : LocalizationManager.GetText("BTN_BUY_ESTATE");
             }
         }
 
         if (ownedText != null) {
             ownedText.gameObject.SetActive(data.owned);
             if (data.owned) {
-                ownedText.text = "보유중";
+                // [수정] 보유중 텍스트 현지화
+                ownedText.text = LocalizationManager.GetText("LBL_ESTATE_OWNED");
             }
         }
     }

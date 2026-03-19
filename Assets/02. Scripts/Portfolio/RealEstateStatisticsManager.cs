@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using System;
 
 public class RealEstateStatisticsManager : MonoBehaviour {
 
@@ -11,68 +12,85 @@ public class RealEstateStatisticsManager : MonoBehaviour {
     public TextMeshProUGUI estateExpectedIncomeText;
 
     private void OnEnable() {
-        // 코루틴 시작 (초기화 및 구독 연결)
+        // 여기서 바로 실행하지 않고, 코루틴에게 넘깁니다.
         StartCoroutine(InitAndSubscribe());
     }
 
     private void OnDisable() {
-        // [중요] 패널이 꺼질 때 구독 해제 (메모리 누수 방지)
         if (RealEstatePanelController.Instance != null) {
             RealEstatePanelController.Instance.OnRealEstateChanged -= UpdateStatisticsUI;
         }
     }
 
     IEnumerator InitAndSubscribe() {
-        // 매니저들이 준비될 때까지 대기
+        // [핵심] 언어 매니저(LocalizationManager)가 JSON을 다 읽을 수 있도록 딱 1프레임만 기다려줍니다!
+        yield return null;
+
+        // 1프레임 쉰 다음, 안전하게 첫 번역본을 화면에 쏴줍니다. (해금 전에도 무조건 0원으로 영문 출력)
+        UpdateStatisticsUI();
+
+        // 그 이후에 부동산 매니저가 켜질 때까지 무한 대기
         while (PlayerManager.Instance == null || RealEstatePanelController.Instance == null) {
             yield return null;
         }
 
-        // [핵심] 이벤트 구독: "부동산 정보 바뀌면 UpdateStatisticsUI 실행해라"
-        RealEstatePanelController.Instance.OnRealEstateChanged -= UpdateStatisticsUI; // 중복 방지용 제거
+        // 해금 완료 후 이벤트 연결
+        RealEstatePanelController.Instance.OnRealEstateChanged -= UpdateStatisticsUI;
         RealEstatePanelController.Instance.OnRealEstateChanged += UpdateStatisticsUI;
 
-        // 처음에 한 번 강제 실행 (초기값 표시용)
+        // 해금되었으니 다시 한번 갱신
         UpdateStatisticsUI();
     }
 
     public void UpdateStatisticsUI() {
-        var pm = PlayerManager.Instance;
-        var estateCtrl = RealEstatePanelController.Instance;
-
-        if (pm == null || estateCtrl == null) return;
-
         long currentTotalValue = 0;
         long totalPurchaseCost = 0;
         long totalExpectedIncome = 0;
+        long totalRentIncome = 0;
 
-        var myEstates = estateCtrl.GetAllEstates();
+        // [수정] PlayerManager나 RealEstatePanelController가 없어도 
+        // 튕겨나가지(return) 않고 기본값(0)으로 아래 번역 로직을 실행하게 바꿨습니다.
 
-        // 데이터 리스트가 비어있을 수 있으므로 체크
-        if (myEstates != null) {
-            foreach (var estate in myEstates) {
-                if (estate.owned) {
-                    currentTotalValue += estate.price;
-                    totalPurchaseCost += estate.purchasePrice;
+        if (PlayerManager.Instance != null) {
+            totalRentIncome = PlayerManager.Instance.totalRealEstateIncome;
+        }
 
-                    // 예상 수익 계산
-                    long income = (long)(estate.price * estate.monthlyYield);
-                    totalExpectedIncome += income;
+        if (RealEstatePanelController.Instance != null) {
+            var myEstates = RealEstatePanelController.Instance.GetAllEstates();
+            if (myEstates != null) {
+                foreach (var estate in myEstates) {
+                    if (estate.owned) {
+                        currentTotalValue += estate.price;
+                        totalPurchaseCost += estate.purchasePrice;
+
+                        long income = (long)(estate.price * estate.monthlyYield);
+                        totalExpectedIncome += income;
+                    }
                 }
             }
         }
 
-        // UI 갱신 (기존 코드와 동일)
-        estateTotalValueText.text = $"총 보유 자산: {currentTotalValue:N0}원";
-        estateTotalIncomeText.text = $"총 월세 수익: {pm.totalRealEstateIncome:N0}원";
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+
+        if (estateTotalValueText != null)
+            estateTotalValueText.text = string.Format(LocalizationManager.GetText("LBL_ESTATE_TOTAL_VALUE"), currentTotalValue.ToString("N0"), unit);
+
+        if (estateTotalIncomeText != null)
+            estateTotalIncomeText.text = string.Format(LocalizationManager.GetText("LBL_ESTATE_TOTAL_INCOME"), totalRentIncome.ToString("N0"), unit);
 
         long netProfit = currentTotalValue - totalPurchaseCost;
-        if (netProfit > 0) estateNetProfitText.text = $"평가 손익: <color=red>▲{netProfit:N0}원</color>";
-        else if (netProfit < 0) estateNetProfitText.text = $"평가 손익: <color=blue>▼{netProfit:N0}원</color>";
-        else estateNetProfitText.text = "평가 손익: -";
+        if (estateNetProfitText != null) {
+            if (netProfit > 0) {
+                estateNetProfitText.text = string.Format(LocalizationManager.GetText("LBL_ESTATE_NET_PROFIT_UP"), netProfit.ToString("N0"), unit);
+            } else if (netProfit < 0) {
+                estateNetProfitText.text = string.Format(LocalizationManager.GetText("LBL_ESTATE_NET_PROFIT_DOWN"), Math.Abs(netProfit).ToString("N0"), unit);
+            } else {
+                estateNetProfitText.text = LocalizationManager.GetText("LBL_ESTATE_NET_PROFIT_NONE");
+            }
+        }
 
         if (estateExpectedIncomeText != null) {
-            estateExpectedIncomeText.text = $"예상 주기 수익: +{totalExpectedIncome:N0}원";
+            estateExpectedIncomeText.text = string.Format(LocalizationManager.GetText("LBL_ESTATE_EXPECTED_INCOME"), totalExpectedIncome.ToString("N0"), unit);
         }
     }
 }

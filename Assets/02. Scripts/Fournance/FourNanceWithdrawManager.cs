@@ -64,7 +64,7 @@ public class FourNanceWithdrawManager : MonoBehaviour {
 
     void SetupDropdowns() {
         coinDropdown.ClearOptions();
-        coinDropdown.AddOptions(new List<string> { "USDT", "USDC", "KRW" });
+        coinDropdown.AddOptions(new List<string> { "USTT", "USCC", "KRW" });
         RefreshOptions();
     }
 
@@ -75,14 +75,14 @@ public class FourNanceWithdrawManager : MonoBehaviour {
         networkDropdown.ClearOptions();
         platformDropdown.ClearOptions();
 
-        if (selectedCoin == "USDT") {
+        if (selectedCoin == "USTT") {
             platformDropdown.AddOptions(new List<string> { "불비트 거래소" });
             networkDropdown.AddOptions(new List<string> { "TRON (TRC-20)" });
             addressInput.text = "T-Bullbit-HotWallet-Deposit";
             currentFee = 1;
-        } else if (selectedCoin == "USDC") {
+        } else if (selectedCoin == "USCC") {
             platformDropdown.AddOptions(new List<string> { "불비트 거래소" });
-            networkDropdown.AddOptions(new List<string> { "Arbitrum One" });
+            networkDropdown.AddOptions(new List<string> { "Supatrum One" });
             addressInput.text = "0x-Bullbit-HotWallet-Deposit";
             currentFee = 1;
         } else if (selectedCoin == "KRW") {
@@ -117,16 +117,19 @@ public class FourNanceWithdrawManager : MonoBehaviour {
 
         if (availableBalanceText != null) {
             double finalWithdrawable = Math.Max(0, withdrawableAmount - currentFee);
-            availableBalanceText.text = $"출금 가능: ${finalWithdrawable:N2}";
+            // [수정] 출금 가능 금액 현지화
+            availableBalanceText.text = string.Format(LocalizationManager.GetText("LBL_AVAILABLE_BALANCE"), finalWithdrawable.ToString("N2"));
         }
 
         if (noticeText != null) {
             string selectedCoin = coinDropdown.options[coinDropdown.value].text;
             if (selectedCoin == "KRW") {
-                noticeText.text = "사토시 은행 송금 시 환전 수수료 10% 발생 됩니다.";
+                // [수정] 환전 수수료 안내 문구 현지화
+                noticeText.text = LocalizationManager.GetText("MSG_OVERSEAS_TRANSFER_FEE_NOTICE");
                 noticeText.color = new Color32(230, 60, 60, 255);
             } else {
-                noticeText.text = $"출금 시 출금 수수료 ${currentFee}이 발생합니다.";
+                // [수정] 코인 출금 수수료 안내 문구 현지화
+                noticeText.text = string.Format(LocalizationManager.GetText("LBL_WITHDRAW_CRYPTO_FEE"), currentFee, selectedCoin);
                 noticeText.color = new Color32(230, 60, 60, 255);
             }
         }
@@ -167,18 +170,18 @@ public class FourNanceWithdrawManager : MonoBehaviour {
 
         string selectedCoin = coinDropdown.options[coinDropdown.value].text;
 
-        // USDT나 USDC일 경우 예상 수령액을 보여주지 않음 (텍스트 비움)
         if (selectedCoin != "KRW" || amount <= 0) {
             expectedReceiveText.text = "";
             return;
         }
 
-        // KRW일 경우만 예상 수령액 및 환율 계산해서 보여줌
         double netAmountUsd = amount * 0.90;
         double currentRate = GlobalEconomyManager.UsdToKrw;
         double receiveKrw = netAmountUsd * currentRate;
 
-        expectedReceiveText.text = $"예상 수령액: {receiveKrw:N0} 원\n<size=80%>(적용 환율: {currentRate:N2}원)</size>";
+        // [수정] 예상 수령액 및 환율 안내 문구 현지화
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+        expectedReceiveText.text = string.Format(LocalizationManager.GetText("LBL_EXPECTED_RECEIPT_USD"), receiveKrw.ToString("N0"), currentRate.ToString("N2"), unit);
         expectedReceiveText.color = new Color32(50, 214, 149, 255);
     }
 
@@ -205,7 +208,12 @@ public class FourNanceWithdrawManager : MonoBehaviour {
             double receiveKrw = netUsd * GlobalEconomyManager.UsdToKrw;
 
             PlayerManager.Instance.satoshiBankCash += receiveKrw;
-            TransactionManager.Instance.AddRecord("사토시 은행", receiveKrw, "입금", $"선물 송금 (수수료 10%: -${feeUsd:N2})");
+
+            // ★ [핵심 수정] 기록은 무조건 한글 원본 고정! (입금)
+            // 출처를 "포넨스"로, 상세 내역에 수수료 명시
+            string assetDetail = $"해외송금 (수수료 10%: -${feeUsd:N2})";
+            TransactionManager.Instance.AddRecord("포넨스", receiveKrw, "입금", assetDetail);
+
         } else {
             CoinData coinData = CoinManager.Instance.coins.Find(c => c.Symbol == coinSymbol);
             double currentPriceKrw = coinData != null ? coinData.CurrentPrice : GlobalEconomyManager.UsdToKrw;

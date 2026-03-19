@@ -85,7 +85,7 @@ public class BullbitWithdrawManager : MonoBehaviour {
     void SetupCryptoOptions() {
         coinDropdown.ClearOptions();
         // ETH 제거: 스테이블 코인만 출금 가능
-        coinDropdown.AddOptions(new List<string> { "USDT", "USDC" });
+        coinDropdown.AddOptions(new List<string> { "USTT", "USCC" });
 
         exchangeDropdown.ClearOptions();
 
@@ -129,13 +129,13 @@ public class BullbitWithdrawManager : MonoBehaviour {
         networkDropdown.ClearOptions();
 
         switch (coin) {
-            case "USDT":
+            case "USTT":
                 networkDropdown.AddOptions(new List<string> { "TRON (TRC-20)" });
                 currentFee = 1.0;
                 currentMinWithdraw = 100;
                 break;
-            case "USDC":
-                networkDropdown.AddOptions(new List<string> { "Arbitrum One" });
+            case "USCC":
+                networkDropdown.AddOptions(new List<string> { "Supatrum One" });
                 currentFee = 1.0;
                 currentMinWithdraw = 100;
                 break;
@@ -154,7 +154,7 @@ public class BullbitWithdrawManager : MonoBehaviour {
         string coin = coinDropdown.options[coinDropdown.value].text;
 
         // 포넨스 전용 주소 자동 입력 (다른 옵션이 없으므로 고정)
-        addressInputField.text = (coin == "USDT") ? "THgrtiK99pOnAnCe" : "0xHgrtiK77vIeW3F";
+        addressInputField.text = (coin == "USTT") ? "THgrtiK99pOnAnCe" : "0xHgrtiK77vIeW3F";
     }
 
     // --- (OnClick 전액 버튼, OnValueChanged, OnClickWithdraw 로직 기존과 동일) ---
@@ -225,11 +225,7 @@ public class BullbitWithdrawManager : MonoBehaviour {
             PlayerManager.Instance.ChangeBullbitCash(-totalDeduct);
             PlayerManager.Instance.satoshiBankCash += amount;
 
-            // [수정] 거래 기록 하드코딩 제거
-            string logDesc = LocalizationManager.GetText("LOG_BULLBIT");
-            string logType = LocalizationManager.GetText("LOG_DEPOSIT");
-            string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH");
-            TransactionManager.Instance.AddRecord(logDesc, amount, logType, logAsset);
+            TransactionManager.Instance.AddRecord("불비트", amount, "입금", "사토시 현금");
 
         } else {
             string symbol = coinDropdown.options[coinDropdown.value].text.Trim().ToUpper();
@@ -244,7 +240,7 @@ public class BullbitWithdrawManager : MonoBehaviour {
             PlayerManager.Instance.ChangeCoin(symbol, -(amount + currentFee));
 
             if (destination.Contains(fournanceName)) {
-                if (symbol == "USDT" || symbol == "USDC") {
+                if (symbol == "USTT" || symbol == "USCC") {
                     PlayerManager.Instance.fournanceCash += amount;
                     Debug.Log($"[포넨스 입금] 스테이블 코인 {symbol} 수량 그대로 ${amount:F2} 입금 완료");
                 } else {

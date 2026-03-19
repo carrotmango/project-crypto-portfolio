@@ -114,24 +114,24 @@ public class GambleManager_renewal : MonoBehaviour {
         long betAmount = GetBetAmount();
         double bankCash = PlayerManager.Instance.satoshiBankCash;
         long limit = OfficeManager.Instance.GetGambleLimit();
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY"); // [추가] 화폐 단위
 
         // 1. 배팅 금액 텍스트
         bool isLimited = (betAmount >= limit) && (bankCash > limit);
         if (isLimited) {
-            betAmountText.text = $"배팅 금액: {betAmount:N0} (MAX)";
+            betAmountText.text = string.Format(LocalizationManager.GetText("LBL_GAMBLE_BET_MAX"), betAmount.ToString("N0"), unit);
             betAmountText.color = Color.red; // 한도 도달 시 빨간색 강조
         } else {
-            betAmountText.text = $"배팅 금액: {betAmount:N0}";
+            betAmountText.text = string.Format(LocalizationManager.GetText("LBL_GAMBLE_BET"), betAmount.ToString("N0"), unit);
             betAmountText.color = Color.white;
         }
 
         // 2. 은행 잔고 텍스트
-        bankCashText.text = $"은행 잔고: {bankCash:N0}";
+        bankCashText.text = string.Format(LocalizationManager.GetText("LBL_GAMBLE_BANK"), bankCash.ToString("N0"), unit);
 
-        // 3. [추가] 배팅 한도 텍스트 갱신
+        // 3. 배팅 한도 텍스트 갱신
         if (limitText != null) {
-            // 예: "한도: 1,000만"
-            limitText.text = $"최대 배팅 한도: {limit:N0}원";
+            limitText.text = string.Format(LocalizationManager.GetText("LBL_GAMBLE_LIMIT"), limit.ToString("N0"), unit);
         }
 
         UpdatePayoutText(betAmount);
@@ -142,14 +142,15 @@ public class GambleManager_renewal : MonoBehaviour {
         if (payoutText == null) return;
 
         string mode = gameModes[currentGameIndex];
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY"); // [추가]
 
         if (mode == "GAMBLE MONSTER") {
-            long unit = (long)(betAmount * GAMBLE_MONSTER_RATE_NUM / GAMBLE_MONSTER_RATE_DEN);
-            payoutText.text = $"배당률: 1코인 = {unit:N0}원";
+            long payoutUnit = (long)(betAmount * GAMBLE_MONSTER_RATE_NUM / GAMBLE_MONSTER_RATE_DEN);
+            payoutText.text = string.Format(LocalizationManager.GetText("LBL_GAMBLE_PAYOUT_MONSTER"), payoutUnit.ToString("N0"), unit);
         } else if (mode == "COIN FLIP") {
-            payoutText.text = "배당률: 성공 시 2배";
+            payoutText.text = LocalizationManager.GetText("LBL_GAMBLE_PAYOUT_COINFLIP");
         } else if (mode == "DEATH FUN") {
-            payoutText.text = "배당률: 성공한 타일당 Multiple";
+            payoutText.text = LocalizationManager.GetText("LBL_GAMBLE_PAYOUT_DEATHFUN");
         }
     }
 
@@ -212,15 +213,16 @@ public class GambleManager_renewal : MonoBehaviour {
 
         string mode = gameModes[currentGameIndex];
 
+        // [수정] 게임 설명 현지화
         if (mode == "GAMBLE MONSTER") {
             FixedLabel.text = "Gamble Monster";
-            gameDescription.text = "30초 동안 고블린을 최대한 많이 처치하여 금화를 모으세요.";
+            gameDescription.text = LocalizationManager.GetText("DESC_GAMBLE_MONSTER");
         } else if (mode == "COIN FLIP") {
             FixedLabel.text = "Coin Flip";
-            gameDescription.text = "앞 또는 뒤를 골라 한방을 쟁취하세요.";
+            gameDescription.text = LocalizationManager.GetText("DESC_GAMBLE_COINFLIP");
         } else if (mode == "DEATH FUN") {
             FixedLabel.text = "Death Fun";
-            gameDescription.text = "폭탄 타일을 피해 정상까지 도달하세요.";
+            gameDescription.text = LocalizationManager.GetText("DESC_GAMBLE_DEATHFUN");
         }
     }
 
@@ -229,12 +231,12 @@ public class GambleManager_renewal : MonoBehaviour {
         long betAmount = GetBetAmount();
 
         if (betAmount <= 0) {
-            StartCoroutine(ShowAlert("배팅 금액을 설정하세요"));
+            StartCoroutine(ShowAlert(LocalizationManager.GetText("MSG_GAMBLE_SET_BET")));
             return;
         }
 
         if (PlayerManager.Instance.satoshiBankCash < betAmount) {
-            StartCoroutine(ShowAlert("은행 잔고가 부족합니다"));
+            StartCoroutine(ShowAlert(LocalizationManager.GetText("MSG_GAMBLE_LACK_CASH")));
             return;
         }
         if (menuButton != null) menuButton.SetActive(false);
@@ -282,25 +284,23 @@ public class GambleManager_renewal : MonoBehaviour {
             long unit = currentBetAmount * GAMBLE_MONSTER_RATE_NUM / GAMBLE_MONSTER_RATE_DEN;
             reward = value * unit;
         } else if (mode == "COIN FLIP") {
-            // value = 성공 여부 (1 = 성공, 0 = 실패) 같은 구조면
             reward = value > 0 ? currentBetAmount * 2 : 0;
         } else if (mode == "DEATH FUN") {
-            // value = profit (이미 계산된 최종 수익)
             reward = value;
         }
 
         if (reward > 0) {
             PlayerManager.Instance.satoshiBankCash += reward;
             TransactionManager.Instance.AddRecord("오락실", reward, "입금", "사토시 현금");
+
             QuestManager.Instance.ProcessAction(QuestType.ArcadeWinCash, reward);
             CoinManager.Instance.UpdateCashText();
             PlayerManager.Instance.AddGambleEarn(reward);
         }
-        
+
         currentBetAmount = 0;
         InitSlider();
         UpdateGameLabel();
-
     }
     public void turnOnDim() {
         if (menuButton != null) menuButton.SetActive(true);

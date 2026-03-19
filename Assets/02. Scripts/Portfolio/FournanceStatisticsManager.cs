@@ -46,33 +46,45 @@ public class FournanceStatisticsManager : MonoBehaviour {
         var renderer = FutureChartRenderer.Instance;
         var manager = FourNanceManager.Instance;
 
+        if (pm == null || renderer == null || manager == null) return;
+
         // -------------------------------------------------------------
         // A. PlayerManager에 저장된 '누적 데이터' (과거의 영광)
         // -------------------------------------------------------------
 
         // 1. 누적 거래량
-        totalVolumeText.text = $"누적 거래량: ${pm.fournanceTotalVolume:N0}";
+        if (totalVolumeText != null) {
+            totalVolumeText.text = string.Format(LocalizationManager.GetText("LBL_FN_TOTAL_VOL"), pm.fournanceTotalVolume.ToString("N0"));
+        }
 
         // 2. 누적 수수료
-        totalFeeText.text = $"누적 수수료: ${pm.fournanceTotalFee:N2}";
+        if (totalFeeText != null) {
+            totalFeeText.text = string.Format(LocalizationManager.GetText("LBL_FN_TOTAL_FEE"), pm.fournanceTotalFee.ToString("N2"));
+        }
 
         // 3. 누적 실현 손익 (이미 통장에 꽂힌 돈)
-        SetColorText(realizedPnLText, "실현 손익", pm.fournanceRealizedPnL);
-
+        if (realizedPnLText != null) {
+            string realizedLabel = LocalizationManager.GetText("LBL_FN_REALIZED_PNL");
+            SetColorText(realizedPnLText, realizedLabel, pm.fournanceRealizedPnL);
+        }
 
         // -------------------------------------------------------------
         // B. FutureChartRenderer 등이 계산 중인 '실시간 데이터' (현재 상황)
         // -------------------------------------------------------------
 
         // 4. 현재 총 자산 (Equity) - FourNanceManager가 계산해 둔 것 가져오기
-        double currentEquity = manager.GetTotalEquity();
-        totalEquityText.text = $"총 선물 자산: ${currentEquity:N2}";
+        if (totalEquityText != null) {
+            double currentEquity = manager.GetTotalEquity();
+            totalEquityText.text = string.Format(LocalizationManager.GetText("LBL_FN_TOTAL_EQUITY"), currentEquity.ToString("N2"));
+        }
 
         // 5. 현재 평가 손익 (Unrealized PnL) - 차트 렌더러가 실시간 계산 중인 것
-        double unrealized = renderer.CalculateTotalUnrealizedPnL();
-        SetColorText(unrealizedPnLText, "평가 손익", unrealized);
+        if (unrealizedPnLText != null) {
+            double unrealized = renderer.CalculateTotalUnrealizedPnL();
+            string unrealizedLabel = LocalizationManager.GetText("LBL_FN_UNREALIZED_PNL");
+            SetColorText(unrealizedPnLText, unrealizedLabel, unrealized);
+        }
     }
-
     // [유틸] 양수면 초록색, 음수면 빨간색 칠해주는 함수
     void SetColorText(TextMeshProUGUI uiText, string label, double value) {
         if (value > 0) {

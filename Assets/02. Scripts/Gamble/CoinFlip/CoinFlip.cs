@@ -27,15 +27,16 @@ public class CoinFlip : MonoBehaviour {
     private string playerChoice = "";
 
     private void Awake() {
-        frontButton.onClick.AddListener(() => OnChoose("앞"));
-        backButton.onClick.AddListener(() => OnChoose("뒤"));
-        resultText.text = "앞 또는 뒤를 선택하세요";
+        // [핵심] 내부 로직용 데이터는 언어에 영향받지 않도록 영어 상수로 고정
+        frontButton.onClick.AddListener(() => OnChoose("FRONT"));
+        backButton.onClick.AddListener(() => OnChoose("BACK"));
     }
 
     public void GambleStart() {
         playerChoice = "";
 
-        resultText.text = "앞 또는 뒤를 선택하세요";
+        // [수정] 안내 문구 현지화
+        resultText.text = LocalizationManager.GetText("MSG_COIN_CHOOSE");
         frontButton.interactable = true;
         backButton.interactable = true;
 
@@ -61,14 +62,15 @@ public class CoinFlip : MonoBehaviour {
     IEnumerator RunFlip() {
 
         if (audioSource != null && coinFlipSound != null) {
-            // 클릭 소리 교체
-            if (coinFlipSound != null) SfxPlayer.Instance.Play(coinFlipSound);
+            SfxPlayer.Instance.Play(coinFlipSound);
         }
 
-        resultText.text = "동전 던지는 중...";
+        // [수정] 대기 문구 현지화
+        resultText.text = LocalizationManager.GetText("MSG_COIN_FLIPPING");
         yield return new WaitForSecondsRealtime(2f);
 
-        string[] outcomes = { "앞", "뒤" };
+        // 내부 로직은 영어 상수로 처리
+        string[] outcomes = { "FRONT", "BACK" };
         string result = outcomes[Random.Range(0, 2)];
         bool isWin = (playerChoice == result);
 
@@ -79,18 +81,23 @@ public class CoinFlip : MonoBehaviour {
         }
 
         coinSprite.enabled = true;
-        coinSprite.sprite = (result == "앞") ? frontSprite : backSprite;
+        coinSprite.sprite = (result == "FRONT") ? frontSprite : backSprite;
 
-        resultText.text = $"결과: {result}";
+        // [수정] 결과 텍스트 현지화 (FRONT/BACK을 다시 앞/뒤, 혹은 Heads/Tails로 번역)
+        string localizedResult = LocalizationManager.GetText(result == "FRONT" ? "LBL_COIN_FRONT" : "LBL_COIN_BACK");
+        resultText.text = string.Format(LocalizationManager.GetText("MSG_COIN_RESULT"), localizedResult);
         yield return new WaitForSecondsRealtime(1f);
 
         // UI 표시용 계산 
         long displayReward = 0;
         if (isWin) {
             displayReward = gambleManager.currentBetAmount * 2;
-            resultText.text = $"성공! +{displayReward:N0}원";
+            string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+            // [수정] 성공 텍스트 현지화
+            resultText.text = string.Format(LocalizationManager.GetText("MSG_COIN_SUCCESS"), displayReward.ToString("N0"), unit);
         } else {
-            resultText.text = "실패...";
+            // [수정] 실패 텍스트 현지화
+            resultText.text = LocalizationManager.GetText("MSG_COIN_FAIL");
         }
 
         // 실제 정산 
@@ -102,7 +109,4 @@ public class CoinFlip : MonoBehaviour {
         gambleManager.OnReturnFromGame();
         gambleManager.turnOnDim();
     }
-
-
-
 }

@@ -112,11 +112,8 @@ public class LoanManager : MonoBehaviour {
 
         PlayerManager.Instance.satoshiBankCash += (double)amount;
 
-        // [수정] 대출 실행 기록 현지화
-        string logDesc = LocalizationManager.GetText("LOG_LOAN_ISSUE");
-        string logType = LocalizationManager.GetText("LOG_DEPOSIT"); // "입금"
-        string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH");
-        TransactionManager.Instance.AddRecord(logDesc, amount, logType, logAsset);
+        // [핵심 수정] 기록은 무조건 한글 원본 고정! (입금)
+        TransactionManager.Instance.AddRecord("대출실행", amount, "입금", "사토시 현금");
 
         RefreshLoanUI();
         RefreshSatoshiBankUI();
@@ -149,15 +146,11 @@ public class LoanManager : MonoBehaviour {
             return;
         }
 
-        string logTypeWithdraw = LocalizationManager.GetText("LOG_WITHDRAW"); // "출금"
-        string logAssetCash = LocalizationManager.GetText("LOG_SATOSHI_CASH");
-
         if (!hasPaidFirstInterest) {
             PlayerManager.Instance.satoshiBankCash -= penaltyInterest;
 
-            // [수정] 대출 이자 (조기 상환) 기록 현지화
-            string logPenaltyDesc = LocalizationManager.GetText("LOG_LOAN_EARLY_FEE");
-            TransactionManager.Instance.AddRecord(logPenaltyDesc, penaltyInterest, logTypeWithdraw, logAssetCash);
+            // [핵심 수정] 조기 상환 이자 지불 - 한글 원본 고정! (출금)
+            TransactionManager.Instance.AddRecord("대출이자(조기상환)", penaltyInterest, "출금", "사토시 현금");
 
             actualRepayTotal -= penaltyInterest;
             hasPaidFirstInterest = true;
@@ -167,9 +160,8 @@ public class LoanManager : MonoBehaviour {
         PlayerManager.Instance.satoshiBankCash -= repayToPrincipal;
         currentLoanPrincipal -= repayToPrincipal;
 
-        // [수정] 대출 원금 상환 기록 현지화
-        string logRepayDesc = LocalizationManager.GetText("LOG_LOAN_REPAY");
-        TransactionManager.Instance.AddRecord(logRepayDesc, repayToPrincipal, logTypeWithdraw, logAssetCash);
+        // [핵심 수정] 원금 상환 지불 - 한글 원본 고정! (출금)
+        TransactionManager.Instance.AddRecord("대출상환", repayToPrincipal, "출금", "사토시 현금");
 
         if (currentLoanPrincipal <= 0) {
             overdueCount = 0;
@@ -261,16 +253,12 @@ public class LoanManager : MonoBehaviour {
 
         string unit = LocalizationManager.GetText("UNIT_CURRENCY");
 
-        // [수정] 대출 이자 정산 알림 현지화
+        // 알림 문구는 UI용이므로 현지화 유지
         string notiTitle = LocalizationManager.GetText("SMS_NOTI_LOAN_TITLE");
         string notiMsg = string.Format(LocalizationManager.GetText("SMS_NOTI_LOAN_MSG"), interest.ToString("N0"), unit);
 
-        // [수정] 거래 내역 로그 현지화
-        string logDesc = LocalizationManager.GetText("LOG_LOAN_INTEREST");
-        string logType = LocalizationManager.GetText("LOG_WITHDRAW");
-        string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH");
-
-        TransactionManager.Instance.AddRecord(logDesc, interest, logType, logAsset);
+        // [핵심 수정] 정기 이자 지불 - 한글 원본 고정! (출금)
+        TransactionManager.Instance.AddRecord("대출이자", interest, "출금", "사토시 현금");
 
         if (GlobalNotificationManager.Instance != null) {
             GlobalNotificationManager.Instance.ShowNotification("Bank", notiTitle, notiMsg, null);

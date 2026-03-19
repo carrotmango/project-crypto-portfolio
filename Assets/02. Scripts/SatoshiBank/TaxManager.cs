@@ -135,12 +135,9 @@ public class TaxManager : MonoBehaviour {
         // 1. 돈 차감
         PlayerManager.Instance.ChangeSatoshiMoney(-unpaidTaxAmount);
 
-        // 2. ★ [기록] 정상 납부 기록 현지화
-        string logTax = LocalizationManager.GetText("LOG_TAX");
-        string logType = LocalizationManager.GetText("LOG_WITHDRAW"); // "출금"
-        string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH"); // "사토시 현금"
-
-        TransactionManager.Instance.AddRecord(logTax, unpaidTaxAmount, logType, logAsset);
+        // 2. ★ [핵심 수정] 기록은 무조건 한글 원본 데이터 고정! (출금)
+        // 번역된 텍스트 대신 "소득세", "출금" 이라는 고정된 단어로 보내주세요.
+        TransactionManager.Instance.AddRecord("소득세", unpaidTaxAmount, "출금", "사토시 현금");
 
         Debug.Log($"[Tax] 정상 납부 완료: {unpaidTaxAmount:N0}원");
 
@@ -157,12 +154,8 @@ public class TaxManager : MonoBehaviour {
             // 1. 돈 차감 (마통 가능)
             PlayerManager.Instance.ChangeSatoshiMoney(-penaltyTax);
 
-            // 2. ★ [기록] 강제 징수 기록 현지화
-            string logTaxEnforced = LocalizationManager.GetText("LOG_TAX_ENFORCED");
-            string logType = LocalizationManager.GetText("LOG_WITHDRAW");
-            string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH");
-
-            TransactionManager.Instance.AddRecord(logTaxEnforced, penaltyTax, logType, logAsset);
+            // 2. ★ [핵심 수정] 기록은 무조건 한글 원본 데이터 고정! (출금)
+            TransactionManager.Instance.AddRecord("소득세(강제징수)", penaltyTax, "출금", "사토시 현금");
         }
 
         ClearTax();

@@ -63,49 +63,56 @@ public class ETCPortfolioManager : MonoBehaviour {
         var pm = PlayerManager.Instance;
         var office = OfficeManager.Instance;
 
+        // [수정] 공통 단위 현지화 로드
+        string unitCurrency = LocalizationManager.GetText("UNIT_CURRENCY");
+        string unitTimes = LocalizationManager.GetText("UNIT_TIMES");
+        string unitTickets = LocalizationManager.GetText("UNIT_TICKETS");
+
         // ---------------------------------------------------------
         // 1. 현재 급여
         // ---------------------------------------------------------
         if (office != null) {
-            currentSalaryText.text = $"현재 급여: {office.currentMonthlySalary:N0}원";
+            currentSalaryText.text = $"{LocalizationManager.GetText("LBL_CURRENT_SALARY")} {office.currentMonthlySalary:N0}{unitCurrency}";
         } else {
-            currentSalaryText.text = "현재 급여: -";
+            currentSalaryText.text = $"{LocalizationManager.GetText("LBL_CURRENT_SALARY")} -";
         }
 
         // ---------------------------------------------------------
         // 2. 플레이어 통계
         // ---------------------------------------------------------
         if (pm != null) {
-            totalSalaryText.text = $"수령한 급여: {pm.totalSalaryReceived:N0}원";
+            totalSalaryText.text = $"{LocalizationManager.GetText("LBL_TOTAL_SALARY_RECEIVED")} {pm.totalSalaryReceived:N0}{unitCurrency}";
 
-            albaCountText.text = $"알바 횟수: {pm.totalPartTimeJobCount:N0}회";
-            albaTotalIncomeText.text = $"수령한 알바 급여: {pm.totalPartTimeJobIncome:N0}원";
+            albaCountText.text = $"{LocalizationManager.GetText("LBL_PART_TIME_COUNT")} {pm.totalPartTimeJobCount:N0}{unitTimes}";
+            albaTotalIncomeText.text = $"{LocalizationManager.GetText("LBL_PART_TIME_EARNINGS")} {pm.totalPartTimeJobIncome:N0}{unitCurrency}";
 
-            lottoCountText.text = $"구매한 복권 수: {pm.totalLotteryTicketCount:N0}장";
-            lottoSpentText.text = $"누적 복권 구매 금액: {pm.totalLotterySpentAmount:N0}원";
-            lottoWonText.text = $"누적 복권 당첨 금액: {pm.totalLotteryWonAmount:N0}원";
-        }
+            lottoCountText.text = $"{LocalizationManager.GetText("LBL_LOTTO_COUNT")} {pm.totalLotteryTicketCount:N0}{unitTickets}";
+            lottoSpentText.text = $"{LocalizationManager.GetText("LBL_LOTTO_TOTAL_SPENT")} {pm.totalLotterySpentAmount:N0}{unitCurrency}";
+            lottoWonText.text = $"{LocalizationManager.GetText("LBL_LOTTO_TOTAL_WON")} {pm.totalLotteryWonAmount:N0}{unitCurrency}";
 
-        if (gambleSpentText != null) {
-            gambleSpentText.text = $"총 베팅 금액: {pm.totalGambleSpent:N0}원";
-        }
+            // 오락실 통계
+            if (gambleSpentText != null) {
+                gambleSpentText.text = $"{LocalizationManager.GetText("LBL_ARCADE_SPENT")} {pm.totalGambleSpent:N0}{unitCurrency}";
+            }
 
-        if (gambleEarnedText != null) {
-            gambleEarnedText.text = $"총 당첨 금액: {pm.totalGambleEarned:N0}원";
-        }
+            if (gambleEarnedText != null) {
+                gambleEarnedText.text = $"{LocalizationManager.GetText("LBL_ARCADE_WON")} {pm.totalGambleEarned:N0}{unitCurrency}";
+            }
 
-        if (gambleNetProfitText != null) {
-            long netProfit = pm.totalGambleEarned - pm.totalGambleSpent;
+            if (gambleNetProfitText != null) {
+                long netProfit = pm.totalGambleEarned - pm.totalGambleSpent;
+                string profitLabel = LocalizationManager.GetText("LBL_ARCADE_PROFIT");
 
-            if (netProfit > 0) {
-       
-                gambleNetProfitText.text = $"오락실 손익: <color=#32D695>▲{netProfit:N0}원</color>";
-            } else if (netProfit < 0) {
-                // 손해: 파란색 (▼) - 부호 떼고 출력
-                gambleNetProfitText.text = $"오락실 손익: <color=#E63C3C>▼{Math.Abs(netProfit):N0}원</color>";
-            } else {
-                // 본전
-                gambleNetProfitText.text = $"오락실 손익: -";
+                if (netProfit > 0) {
+                    // 이득: 초록색 (▲)
+                    gambleNetProfitText.text = $"{profitLabel} <color=#32D695>▲{netProfit:N0}{unitCurrency}</color>";
+                } else if (netProfit < 0) {
+                    // 손해: 빨간색 (▼)
+                    gambleNetProfitText.text = $"{profitLabel} <color=#E63C3C>▼{Math.Abs(netProfit):N0}{unitCurrency}</color>";
+                } else {
+                    // 본전
+                    gambleNetProfitText.text = $"{profitLabel} -";
+                }
             }
         }
     }

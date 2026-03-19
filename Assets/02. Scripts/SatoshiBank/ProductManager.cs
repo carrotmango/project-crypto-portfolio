@@ -108,11 +108,8 @@ public class ProductManager : MonoBehaviour {
 
         PlayerManager.Instance.satoshiBankCash += (double)refundAmount;
 
-        // [수정] 거래 내역 로그 현지화
-        string logDesc = LocalizationManager.GetText("LOG_CANCEL_DEPOSIT");
-        string logType = LocalizationManager.GetText("LOG_DEPOSIT"); // "입금"
-        string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH");
-        TransactionManager.Instance.AddRecord(logDesc, refundAmount, logType, logAsset);
+        // [핵심 수정] 기록은 무조건 한글 원본 데이터 고정! (입금)
+        TransactionManager.Instance.AddRecord("예금 중도해지", refundAmount, "입금", "사토시 현금");
 
         myDeposits.RemoveAt(0);
         RefreshProductUI();
@@ -245,11 +242,10 @@ public class ProductManager : MonoBehaviour {
         myDeposits.Add(newDeposit);
         PlayerManager.Instance.satoshiBankCash -= amount;
 
-        // [수정] 가입 로그 현지화
-        string logDesc = string.Format(LocalizationManager.GetText("LOG_JOIN_DEPOSIT"), month);
-        string logType = LocalizationManager.GetText("LOG_WITHDRAW"); // "출금"
-        string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH");
-        TransactionManager.Instance.AddRecord(logDesc, amount, logType, logAsset);
+        // [핵심 수정] 기록은 무조건 한글 원본 데이터 고정! (출금)
+        // "{0}개월 예금 가입" 처럼 포맷팅된 문자열을 보내면 TransactionItem에서 번역을 못 찾습니다!
+        // 따라서 "예금가입" 이라는 고정된 단어로 보내주세요.
+        TransactionManager.Instance.AddRecord("예금가입", amount, "출금", "사토시 현금");
 
         if (SatoshiBankPanel.Instance != null) SatoshiBankPanel.Instance.RefreshDepositStatus();
 
@@ -257,6 +253,7 @@ public class ProductManager : MonoBehaviour {
         RefreshProductUI();
         ClosePanel();
     }
+
     private IEnumerator ShowWarningRoutine(string message) {
         isWarningActive = true;
         warningPopupText.text = message;
@@ -312,13 +309,10 @@ public class ProductManager : MonoBehaviour {
 
         PlayerManager.Instance.satoshiBankCash += (double)totalPayout;
 
-        // [수정] 만기 로그 현지화
-        string logDesc = string.Format(LocalizationManager.GetText("LOG_EXPIRE_DEPOSIT"), deposit.durationMonth);
-        string logType = LocalizationManager.GetText("LOG_DEPOSIT"); // "입금"
-        string logAsset = LocalizationManager.GetText("LOG_SATOSHI_CASH");
-        TransactionManager.Instance.AddRecord(logDesc, totalPayout, logType, logAsset);
+        // [핵심 수정] 기록은 무조건 한글 원본 데이터 고정! (입금)
+        // 여기도 "예금만기" 라는 고정된 단어로 보내주세요.
+        TransactionManager.Instance.AddRecord("예금만기", totalPayout, "입금", "사토시 현금");
 
-        // [수정] 만기 문자 및 팝업 알림 현지화
         string unit = LocalizationManager.GetText("UNIT_CURRENCY");
         string fullBody = string.Format(
             LocalizationManager.GetText("SMS_DEPOSIT_EXPIRE_BODY"),

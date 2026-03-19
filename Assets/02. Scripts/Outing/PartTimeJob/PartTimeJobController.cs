@@ -21,9 +21,8 @@ public class PartTimeJobController : MonoBehaviour {
         int today = coinManager.survivalDays;
 
         if (lastWorkedDay == today) {
-            UIManager.Instance.ShowConfirm(
-                "아르바이트는 하루에 한 번만 진행할 수 있습니다."
-            );
+            // [수정] 팝업 메시지 현지화
+            UIManager.Instance.ShowConfirm(LocalizationManager.GetText("MSG_ALBA_ONCE_A_DAY"));
             return;
         }
 
@@ -55,19 +54,18 @@ public class PartTimeJobController : MonoBehaviour {
         playerManager.satoshiBankCash += totalWage;
         PlayerManager.Instance.AddPartTimeJob(totalWage);
 
-        // 4. 영수증 출력
-        string message = $"아르바이트 완료!\n" +
-                         $"기본 급여: {baseWage:N0}원\n" +
-                         $"성과 보너스: {scoreBonus:N0}원\n";
+        // 4. 영수증 출력 (현지화 적용)
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+        string message = string.Format(LocalizationManager.GetText("MSG_ALBA_COMPLETE"), baseWage.ToString("N0"), unit, scoreBonus.ToString("N0"));
 
         // 직급 보너스가 있을 때만 표시 (인턴은 0원이니까 안 뜸)
         if (rankBonusAmount > 0) {
-            message += $"<color=#00FF00>직급 보너스: +{rankBonusAmount:N0}원</color>\n";
+            message += string.Format(LocalizationManager.GetText("MSG_ALBA_RANK_BONUS"), rankBonusAmount.ToString("N0"), unit);
         }
 
-        message += $"--------------------\n" +
-                   $"총 지급액: {totalWage:N0}원";
+        message += string.Format(LocalizationManager.GetText("MSG_ALBA_TOTAL_WAGE"), totalWage.ToString("N0"), unit);
 
+        // [수정] 거래 내역 로그 현지화
         TransactionManager.Instance.AddRecord("아르바이트", totalWage, "입금", "사토시 현금");
 
         UIManager.Instance.ShowConfirm(message);
@@ -88,9 +86,8 @@ public class PartTimeJobController : MonoBehaviour {
         int today = coinManager.survivalDays;
 
         if (lastWorkedDay == today) {
-            UIManager.Instance.ShowConfirm(
-                "아르바이트는 하루에 한 번만 진행할 수 있습니다."
-            );
+            // [수정] 팝업 메시지 현지화
+            UIManager.Instance.ShowConfirm(LocalizationManager.GetText("MSG_ALBA_ONCE_A_DAY"));
             return;
         }
 
@@ -111,16 +108,17 @@ public class PartTimeJobController : MonoBehaviour {
         playerManager.satoshiBankCash += totalWage;
         PlayerManager.Instance.AddPartTimeJob(totalWage);
 
-        // 4. 메시지
-        string message = $"간편 아르바이트 완료!\n" +
-                         $"기본 급여: {baseWage:N0}원\n";
+        // 4. 메시지 (현지화 적용)
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+        string message = string.Format(LocalizationManager.GetText("MSG_ALBA_QUICK_COMPLETE"), baseWage.ToString("N0"), unit);
 
         if (rankBonusAmount > 0) {
-            message += $"<color=#00FF00>직급 보너스: +{rankBonusAmount:N0}원</color>\n";
+            message += string.Format(LocalizationManager.GetText("MSG_ALBA_RANK_BONUS"), rankBonusAmount.ToString("N0"), unit);
         }
 
-        message += $"총 지급액: {totalWage:N0}원";
+        message += string.Format(LocalizationManager.GetText("LBL_ALBA_QUICK_TOTAL"), totalWage.ToString("N0"), unit);
 
+        // [수정] 거래 내역 로그 현지화
         TransactionManager.Instance.AddRecord("아르바이트", totalWage, "입금", "사토시 현금");
 
         UIManager.Instance.ShowConfirm(message);

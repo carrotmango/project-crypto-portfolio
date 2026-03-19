@@ -59,20 +59,20 @@ public class CoinEventScenarioManager : MonoBehaviour {
                     meta.CirculatingSupply += unlockAmount;
                     if (coin.CirculatingSupply > maxSupply) coin.CirculatingSupply = maxSupply;
 
-                    string msg = $"{coin.Name}({coin.Symbol})의 유통 물량 {unlockAmount:N0}개가 정식 해제되었습니다.";
-                    SendNews($"news_unlock_{coin.Symbol}_{todayStr}", "[공시]", coin.Symbol, msg);
+                    // ★ [핵심 수정] 락업 해제 뉴스 현지화
+                    string tag = LocalizationManager.GetText("LBL_NOTICE_TAG"); // "[공시]"
+                    string msg = string.Format(LocalizationManager.GetText("MSG_UNLOCK_NEWS"), coin.Name, coin.Symbol, unlockAmount.ToString("N0"));
+                    SendNews($"news_unlock_{coin.Symbol}_{todayStr}", tag, coin.Symbol, msg);
 
                     processedKeys.Add(supplyKey);
                 }
             }
         }
 
-        //  가격 변동 수치 대폭 하향 조정 (30분 틱 기준)
+        // 가격 변동 수치 대폭 하향 조정 (30분 틱 기준)
         if (daysLeft <= 14 && daysLeft >= -3) {
             string scenarioName = GetScenarioName(scenarioDice);
 
-            // 매번 찍히면 시끄러우니, 날짜가 바뀔 때(0시 0분) 한 번만 찍히도록 권장하지만, 
-            // 현재는 행님이 테스트하기 편하시게 조건문에 들어오면 바로 찍히게 두겠습니다.
             Debug.Log($"<color=#FFD700>[락업 시나리오 감지]</color> <b>{coin.Symbol}</b>: {scenarioName} (D-{daysLeft})");
 
             if (scenarioDice < 25) ScenarioA(coin, daysLeft, now);
@@ -198,14 +198,18 @@ public class CoinEventScenarioManager : MonoBehaviour {
                 string halvingKey = $"halving_applied_{coin.Symbol}_{lastEventDate:yyyyMMdd}";
                 if (!processedKeys.Contains(halvingKey)) {
                     meta.DailyMintAmount /= 2;
-                    string msg = $"{coin.Name}({coin.Symbol}) 반감기 시즌으로, 채굴 보상이 절반으로 줄어듭니다.";
-                    SendNews($"news_halving_{coin.Symbol}_{now:yyyyMMdd}", "[공고]", coin.Symbol, msg);
+
+                    // ★ [핵심 수정] 반감기 뉴스 현지화
+                    string tag = LocalizationManager.GetText("LBL_ANNOUNCE_TAG"); // "[공고]"
+                    string msg = string.Format(LocalizationManager.GetText("MSG_HALVING_NEWS"), coin.Name, coin.Symbol);
+                    SendNews($"news_halving_{coin.Symbol}_{now:yyyyMMdd}", tag, coin.Symbol, msg);
+
                     processedKeys.Add(halvingKey);
                     Debug.Log($"<color=#00BFFF>[반감기 시스템]</color> {coin.Symbol}: 채굴량 반토막");
                 }
             }
 
-           
+
             bool isPumpingTime = false;
             int duration = 7; 
 
@@ -269,10 +273,12 @@ public class CoinEventScenarioManager : MonoBehaviour {
 
     private void SendNews(string specificKey, string tag, string symbol, string msg) {
         if (EventUIManager.Instance != null) {
+            string authorNameStr = $"{LocalizationManager.GetText("BRAND_NAME")} {LocalizationManager.GetText("LBL_News")}";
+
             UIEventData newsData = new UIEventData {
                 key = specificKey,
                 type = UIEventType.News,
-                authorName = "불비트 뉴스",
+                authorName = authorNameStr,
                 category = (NewsCategory)5,
                 title = "",
                 message = $"<b>{tag} {symbol}</b>\n\n{msg}",

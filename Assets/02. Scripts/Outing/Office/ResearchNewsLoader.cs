@@ -34,19 +34,19 @@ public class ResearchNewsLoader : MonoBehaviour {
         TimeSpan diff = gameNow - occurredTime;
 
         // 미래 시간 방어 로직 (혹시나 발생 시간이 현재보다 앞선 경우)
-        if (diff.TotalSeconds < 0) return "방금";
+        if (diff.TotalSeconds < 0) return LocalizationManager.GetText("LBL_TIME_JUST_NOW");
 
-        // 2. 1시간 이내 (60분 미만) -> 방금
+        // 2. 1시간 이내 (60분 미만) -> 방금 (Just now)
         if (diff.TotalMinutes < 60) {
-            return "방금";
+            return LocalizationManager.GetText("LBL_TIME_JUST_NOW");
         }
 
-        // 3. 당일 (24시간 이내) -> n시간 전
+        // 3. 당일 (24시간 이내) -> n시간 전 ({0} hours ago)
         if (diff.TotalHours < 24) {
-            return $"{(int)diff.TotalHours}시간 전";
+            return string.Format(LocalizationManager.GetText("LBL_TIME_HOURS_AGO"), (int)diff.TotalHours);
         }
 
-        // 4. 그 이상 -> n일 전
-        return $"{(int)diff.TotalDays}일 전";
+        // 4. 그 이상 -> n일 전 ({0} days ago)
+        return string.Format(LocalizationManager.GetText("LBL_TIME_DAYS_AGO"), (int)diff.TotalDays);
     }
 }

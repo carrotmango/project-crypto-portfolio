@@ -9,7 +9,7 @@
       }
     },
     {
-      "key": "trump_president",
+      "key": "PRSDNT_president",
       "durationHours": 18,
       "exchangeRateEffect": {
         "targetRateMin": 1346.0,
@@ -22,7 +22,7 @@
       }
     },
     {
-      "key": "trump_president_02",
+      "key": "PRSDNT_president_02",
       "durationHours": 24,
       "exchangeRateEffect": {
         "targetRateMin": 1320.0,
@@ -46,7 +46,7 @@
         {
           "targetSegment": 0,
           "symbols": [
-            "TRUMP"
+            "PRSDNT"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 3,
@@ -67,7 +67,7 @@
         {
           "symbols": [
             "DOGE",
-            "PEPE"
+            "FROG"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 3,
@@ -78,7 +78,7 @@
       ]
     },
     {
-      "key": "xrp_rumor_positive",
+      "key": "xrs_rumor_positive",
       "durationHours": 12,
       "globalMarketPhase": {
         "phase": 4,
@@ -87,7 +87,7 @@
       "targetGroups": [
         {
           "symbols": [
-            "XRP"
+            "xrs"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 2,
@@ -98,7 +98,7 @@
       ]
     },
     {
-      "key": "xrp_rumor_negative",
+      "key": "xrs_rumor_negative",
       "durationHours": 12,
       "globalMarketPhase": {
         "phase": 4,
@@ -107,7 +107,7 @@
       "targetGroups": [
         {
           "symbols": [
-            "XRP"
+            "xrs"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 6,
@@ -118,7 +118,7 @@
       ]
     },
     {
-      "key": "xrp_rumor_negative2",
+      "key": "xrs_rumor_negative2",
       "durationHours": 12,
       "globalMarketPhase": {
         "phase": 4,
@@ -127,7 +127,7 @@
       "targetGroups": [
         {
           "symbols": [
-            "XRP"
+            "xrs"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 7,
@@ -138,7 +138,7 @@
       ]
     },
     {
-      "key": "solana_news_0107",
+      "key": "sinana_news_0107",
       "durationHours": 72,
       "globalMarketPhase": {
         "phase": 5,
@@ -147,7 +147,7 @@
       "targetGroups": [
         {
           "symbols": [
-            "SOL"
+            "SNA"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 4,
@@ -158,7 +158,7 @@
       ]
     },
     {
-      "key": "movement_news_0109",
+      "key": "runner_news_0109",
       "durationHours": 48,
       "globalMarketPhase": {
         "phase": 5,
@@ -167,7 +167,7 @@
       "targetGroups": [
         {
           "symbols": [
-            "MOVE"
+            "RUN"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 5,
@@ -178,7 +178,7 @@
       ]
     },
     {
-      "key": "movement_A_delist_risk",
+      "key": "runner_A_delist_risk",
       "durationHours": 24,
       "globalMarketPhase": {
         "phase": 5,
@@ -187,7 +187,7 @@
       "targetGroups": [
         {
           "symbols": [
-            "MOVE"
+            "RUN"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 5,
@@ -198,7 +198,7 @@
       ]
     },
     {
-      "key": "movement_B_delisted",
+      "key": "runner_B_delisted",
       "durationHours": 24,
       "globalMarketPhase": {
         "phase": 8,
@@ -207,7 +207,7 @@
       "targetGroups": [
         {
           "symbols": [
-            "MOVE"
+            "RUN"
           ],
           "coinEventType": 1,
           "targetMarketPhase": 9,
@@ -218,7 +218,7 @@
       ]
     },
     {
-      "key": "movement_E_relist",
+      "key": "runner_E_relist",
       "durationHours": 4,
       "globalMarketPhase": {
         "phase": 5,
@@ -227,7 +227,7 @@
       "targetGroups": [
         {
           "symbols": [
-            "MOVE"
+            "RUN"
           ],
           "coinEventType": 2,
           "relistBasePrice": 400,
@@ -239,7 +239,7 @@
       ]
     },
     {
-      "key": "movement_B_not_delisted",
+      "key": "runner_B_not_delisted",
       "durationHours": 24,
       "globalMarketPhase": {
         "phase": 5,
@@ -248,7 +248,7 @@
       "targetGroups": [
         {
           "symbols": [
-            "MOVE"
+            "RUN"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 4,
@@ -259,7 +259,7 @@
       ]
     },
     {
-      "key": "movement_C_engine_upgrade",
+      "key": "runner_C_engine_upgrade",
       "durationHours": 24,
       "globalMarketPhase": {
         "phase": 5,
@@ -268,7 +268,7 @@
       "targetGroups": [
         {
           "symbols": [
-            "MOVE"
+            "RUN"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 3,
@@ -279,7 +279,7 @@
       ]
     },
     {
-      "key": "movement_rumor_is_rumor",
+      "key": "runner_rumor_is_rumor",
       "durationHours": 24,
       "globalMarketPhase": {
         "phase": 5,
@@ -288,7 +288,7 @@
       "targetGroups": [
         {
           "symbols": [
-            "MOVE"
+            "RUN"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 3,
@@ -348,7 +348,7 @@
       "targetGroups": [
         {
           "symbols": [
-            "ANIME"
+            "OTAKU"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 3,
@@ -392,7 +392,7 @@
       ]
     },
     {
-      "key": "trump_01_16",
+      "key": "PRSDNT_01_16",
       "durationHours": 48,
       "globalMarketPhase": {
         "phase": 3,
@@ -410,7 +410,7 @@
         },
         {
           "symbols": [
-            "TRUMP"
+            "PRSDNT"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 3,
@@ -485,12 +485,12 @@
       "targetGroups": []
     },
     {
-      "key": "sui_listing_news",
+      "key": "wat_listing_news",
       "durationHours": 1,
       "targetGroups": [
         {
           "symbols": [
-            "SUI"
+            "WAT"
           ],
           "coinEventType": 0,
           "targetMarketPhase": 3,
@@ -501,12 +501,12 @@
       ]
     },
     {
-      "key": "sui_dump_1",
+      "key": "wat_dump_1",
       "durationHours": 4,
       "targetGroups": [
         {
           "symbols": [
-            "SUI"
+            "WAT"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 4,
@@ -517,12 +517,12 @@
       ]
     },
     {
-      "key": "sui_pump_1",
+      "key": "wat_pump_1",
       "durationHours": 1,
       "targetGroups": [
         {
           "symbols": [
-            "SUI"
+            "WAT"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 4,
@@ -533,12 +533,12 @@
       ]
     },
     {
-      "key": "sui_pump_2",
+      "key": "wat_pump_2",
       "durationHours": 2,
       "targetGroups": [
         {
           "symbols": [
-            "SUI"
+            "WAT"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 3,
@@ -768,7 +768,7 @@
       "targetGroups": [
         {
           "symbols": [
-            "ANIME"
+            "OTAKU"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 5,
@@ -779,7 +779,7 @@
       ]
     },
     {
-      "key": "middle_east_trump_02_06",
+      "key": "middle_east_PRSDNT_02_06",
       "durationHours": 36,
       "exchangeRateEffect": {
         "targetRateMin": 1400.0,
@@ -848,7 +848,7 @@
       ]
     },
     {
-      "key": "Aave_positive_02_09",
+      "key": "ghst_positive_02_09",
       "durationHours": 36,
       "globalMarketPhase": {
         "phase": 6,
@@ -866,7 +866,7 @@
         },
         {
           "symbols": [
-            "AAVE"
+            "GHST"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 2,
@@ -901,7 +901,7 @@
       ]
     },
     {
-      "key": "trump_middle_east_war_02_13",
+      "key": "PRSDNT_middle_east_war_02_13",
       "durationHours": 48,
       "exchangeRateEffect": {
         "targetRateMin": 1535.0,
@@ -925,7 +925,7 @@
       ]
     },
     {
-      "key": "trump_middle_east_war_02_15",
+      "key": "PRSDNT_middle_east_war_02_15",
       "durationHours": 48,
       "exchangeRateEffect": {
         "targetRateMin": 1515.0,
@@ -949,7 +949,7 @@
       ]
     },
     {
-      "key": "trump_middle_east_deal_success_02_16",
+      "key": "PRSDNT_middle_east_deal_success_02_16",
       "durationHours": 48,
       "exchangeRateEffect": {
         "targetRateMin": 1485.0,
@@ -1027,7 +1027,7 @@
         },
         {
           "symbols": [
-            "WLD"
+            "INT"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 2,
@@ -1224,7 +1224,7 @@
       ]
     },
     {
-      "key": "sui_positive_03_09",
+      "key": "wat_positive_03_09",
       "durationHours": 48,
       "exchangeRateEffect": {
         "targetRateMin": 1375.0,
@@ -1248,7 +1248,7 @@
         },
         {
           "symbols": [
-            "SUI"
+            "WAT"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 2,
@@ -1293,7 +1293,7 @@
       ]
     },
     {
-      "key": "trump_big_days_comming_03_13",
+      "key": "PRSDNT_big_days_comming_03_13",
       "durationHours": 72,
       "exchangeRateEffect": {
         "targetRateMin": 1355.0,
@@ -1351,7 +1351,7 @@
       "targetGroups": [
         {
           "symbols": [
-            "PEPE"
+            "FROG"
           ],
           "coinEventType": -1,
           "targetMarketPhase": 2,

@@ -268,11 +268,45 @@ public class GameMenuController : MonoBehaviour {
     }
 
     private void ApplyLanguage(int index) {
-        // [추가] 매니저의 언어 설정을 바꾸고 모든 UILocalizer를 새로고침합니다.
+        // 1. UI 언어 변경
         LocalizationManager.SetLanguage(index);
 
-        // 추가로 드롭다운 옵션 텍스트들도 실시간으로 바꾸고 싶다면 다시 빌드
+        // 2. 드롭다운 글자 갱신
         UpdateDropdownOptions();
+
+        // 3. 커뮤니티 데이터 재로드
+        if (CommunityDataLoader.Instance != null) {
+            CommunityDataLoader.Instance.LoadData();
+        }
+
+        // 4. [핵심 추가] UI & 정식 뉴스 데이터 재로드 (UI.json / UI_En.json)
+        NewsRepository newsRepo = FindAnyObjectByType<NewsRepository>();
+        if (newsRepo != null) {
+            newsRepo.LoadData();
+        }
+
+        // 5. [핵심 추가] 트위터(Xbird) 뉴스 데이터 재로드 (News.json / News_En.json)
+        XPostRepository xpostRepo = FindAnyObjectByType<XPostRepository>();
+        if (xpostRepo != null) {
+            xpostRepo.Load();
+        }
+
+
+        RandomEventManager randomEvtMgr = FindAnyObjectByType<RandomEventManager>();
+        if (randomEvtMgr != null) {
+            randomEvtMgr.LoadEvents();
+        }
+
+        if (CoinManager.Instance != null && CoinManager.Instance.coins != null) {
+            foreach (var coin in CoinManager.Instance.coins) {
+                // Meta 데이터베이스에서 번역된 최신 이름을 찾아서
+                var meta = System.Array.Find(CoinMetaDatabase.AllCoins, m => m.Symbol == coin.Symbol);
+                if (meta != null) {
+                    // 코인 객체의 이름을 강제로 덮어씌움!
+                    coin.Name = meta.Name;
+                }
+            }
+        }
     }
 
     // 드롭다운 글자 자체도 언어 바꿀 때마다 갱신해주기

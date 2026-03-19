@@ -51,11 +51,13 @@ public class TotalAssetPanelController : MonoBehaviour {
 
         StatusPanelController status = FindFirstObjectByType<StatusPanelController>();
 
-        // 루프 돌기 전 필요한 실시간 자산 미리 계산
         double crypto = CoinManager.Instance.GetBullbitAsset();
         double bank = CoinManager.Instance.GetSatoshiBankAsset();
         double estate = GetEstateAssetValue();
         double total = (status != null) ? status.GetTotalBalance() : (crypto + bank + estate);
+
+        // [수정] 공통 화폐 단위 불러오기 (KRW 하드코딩 제거용)
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
 
         foreach (var asset in userAssets) {
             PlatformInfo info = platformInfos.Find(p => p.id == asset.platformId);
@@ -64,35 +66,25 @@ public class TotalAssetPanelController : MonoBehaviour {
             double displayedValue = 0;
             string currentId = info.id;
 
-            // 1. 수치 배정 로직
-            if (currentId == "bullbit") {
-                displayedValue = crypto;
-            } else if (currentId == "satoshi_bank") {
-                displayedValue = bank;
-            } else if (currentId == "my_total_asset") {
-                displayedValue = total;
-            } else if (currentId == "real_estate") {
-                displayedValue = estate;
-            } else {
-                displayedValue = asset.cashAsset;
-            }
+            if (currentId == "bullbit") displayedValue = crypto;
+            else if (currentId == "satoshi_bank") displayedValue = bank;
+            else if (currentId == "my_total_asset") displayedValue = total;
+            else if (currentId == "real_estate") displayedValue = estate;
+            else displayedValue = asset.cashAsset;
 
-            // 2. 프리팹 생성 및 기본 설정
             GameObject row = Instantiate(platformRowPrefab, contentParent);
             row.name = currentId;
 
-            // 3. 로고 설정 및 사이즈 조절 (기존 수치 유지)
             Image logoImage = row.transform.Find("Platform_logo").GetComponent<Image>();
             logoImage.sprite = info.logo;
 
             ApplyLogoSize(currentId, logoImage);
 
-            // 4. 텍스트 정보 입력
-            row.transform.Find("Platform_name").GetComponent<TextMeshProUGUI>().text = info.displayName;
-            row.transform.Find("Platform_Asset").GetComponent<TextMeshProUGUI>().text = $"{displayedValue:N0} KRW";
-            row.transform.Find("Platform_Type").GetComponent<TextMeshProUGUI>().text = info.type;
+            // ★ [핵심] 인스펙터에 적어둔 Key(info.displayName)를 번역기에 넣어서 돌립니다!
+            row.transform.Find("Platform_name").GetComponent<TextMeshProUGUI>().text = LocalizationManager.GetText(info.displayName);
+            row.transform.Find("Platform_Type").GetComponent<TextMeshProUGUI>().text = LocalizationManager.GetText(info.type);
+            row.transform.Find("Platform_Asset").GetComponent<TextMeshProUGUI>().text = $"{displayedValue:N0} {unit}";
 
-            // 5. 버튼 이벤트 연결
             Button rowButton = row.GetComponent<Button>() ?? row.AddComponent<Button>();
             rowButton.onClick.AddListener(() => OpenPortfolioPanel(currentId));
 
@@ -122,6 +114,7 @@ public class TotalAssetPanelController : MonoBehaviour {
     public void UpdatePlatformAssetTexts() {
         StatusPanelController status = FindFirstObjectByType<StatusPanelController>();
         double realTotal = (status != null) ? status.GetTotalBalance() : 0;
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY"); // [추가]
 
         foreach (Transform row in contentParent) {
             string id = row.name;
@@ -133,10 +126,10 @@ public class TotalAssetPanelController : MonoBehaviour {
             else if (id == "my_total_asset") rowValue = realTotal;
 
             var assetText = row.transform.Find("Platform_Asset")?.GetComponent<TextMeshProUGUI>();
-            if (assetText != null) assetText.text = $"{rowValue:N0} KRW";
+            // [수정] KRW 대신 unit 적용
+            if (assetText != null) assetText.text = $"{rowValue:N0} {unit}";
         }
     }
-
     private double GetEstateAssetValue() {
         if (RealEstatePanelController.Instance == null) return 0;
         var estates = RealEstatePanelController.Instance.GetAllEstates();

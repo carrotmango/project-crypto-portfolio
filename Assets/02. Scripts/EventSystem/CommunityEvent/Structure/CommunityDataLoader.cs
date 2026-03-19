@@ -1,45 +1,38 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class CommunityDataLoader : MonoBehaviour {
     public static CommunityDataLoader Instance;
-
-    // ÀÎ½ºÆåÅÍ¿¡¼­ È®ÀÎ¿ë (µğ¹ö±ë¿ë)
-    public TextAsset communityJson;
-    public TextAsset userJson;
 
     public CommunityPostDB PostDB { get; private set; }
     public UserDB UserDB { get; private set; }
 
     private void Awake() {
-        if (Instance == null) Instance = this;
+        // ë¡œë¹„/ì¸ê²Œì„ ì™”ë‹¤ê°”ë‹¤ í•  ë•Œ ì¸ìŠ¤í„´ìŠ¤ ê¼¬ì„ ë°©ì§€
+        Instance = this;
         LoadData();
     }
 
     public void LoadData() {
-        // =========================================================
-        // [ÇÙ½É] Assets/Resources/json/ Æú´õ ¾ÈÀÇ ÆÄÀÏÀ» ÀÚµ¿À¸·Î ·Îµå
-        // ÆÄÀÏ¸í: community_noise, community_users (È®ÀåÀÚ Á¦¿Ü)
-        // =========================================================
+        // [ìˆ˜ì •] GameMenuControllerë‘ ë˜‘ê°™ì€ í‚¤ê°’("Saved_Language")ìœ¼ë¡œ ê°€ì ¸ì™€ì•¼ í•©ë‹ˆë‹¤!!
+        int currentLang = PlayerPrefs.GetInt("Saved_Language", 1);
 
-        // 1. ¶Ë±Û ÅÛÇÃ¸´ ·Îµå (°æ·Î: json/community_noise)
-        communityJson = Resources.Load<TextAsset>("json/Community_Noise");
+        // 0ì´ë©´ ì˜ì–´(_En), 1ì´ë©´ í•œêµ­ì–´(ì ‘ë¯¸ì‚¬ ì—†ìŒ)
+        string suffix = (currentLang == 0) ? "_En" : "";
 
-        // 2. À¯Àú DB ·Îµå (°æ·Î: json/community_users)
-        userJson = Resources.Load<TextAsset>("json/Community_Users");
+        // 1. ë°ì´í„° ë¡œë“œ (íŒŒì¼ëª…: Community_Noise / Community_Noise_En)
+        TextAsset noiseJson = Resources.Load<TextAsset>($"json/Community_Noise{suffix}");
+        TextAsset userJson = Resources.Load<TextAsset>($"json/Community_Users{suffix}");
 
-        // 3. ÆÄ½Ì (µ¥ÀÌÅÍ º¯È¯)
-        if (communityJson != null) {
-            PostDB = JsonUtility.FromJson<CommunityPostDB>(communityJson.text);
-            Debug.Log($"[Community] ¶Ë±Û ÅÛÇÃ¸´ ·Îµå ¼º°ø: {PostDB.templates.Count}°³");
+        if (noiseJson != null) {
+            PostDB = JsonUtility.FromJson<CommunityPostDB>(noiseJson.text);
+            Debug.Log($"[Community] í…œí”Œë¦¿ ë¡œë“œ ì™„ë£Œ: {noiseJson.name}");
         } else {
-            Debug.LogError("[Community] 'Resources/json/community_noise' ÆÄÀÏÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù!");
+            Debug.LogError($"[Community] íŒŒì¼ì„ ì°¾ì„ ìˆ˜ ì—†ìŒ: json/Community_Noise{suffix}");
         }
 
         if (userJson != null) {
             UserDB = JsonUtility.FromJson<UserDB>(userJson.text);
-            Debug.Log($"[Community] À¯Àú DB ·Îµå ¼º°ø: {UserDB.names.Length}¸í");
-        } else {
-            Debug.LogError("[Community] 'Resources/json/community_users' ÆÄÀÏÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù!");
+            Debug.Log($"[Community] ìœ ì € ë¡œë“œ ì™„ë£Œ: {userJson.name}");
         }
     }
 }

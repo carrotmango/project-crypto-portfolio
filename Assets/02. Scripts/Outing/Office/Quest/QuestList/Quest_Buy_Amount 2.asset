@@ -22,6 +22,6 @@ MonoBehaviour:
   targetTheme: 0
   rewards:
   - type: 1
-    targetID: XRP
+    targetID: XRS
     amount: 10000
   prerequisiteQuestID: 0_002

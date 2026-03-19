@@ -19,7 +19,7 @@
       "effectKey": "welcome_to_project_crypto"
     },
     {
-      "key": "trump_president",
+      "key": "PRSDNT_president",
       "authorId": "system",
       "executionMode": 1,
       "startDate": "2020-01-02 12:00",
@@ -31,11 +31,11 @@
       "probability": 1.0,
       "repeatType": 1,
       "gate": true,
-      "uiKey": "trump_president",
-      "effectKey": "trump_president"
+      "uiKey": "PRSDNT_president",
+      "effectKey": "PRSDNT_president"
     },
     {
-      "key": "trump_president_02",
+      "key": "PRSDNT_president_02",
       "authorId": "system",
       "executionMode": 1,
       "startDate": "2020-01-03 12:00",
@@ -47,8 +47,8 @@
       "probability": 1.0,
       "repeatType": 1,
       "gate": true,
-      "uiKey": "trump_president_02",
-      "effectKey": "trump_president_02"
+      "uiKey": "PRSDNT_president_02",
+      "effectKey": "PRSDNT_president_02"
     },
     {
       "key": "elonevent1",
@@ -64,13 +64,13 @@
       "gate": true,
       "prerequisitesSymbols": [
         "DOGE",
-        "PEPE"
+        "FROG"
       ],
       "uiKey": "elonevent1",
       "effectKey": "elonevent1",
       "outcomes": [
         {
-          "key": "dogepepefix",
+          "key": "dogeFROGfix",
           "weight": 1.0
         }
       ]
@@ -93,7 +93,7 @@
       "uiKey": "Qubit_psy"
     },
     {
-      "key": "xrp_rumor",
+      "key": "xrs_rumor",
       "authorId": "system",
       "executionMode": 1,
       "startDate": "2020-01-05 19:00",
@@ -106,23 +106,23 @@
       "gate": false,
       "prerequisites": [],
       "prerequisitesSymbols": [
-        "XRP"
+        "xrs"
       ],
       "outcomes": [
         {
-          "key": "xrp_rumor_positive",
+          "key": "xrs_rumor_positive",
           "weight": 0.5
         },
         {
-          "key": "xrp_rumor_negative",
+          "key": "xrs_rumor_negative",
           "weight": 0.5
         }
       ],
       "outcomeRule": "OneOf",
-      "uiKey": "xrp_rumor"
+      "uiKey": "xrs_rumor"
     },
     {
-      "key": "xrp_rumor_positive",
+      "key": "xrs_rumor_positive",
       "authorId": "system",
       "executionMode": 2,
       "dayOffset": {
@@ -136,17 +136,17 @@
       "repeatType": 1,
       "gate": true,
       "prerequisites": [
-        "xrp_rumor"
+        "xrs_rumor"
       ],
       "prerequisitesSymbols": [
-        "XRP"
+        "xrs"
       ],
       "outcomes": [],
-      "uiKey": "xrp_rumor_positive",
-      "effectKey": "xrp_rumor_positive"
+      "uiKey": "xrs_rumor_positive",
+      "effectKey": "xrs_rumor_positive"
     },
     {
-      "key": "xrp_rumor_negative",
+      "key": "xrs_rumor_negative",
       "authorId": "system",
       "executionMode": 2,
       "dayOffset": {
@@ -160,22 +160,22 @@
       "repeatType": 1,
       "gate": true,
       "prerequisites": [
-        "xrp_rumor"
+        "xrs_rumor"
       ],
       "prerequisitesSymbols": [
-        "XRP"
+        "xrs"
       ],
       "outcomes": [
         {
-          "key": "xrp_rumor_negative2",
+          "key": "xrs_rumor_negative2",
           "weight": 1.0
         }
       ],
-      "uiKey": "xrp_rumor_negative",
-      "effectKey": "xrp_rumor_negative"
+      "uiKey": "xrs_rumor_negative",
+      "effectKey": "xrs_rumor_negative"
     },
     {
-      "key": "xrp_rumor_negative2",
+      "key": "xrs_rumor_negative2",
       "authorId": "system",
       "executionMode": 2,
       "dayOffset": {
@@ -189,23 +189,23 @@
       "repeatType": 1,
       "gate": true,
       "prerequisites": [
-        "xrp_rumor_negative"
+        "xrs_rumor_negative"
       ],
       "prerequisitesSymbols": [
-        "XRP"
+        "xrs"
       ],
       "outcomes": [],
-      "uiKey": "xrp_rumor_negative2",
-      "effectKey": "xrp_rumor_negative2"
+      "uiKey": "xrs_rumor_negative2",
+      "effectKey": "xrs_rumor_negative2"
     },
     {
-      "key": "solana_news_0107",
+      "key": "sinana_news_0107",
       "authorId": "system",
       "executionMode": 1,
       "startDate": "2020-01-07 09:00",
       "endDate": "2020-01-07 10:30",
       "prerequisitesSymbols": [
-        "SOL"
+        "SNA"
       ],
       "timeRule": {
         "type": 0
@@ -213,17 +213,17 @@
       "probability": 1.0,
       "repeatType": 1,
       "gate": true,
-      "uiKey": "solana_news_0107",
-      "effectKey": "solana_news_0107"
+      "uiKey": "sinana_news_0107",
+      "effectKey": "sinana_news_0107"
     },
     {
-      "key": "movement_news_0109",
+      "key": "runner_news_0109",
       "authorId": "system",
       "executionMode": 1,
       "startDate": "2020-01-09 13:00",
       "endDate": "2020-01-09 16:30",
       "prerequisitesSymbols": [
-        "MOVE"
+        "RUN"
       ],
       "timeRule": {
         "type": 0
@@ -231,11 +231,11 @@
       "probability": 1.0,
       "repeatType": 1,
       "gate": true,
-      "uiKey": "movement_news_0109",
-      "effectKey": "movement_news_0109"
+      "uiKey": "runner_news_0109",
+      "effectKey": "runner_news_0109"
     },
     {
-      "key": "movement_rumor",
+      "key": "runner_rumor",
       "authorId": "system",
       "executionMode": 1,
       "startDate": "2020-01-09 20:00",
@@ -248,23 +248,23 @@
       "gate": false,
       "prerequisites": [],
       "prerequisitesSymbols": [
-        "MOVE"
+        "RUN"
       ],
       "outcomes": [
         {
-          "key": "movement_A_delist_risk_rumor",
+          "key": "runner_A_delist_risk_rumor",
           "weight": 0.75
         },
         {
-          "key": "movement_rumor_is_rumor",
+          "key": "runner_rumor_is_rumor",
           "weight": 0.25
         }
       ],
       "outcomeRule": "OneOf",
-      "uiKey": "movement_rumor"
+      "uiKey": "runner_rumor"
     },
     {
-      "key": "movement_rumor_is_rumor",
+      "key": "runner_rumor_is_rumor",
       "authorId": "system",
       "executionMode": 2,
       "dayOffset": {
@@ -278,22 +278,22 @@
       "repeatType": 1,
       "gate": true,
       "prerequisites": [
-        "movement_rumor"
+        "runner_rumor"
       ],
       "prerequisitesSymbols": [
-        "MOVE"
+        "RUN"
       ],
       "outcomes": [
         {
-          "key": "movement_C_engine_upgrade_2",
+          "key": "runner_C_engine_upgrade_2",
           "weight": 1.0
         }
       ],
-      "uiKey": "movement_rumor_is_rumor",
-      "effectKey": "movement_rumor_is_rumor"
+      "uiKey": "runner_rumor_is_rumor",
+      "effectKey": "runner_rumor_is_rumor"
     },
     {
-      "key": "movement_A_delist_risk_rumor",
+      "key": "runner_A_delist_risk_rumor",
       "authorId": "system",
       "executionMode": 2,
       "dayOffset": {
@@ -307,24 +307,24 @@
       "repeatType": 1,
       "gate": true,
       "prerequisites": [
-        "movement_rumor"
+        "runner_rumor"
       ],
       "prerequisitesSymbols": [
-        "MOVE"
+        "RUN"
       ],
       "outcomes": [
         {
-          "key": "movement_A_delist_risk_news",
+          "key": "runner_A_delist_risk_news",
           "weight": 1.0
         }
       ]
     },
     {
-      "key": "movement_A_delist_risk_news",
+      "key": "runner_A_delist_risk_news",
       "authorId": "system",
       "executionMode": 2,
       "prerequisites": [
-        "movement_A_delist_risk_rumor"
+        "runner_A_delist_risk_rumor"
       ],
       "dayOffset": {
         "type": 1,
@@ -335,29 +335,29 @@
       },
       "repeatType": 1,
       "gate": true,
-      "effectKey": "movement_A_delist_risk",
-      "uiKey": "movement_A_delist_risk",
+      "effectKey": "runner_A_delist_risk",
+      "uiKey": "runner_A_delist_risk",
       "prerequisitesSymbols": [
-        "MOVE"
+        "RUN"
       ],
       "outcomeRule": "OneOf",
       "outcomes": [
         {
-          "key": "movement_B_delisted",
+          "key": "runner_B_delisted",
           "weight": 0.5
         },
         {
-          "key": "movement_B_not_delisted",
+          "key": "runner_B_not_delisted",
           "weight": 0.5
         }
       ]
     },
     {
-      "key": "movement_B_delisted",
+      "key": "runner_B_delisted",
       "authorId": "system",
       "executionMode": 2,
       "prerequisites": [
-        "movement_A_delist_risk_news"
+        "runner_A_delist_risk_news"
       ],
       "dayOffset": {
         "type": 1,
@@ -368,24 +368,24 @@
       },
       "repeatType": 1,
       "gate": true,
-      "effectKey": "movement_B_delisted",
-      "uiKey": "movement_B_delisted",
+      "effectKey": "runner_B_delisted",
+      "uiKey": "runner_B_delisted",
       "prerequisitesSymbols": [
-        "MOVE"
+        "RUN"
       ],
       "outcomes": [
         {
-          "key": "movement_D_revival_prepare",
+          "key": "runner_D_revival_prepare",
           "weight": 1.0
         }
       ]
     },
     {
-      "key": "movement_B_not_delisted",
+      "key": "runner_B_not_delisted",
       "authorId": "system",
       "executionMode": 2,
       "prerequisites": [
-        "movement_A_delist_risk_news"
+        "runner_A_delist_risk_news"
       ],
       "dayOffset": {
         "type": 1,
@@ -396,24 +396,24 @@
       },
       "repeatType": 1,
       "gate": true,
-      "effectKey": "movement_B_not_delisted",
-      "uiKey": "movement_B_not_delisted",
+      "effectKey": "runner_B_not_delisted",
+      "uiKey": "runner_B_not_delisted",
       "prerequisitesSymbols": [
-        "MOVE"
+        "RUN"
       ],
       "outcomes": [
         {
-          "key": "movement_C_engine_upgrade",
+          "key": "runner_C_engine_upgrade",
           "weight": 1.0
         }
       ]
     },
     {
-      "key": "movement_C_engine_upgrade",
+      "key": "runner_C_engine_upgrade",
       "authorId": "system",
       "executionMode": 2,
       "prerequisites": [
-        "movement_B_not_delisted"
+        "runner_B_not_delisted"
       ],
       "dayOffset": {
         "type": 1,
@@ -427,17 +427,17 @@
       "repeatType": 1,
       "gate": true,
       "prerequisitesSymbols": [
-        "MOVE"
+        "RUN"
       ],
-      "effectKey": "movement_C_engine_upgrade",
-      "uiKey": "movement_C_engine_upgrade"
+      "effectKey": "runner_C_engine_upgrade",
+      "uiKey": "runner_C_engine_upgrade"
     },
     {
-      "key": "movement_C_engine_upgrade_2",
+      "key": "runner_C_engine_upgrade_2",
       "authorId": "system",
       "executionMode": 2,
       "prerequisites": [
-        "movement_rumor_is_rumor"
+        "runner_rumor_is_rumor"
       ],
       "dayOffset": {
         "type": 1,
@@ -451,17 +451,17 @@
       "repeatType": 1,
       "gate": true,
       "prerequisitesSymbols": [
-        "MOVE"
+        "RUN"
       ],
-      "effectKey": "movement_C_engine_upgrade",
-      "uiKey": "movement_C_engine_upgrade"
+      "effectKey": "runner_C_engine_upgrade",
+      "uiKey": "runner_C_engine_upgrade"
     },
     {
-      "key": "movement_D_revival_prepare",
+      "key": "runner_D_revival_prepare",
       "authorId": "system",
       "executionMode": 2,
       "prerequisites": [
-        "movement_B_delisted"
+        "runner_B_delisted"
       ],
       "dayOffset": {
         "type": 1,
@@ -472,20 +472,20 @@
       },
       "repeatType": 1,
       "gate": true,
-      "uiKey": "movement_D_revival_prepare",
+      "uiKey": "runner_D_revival_prepare",
       "outcomes": [
         {
-          "key": "movement_E_relist",
+          "key": "runner_E_relist",
           "weight": 1.0
         }
       ]
     },
     {
-      "key": "movement_E_relist",
+      "key": "runner_E_relist",
       "authorId": "system",
       "executionMode": 2,
       "prerequisites": [
-        "movement_D_revival_prepare"
+        "runner_D_revival_prepare"
       ],
       "dayOffset": {
         "type": 1,
@@ -498,8 +498,8 @@
       },
       "repeatType": 1,
       "gate": true,
-      "effectKey": "movement_E_relist",
-      "uiKey": "movement_E_relist"
+      "effectKey": "runner_E_relist",
+      "uiKey": "runner_E_relist"
     },
     {
       "key": "choco_listing_announce_1",
@@ -576,7 +576,7 @@
       "repeatType": 1,
       "gate": true,
       "prerequisitesSymbols": [
-        "ANIME"
+        "OTAKU"
       ],
       "uiKey": "elonevent2",
       "effectKey": "elonevent2",
@@ -617,7 +617,7 @@
       "outcomes": []
     },
     {
-      "key": "trump_01_16",
+      "key": "PRSDNT_01_16",
       "authorId": "system",
       "executionMode": 1,
       "startDate": "2020-01-16 14:00",
@@ -629,8 +629,8 @@
       "repeatType": 1,
       "gate": true,
       "prerequisitesSymbols": [],
-      "uiKey": "trump_01_16",
-      "effectKey": "trump_01_16",
+      "uiKey": "PRSDNT_01_16",
+      "effectKey": "PRSDNT_01_16",
       "outcomes": []
     },
     {
@@ -684,7 +684,7 @@
       "outcomes": []
     },
     {
-      "key": "sui_listing_announce",
+      "key": "wat_listing_announce",
       "authorId": "system",
       "executionMode": 1,
       "startDate": "2020-01-21 10:00",
@@ -696,20 +696,20 @@
       "probability": 1.0,
       "repeatType": 1,
       "gate": true,
-      "uiKey": "sui_listing_soon_news",
+      "uiKey": "wat_listing_soon_news",
       "outcomes": [
         {
-          "key": "sui_listing_news",
+          "key": "wat_listing_news",
           "weight": 1.0
         }
       ]
     },
     {
-      "key": "sui_listing_news",
+      "key": "wat_listing_news",
       "authorId": "system",
       "executionMode": 2,
       "prerequisites": [
-        "sui_listing_announce"
+        "wat_listing_announce"
       ],
       "prerequisitesSymbols": [],
       "dayOffset": {
@@ -723,24 +723,24 @@
       },
       "repeatType": 1,
       "gate": true,
-      "effectKey": "sui_listing_news",
-      "uiKey": "sui_listing_news",
+      "effectKey": "wat_listing_news",
+      "uiKey": "wat_listing_news",
       "outcomes": [
         {
-          "key": "sui_pump_1",
+          "key": "wat_pump_1",
           "weight": 1.0
         }
       ]
     },
     {
-      "key": "sui_pump_1",
+      "key": "wat_pump_1",
       "authorId": "system",
       "executionMode": 2,
       "prerequisites": [
-        "sui_listing_news"
+        "wat_listing_news"
       ],
       "prerequisitesSymbols": [
-        "SUI"
+        "WAT"
       ],
       "dayOffset": {
         "type": 0
@@ -752,23 +752,23 @@
       },
       "repeatType": 1,
       "gate": true,
-      "effectKey": "sui_pump_1",
+      "effectKey": "wat_pump_1",
       "outcomes": [
         {
-          "key": "sui_dump_1",
+          "key": "wat_dump_1",
           "weight": 1.0
         }
       ]
     },
     {
-      "key": "sui_dump_1",
+      "key": "wat_dump_1",
       "authorId": "system",
       "executionMode": 2,
       "prerequisites": [
-        "sui_pump_1"
+        "wat_pump_1"
       ],
       "prerequisitesSymbols": [
-        "SUI"
+        "WAT"
       ],
       "dayOffset": {
         "type": 0
@@ -780,23 +780,23 @@
       },
       "repeatType": 1,
       "gate": true,
-      "effectKey": "sui_dump_1",
+      "effectKey": "wat_dump_1",
       "outcomes": [
         {
-          "key": "sui_pump_2",
+          "key": "wat_pump_2",
           "weight": 1.0
         }
       ]
     },
     {
-      "key": "sui_pump_2",
+      "key": "wat_pump_2",
       "authorId": "system",
       "executionMode": 2,
       "prerequisites": [
-        "sui_dump_1"
+        "wat_dump_1"
       ],
       "prerequisitesSymbols": [
-        "SUI"
+        "WAT"
       ],
       "dayOffset": {
         "type": 0
@@ -808,7 +808,7 @@
       },
       "repeatType": 1,
       "gate": true,
-      "effectKey": "sui_pump_2"
+      "effectKey": "wat_pump_2"
     },
     {
       "key": "positive_days_01_23",
@@ -999,7 +999,7 @@
       "outcomes": []
     },
             {
-      "key": "middle_east_trump_02_06",
+      "key": "middle_east_PRSDNT_02_06",
       "authorId": "system",
       "executionMode": 1,
       "startDate": "2020-02-06 12:00",
@@ -1011,8 +1011,8 @@
       "repeatType": 1,
       "gate": true,
       "prerequisitesSymbols": [],
-      "effectKey": "middle_east_trump_02_06",
-      "uiKey": "middle_east_trump_02_06",
+      "effectKey": "middle_east_PRSDNT_02_06",
+      "uiKey": "middle_east_PRSDNT_02_06",
       "outcomes": []
     },
                 {
@@ -1076,7 +1076,7 @@
       "outcomes": []
     },
         {
-      "key": "Aave_positive_02_09",
+      "key": "ghst_positive_02_09",
       "authorId": "system",
       "executionMode": 1,
       "startDate": "2020-02-09 20:00",
@@ -1088,8 +1088,8 @@
       "repeatType": 1,
       "gate": true,
       "prerequisitesSymbols": [],
-      "effectKey": "Aave_positive_02_09",
-      "uiKey": "Aave_positive_02_09",
+      "effectKey": "ghst_positive_02_09",
+      "uiKey": "ghst_positive_02_09",
       "outcomes": []
     },
     {
@@ -1110,7 +1110,7 @@
       "outcomes": []
     },
     {
-      "key": "trump_middle_east_war_02_13",
+      "key": "PRSDNT_middle_east_war_02_13",
       "authorId": "system",
       "executionMode": 1,
       "startDate": "2020-02-13 12:00",
@@ -1122,12 +1122,12 @@
       "repeatType": 1,
       "gate": true,
       "prerequisitesSymbols": [],
-      "effectKey": "trump_middle_east_war_02_13",
-      "uiKey": "trump_middle_east_war_02_13",
+      "effectKey": "PRSDNT_middle_east_war_02_13",
+      "uiKey": "PRSDNT_middle_east_war_02_13",
       "outcomes": []
     },
         {
-      "key": "trump_middle_east_war_02_15",
+      "key": "PRSDNT_middle_east_war_02_15",
       "authorId": "system",
       "executionMode": 1,
       "startDate": "2020-02-15 12:00",
@@ -1139,12 +1139,12 @@
       "repeatType": 1,
       "gate": true,
       "prerequisitesSymbols": [],
-      "effectKey": "trump_middle_east_war_02_15",
-      "uiKey": "trump_middle_east_war_02_15",
+      "effectKey": "PRSDNT_middle_east_war_02_15",
+      "uiKey": "PRSDNT_middle_east_war_02_15",
       "outcomes": []
     },
     {
-      "key": "trump_middle_east_deal_success_02_16",
+      "key": "PRSDNT_middle_east_deal_success_02_16",
       "authorId": "system",
       "executionMode": 1,
       "startDate": "2020-02-16 14:00",
@@ -1156,8 +1156,8 @@
       "repeatType": 1,
       "gate": true,
       "prerequisitesSymbols": [],
-      "effectKey": "trump_middle_east_deal_success_02_16",
-      "uiKey": "trump_middle_east_deal_success_02_16",
+      "effectKey": "PRSDNT_middle_east_deal_success_02_16",
+      "uiKey": "PRSDNT_middle_east_deal_success_02_16",
       "outcomes": []
     },
         {
@@ -1355,7 +1355,7 @@
       "outcomes": []
     },
     {
-      "key": "sui_positive_03_09",
+      "key": "wat_positive_03_09",
       "authorId": "system",
       "executionMode": 1,
       "startDate": "2020-03-09 11:00",
@@ -1367,8 +1367,8 @@
       "repeatType": 1,
       "gate": true,
       "prerequisitesSymbols": [],
-      "uiKey": "sui_positive_03_09",
-      "effectKey": "sui_positive_03_09",
+      "uiKey": "wat_positive_03_09",
+      "effectKey": "wat_positive_03_09",
       "outcomes": []
     },
     {
@@ -1389,7 +1389,7 @@
       "outcomes": []
     },
     {
-      "key": "trump_big_days_comming_03_13",
+      "key": "PRSDNT_big_days_comming_03_13",
       "authorId": "system",
       "executionMode": 1,
       "startDate": "2020-03-13 11:00",
@@ -1401,8 +1401,8 @@
       "repeatType": 1,
       "gate": true,
       "prerequisitesSymbols": [],
-      "uiKey": "trump_big_days_comming_03_13",
-      "effectKey": "trump_big_days_comming_03_13",
+      "uiKey": "PRSDNT_big_days_comming_03_13",
+      "effectKey": "PRSDNT_big_days_comming_03_13",
       "outcomes": []
     },
     {

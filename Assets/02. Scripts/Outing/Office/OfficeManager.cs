@@ -360,5 +360,10 @@ public class OfficeManager : MonoBehaviour {
     }
 
     public bool IsRealEstateUnlocked() => currentRankIndex >= 2;
-    public bool IsFuturesUnlocked() => currentRankIndex >= 3;
+    public bool IsFuturesUnlocked() {
+        // 선물거래를 아예 막으려면 바로 아래 줄의 주석(//)을 지워주세요!
+        return false;
+
+        return currentRankIndex >= 3; // 정식 버전 정상 해금 로직 (차장 이상)
+    }
 }

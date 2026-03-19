@@ -23,42 +23,42 @@ public class DailyIncomeManager : MonoBehaviour {
     }
 
     // 하루 종료(00:00) 시 호출
+    // [DailyIncomeManager.cs 내부의 FlushAndNotify 함수 수정]
     public void FlushAndNotify() {
-        // 급여가 없으면 알림 안 보냄
         if (salaryIncome <= 0) return;
 
         long total = salaryIncome;
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
 
-        // 1. 알림창 제목/내용 (심플하게)
-        string notiTitle = "급여 입금";
-        string notiMsg = $"급여 {total:N0}원이 입금되었습니다.";
+        // UI용 텍스트들은 번역해도 됩니다.
+        string notiTitle = LocalizationManager.GetText("NOTI_SALARY_TITLE");
+        string notiMsg = string.Format(LocalizationManager.GetText("NOTI_SALARY_MSG"), total.ToString("N0"), unit);
 
-        // 2. 상세 팝업 내용
-        string fullBody = "[급여 명세서]\n\n";
-        fullBody += $"■ 기본 급여: +{total:N0}원\n";
+        string fullBody = LocalizationManager.GetText("SMS_SALARY_STATEMENT");
+        fullBody += string.Format(LocalizationManager.GetText("SMS_SALARY_BASE"), total.ToString("N0"), unit);
         fullBody += "\n--------------------------------\n";
-        fullBody += $"실 수령액: {total:N0}원\n";
-        fullBody += "사토시 은행 계좌로 지급되었습니다.";
+        fullBody += string.Format(LocalizationManager.GetText("SMS_SALARY_NET"), total.ToString("N0"), unit);
+        fullBody += LocalizationManager.GetText("SMS_SALARY_FOOTER");
 
+        // ★★★ [가장 중요한 수정] ★★★
+        // 기록을 남길 때는 번역된 logSalary, logDeposit을 쓰지 말고 
+        // 무조건 한글 원본 "급여", "입금"을 직접 넣으세요.
         TransactionManager.Instance.AddRecord("급여", total, "입금", "사토시 현금");
 
-        // 3. 글로벌 알림 호출 (파란색 Bank 테마)
         if (GlobalNotificationManager.Instance != null) {
             GlobalNotificationManager.Instance.ShowNotification(
                 "Bank",
                 notiTitle,
                 notiMsg,
-                () => {         // 클릭 시 상세 명세서 팝업
+                () => {
                     if (UIManager.Instance != null) {
-                        UIManager.Instance.ShowSMSResult(
-                            $"발신인: 사토시 은행\n\n{fullBody}"
-                        );
+                        string senderMsg = string.Format(LocalizationManager.GetText("SMS_BANK_SENDER"), fullBody);
+                        UIManager.Instance.ShowSMSResult(senderMsg);
                     }
                 }
             );
         }
 
-        // 초기화
         salaryIncome = 0;
     }
 }
