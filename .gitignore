@@ -31,6 +31,10 @@
 # Jetbrains Rider personal-layer settings
 *.DotSettings.user
 
+# Mega Music Asset Bundle 리소스 
+/[Aa]ssets/Mega\ Music\ Asset\ Bundle/
+/[Aa]ssets/Mega\ Music\ Asset\ Bundle.meta
+
 # Visual Studio cache directory
 .vs/
 

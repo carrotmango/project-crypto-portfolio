@@ -5,6 +5,8 @@ using TMPro;
 using System.Collections.Generic;
 
 public class GameMenuController : MonoBehaviour {
+
+
     [Header("UI Panels")]
     public GameObject menuPanel;
     public Button hamburgerButton;
@@ -33,6 +35,16 @@ public class GameMenuController : MonoBehaviour {
     [Header("Language Settings")]
     public TMP_Dropdown langDropdown;
 
+    [Header("Language Change Popup")]
+    public GameObject langChangePopup;    // CallInteractionPanel 최상위 오브젝트
+    public Button langYesButton;          // Confirm Button
+    public Button langNoButton;           // No Button
+    public TextMeshProUGUI langPopupText; // "전화가 걸려옵니다" 텍스트
+
+    private int currentLangIndex;         // 현재 언어 기억용
+    private int pendingLangIndex;         // 변경 대기중인 언어
+
+
     public SfxPlayer sfxPlayer;
     private List<Resolution> resolutions = new List<Resolution>();
 
@@ -44,22 +56,25 @@ public class GameMenuController : MonoBehaviour {
         if (saveButton) saveButton.onClick.AddListener(OnClickSave);
         if (exitButton) exitButton.onClick.AddListener(OnClickExit);
 
+        // 팝업 초기화 및 리스너 연결
+        if (langChangePopup != null) langChangePopup.SetActive(false);
+        if (langYesButton != null) langYesButton.onClick.AddListener(OnConfirmLanguageChange);
+        if (langNoButton != null) langNoButton.onClick.AddListener(OnCancelLanguageChange);
+
         InitAllSliders();
         InitResolutionAndScreenMode();
         InitLanguage();
 
-        // 1. 화면 모드 리스너
         if (screenModeDropdown != null) {
             screenModeDropdown.onValueChanged.AddListener(SetScreenMode);
         }
-
-        // 2. 해상도 리스너 
         if (resDropdown != null) {
             resDropdown.onValueChanged.AddListener(SetResolution);
         }
 
+        // 기존 SetLanguage 대신 팝업 띄우는 함수로 연결
         if (langDropdown != null) {
-            langDropdown.onValueChanged.AddListener(SetLanguage);
+            langDropdown.onValueChanged.AddListener(OnLanguageDropdownChanged);
         }
     }
 
@@ -232,32 +247,28 @@ public class GameMenuController : MonoBehaviour {
 
     #region 언어 설정 (기본: 한국어)
     private void InitLanguage() {
-        // [추가] 가장 먼저 데이터를 로드해야 합니다!
         LocalizationManager.LoadData();
 
         if (langDropdown == null) return;
 
-        // 1. 드롭다운 옵션 설정 (인덱스 주의: 0은 English, 1은 한국어)
         langDropdown.ClearOptions();
-
-        // JSON 키값을 활용해서 드롭다운 텍스트도 다국어 처리하고 싶다면 이렇게:
         List<string> options = new List<string> {
-            LocalizationManager.GetText("LANG_EN"), // English
-            LocalizationManager.GetText("LANG_KR")  // 한국어
+            LocalizationManager.GetText("LANG_EN"),
+            LocalizationManager.GetText("LANG_KR")
         };
         langDropdown.AddOptions(options);
 
-        // 2. 저장된 언어 불러오기 (값이 없으면 1번 '한국어'를 기본값으로 사용)
         int savedLang = PlayerPrefs.GetInt("Saved_Language", 1);
 
-        // 3. UI 업데이트 (이벤트 발생 없이 값만 세팅)
+        // 현재 언어 인덱스 저장
+        currentLangIndex = savedLang;
+
         langDropdown.SetValueWithoutNotify(savedLang);
         langDropdown.RefreshShownValue();
 
-        // 4. 실제 게임 내 언어 적용 (여기서 씬의 모든 텍스트가 바뀜)
         ApplyLanguage(savedLang);
 
-        Debug.Log($"[Language] 초기화 및 데이터 로드 완료: {(savedLang == 1 ? "한국어" : "English")}");
+        Debug.Log($"[Language] 초기화 완료: {(savedLang == 1 ? "한국어" : "English")}");
     }
 
     public void SetLanguage(int index) {
@@ -299,14 +310,29 @@ public class GameMenuController : MonoBehaviour {
 
         if (CoinManager.Instance != null && CoinManager.Instance.coins != null) {
             foreach (var coin in CoinManager.Instance.coins) {
-                // Meta 데이터베이스에서 번역된 최신 이름을 찾아서
                 var meta = System.Array.Find(CoinMetaDatabase.AllCoins, m => m.Symbol == coin.Symbol);
                 if (meta != null) {
-                    // 코인 객체의 이름을 강제로 덮어씌움!
                     coin.Name = meta.Name;
                 }
             }
         }
+
+        var portfolio = FindAnyObjectByType<BullbitPortfolioRenderer>();
+        if (portfolio != null && portfolio.gameObject.activeInHierarchy) {
+            portfolio.RenderPortfolioRows(); // 포트폴리오 리로드
+        }
+
+        var statusPanel = FindAnyObjectByType<StatusPanelController>();
+        if (statusPanel != null) {
+            // statusPanel.RefreshUI(); // 행님이 만드신 상태창 갱신 함수 호출
+        }
+
+        var buyPanel = FindAnyObjectByType<BuyPanelController>();
+        if (buyPanel != null && buyPanel.panel.activeInHierarchy) {
+            // buyPanel.UpdateUI(); // 매수 패널 갱신 함수 (이름에 맞게 수정)
+        }
+
+
     }
 
     // 드롭다운 글자 자체도 언어 바꿀 때마다 갱신해주기
@@ -330,4 +356,46 @@ public class GameMenuController : MonoBehaviour {
     private void CloseMenu() => menuPanel.SetActive(false);
     private void OnClickSave() => GameSaveController.OnSaveClicked();
     private void OnClickExit() { if (FindAnyObjectByType<LobbyManager>()) FindAnyObjectByType<LobbyManager>().RestartGame(); }
+
+    // 드롭다운 변경 시 즉시 적용하지 않고 팝업만 띄움
+    public void OnLanguageDropdownChanged(int index) {
+        if (index == currentLangIndex) return;
+
+        pendingLangIndex = index;
+
+        // 전화 팝업의 텍스트 강제 변경
+        if (langPopupText != null) {
+            var localizer = langPopupText.GetComponent<UILocalizer>();
+            if (localizer != null) localizer.enabled = false;
+
+            langPopupText.text = LocalizationManager.GetText("LBL_LANG_RESTART");
+        }
+
+        langChangePopup.SetActive(true);
+    }
+
+    // 팝업에서 '네(Yes)' 클릭 시
+    private void OnConfirmLanguageChange() {
+        langChangePopup.SetActive(false);
+
+        // 하드에 변경된 언어 저장
+        PlayerPrefs.SetInt("Saved_Language", pendingLangIndex);
+        PlayerPrefs.Save();
+
+        // 씬 재시작 (재부팅)
+        if (FindAnyObjectByType<LobbyManager>()) {
+            FindAnyObjectByType<LobbyManager>().RestartGame();
+        } else {
+            UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        }
+    }
+
+    // 팝업에서 '아니오(No)' 클릭 시
+    private void OnCancelLanguageChange() {
+        langChangePopup.SetActive(false);
+
+        // 드롭다운 상태를 원래 언어로 되돌림 (이벤트 발생 안 함)
+        langDropdown.SetValueWithoutNotify(currentLangIndex);
+        langDropdown.RefreshShownValue();
+    }
 }

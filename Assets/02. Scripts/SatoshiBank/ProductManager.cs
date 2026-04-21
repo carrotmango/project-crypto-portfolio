@@ -166,13 +166,18 @@ public class ProductManager : MonoBehaviour {
             // 경고 팝업 띄우기 (중복 실행 방지)
             if (!isWarningActive) {
                 StopCoroutine("ShowWarningRoutine");
-                StartCoroutine(ShowWarningRoutine("사토시 은행 잔액이 부족합니다!"));
+                // [수정] 하드코딩된 한국어 경고문을 현지화 키로 변경
+                StartCoroutine(ShowWarningRoutine(LocalizationManager.GetText("MSG_WARN_LACK_BALANCE_01")));
             }
         }
 
         // 1만원 단위 절삭
         long val = (long)(amountSlider.value / 10000) * 10000;
-        currentSelectAmountText.text = $"{val:N0}원";
+
+        // [수정] '원' 하드코딩을 현지화된 화폐 단위로 변경
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY_2");
+        currentSelectAmountText.text = $"{val:N0}{unit}";
+
         UpdateDepositUI();
     }
 

@@ -7,6 +7,7 @@ public class BullBitDetailTradeManager : MonoBehaviour {
     public SpotChartRenderer spotChartRenderer; // 상세 패널 안에 있는 차트 렌더러
 
     public TradePanelController tradePanelController;
+    private CoinData lastOpenedCoin;
 
     void Update() {
         // 패널이 켜져 있는 상태에서만 작동하도록 체크
@@ -17,7 +18,14 @@ public class BullBitDetailTradeManager : MonoBehaviour {
         }
     }
 
+    public bool HasLastCoin => lastOpenedCoin != null;
+
     public void OpenDetailPanel(CoinData coin) {
+        if (coin == null) 
+            return;
+
+        lastOpenedCoin = coin;
+
         // 1. 상세 패널 껍데기 켜기
         if (detailPanelRoot != null) {
             detailPanelRoot.SetActive(true);
@@ -32,6 +40,12 @@ public class BullBitDetailTradeManager : MonoBehaviour {
             tradePanelController.OpenPanel(coin);
         } else {
             Debug.LogError("행님! BullBitDetailTradeManager에 TradePanelController가 인스펙터에 연결 안 됐습니다!");
+        }
+    }
+
+    public void ReopenLastCoin() {
+        if (lastOpenedCoin != null) {
+            OpenDetailPanel(lastOpenedCoin);
         }
     }
 

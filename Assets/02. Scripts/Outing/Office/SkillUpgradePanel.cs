@@ -4,6 +4,8 @@ using TMPro;
 
 public class SkillUpgradePanel : MonoBehaviour {
 
+    public TextMeshProUGUI bankCashLabel;
+
     [Header("Skill 1: Work Efficiency (업무 효율)")]
     public TextMeshProUGUI skillNameLabel;    // "업무 효율 Lv.1"
     public TextMeshProUGUI skillEffectLabel;  // "급여 상승률: 10%"
@@ -20,6 +22,7 @@ public class SkillUpgradePanel : MonoBehaviour {
     public TextMeshProUGUI skill2CostLabel;   // "비용: 3,000,000"
     public Button skill2UpgradeButton;        // Skill 2 강화 버튼
     public TextMeshProUGUI skill2ButtonText;  // Skill 2 버튼 텍스트
+
 
     private OfficePanelController parentController;
 
@@ -51,6 +54,12 @@ public class SkillUpgradePanel : MonoBehaviour {
 
         // 공통 화폐 단위 (원 / Won)
         string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+
+        if (bankCashLabel != null) {
+            long myCash = (long)PlayerManager.Instance.satoshiBankCash;
+            // 로컬라이징 키 "LBL_BANK_CASH_DISPLAY"를 사용하여 출력
+            bankCashLabel.text = string.Format(LocalizationManager.GetText("LBL_BANK_CASH_DISPLAY"), myCash.ToString("N0"), unit);
+        }
 
         // ------------------------------------------------
         // 1. Skill 1: 업무 효율

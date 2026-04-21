@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using DG.Tweening; // DOTween 추가
+using DG.Tweening;
 
 public class ResearchDetailPopup : MonoBehaviour {
     [Header("Inside Panel")]
@@ -30,12 +30,16 @@ public class ResearchDetailPopup : MonoBehaviour {
 
         // 1. 텍스트 데이터 셋팅
         titleText.text = art.title;
-        authorAndTimeText.text = $"작성자: {art.provider}\n{occurredTime:MM/dd/yyyy HH:mm}";
         contextText.text = art.summary;
-        expertText.text = $"[전문가 의견]: {art.expertOpinion}";
+
+        // [다국어 처리 수정] 작성자 및 시간 포맷팅
+        string timeStr = occurredTime.ToString("MM/dd/yyyy HH:mm");
+        authorAndTimeText.text = string.Format(LocalizationManager.GetText("LBL_AUTHOR_AND_TIME"), art.provider, timeStr);
+
+        // [다국어 처리 수정] 전문가 의견 포맷팅
+        expertText.text = string.Format(LocalizationManager.GetText("LBL_EXPERT_OPINION"), art.expertOpinion);
 
         // 2. 이미지 로딩 (NewsLoader의 TrySetSprite 로직 적용)
-        // article.newsImage가 "trump.jpg" 형태이므로 확장자 떼고 image/content에서 찾음
         string imageName = art.newsImage;
         TrySetArticleImage(contentImage, "image/content", imageName, contentImageContainer);
 
@@ -67,19 +71,16 @@ public class ResearchDetailPopup : MonoBehaviour {
 
     private void OpenMenuWithTween() {
         gameObject.SetActive(true);
-        // 초기 스케일 0.5에서 1로 (SetUpdate(true)로 타임스케일 무관하게 작동)
         insidePanel.transform.localScale = Vector3.one * 0.5f;
         insidePanel.transform.DOScale(1f, 0.25f).SetEase(Ease.OutBack).SetUpdate(true);
     }
 
     public void ClosePopup() {
-        // 닫을 때도 살짝 작아지면서 꺼지면 더 고급짐
         insidePanel.transform.DOScale(0.5f, 0.15f).SetEase(Ease.InBack).SetUpdate(true).OnComplete(() => {
             gameObject.SetActive(false);
         });
     }
 
-    // NewsLoader 참고한 이미지 로딩 유틸리티
     private void TrySetArticleImage(Image target, string folder, string fileName, GameObject container) {
         if (string.IsNullOrEmpty(fileName)) {
             if (container != null) container.SetActive(false);

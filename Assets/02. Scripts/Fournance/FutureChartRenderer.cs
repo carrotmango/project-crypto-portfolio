@@ -319,8 +319,10 @@ public class FutureChartRenderer : LiveChartRenderer {
         double orderQty = (currentPriceUsd > 0) ? (totalOrderValueUsd / currentPriceUsd) : 0;
 
         // 비용과 수수료를 같이 보여줌
-        if (costText != null)
-            costText.text = $"COST: ${inputTotalUsd:N2} (수수료: ${estimatedEntryFee:N2})";
+        if (costText != null) {
+            string feeTextStr = LocalizationManager.GetText("LBL_FEE");
+            costText.text = $"COST: ${inputTotalUsd:N2} ({feeTextStr}: ${estimatedEntryFee:N2})";
+        }
 
         if (maxQtyText != null)
             maxQtyText.text = $"Size: {orderQty:F4} {targetCoin.Symbol}";
@@ -450,25 +452,28 @@ public class FutureChartRenderer : LiveChartRenderer {
             }
 
             // 알림 발송
-            if (GlobalNotificationManager.Instance != null) {
-                string sender = "Fournance Risk Team";
-                string shortMsg = $"[알림] {pos.Symbol}USD 포지션이 강제 청산되었습니다.";
+            string sender = "Fournance Risk Team";
+            string noticeLabel = LocalizationManager.GetText("LBL_NOTICE");
+            string liqNoticeFmt = LocalizationManager.GetText("MSG_LIQ_NOTICE");
+            string shortMsg = $"[{noticeLabel}] " + string.Format(liqNoticeFmt, $"{pos.Symbol}USD");
 
-                string fullBody = $"[청산] {pos.Symbol}USD ({(pos.IsLong ? "Long" : "Short")})\n";
-                fullBody += $"진입 ${pos.EntryPriceUSD:N4} / 청산 ${pos.LiquidationPriceUSD:N4}\n";
-                fullBody += $"손실 -${actualLoss:N2} (잔고 ${PlayerManager.Instance.fournanceCash:N2})";
+            string liqLabel = LocalizationManager.GetText("LBL_LIQUIDATION");
+            string lossLabel = LocalizationManager.GetText("LBL_LOSS");
+            string balLabel = LocalizationManager.GetText("LBL_BALANCE");
+            string senderLabel = LocalizationManager.GetText("LBL_SENDER");
 
-                GlobalNotificationManager.Instance.ShowNotification(
-                    "Bullbit",
-                    sender,
-                    shortMsg,
-                    () => {
-                        if (UIManager.Instance != null) {
-                            UIManager.Instance.ShowSMSResult($"발신인: {sender}\n\n{fullBody}");
-                        }
+            string fullBody = $"[{liqLabel}] {pos.Symbol}USD ({(pos.IsLong ? "Long" : "Short")})\n";
+            fullBody += $"Entry ${pos.EntryPriceUSD:N4} / Liq ${pos.LiquidationPriceUSD:N4}\n";
+            fullBody += $"{lossLabel} -${actualLoss:N2} ({balLabel} ${PlayerManager.Instance.fournanceCash:N2})";
+
+            GlobalNotificationManager.Instance.ShowNotification(
+                "Bullbit", sender, shortMsg,
+                () => {
+                    if (UIManager.Instance != null) {
+                        UIManager.Instance.ShowSMSResult($"{senderLabel}: {sender}\n\n{fullBody}");
                     }
-                );
-            }
+                }
+            );
 
             // =========================================================
             // [추가] 통계 데이터 기록
@@ -957,7 +962,7 @@ public class FutureChartRenderer : LiveChartRenderer {
             GlobalNotificationManager.Instance.ShowNotification(
                 "Bullbit",
                 "Fournance",
-                "모든 포지션을 시장가로 종료했습니다.",
+                LocalizationManager.GetText("MSG_ALL_POS_CLOSED"),
                 null
             );
         }

@@ -24,9 +24,40 @@ public class TutorialManager : MonoBehaviour {
     [HideInInspector] public Button ethBuyButton;
     [HideInInspector] public Button bullbitPortfolioRowButton;
     public Button portfolioButton;
+    public Button transferMaxButton;
+
+    [HideInInspector] public Button btcRowButton;
+
+    [Header("상세 패널 튜토리얼용")]
+    public Button detailTenPercentButton; //  10% 버튼
+    public Button detailBuyButton;        //  매수(Buy) 버튼
+    public GameObject detailTenPercentDim; //  10% 영역만 뚫어놓은 투명 딤
+    public GameObject detailBuyDim;        //  매수 영역만 뚫어놓은 투명 딤
+
+    [Header("업무 패널 튜토리얼용")]
+    public Button companyButton;      // 
+    public GameObject companyDim;
+
+    [Header("매도 튜토리얼용")]
+    public Button detailSellTabButton;        //  매도 탭 여는 버튼
+    public Button detailHundredPercentButton; //  100% 버튼
+    public Button detailExecuteSellButton;    //  최종 매도하기 버튼
+
+    public GameObject detailSellTabDim;        //  매도 탭 딤
+    public GameObject detailHundredPercentDim; //  100% 딤
+    public GameObject detailExecuteSellDim;    //  최종 매도하기 딤
+
+    [Header("업무 패널 좌측 메뉴 튜토리얼용")]
+    public GameObject depositDim;
+    public GameObject skillDim;
+    public GameObject questDim;
+    public GameObject researchDim;
+    public GameObject timeDim;
 
     [HideInInspector] public List<TextMeshProUGUI> portfolioCoinSymbolTexts = new List<TextMeshProUGUI>();
     [HideInInspector] public List<TextMeshProUGUI> portfolioCoinLabelTexts = new List<TextMeshProUGUI>();
+    private Dictionary<Button, Coroutine> buttonHighlightCoroutines = new Dictionary<Button, Coroutine>();
+    private Dictionary<Button, Color> buttonOriginalColors = new Dictionary<Button, Color>(); //  
 
 
     [Header("옵션")]
@@ -42,6 +73,8 @@ public class TutorialManager : MonoBehaviour {
     public GameObject bullbitDim;
     public GameObject satoshiDim;
     public GameObject satoshiDimWithButton;
+    public GameObject perpDim;
+    public GameObject spotButtonDim;
     public GameObject partTimeDim;
     public GameObject estateDim;
     public GameObject xbirdDim;
@@ -57,7 +90,13 @@ public class TutorialManager : MonoBehaviour {
     public GameObject appDim;
     public GameObject portfolioDim;
     public GameObject porfolioInnerDim;
-
+    public GameObject perpAndEstateDim;
+    public GameObject bankExplainDim;
+    public GameObject AmountDim;
+    public GameObject BorderDim;
+    public GameObject BorderDim2;
+    public GameObject actualDetailPanel;
+    public GameObject OfficeBorder;
 
     [Header("UI 표시용")]
     public Image arrowImage;
@@ -70,11 +109,14 @@ public class TutorialManager : MonoBehaviour {
     [SerializeField] private AudioClip typingClip;
 
 
+    public bool IsTutorialPlaying { get; private set; } = false;
 
-    //void Update() {
-    //    if (!tutorialFinished && Time.timeScale != 0f)
-    //        Time.timeScale = 0f;
-    //}
+
+    void Update() {
+        if (IsTutorialPlaying) {
+            Input.ResetInputAxes();
+        }
+    }
 
 
     private IEnumerator ArrowBlink(Image img) {
@@ -135,6 +177,8 @@ public class TutorialManager : MonoBehaviour {
             return;
         }
 
+        IsTutorialPlaying = true;
+
         //
         if (!timePausedOnce) {
             Time.timeScale = 0f;
@@ -188,120 +232,228 @@ public class TutorialManager : MonoBehaviour {
         if (status != null && status.playerNameText != null)
             playerName = status.playerNameText.text;
 
-        // 노드 생성
-        DialogueNode n1 = new DialogueNode { text = $"당신이 이번 우리 회사 신입 트레이더 '{playerName}' 인가요?" };
-        DialogueNode n2 = new DialogueNode { text = "굉장히 허접하게 생기셨네요. 이런 사람이 트레이더라니..." };
-        DialogueNode n3 = new DialogueNode { text = "어쨌든... 저는 대표님의 비서 'Carrot' 이라고 해요" };
-        DialogueNode n4 = new DialogueNode { text = "혹시 트레이딩 경험이 있으신가요?", isChoice = true };
+        // 노드 생성 (다국어 매니저에서 텍스트 불러오기)
+        DialogueNode n1 = new DialogueNode { text = string.Format(LocalizationManager.GetText("TUTORIAL_N1"), playerName) };
+        DialogueNode n2 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N2") };
+        DialogueNode n3 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N3") };
+        DialogueNode n4 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N4"), isChoice = true };
 
-        DialogueNode y1 = new DialogueNode { text = "그럼 뭐, 대충 알려드려도 잘하시겠네요." };
-        DialogueNode y2 = new DialogueNode { text = "그래도 혹시 모르니 거래를 하는 방법부터 알려드릴께요." };
+        DialogueNode y1 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_Y1") };
+        DialogueNode y2 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_Y2") };
+        DialogueNode y3 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_Y3") };
 
-        DialogueNode n5 = new DialogueNode { text = "없다구요? 대표님은 어떤 생각으로 이 사람을 뽑으신거지?" };
-        DialogueNode n6 = new DialogueNode { text = "후... 일단 거래를 하는 방법부터 알려드릴께요." };
+        DialogueNode n5 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N5") };
+        DialogueNode n6 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N6") };
+        DialogueNode n7 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N7") };
+        DialogueNode n8 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N8") };
+        DialogueNode n9 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N9"), action = DialogueAction.HighlightAppButton };
+        DialogueNode n10 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N10") };
+        DialogueNode n11 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N11"), highlightTarget = HighlightTarget.Bullbit };
+        DialogueNode n12 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N12"), highlightTarget = HighlightTarget.Bullbit };
+        DialogueNode n13 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N13"), highlightTarget = HighlightTarget.spotButton };
+        DialogueNode n14 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N14"), highlightTarget = HighlightTarget.spotButton };
+        DialogueNode n15 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N15"), highlightTarget = HighlightTarget.Satoshi };
+        DialogueNode n16 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N16"), highlightTarget = HighlightTarget.Satoshi };
+        DialogueNode n17 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N17"), highlightTarget = HighlightTarget.Satoshi };
+        DialogueNode n18 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N18"), highlightTarget = HighlightTarget.perpAndEstateDim };
+        DialogueNode n19 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N19"), highlightTarget = HighlightTarget.perpAndEstateDim };
+        DialogueNode n20 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N20"), highlightTarget = HighlightTarget.perpAndEstateDim };
+        DialogueNode n21 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N21"), highlightTarget = HighlightTarget.perpAndEstateDim };
+        DialogueNode n22 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N22"), highlightTarget = HighlightTarget.perpAndEstateDim };
+        DialogueNode n23 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N23"), highlightTarget = HighlightTarget.perpAndEstateDim };
+        DialogueNode n24 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N24"), highlightTarget = HighlightTarget.perpAndEstateDim };
+        DialogueNode n25 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N25"), highlightTarget = HighlightTarget.Xbird };
+        DialogueNode n26 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N26"), highlightTarget = HighlightTarget.Xbird };
+        DialogueNode n27 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N27"), highlightTarget = HighlightTarget.Xbird };
+        DialogueNode n28 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N28"), highlightTarget = HighlightTarget.Xbird };
+        DialogueNode n29 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N29"), highlightTarget = HighlightTarget.Xbird };
+        DialogueNode n30 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N30"), highlightTarget = HighlightTarget.Xbird };
+        DialogueNode n31 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N31") };
+        DialogueNode n32 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N32"), highlightTarget = HighlightTarget.SatoshiDimWithButton, action = DialogueAction.WaitForSatoshiDepositButton };
+        DialogueNode n33 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N33") };
+        DialogueNode n34 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N34"), highlightTarget = HighlightTarget.bankExplainDim };
+        DialogueNode n35 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N35"), highlightTarget = HighlightTarget.bankExplainDim };
+        DialogueNode n36 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N36") };
+        DialogueNode n37 = new DialogueNode { text = string.Format(LocalizationManager.GetText("TUTORIAL_N37"), playerName) };
+        DialogueNode n38 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N38"), highlightTarget = HighlightTarget.WithdrawButton, action = DialogueAction.WaitForWithdrawButton };
+        DialogueNode n39 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N39") };
+        DialogueNode n40 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N40") };
+        DialogueNode n41 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N41") };
+        DialogueNode n42 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N42") };
+        DialogueNode n43 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N43") };
+        DialogueNode n44 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N44"), action = DialogueAction.WaitForTransfer, highlightTarget = HighlightTarget.TransferDim };
+        DialogueNode n45 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N45") };
+        DialogueNode n46 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N46"), action = DialogueAction.HighlightBullbitButton };
+        DialogueNode n47 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N47"), highlightTarget = HighlightTarget.AmountDim };
+        DialogueNode n48 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N48"), highlightTarget = HighlightTarget.AmountDim };
+        DialogueNode n49 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N49") };
+        DialogueNode n50 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N50") };
+        DialogueNode n51 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N51") };
+        DialogueNode n52 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N52"), highlightTarget = HighlightTarget.BorderDim };
+        DialogueNode n53 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N53"), highlightTarget = HighlightTarget.BorderDim2, action = DialogueAction.WaitForBTCDetailPanel };
+        DialogueNode n54 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N54") };
+        DialogueNode n55 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N55") };
+        DialogueNode n56 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N56") };
+        DialogueNode n57 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N57") };
+        DialogueNode n58 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N58") };
+        DialogueNode n59 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N59"), action = DialogueAction.WaitForDetailBuy };
+        DialogueNode n60 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N60") };
+        DialogueNode n61 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N61") };
+        DialogueNode n62 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N62"), action = DialogueAction.WaitForDetailSell };
+        DialogueNode n63 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N63") };
+        DialogueNode n64 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N64") };
+        DialogueNode n65 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N65"), action = DialogueAction.HighlightCompanyButton };
+        DialogueNode n66 = new DialogueNode { text = string.Format(LocalizationManager.GetText("TUTORIAL_N66"), playerName) };
+        DialogueNode n67 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N67"), highlightTarget = HighlightTarget.OfficeBorder };
+        DialogueNode n68 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N68"), highlightTarget = HighlightTarget.OfficeBorder };
+        DialogueNode n69 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N69"), highlightTarget = HighlightTarget.None };
 
-        DialogueNode n7 = new DialogueNode { text = "일단 하단에 있는 '앱' 버튼을 눌러보세요", action = DialogueAction.HighlightAppButton };
-        DialogueNode n8 = new DialogueNode { text = "이곳에 여러 앱들이 있는데, 간단하게 설명 드리자면" };
-        DialogueNode n9 = new DialogueNode { text = "여기 있는 불비트가 우리 거래 앱이에요.", highlightTarget = HighlightTarget.Bullbit };
-        DialogueNode n10 = new DialogueNode { text = "이곳에서 코인을 사고 팔 수 있어요", highlightTarget = HighlightTarget.Bullbit };
-        DialogueNode n11 = new DialogueNode { text = "그리고 이건 은행앱이에요.", highlightTarget = HighlightTarget.Satoshi };
-        DialogueNode n12 = new DialogueNode { text = "사토시 은행을 통해, 불비트로 돈을 옮기고", highlightTarget = HighlightTarget.Satoshi };
-        DialogueNode n13 = new DialogueNode { text = "불비트에서 은행으로 출금을하고, 부동산을 사는 등", highlightTarget = HighlightTarget.Satoshi };
-        DialogueNode n14 = new DialogueNode { text = "돈을 움직일땐 은행을 필수로 이용해야 하죠.", highlightTarget = HighlightTarget.Satoshi };
-        //DialogueNode n15 = new DialogueNode { text = "그리고 이건 아르바이트 앱 이에요.", highlightTarget = HighlightTarget.PartTimeJob };
-        //DialogueNode n16 = new DialogueNode { text = "급전이 필요할때, 하루에 한번 아르바이트를 진행할 수 있어요", highlightTarget = HighlightTarget.PartTimeJob };
-        //DialogueNode n17 = new DialogueNode { text = "근데 트레이더라는 사람이..", highlightTarget = HighlightTarget.PartTimeJob };
-        //DialogueNode n18 = new DialogueNode { text = "몰래 아르바이트 뛰고 그런거 아니죠...?", highlightTarget = HighlightTarget.PartTimeJob };
-        //DialogueNode n19 = new DialogueNode { text = "그럴일은 없길 바랄께요.", highlightTarget = HighlightTarget.PartTimeJob };
-        DialogueNode n20 = new DialogueNode { text = "이건 부동산 매매할때 쓰는 앱이에요", highlightTarget = HighlightTarget.Estate };
-        DialogueNode n21 = new DialogueNode { text = "나중에 한번 둘러보세요.", highlightTarget = HighlightTarget.Estate };
-        DialogueNode n22 = new DialogueNode { text = "이 앱은 Xbird라는 앱인데,", highlightTarget = HighlightTarget.Xbird };
-        DialogueNode n23 = new DialogueNode { text = "이 앱을 이용해서 누구보다 빠르게 정보를 얻을 수 있어요.", highlightTarget = HighlightTarget.Xbird };
-        DialogueNode n24 = new DialogueNode { text = "하지만 가짜정보도 판을치니, 판단을 잘하셔야 할거에요", highlightTarget = HighlightTarget.Xbird };
-        DialogueNode n25 = new DialogueNode { text = "그러나 그런 가짜 정보로도 돈을 벌 수 있어야", highlightTarget = HighlightTarget.Xbird };
-        DialogueNode n26 = new DialogueNode { text = "진짜 트레이더라고 불릴 수 있다고 저는 생각해요.", highlightTarget = HighlightTarget.Xbird };
-        DialogueNode n27 = new DialogueNode { text = "하단에 뉴스 탭에서도 진입할 수 있어요.", highlightTarget = HighlightTarget.Xbird };
-        //DialogueNode n28 = new DialogueNode { text = "당신이 진정한 도파민 중독자라면 추천드릴께요.", highlightTarget = HighlightTarget.Gamble };
-        DialogueNode n29 = new DialogueNode { text = "일단 그러면 저희 불비트 거래소에 입금을 먼저 해볼까요?", };
-        DialogueNode n30 = new DialogueNode { text = "좀 전에 알려드린 사토시 은행앱을 눌러서", highlightTarget = HighlightTarget.Satoshi };
-        DialogueNode n31 = new DialogueNode { text = "입금을 한번 해보도록 하죠.", highlightTarget = HighlightTarget.SatoshiDimWithButton, action = DialogueAction.WaitForSatoshiDepositButton };
-        DialogueNode n32 = new DialogueNode { text = "좋아요 여기가 은행 화면이에요.", blockPanelAlpha = 0.0f, highlightTarget = HighlightTarget.None };
-        DialogueNode n33 = new DialogueNode { text = $"회사 명의로 '{playerName}님 계좌에 200만원을 넣어드렸어요.", };
-        DialogueNode n34 = new DialogueNode { text = "이 돈을 한번 불비트 거래소로 옮겨보죠.", };
-        DialogueNode n35 = new DialogueNode { text = "화면 중앙에 있는 이체 버튼을 한번 눌러보세요.", highlightTarget = HighlightTarget.WithdrawButton, action = DialogueAction.WaitForWithdrawButton };
-        DialogueNode n36 = new DialogueNode { text = "잘 하셨어요. 일단 이체할 플랫폼을 먼저 골라야해요.", };
-        DialogueNode n37 = new DialogueNode { text = "저희는 거래를 해야하니까, 불비트 거래소로 송금 해야겠죠?", };
-        DialogueNode n38 = new DialogueNode { text = "지금은 송금할 수 있는 플랫폼이 몇개 없겠지만", };
-        DialogueNode n39 = new DialogueNode { text = "보유한 자금이 늘어나시다보면, 새로운 플랫폼이 해금될거에요.", };
-        DialogueNode n40 = new DialogueNode { text = "일단 이체를 진행해 볼까요?", };
-        DialogueNode n41 = new DialogueNode { text = "전액'버튼을 누르고 이체 버튼을 눌러 모든금액을 송금해보죠.", action = DialogueAction.WaitForTransfer, highlightTarget = HighlightTarget.TransferDim };
-        DialogueNode n42 = new DialogueNode { text = "좋아요. 이렇게하면 정상적으로 송금이 됐을거에요.", };
-        DialogueNode n43 = new DialogueNode { text = "그럼 저희는 불비트 거래소로 이동해 볼까요?", action = DialogueAction.HighlightBullbitButton };
-        DialogueNode n44 = new DialogueNode { text = $"좋아요 왼쪽 상단을 보시면 입금된 잔액을 볼 수 있어요." };
-        DialogueNode n45 = new DialogueNode { text = "잔액이 들어온것은 확인했고, 그러면 코인을 한번 매수해볼까요?" };
-        DialogueNode n46 = new DialogueNode { text = "그러면 지금 절반의 비트코인과 이더리움을 매수해보죠." };
-        DialogueNode n47 = new DialogueNode { text = "일단 비트코인을 먼저 매수해봐요.", action = DialogueAction.HighlightBitcoinBuy };
-        DialogueNode n48 = new DialogueNode { text = "좋아요, 생각보다 능숙하시네요?" };
-        DialogueNode n49 = new DialogueNode { text = "그러면 남은 잔액 전부로 이더리움을 매수해보죠", action = DialogueAction.HighlightEthBuy };
-        DialogueNode n50 = new DialogueNode { text = "음, 망설임 없이 매수하시는걸 보니, 트레이더의 성향이 보이긴 하네요.", };
-        DialogueNode n51 = new DialogueNode { text = "이제 매수를 했다면, 자신의 포트폴리오를 확인해야겠죠?", };
-        DialogueNode n52 = new DialogueNode { text = "하단 자산관리 메뉴 버튼을 누르면, 포트폴리오를 볼 수 있어요.", };
-        DialogueNode n53 = new DialogueNode { text = "지금 바로 확인해볼까요?", action = DialogueAction.HighlightPortfolioButton };
-        DialogueNode n54 = new DialogueNode { text = "좋아요, 여기서 불비트를 선택해 보세요.", action = DialogueAction.WaitForClickBullPort };
-        DialogueNode n55 = new DialogueNode { text = $"여기서 {playerName}님의 포트폴리오를 볼 수 있어요." };
-        DialogueNode n56 = new DialogueNode { text = $"실시간으로 잔고가 요동치는 걸 볼 수 있죠.", action = DialogueAction.HighlightSymbolLabel_ON };
-        DialogueNode n57 = new DialogueNode { text = $"코인의 이름을 또는 심볼명을 누르면 ", };
-        DialogueNode n58 = new DialogueNode { text = $"이 화면에서 바로 거래도 가능해요.", action = DialogueAction.HighlightSymbolLabel_OFF };
-        DialogueNode n59 = new DialogueNode { text = $"좋아요, 매수 매도같이 기본적인 것은 여기까지에요.", };
-        DialogueNode n60 = new DialogueNode { text = $"여기서 매수한 코인은 능력껏 잘 팔아보도록 해요.", };
-        DialogueNode n61 = new DialogueNode { text = $"자산을 늘리다보면, 추가로 할 수 있는 것들도 열릴거에요.", };
-        DialogueNode n62 = new DialogueNode { text = $"그때까지 시장에서 살아남을 수 있을진 모르겠지만...", };
-        DialogueNode n63 = new DialogueNode { text = $"그럼 행운을 빌게요.", };
+        DialogueNode n70 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N70"), highlightTarget = HighlightTarget.depositDim };
+        DialogueNode n71 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N71"), highlightTarget = HighlightTarget.depositDim };
+        DialogueNode n72 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N72"), highlightTarget = HighlightTarget.depositDim };
+        DialogueNode n73 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N73"), highlightTarget = HighlightTarget.skillDim };
+        DialogueNode n74 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N74"), highlightTarget = HighlightTarget.skillDim };
+        DialogueNode n75 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N75"), highlightTarget = HighlightTarget.questDim };
+        DialogueNode n76 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N76"), highlightTarget = HighlightTarget.questDim };
+        DialogueNode n77 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N77"), highlightTarget = HighlightTarget.researchDim };
+        DialogueNode n78 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N78"), highlightTarget = HighlightTarget.researchDim };
+        DialogueNode n79 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N79"), highlightTarget = HighlightTarget.None };
+        DialogueNode n80 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N80") };
+        DialogueNode n81 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N81") };
+        DialogueNode n82 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N82"), highlightTarget = HighlightTarget.timeDim };
+        DialogueNode n83 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N83") , highlightTarget = HighlightTarget.timeDim };
+        DialogueNode n84 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N84"), highlightTarget = HighlightTarget.timeDim };
+        DialogueNode n85 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N85") };
+        DialogueNode n86 = new DialogueNode { text = LocalizationManager.GetText("TUTORIAL_N86") };
 
         // 기본 연결
-        n1.next = n2; n2.next = n3; n3.next = n4;
-        n4.yesNext = y1; n4.noNext = n5;
-        y1.next = y2; y2.next = n7;
-        n5.next = n6; n6.next = n7;
-        n7.next = n8; n8.next = n9; n9.next = n10;
-        n10.next = n11; n11.next = n12; n12.next = n13;
-        n13.next = n14; n14.next = n20;
+        n1.next = n2;
+        n2.next = n3;
+        n3.next = n4;
+        n4.yesNext = y1;
+        n4.noNext = n5;
 
-        //n15.next = n16; n16.next = n17;
-        //n17.next = n18; n18.next = n19; n19.next = n20;
+        y1.next = y2;
+        y2.next = y3;
+        y3.next = n7;
 
+        n5.next = n6;
+        n6.next = n7;
+
+        n7.next = n8;
+        n8.next = n9;
+        n9.next = n10;
+        n10.next = n11;
+        n11.next = n12;
+        n12.next = n13;
+        n13.next = n14;
+        n14.next = n15;
+        n15.next = n16;
+        n16.next = n17;
+        n17.next = n18;
+        n18.next = n19;
+        n19.next = n20;
         n20.next = n21;
-        n21.next = n22; n22.next = n23; n23.next = n24; n24.next = n25;
-        n25.next = n26; n26.next = n27; n27.next = n29; 
-        n29.next = n30; n30.next = n31; n31.next = n32; n32.next = n33;
-        n33.next = n34; n34.next = n35; n35.next = n36; n36.next = n37;
-        n37.next = n38; n38.next = n39; n39.next = n40; n40.next = n41;
-        n41.next = n42; n42.next = n43; n43.next = n44; n44.next = n45;
-        n45.next = n46; n46.next = n47; n47.next = n48; n48.next = n49;
-        n49.next = n50; n50.next = n51; n51.next = n52; n52.next = n53;
-        n53.next = n54; n54.next = n55; n55.next = n56; n56.next = n57;
-        n57.next = n58; n58.next = n59; n59.next = n60; n60.next = n61;
-        n61.next = n62; n62.next = n63; n63.next = null;
+        n21.next = n22;
+        n22.next = n23;
+        n23.next = n24;
+        n24.next = n25;
+        n25.next = n26;
+        n26.next = n27;
+        n27.next = n28;
+        n28.next = n29;
+        n29.next = n30;
+        n30.next = n31;
+        n31.next = n32;
+        n32.next = n33;
+        n33.next = n34;
+        n34.next = n35;
+        n35.next = n36;
+        n36.next = n37;
+        n37.next = n38;
+        n38.next = n39;
+        n39.next = n40;
+        n40.next = n41;
+        n41.next = n42;
+        n42.next = n43;
+        n43.next = n44;
+        n44.next = n45;
+        n45.next = n46;
+        n46.next = n47;
+        n47.next = n48;
+        n48.next = n49;
+        n49.next = n50;
+        n50.next = n51;
+        n51.next = n52;
+        n52.next = n53;
+        n53.next = n54;
+        n54.next = n55;
+        n55.next = n56;
+        n56.next = n57;
+        n57.next = n58;
+        n58.next = n59;
+        n59.next = n60;
+        n60.next = n61;
+        n61.next = n62;
+        n62.next = n63;
+        n63.next = n64;
+        n64.next = n65;
+        n65.next = n66;
+        n66.next = n67;
+        n67.next = n68;
+        n68.next = n69;
+        n69.next = n70;
+        n70.next = n71;
+        n71.next = n72;
+        n72.next = n73;
+        n73.next = n74;
+        n74.next = n75;
+        n75.next = n76;
+        n76.next = n77;
+        n77.next = n78;
+        n78.next = n79;
+        n79.next = n80;
+        n80.next = n81;
+        n81.next = n82;
+        n82.next = n83;
+        n83.next = n84;
+        n84.next = n85;
+        n85.next = n86;
+        n86.next = null;
 
         currentNode = n1;
     }
 
     public void ApplyHighlight(HighlightTarget target) {
         // 전체 Dim 꺼두기
-        bullbitDim.SetActive(false);
-        satoshiDim.SetActive(false);
-        satoshiDimWithButton.SetActive(false);
-        partTimeDim.SetActive(false);
-        estateDim.SetActive(false);
-        xbirdDim.SetActive(false);
-        gambleDim.SetActive(false);
-        withdrawButtonDim.SetActive(false);
-        transferDim.SetActive(false);
-
+        if (bullbitDim != null) bullbitDim.SetActive(false);
+        if (satoshiDim != null) satoshiDim.SetActive(false);
+        if (perpDim != null) perpDim.SetActive(false);
+        if (spotButtonDim != null) spotButtonDim.SetActive(false);
+        if (satoshiDimWithButton != null) satoshiDimWithButton.SetActive(false);
+        if (partTimeDim != null) partTimeDim.SetActive(false);
+        if (estateDim != null) estateDim.SetActive(false);
+        if (xbirdDim != null) xbirdDim.SetActive(false);
+        if (gambleDim != null) gambleDim.SetActive(false);
+        if (withdrawButtonDim != null) withdrawButtonDim.SetActive(false);
+        if (transferDim != null) transferDim.SetActive(false);
+        if (perpAndEstateDim != null) perpAndEstateDim.SetActive(false);
+        if (bankExplainDim != null) bankExplainDim.SetActive(false);
+        if (AmountDim != null) AmountDim.SetActive(false);
+        if (BorderDim != null) BorderDim.SetActive(false);
+        if (BorderDim2 != null) BorderDim2.SetActive(false);
+        if (OfficeBorder != null) OfficeBorder.SetActive(false); 
+        if (depositDim != null) depositDim.SetActive(false);
+        if (skillDim != null) skillDim.SetActive(false);
+        if (questDim != null) questDim.SetActive(false);
+        if (researchDim != null) researchDim.SetActive(false);
+        if (timeDim != null) timeDim.SetActive(false);
 
         switch (target) {
             case HighlightTarget.Bullbit: bullbitDim.SetActive(true); break;
             case HighlightTarget.Satoshi: satoshiDim.SetActive(true); break;
+            case HighlightTarget.perpDim: perpDim.SetActive(true); break;
+            case HighlightTarget.spotButton: spotButtonDim.SetActive(true); break;
             case HighlightTarget.SatoshiDimWithButton: satoshiDimWithButton.SetActive(true); break;
             case HighlightTarget.PartTimeJob: partTimeDim.SetActive(true); break;
             case HighlightTarget.Estate: estateDim.SetActive(true); break;
@@ -309,12 +461,22 @@ public class TutorialManager : MonoBehaviour {
             case HighlightTarget.Gamble: gambleDim.SetActive(true); break;
             case HighlightTarget.WithdrawButton: withdrawButtonDim.SetActive(true); break;
             case HighlightTarget.TransferDim: transferDim.SetActive(true); break;
+            case HighlightTarget.perpAndEstateDim: perpAndEstateDim.SetActive(true); break;
+            case HighlightTarget.bankExplainDim: bankExplainDim.SetActive(true); break;
+            case HighlightTarget.AmountDim: AmountDim.SetActive(true); break;
+            case HighlightTarget.BorderDim: BorderDim.SetActive(true); break;
+            case HighlightTarget.BorderDim2: BorderDim2.SetActive(true); break;
+            case HighlightTarget.OfficeBorder: OfficeBorder.SetActive(true); break;
+            case HighlightTarget.depositDim: if (depositDim != null) depositDim.SetActive(true); break;
+            case HighlightTarget.skillDim: if (skillDim != null) skillDim.SetActive(true); break;
+            case HighlightTarget.questDim: if (questDim != null) questDim.SetActive(true); break;
+            case HighlightTarget.researchDim: if (researchDim != null) researchDim.SetActive(true); break;
+            case HighlightTarget.timeDim: if(timeDim != null) timeDim.SetActive(true); break;
         }
     }
 
 
     private void ShowDialogue() {
-
 
         if (currentNode == null) {
             EndTutorial();   // 마지막에 도달했으면 튜토리얼 종료 처리
@@ -324,16 +486,9 @@ public class TutorialManager : MonoBehaviour {
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
         typingCoroutine = StartCoroutine(TypeText(currentNode.text));
 
-        // 노드 진입 시점에서 추가 처리
-        if (currentNode.action == DialogueAction.WaitForSatoshiDepositButton) {
-            // 여기서는 그냥 대기만 — 실제 버튼 클릭까지 진행 막기
-            return;
-        }
-
         if (currentNode.action == DialogueAction.WaitForWithdrawButton) {
             return;
         }
-
 
         if (currentNode.blockPanelAlpha >= 0f) {
             SetBlockPanelAlpha(currentNode.blockPanelAlpha);
@@ -346,6 +501,8 @@ public class TutorialManager : MonoBehaviour {
         isTyping = true;
         textCompleted = false;
 
+        if (currentNode == null) yield break;
+
         foreach (char c in message) {
             dialogueText.text += c;
 
@@ -353,10 +510,8 @@ public class TutorialManager : MonoBehaviour {
                 SfxPlayer.Instance?.Play(typingClip);
             }
 
-
             yield return new WaitForSecondsRealtime(textSpeed);
         }
-
 
         isTyping = false;
         textCompleted = true;
@@ -365,30 +520,229 @@ public class TutorialManager : MonoBehaviour {
             yesButton.gameObject.SetActive(true);
             noButton.gameObject.SetActive(true);
         }
+
         if (currentNode.highlightTarget != HighlightTarget.None) {
             ApplyHighlight(currentNode.highlightTarget);
         } else {
-            // 혹시 필요하면 DIM 전부 끄기
             ApplyHighlight(HighlightTarget.None);
         }
+
         if (currentNode.blockPanelAlpha >= 0f) {
             SetBlockPanelAlpha(currentNode.blockPanelAlpha);
         }
 
+ 
+        if (currentNode.action == DialogueAction.WaitForBTCDetailPanel) {
+            tutorialPanel.SetActive(false);
+            BorderDim.SetActive(false);
+            BorderDim2.SetActive(true);
+            StartCoroutine(CheckDetailPanelOpened());
+            yield break;
+        }
+
         ShowArrow();
     }
-
     public void OnDialogueClick() {
         HideArrow();
         if (state != State.Dialogue) return;
         if (tutorialFinished) return;
 
         if (currentNode.action == DialogueAction.WaitForSatoshiDepositButton) {
-
             return;
         }
 
         if (currentNode.action == DialogueAction.WaitForWithdrawButton) {
+            return;
+        }
+
+        if (currentNode.action == DialogueAction.WaitForTransfer) {
+            tutorialPanel.SetActive(false);
+            transferDim.SetActive(true); // 딤 켜기
+
+            // 1단계: '전액' 버튼 깜빡임 시작
+            HighlightButton(transferMaxButton);
+
+            transferMaxButton.onClick.AddListener(() => {
+
+                // 전액 버튼을 누르면 멈추고
+                StopHighlight(transferMaxButton);
+
+                // 2단계: '이체' 버튼 깜빡임 시작
+                HighlightButton(TransferButton);
+
+                TransferButton.onClick.AddListener(() => {
+
+                    // 이체 버튼을 누르면 깜빡임 멈추고 딤 해제
+                    StopHighlight(TransferButton);
+                    transferDim.SetActive(false);
+
+                    // 튜토리얼 다음 단계로 진행!
+                    if (!tutorialFinished) {
+                        tutorialPanel.SetActive(true);
+                        currentNode = currentNode.next;
+                        ShowDialogue();
+                    }
+                });
+            });
+            return;
+        }
+
+        if (currentNode.action == DialogueAction.WaitForBTCDetailPanel && !tutorialFinished) {
+
+            if (isTyping) {
+                StopCoroutine(typingCoroutine);
+                isTyping = false;
+                textCompleted = true;
+
+                tutorialPanel.SetActive(false); // 대화창 즉시 삭제
+                BorderDim.SetActive(false);     // n52의 딤 삭제
+                BorderDim2.SetActive(true);     // n53의 새 딤 켜기
+
+                StartCoroutine(CheckDetailPanelOpened());
+            }
+            return;
+        }
+
+        if (currentNode.action == DialogueAction.WaitForDetailBuy && !tutorialFinished) {
+
+            if (isTyping) {
+                StopCoroutine(typingCoroutine);
+                dialogueText.text = currentNode.text;
+                isTyping = false;
+                textCompleted = true;
+                ShowArrow();
+                return;
+            }
+
+            if (textCompleted) {
+                tutorialPanel.SetActive(false);
+                detailTenPercentDim.SetActive(true);
+                HighlightButton(detailTenPercentButton);
+
+                detailTenPercentButton.onClick.AddListener(() => {
+            
+                    if (tutorialFinished) return;
+
+                    StopHighlight(detailTenPercentButton);
+                    detailTenPercentDim.SetActive(false);
+
+                    detailBuyDim.SetActive(true);
+                    HighlightButton(detailBuyButton);
+
+                    detailBuyButton.onClick.AddListener(() => {
+                     
+                        if (tutorialFinished) return;
+
+                        StopHighlight(detailBuyButton, true);
+                        detailBuyDim.SetActive(false);
+
+                        if (!tutorialFinished) {
+                            tutorialPanel.SetActive(true);
+                            currentNode = currentNode.next;
+                            ShowDialogue();
+                        }
+                    });
+                });
+            }
+            return;
+        }
+
+        if (currentNode.action == DialogueAction.WaitForDetailSell && !tutorialFinished) {
+
+            if (isTyping) {
+                StopCoroutine(typingCoroutine);
+                dialogueText.text = currentNode.text;
+                isTyping = false;
+                textCompleted = true;
+                ShowArrow();
+                return;
+            }
+
+            if (textCompleted) {
+                tutorialPanel.SetActive(false);
+                detailSellTabDim.SetActive(true);
+                HighlightButton(detailSellTabButton);
+
+                detailSellTabButton.onClick.AddListener(() => {
+     
+                    if (tutorialFinished) return;
+
+                    StopHighlight(detailSellTabButton);
+
+                    ColorUtility.TryParseHtmlString("#C86464", out Color sellRed);
+                    detailSellTabButton.GetComponent<Image>().color = sellRed;
+
+                    detailSellTabDim.SetActive(false);
+                    detailHundredPercentDim.SetActive(true);
+
+                    HighlightButton(detailHundredPercentButton);
+
+                    detailHundredPercentButton.onClick.AddListener(() => {
+        
+                        if (tutorialFinished) return;
+
+                        StopHighlight(detailHundredPercentButton);
+                        detailHundredPercentDim.SetActive(false);
+
+                        detailExecuteSellDim.SetActive(true);
+
+                        HighlightButton(detailExecuteSellButton);
+
+                        detailExecuteSellButton.onClick.AddListener(() => {
+          
+                            if (tutorialFinished) return;
+
+                            StopHighlight(detailExecuteSellButton, true);
+                            detailExecuteSellDim.SetActive(false);
+
+                            if (!tutorialFinished) {
+                                tutorialPanel.SetActive(true);
+                                currentNode = currentNode.next;
+                                ShowDialogue();
+                            }
+                        });
+                    });
+                });
+            }
+            return;
+        }
+
+        if (currentNode.action == DialogueAction.HighlightCompanyButton && !tutorialFinished) {
+
+            // 1. 타이핑 중 클릭 시 스킵 처리
+            if (isTyping) {
+                StopCoroutine(typingCoroutine);
+                dialogueText.text = currentNode.text;
+                isTyping = false;
+                textCompleted = true;
+                ShowArrow();
+                return;
+            }
+
+            // 2. 타이핑 완료 후 1스텝 시작
+            if (textCompleted) {
+                tutorialPanel.SetActive(false); // 대화창 끄기
+                companyDim.SetActive(true);     // 💡 업무 버튼 딤 켜기
+
+                // 깜빡임 시작
+                HighlightButton(companyButton);
+
+                companyButton.onClick.AddListener(() => {
+                    // 💡 [방어막] 튜토리얼 끝났으면 눈치껏 빠지기
+                    if (tutorialFinished) return;
+
+                    // 깜빡임 멈추고 딤 끄기 (색상 원래대로)
+                    StopHighlight(companyButton);
+                    companyDim.SetActive(false);
+
+                    // 튜토리얼 다음 단계("이곳이 업무 패널이에요~")로 진행
+                    if (!tutorialFinished) {
+                        tutorialPanel.SetActive(true);
+                        currentNode = currentNode.next;
+                        ShowDialogue();
+                    }
+                });
+            }
             return;
         }
 
@@ -408,6 +762,7 @@ public class TutorialManager : MonoBehaviour {
             if (currentNode.highlightTarget != HighlightTarget.None) {
                 ApplyHighlight(currentNode.highlightTarget);
             } else {
+                // 혹시 필요하면 DIM 전부 끄기
                 ApplyHighlight(HighlightTarget.None);
             }
 
@@ -429,22 +784,6 @@ public class TutorialManager : MonoBehaviour {
             appButton.onClick.AddListener(() => {
                 StopHighlight(appButton);
                 appDim.SetActive(false);
-
-                // 튜토리얼이 아직 안 끝났을 때만 패널 다시 켬
-                if (!tutorialFinished) {
-                    tutorialPanel.SetActive(true);
-                    currentNode = currentNode.next;
-                    ShowDialogue();
-                }
-            });
-            return;
-        }
-
-        if (currentNode.action == DialogueAction.WaitForTransfer) {
-            tutorialPanel.SetActive(false);
-
-            //TransferButton.onClick.RemoveAllListeners();
-            TransferButton.onClick.AddListener(() => {
 
                 // 튜토리얼이 아직 안 끝났을 때만 패널 다시 켬
                 if (!tutorialFinished) {
@@ -583,40 +922,87 @@ public class TutorialManager : MonoBehaviour {
     private void EndTutorial() {
         state = State.Finished;
 
+        IsTutorialPlaying = false;
+
         tutorialPanel.SetActive(false);
         tutorialFinished = true;
         Time.timeScale = 1f;
         CoinManager.Instance.SetTimeSpeed(TimeSpeed.Normal);
     }
 
-    private Coroutine highlightCoroutine;
     private void HighlightButton(Button target) {
-        if (highlightCoroutine != null) StopCoroutine(highlightCoroutine);
-        highlightCoroutine = StartCoroutine(HighlightEffect(target));
+        if (target == null) return;
+
+        // [중요] 이미 이 버튼이 반짝이고 있다면, 이전 코루틴을 먼저 확실히 끄고 새로 시작합니다.
+        if (buttonHighlightCoroutines.TryGetValue(target, out Coroutine existingCoroutine)) {
+            StopCoroutine(existingCoroutine);
+            buttonHighlightCoroutines.Remove(target);
+        }
+
+        // 새 코루틴 시작하고 딕셔너리에 '꼭' 저장합니다.
+        Coroutine c = StartCoroutine(HighlightEffect(target));
+        buttonHighlightCoroutines[target] = c;
     }
 
     private IEnumerator HighlightEffect(Button target) {
         if (target == null) yield break;
-        var img = target.GetComponent<Image>();
-        if (img == null) yield break;
 
-        Color original = img.color;
+        var img = target.GetComponent<Image>();
+        var txt = target.GetComponent<TextMeshProUGUI>();
+
+        if (img == null && txt == null) yield break;
+
+        // 원래 색상 기억 (이미지가 있으면 이미지, 없으면 텍스트)
+        Color original = img != null ? img.color : txt.color;
+
+        // [중요] StopHighlight에서 써먹어야 하니 원래 색상을 저장해둡니다.
+        if (!buttonOriginalColors.ContainsKey(target)) {
+            buttonOriginalColors[target] = original;
+        }
+
         Color highlight = Color.green;
         float t = 0f;
 
         while (true) {
-            t += Time.unscaledDeltaTime * 2f;
-            img.color = Color.Lerp(original, highlight, Mathf.PingPong(t, 1));
+            // UnscaledDeltaTime을 써야 정지 상태(Time.timeScale = 0)에서도 반짝입니다.
+            t += Time.unscaledDeltaTime * 3f;
+            Color lerpColor = Color.Lerp(original, highlight, Mathf.PingPong(t, 1));
+
+            if (img != null) img.color = lerpColor;
+            if (txt != null) txt.color = lerpColor;
+
             yield return null;
         }
     }
 
-    private void StopHighlight(Button target) {
-        if (highlightCoroutine != null) StopCoroutine(highlightCoroutine);
-        highlightCoroutine = null;
-        if (target != null) {
-            var img = target.GetComponent<Image>();
-            if (img != null) img.color = Color.white;
+    // 💡 [수정됨] 복구 여부를 결정하는 bool 파라미터 추가! (기본값은 true)
+    private void StopHighlight(Button target, bool restoreColor = true) {
+        if (target == null) return;
+
+        // 1. 돌아가고 있는 반짝이 코루틴을 멈춥니다.
+        if (buttonHighlightCoroutines.TryGetValue(target, out Coroutine c)) {
+            StopCoroutine(c);
+            buttonHighlightCoroutines.Remove(target);
+        }
+
+        // 2. 색상 복구를 허락했을 때만 원래 색으로 되돌립니다.
+        if (restoreColor) {
+            if (buttonOriginalColors.TryGetValue(target, out Color originalColor)) {
+                var img = target.GetComponent<Image>();
+                if (img != null) img.color = originalColor;
+
+                var txt = target.GetComponent<TextMeshProUGUI>();
+                if (txt != null) txt.color = originalColor;
+            } else {
+                // 혹시라도 기록이 없으면 최후의 수단으로만 흰색
+                var img = target.GetComponent<Image>();
+                if (img != null) img.color = Color.white;
+            }
+        }
+
+        // 색상 복구를 하든 안 하든 메모리 정리는 해줍니다.
+        if (buttonOriginalColors.ContainsKey(target)) {
+            buttonOriginalColors.Remove(target);
         }
     }
 
@@ -766,4 +1152,21 @@ public class TutorialManager : MonoBehaviour {
             StopHighlightText(text);
     }
 
+    private IEnumerator CheckDetailPanelOpened() {
+        if (tutorialFinished) yield break;
+
+        while (actualDetailPanel == null || !actualDetailPanel.activeSelf) {
+            yield return null;
+        }
+
+
+        BorderDim2.SetActive(false); // 쳐뒀던 딤 끄기
+
+        // 튜토리얼 대화창 다시 띄우고 다음으로 진행
+        if (!tutorialFinished) {
+            tutorialPanel.SetActive(true);
+            currentNode = currentNode.next;
+            ShowDialogue();
+        }
+    }
 }

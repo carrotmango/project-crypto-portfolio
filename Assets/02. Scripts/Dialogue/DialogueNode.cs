@@ -29,20 +29,37 @@ public enum DialogueAction {
     WaitForTransfer,
     WaitForClickBullPort,
     MissionPause,   // 미션 수행 대기
-    MissionResume   // 미션 끝나고 돌아오기
+    MissionResume,   // 미션 끝나고 돌아오기
+    WaitForBTCDetailPanel,
+    WaitForDetailBuy,
+    WaitForDetailSell,
+    HighlightCompanyButton
 }
 
 public enum HighlightTarget {
     None,
     Bullbit,
+    spotButton,
     Satoshi,
+    perpDim,
+    perpAndEstateDim,
     PartTimeJob,
     Estate,
     Xbird,
     Gamble,
     SatoshiDimWithButton,
     WithdrawButton,
-    TransferDim
+    TransferDim,
+    bankExplainDim,
+    AmountDim,
+    BorderDim,
+    BorderDim2,
+    OfficeBorder,
+    depositDim,
+    skillDim,
+    questDim,
+    researchDim,
+    timeDim
 }
 
 

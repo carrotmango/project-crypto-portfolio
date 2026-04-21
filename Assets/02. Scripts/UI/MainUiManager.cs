@@ -335,6 +335,8 @@ public class MainUIManager : MonoBehaviour {
             });
         }
 
+
+
         Image icon = row.transform.Find("IconImage")?.GetComponent<Image>();
         if (icon != null) {
             Sprite sprite = Resources.Load<Sprite>($"Coins/{coin.Symbol}");

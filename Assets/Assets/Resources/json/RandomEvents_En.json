@@ -50,7 +50,7 @@
     {
       "id": "early_test_airdrop",
       "title": "Winner",
-      "description": "You won an event and received an airdrop of 10,000 PENGU coins.",
+      "description": "You won an event and received an airdrop of 10,000 PENGU tokens.",
       "satoshiBankChange": 0,
       "bullbitChange": 0,
       "coins": [
@@ -61,11 +61,11 @@
     {
       "id": "sui_early_airdrop",
       "title": "Reward",
-      "description": "You received a SUI airdrop as an early network participation reward.",
+      "description": "You received a WAT airdrop as an early network participation reward.",
       "satoshiBankChange": 0,
       "bullbitChange": 0,
       "coins": [
-        { "symbol": "SUI", "amount": 300 }
+        { "symbol": "WAT", "amount": 300 }
       ],
       "allowUnlistedAirdrop": true
     },

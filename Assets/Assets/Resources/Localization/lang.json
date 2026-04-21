@@ -714,6 +714,561 @@
 { "key": "COIN_DESC_PGOOSE", "kr": "진지한 투자에 지친 사람들을 위해 순수하게 재미와 커뮤니티의 결속력만으로 뭉쳐 폭발적으로 성장한 보라색 거위 밈 코인입니다.", "en": "A purple goose meme coin that grew explosively, united purely by fun and community solidarity for those tired of serious investing." },
 
 { "key": "COIN_NAME_MOON", "kr": "달", "en": "Moon" },
-{ "key": "COIN_DESC_MOON", "kr": "자체 스테이블 코인의 가치 유지를 위해 알고리즘으로 발행량이 조절되는 혁신적인 거버넌스 코인입니다.", "en": "An innovative governance coin whose issuance is algorithmically adjusted to maintain the value of its native stablecoin." }
+{ "key": "COIN_DESC_MOON", "kr": "자체 스테이블 코인의 가치 유지를 위해 알고리즘으로 발행량이 조절되는 혁신적인 거버넌스 코인입니다.", "en": "An innovative governance coin whose issuance is algorithmically adjusted to maintain the value of its native stablecoin." },
+{ "key": "TUTORIAL_N1", "kr": "당신이 이번 우리 회사 신입 트레이더 '{0}' 인가요?", "en": "Are you the new trader '{0}' joining our company?", "jp": "" },
+{
+    "key": "TUTORIAL_N2",
+    "kr": "굉장히 허접하게 생기셨네요. 이런 사람이 트레이더라니...",
+    "en": "You look incredibly amateurish.\nI can't believe someone like you is a trader..."
+  },
+  {
+    "key": "TUTORIAL_N3",
+    "kr": "어쨌든... 저는 대표님의 비서 'Carrot' 이라고 해요",
+    "en": "Anyway... I'm 'Carrot',\nthe CEO's secretary."
+  },
+  {
+    "key": "TUTORIAL_N4",
+    "kr": "혹시 트레이딩 경험이 있으신가요?",
+    "en": "Do you happen to have\nany trading experience?"
+  },
+  {
+    "key": "TUTORIAL_Y1",
+    "kr": "그럼 뭐, 대충 알려드려도 잘하시겠네요.",
+    "en": "Well then, I guess you'll do fine\neven if I just give you a rough overview."
+  },
+  {
+    "key": "TUTORIAL_Y2",
+    "kr": "하지만, 트레이딩 뿐만이 아니라, 그외에",
+    "en": "However, it's not just trading.\nThere are other"
+  },
+  {
+    "key": "TUTORIAL_Y3",
+    "kr": "다른 업무들도 있어서 설명은 한번 드릴게요.",
+    "en": "tasks as well,\nso I'll explain them to you once."
+  },
+  {
+    "key": "TUTORIAL_N5",
+    "kr": "없다구요? 대표님은 어떤 생각으로 이 사람을 뽑으신거지?",
+    "en": "You don't? What was the CEO thinking\nwhen he hired you?"
+  },
+  {
+    "key": "TUTORIAL_N6",
+    "kr": "후... 이번에 잘 배우시면 되니까, 괜찮아요..",
+    "en": "(Sigh...) Well, you just need to\nlearn well this time, so it's fine.."
+  },
+  {
+    "key": "TUTORIAL_N7",
+    "kr": "일단 거래하는 방법부터 알려드리고,",
+    "en": "First, I'll teach you how to trade,\nand then"
+  },
+  {
+    "key": "TUTORIAL_N8",
+    "kr": "업무에 관해서 설명해드릴께요.",
+    "en": "I'll explain your other duties."
+  },
+  {
+    "key": "TUTORIAL_N9",
+    "kr": "일단 하단에 있는 '앱' 버튼을 눌러보세요",
+    "en": "For now, try pressing the 'App' button\nat the bottom."
+  },
+  {
+    "key": "TUTORIAL_N10",
+    "kr": "이곳에 저희 회사와 계약한 플랫폼들이 있는데, 설명하자면",
+    "en": "Here are the platforms contracted with our company.\nTo explain,"
+  },
+  {
+    "key": "TUTORIAL_N11",
+    "kr": "이 불비트 앱이 기본적인 현물 거래소에요.",
+    "en": "This Bullbit app is\nthe basic spot exchange."
+  },
+  {
+    "key": "TUTORIAL_N12",
+    "kr": "이곳에서 코인 현물을 사고 팔 수 있어요.",
+    "en": "You can buy and sell spot coins here."
+  },
+  {
+    "key": "TUTORIAL_N13",
+    "kr": "불비트는 하단의 '현물거래소' 버튼으로도,",
+    "en": "You can also enter Bullbit through the\n'Spot Exchange' button at the bottom,"
+  },
+  {
+    "key": "TUTORIAL_N14",
+    "kr": "진입할 수 있으니, 참고하시면 좋아요.",
+    "en": "so keep that in mind."
+  },
+  {
+    "key": "TUTORIAL_N15",
+    "kr": "그리고 이건 은행앱이에요.",
+    "en": "And this is the bank app."
+  },
+  {
+    "key": "TUTORIAL_N16",
+    "kr": "은행을 통해, 여러 거래소로 돈을 송금할 수 있고,",
+    "en": "Through the bank, you can transfer money\nto various exchanges,"
+  },
+  {
+    "key": "TUTORIAL_N17",
+    "kr": "대출 또는 예금 상품 가입을 할 수 있어요.",
+    "en": "and sign up for loan or deposit products."
+  },
+  {
+    "key": "TUTORIAL_N18",
+    "kr": "여기 선물 거래소와 부동산 앱이 보이시죠?",
+    "en": "Do you see the futures exchange\nand real estate apps here?"
+  },
+  {
+    "key": "TUTORIAL_N19",
+    "kr": "지금은 잠겨있지만, 나중에 '승진'을 하면 사용할 수 있어요.",
+    "en": "They are locked right now, but you can use them\nlater when you get 'Promoted'."
+  },
+  {
+    "key": "TUTORIAL_N20",
+    "kr": "승진하는 방법은 간단해요. 업무 패널을 통해",
+    "en": "Getting promoted is simple.\nThrough the office panel,"
+  },
+  {
+    "key": "TUTORIAL_N21",
+    "kr": "회사에 일정 금액을 '납입'하기만 하면 됩니다.",
+    "en": "you just need to 'Deposit' a certain amount\nto the company."
+  },
+  {
+    "key": "TUTORIAL_N22",
+    "kr": "목표 금액을 채워서 승진할 때마다",
+    "en": "Every time you reach the target amount\nand get promoted,"
+  },
+  {
+    "key": "TUTORIAL_N23",
+    "kr": "이 앱들의 이용 권한이 하나씩 해제될 거예요.",
+    "en": "the access rights to these apps\nwill be unlocked one by one."
+  },
+  {
+    "key": "TUTORIAL_N24",
+    "kr": "업무 패널에 대해선 나중에 다시 설명해 드릴께요.",
+    "en": "I'll explain the office panel to you again later."
+  },
+  {
+    "key": "TUTORIAL_N25",
+    "kr": "이 앱은 Xbird라는 앱인데,",
+    "en": "This app is called Xbird,"
+  },
+  {
+    "key": "TUTORIAL_N26",
+    "kr": "이 앱을 이용해서 누구보다 빠르게 정보를 얻을 수 있어요.",
+    "en": "You can use this app to get information\nfaster than anyone else."
+  },
+  {
+    "key": "TUTORIAL_N27",
+    "kr": "하지만 가짜정보도 판을치니, 판단을 잘하셔야 할거에요",
+    "en": "However, fake news is rampant,\nso you'll have to judge carefully."
+  },
+  {
+    "key": "TUTORIAL_N28",
+    "kr": "그러나 그런 가짜 정보로도 돈을 벌 수 있어야",
+    "en": "But I believe that being able to make money\neven with such fake information"
+  },
+  {
+    "key": "TUTORIAL_N29",
+    "kr": "진짜 트레이더라고 불릴 수 있다고 저는 생각해요.",
+    "en": "is what makes you a true trader."
+  },
+  {
+    "key": "TUTORIAL_N30",
+    "kr": "하단에 피드 탭에서도 진입할 수 있어요.",
+    "en": "You can also enter from the Feed tab\nat the bottom."
+  },
+  {
+    "key": "TUTORIAL_N31",
+    "kr": "일단 그러면 실입금과 거래를 한번 해볼까요?",
+    "en": "Well then, shall we try making a\nreal deposit and trading?"
+  },
+  {
+    "key": "TUTORIAL_N32",
+    "kr": "아까 말씀 드렸던 사토시 은행 앱을 활성화 해보세요.",
+    "en": "Try activating the Satoshi Bank app\nI mentioned earlier."
+  },
+  {
+    "key": "TUTORIAL_N33",
+    "kr": "좋아요. 잘하셨어요. 은행 앱 내부에서는",
+    "en": "Good. You did well.\nInside the bank app,"
+  },
+  {
+    "key": "TUTORIAL_N34",
+    "kr": "아까 말씀드린 상품들과 환율 지표를 볼 수 있어요.",
+    "en": "you can see the products I mentioned\nand the exchange rate indicators."
+  },
+  {
+    "key": "TUTORIAL_N35",
+    "kr": "해당 기능들을 이용하여, 더욱 많은 자산을 늘려보세요,",
+    "en": "Use these features to increase\nyour assets even more,"
+  },
+  {
+    "key": "TUTORIAL_N36",
+    "kr": "일단 아까 하려고 했던 실 입금을 다시 한번 진행해보죠.",
+    "en": "For now, let's proceed with the real deposit\nwe were going to do."
+  },
+  {
+    "key": "TUTORIAL_N37",
+    "kr": "회사 명의로 {0}님 계좌에 2000만원을 넣어드렸어요.",
+    "en": "I've deposited 20,000,000 Won into your account\nunder the company's name."
+  },
+  {
+    "key": "TUTORIAL_N38",
+    "kr": "불비트로 이체를 위해 출금 패널을 열어보세요.",
+    "en": "Open the withdrawal panel to\ntransfer it to Bullbit."
+  },
+  {
+    "key": "TUTORIAL_N39",
+    "kr": "잘 하셨어요. 일단 이체할 플랫폼을 먼저 골라야해요.",
+    "en": "Well done. First, you need to\nchoose the platform to transfer to."
+  },
+  {
+    "key": "TUTORIAL_N40",
+    "kr": "저희는 거래를 해야하니까, 불비트 거래소로 송금 해야겠죠?",
+    "en": "Since we need to trade, we should send it\nto the Bullbit exchange, right?"
+  },
+  {
+    "key": "TUTORIAL_N41",
+    "kr": "지금은 송금할 수 있는 플랫폼이 몇개 없겠지만",
+    "en": "There might only be a few platforms\nyou can transfer to right now,"
+  },
+  {
+    "key": "TUTORIAL_N42",
+    "kr": "보유한 자금이 늘어나시다보면, 새로운 플랫폼이 해금될거에요.",
+    "en": "but as your funds grow,\nnew platforms will be unlocked."
+  },
+  {
+    "key": "TUTORIAL_N43",
+    "kr": "일단 이체를 진행해 볼까요?",
+    "en": "Shall we proceed with the transfer?"
+  },
+  {
+    "key": "TUTORIAL_N44",
+    "kr": "전액'버튼을 누르고 이체 버튼을 눌러 모든금액을 송금해보죠.",
+    "en": "Press the 'Max' button and then the\nTransfer button to send the entire amount."
+  },
+  {
+    "key": "TUTORIAL_N45",
+    "kr": "좋아요. 이렇게하면 정상적으로 송금이 됐을거에요.",
+    "en": "Good. This should have transferred\nthe money successfully."
+  },
+  {
+    "key": "TUTORIAL_N46",
+    "kr": "그럼 저희는 불비트 거래소로 이동해 볼까요?",
+    "en": "Then shall we move to the Bullbit exchange?"
+  },
+  {
+    "key": "TUTORIAL_N47",
+    "kr": "좋아요 왼쪽 상단을 한번 확인해 보시겠어요?",
+    "en": "Great. Could you check the\ntop left corner?"
+  },
+  {
+    "key": "TUTORIAL_N48",
+    "kr": "불비트 거래소에 정상적으로 입금이 됐네요.",
+    "en": "The deposit has been successfully\ncredited to the Bullbit exchange."
+  },
+  {
+    "key": "TUTORIAL_N49",
+    "kr": "그럼, 잔액이 들어온것은 확인했고, 코인을 한번 매수해볼까요?",
+    "en": "Now that we've confirmed the balance,\nshall we try buying a coin?"
+  },
+  {
+    "key": "TUTORIAL_N50",
+    "kr": "그러면 회사 돈이니 부담 없이 진행해보죠.",
+    "en": "Since it's company money,\nlet's proceed without any pressure."
+  },
+  {
+    "key": "TUTORIAL_N51",
+    "kr": "매수를 하기 위해선, 매수 버튼을 눌러도 좋고",
+    "en": "To buy, you can press the buy button, or"
+  },
+  {
+    "key": "TUTORIAL_N52",
+    "kr": "또는 해당 테두리 안 영역을 누르면 상세 거래 패널이 열려요.",
+    "en": "pressing the area inside this border\nwill open the detailed trading panel."
+  },
+  {
+    "key": "TUTORIAL_N53",
+    "kr": "저희는 상세 거래 패널을 한번 써보죠. 영역을 눌러보세요!",
+    "en": "Let's use the detailed trading panel.\nTry pressing the area!"
+  },
+  {
+    "key": "TUTORIAL_N54",
+    "kr": "잘 하셨어요. 여기가 상세 거래 패널이에요",
+    "en": "Well done. This is the detailed trading panel."
+  },
+  {
+    "key": "TUTORIAL_N55",
+    "kr": "이 곳에선 차트를 보며, 코인을 매수 또는 매도 할 수 있어요.",
+    "en": "Here you can buy or sell coins\nwhile looking at the chart."
+  },
+  {
+    "key": "TUTORIAL_N56",
+    "kr": "차트에선 4시간 봉, 날 봉, 수평선, 측정 자를 지원해요.",
+    "en": "The chart supports 4-hour candles, daily candles,\nhorizontal lines, and a measurement tool."
+  },
+{
+  "key": "TUTORIAL_N57",
+  "kr": "상단 리스트에서 코인을 선택할수도 있고,\n'Ctrl + W' 단축키를 활용하시면,\n해당 패널로 언제든 다시 진입하실 수 있답니다.",
+  "en": "You can select a coin from the list to view its details.\nAlso, by using the 'Ctrl + W' shortcut, you can easily\nreturn to your last viewed coin whenever you like."
+},
+  {
+    "key": "TUTORIAL_N58",
+    "kr": "저희 그러면 슬슬 보유하고 있는 잔액의 10%만 매수해볼까요?",
+    "en": "Shall we go ahead and buy just\n10% of our balance?"
+  },
+  {
+    "key": "TUTORIAL_N59",
+    "kr": "우측 패널에서 10% 버튼을 누른 뒤 하단 매수버튼을 눌러보세요!",
+    "en": "Press the 10% button on the right panel,\nthen press the Buy button at the bottom!"
+  },
+  {
+    "key": "TUTORIAL_N60",
+    "kr": "오우, 잘하셨어요. 이러면 비트코인을 매수 하신거에요",
+    "en": "Oh, well done. You've just bought Bitcoin."
+  },
+  {
+    "key": "TUTORIAL_N61",
+    "kr": "좋아요, 그럼 이제 팔아볼까요?",
+    "en": "Alright, now shall we sell it?"
+  },
+  {
+    "key": "TUTORIAL_N62",
+    "kr": "이번엔 매도 탭을 열어서 100% 매도를 해보세요!",
+    "en": "This time, open the Sell tab and\ntry selling 100%!"
+  },
+  {
+    "key": "TUTORIAL_N63",
+    "kr": "완벽해요! 이로써 기본적인 \n현물 매수, 매도는 모두 마스터하셨네요.",
+    "en": "Perfect! With this, you've mastered\nall basic spot buying and selling."
+  },
+  {
+    "key": "TUTORIAL_N64",
+    "kr": "그렇다면 이제 업무 패널을 소개시켜드릴게요.",
+    "en": "Now, I'll introduce you to the Office Panel."
+  },
+  {
+    "key": "TUTORIAL_N65",
+    "kr": "한번 이동해볼까요? 업무 버튼을 눌러보세요.",
+    "en": "Shall we move there?\nTry pressing the Office button."
+  },
+  {
+    "key": "TUTORIAL_N66",
+    "kr": "이곳이 업무 패널이에요. {0}님은 주기적으로 급여를 받을거에요.",
+    "en": "This is the Office Panel. You, '{0}',\nwill receive a salary periodically."
+  },
+  {
+    "key": "TUTORIAL_N67",
+    "kr": "현재 수령할 수 있는 급여는 해당 테두리를 보면 \n확인할 수 있어요.",
+    "en": "You can check your current receivable salary\nby looking at this border."
+  },
+  {
+    "key": "TUTORIAL_N68",
+    "kr": "급여는 약 7일마다 입금되고, 자본을 납입하거나 스킬을 강화하면\n수령하는 급여가 훨씬 늘어날 거에요.",
+    "en": "Your salary is deposited every 7 days,\nand if you deposit capital or upgrade your skills,\nyour salary will increase significantly."
+  },
+  {
+    "key": "TUTORIAL_N69",
+    "kr": "좌측에 있는 탭들을 봐주시겠어요?\n하나씩 짧게 설명해 드릴게요.",
+    "en": "Could you look at the tabs on the left?\nI'll briefly explain them one by one."
+  },
+  {
+    "key": "TUTORIAL_N70",
+    "kr": "먼저 '자본 납입' 탭이에요.\n은행에 예금된 돈을 회사에 납입해서 승진 심사를 받을 수 있죠.",
+    "en": "First is the 'Capital Deposit' tab.\nYou can use the money deposited in the bank to\ncontribute to the company and undergo a promotion review."
+  },
+  {
+    "key": "TUTORIAL_N71",
+    "kr": "승진을 하면 추가 컨텐츠가 해금되고,\n급여 인상과 최대 대출액 상향까지 노릴 수 있어요.",
+    "en": "When you get promoted, additional content is unlocked,\nand you can aim for a salary raise \nand a higher maximum loan limit."
+  },
+  {
+    "key": "TUTORIAL_N72",
+    "kr": "단, 한 번 회사에 납입한 자금은 절대 인출할 수 없으니\n신중하게 납입하셔야 해요.",
+    "en": "However, funds once deposited to the company\ncan never be withdrawn, so you must deposit carefully."
+  },
+  {
+    "key": "TUTORIAL_N73",
+    "kr": "아래는 '스킬 패널' 이에요.\n이곳 역시 은행에 예금된 돈을 사용해서 업그레이드해요.",
+    "en": "Below is the 'Skill Panel'. This is also upgraded\nusing the money deposited in the bank."
+  },
+  {
+    "key": "TUTORIAL_N74",
+    "kr": "스킬을 강화하면 '급여 크리티컬' 같이\n매매 외적으로도 수익을 올릴 수 있는 든든한 패시브가 생겨요.",
+    "en": "Upgrading skills gives you reliable passives\nlike 'Salary Critical', allowing you to earn profit\noutside of trading."
+  },
+  {
+    "key": "TUTORIAL_N75",
+    "kr": "그 밑은 '퀘스트 패널' 이에요.\n간단한 임무를 완료하고 쏠쏠한 보상을 받을 수 있죠.",
+    "en": "Below that is the 'Quest Panel'.\nYou can complete simple missions and receive sweet rewards."
+  },
+  {
+    "key": "TUTORIAL_N76",
+    "kr": "어라? 벌써 완료된 임무가 있는 것 같네요.\n알림이 떠 있을 테니, 나중에 직접 눌러서 보상을 챙겨보세요.",
+    "en": "Oh? It looks like there's already a completed mission.\nThere should be a notification, \nso click it later and claim your reward."
+  },
+  {
+    "key": "TUTORIAL_N77",
+    "kr": "마지막으로 회사에서 제공하는 '리서치 패널' 이에요.\n코인에 대한 디테일한 정보와 최신 뉴스를 제공해요.",
+    "en": "Lastly, there's the 'Research Panel' provided by the company.\nIt provides detailed information and \nthe latest news about coins."
+  },
+  {
+    "key": "TUTORIAL_N78",
+    "kr": "만약 분석하면서 매매하는 걸 즐기시는 성향이라면,\n분명 마음에 쏙 드실 거예요.",
+    "en": "If you're the type who enjoys analyzing while trading,\nyou'll definitely love it."
+  },
+  {
+    "key": "TUTORIAL_N79",
+    "kr": "좋아요. 대략적인 업무 패널 설명은 끝났네요.\n이제 얼추 트레이더 흉내는 내실 수 있겠어요.",
+    "en": "Alright. \nThat roughly concludes the explanation of the Office Panel.\nNow you can at least pretend to be a trader."
+  },
+  {
+    "key": "TUTORIAL_N80",
+    "kr": "아, 마지막으로 하단 피드 탭에서 볼 수 있는 정보 구독권은\n제가 특별히 한 달 무료로 끊어드렸어요.",
+    "en": "Ah, finally, the information subscription you see in the\nFeed tab at the bottom, I've specially given you a pass."
+  },
+{
+    "key": "TUTORIAL_N81",
+    "kr": "왼쪽 하단에 피드 알림이 표시될 테니 잘 활용해 보세요.\n이번 달 이후부터는 사원님께서 직접 갱신하셔야 한답니다.",
+    "en": "Feed notifications will appear \nin the bottom left, so stay sharp.\nFrom next month, you'll need to renew the subscription yourself."
+  },
+  {
+    "key": "TUTORIAL_N82",
+    "kr": "아차! 정말 마지막으로 한 가지만 더 설명해 드릴게요.",
+    "en": "Wait! There's just one last thing I should explain."
+  },
+  {
+    "key": "TUTORIAL_N83",
+    "kr": "상단에 있는 재생 및 일시정지 버튼이 보이시나요?\n해당 버튼으로 게임의 시간 배속을 자유롭게 설정하실 수 있어요.",
+    "en": "Do you see the play and \npause buttons at the top?\nYou can use them to adjust the game's speed as you like."
+  },
+  {
+    "key": "TUTORIAL_N84",
+    "kr": "'스페이스바'를 누르면 일시정지와 기본 배속이 서로 전환되고,\n길게 꾹 누르고 계시면 시간이 더욱 빠르게 흐른답니다.",
+    "en": "Press 'Space' to toggle between pause and normal speed.\nHold it down, and time will fly even faster!"
+  },
+  {
+    "key": "TUTORIAL_N85",
+    "kr": "제가 도와드릴 수 있는 부분은 정말 여기까지인 것 같네요.\n사원님께서 이 시장에서 얼마나 \n멋지게 살아남으실지 기대하고 있을게요.",
+    "en": "That’s truly all the guidance I can offer for now.\nI look forward to seeing how well you conquer this market."
+  },
+  {
+    "key": "TUTORIAL_N86",
+    "kr": "그럼, 신입 트레이더 사원님. 행운을 빌어요!",
+    "en": "Well then, rookie trader. Good luck!"
+  },
+    {
+    "key": "TUTORIAL_00",
+    "kr": "튜토리얼을 진행합니다.",
+    "en": "Proceeding with the tutorial.",
+    "jp": ""
+  },
+  {
+    "key": "LBL_YES",
+    "kr": "네",
+    "en": "Yes",
+    "jp": ""
+  },
+  {
+    "key": "LBL_NO",
+    "kr": "아니오",
+    "en": "No",
+    "jp": ""
+  },
+  {
+  "key": "LBL_UNLISTED",
+  "kr": "비상장",
+  "en": "Unlisted"
+},
+{
+  "key": "LBL_LANG_RESTART",
+  "kr": "언어 설정을 적용하기 위해 게임을 재시작합니다.\n진행하시겠습니까?",
+  "en": "The game will restart to apply the language settings.\nDo you want to proceed?"
+},
+{
+  "key": "BTN_QUICK_ORDER",
+  "kr": "빠른주문",
+  "en": "Order"
+},
+{
+  "key": "LBL_BANK_CASH_DISPLAY",
+  "kr": "사토시 은행 잔액: {0}{1}",
+  "en": "Satoshi Bank Balance: {0}{1}"
+},
+{ "key": "LBL_FEE", "kr": "수수료", "en": "Fee" },
+  { "key": "LBL_NOTICE", "kr": "알림", "en": "Notice" },
+  { "key": "LBL_LIQUIDATION", "kr": "청산", "en": "Liquidation" },
+  { "key": "LBL_LOSS", "kr": "손실", "en": "Loss" },
+  { "key": "LBL_BALANCE", "kr": "잔고", "en": "Balance" },
+  { "key": "LBL_SENDER", "kr": "발신인", "en": "Sender" },
+  { "key": "MSG_CANT_CHANGE_LEV_WITH_POS", "kr": "포지션 보유 중에는 레버리지를 변경할 수 없습니다.", "en": "Cannot change leverage while holding a position." },
+  { "key": "MSG_ORDER_AMOUNT_TOO_SMALL", "kr": "주문 금액이 너무 적습니다.", "en": "Order amount is too small." },
+  { "key": "MSG_LIQ_NOTICE", "kr": "{0} 포지션이 강제 청산되었습니다.", "en": "{0} position has been liquidated." },
+  { "key": "MSG_ALL_POS_CLOSED", "kr": "모든 포지션을 시장가로 종료했습니다.", "en": "All positions closed at market price." },
+  {
+    "key": "LBL_AVAILABLE_MARGIN",
+    "kr": "주문 가능 금액",
+    "en": "Available Margin"
+  },
+  {
+    "key": "LBL_UNREALIZED_PNL",
+    "kr": "미실현 수익",
+    "en": "Unrealized PnL"
+  },
+  {
+    "key": "LBL_WALLET_BALANCE",
+    "kr": "보유 잔액",
+    "en": "Balance"
+  },
+  {
+  "key": "LBL_FEE_FIXED_RATE",
+  "kr": "수수료: 0.036%",
+  "en": "Fee: 0.036%"
+},
+{
+    "key": "LBL_CURRENT_LEVERAGE",
+    "kr": "현재 레버리지",
+    "en": "Current Leverage"
+  },
+  {
+    "key": "BTN_CONFIRM",
+    "kr": "완료",
+    "en": "Confirm"
+  },
+  { "key": "LBL_POSITION", "kr": "포지션", "en": "Position" },
+  { "key": "BTN_CLOSE_ALL", "kr": "일괄 청산", "en": "Close All" },
+  { "key": "LBL_COIN_1", "kr": "코인", "en": "Coin" },
+  { "key": "LBL_QUANTITY", "kr": "수량", "en": "Qty" },
+  { "key": "LBL_ENTRY_PRICE", "kr": "진입가", "en": "Entry Price" },
+  { "key": "LBL_BREAK_EVEN", "kr": "손익분기", "en": "Break Even" },
+  { "key": "LBL_LIQ_PRICE", "kr": "청산가", "en": "Liq. Price" },
+  { "key": "LBL_NET_PNL", "kr": "Net P&L", "en": "Net P&L" },
+  { "key": "LBL_MARGIN", "kr": "마진", "en": "Margin" },
+  { "key": "LBL_ACTION", "kr": "액션", "en": "Action" },
+  {
+    "key": "LBL_AMOUNT_1",
+    "kr": "금액",
+    "en": "Amount"
+  },
+  {
+    "key": "MSG_WARN_LACK_BALANCE_01",
+    "kr": "사토시 은행 잔액이 부족합니다!",
+    "en": "Insufficient balance in Satoshi Bank!"
+  },
+  {
+    "key": "LBL_AUTHOR_AND_TIME",
+    "kr": "작성자: {0}\n{1}",
+    "en": "Author: {0}\n{1}"
+  },
+  {
+    "key": "LBL_EXPERT_OPINION",
+    "kr": "[전문가 의견]: {0}",
+    "en": "[Expert Opinion]: {0}"
+  },
+    {
+    "key": "LBL_AMOUNT_FIRST",
+    "kr": "0 원",
+    "en": "0 KRW"
+  },
+  { "key": "UNIT_CURRENCY_2", "kr": " 원", "en": " KRW" }
   ]
 }

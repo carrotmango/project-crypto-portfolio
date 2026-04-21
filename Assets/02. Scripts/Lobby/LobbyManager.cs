@@ -122,11 +122,24 @@ public class LobbyManager : MonoBehaviour {
     }
 
     void UpdateBirthdayDisplay() {
-        // 달(Month) 표시: 숫자(month)를 이용해 MONTH_1, MONTH_2 등의 키를 동적으로 부릅니다.
-        monthText.text = LocalizationManager.GetText($"MONTH_{month}");
+        // 현재 설정된 언어 확인 (0:영어, 1:한국어)
+        int savedLang = PlayerPrefs.GetInt("Saved_Language", 1);
 
-        // 일(Day) 표시: 한글은 "1일", 영어는 "1" (UNIT_DAY가 빈칸이므로)
-        dayText.text = $"{day}{LocalizationManager.GetText("UNIT_DAY")}";
+        string monthStr = LocalizationManager.GetText($"MONTH_{month}");
+        string dayUnit = LocalizationManager.GetText("UNIT_DAY");
+
+        if (savedLang == 0) {
+            // 영어일 때: "Jan 1" (약어 + 숫자)
+            monthText.text = monthStr;
+            dayText.text = day.ToString();
+
+            // 만약 하나의 텍스트에 합쳐서 보여주는 방식이라면 아래 참고
+            // totalDateText.text = $"{monthStr} {day}";
+        } else {
+            // 한국어일 때: "1월 1일"
+            monthText.text = monthStr;
+            dayText.text = $"{day}{dayUnit}";
+        }
     }
 
     void ClampDayToMonth() {
@@ -153,14 +166,19 @@ public class LobbyManager : MonoBehaviour {
     // -------------------------------
     void OnStartClicked() {
         if (string.IsNullOrWhiteSpace(nameInput.text)) {
-            Debug.LogWarning("이름을 입력해주세요.");
             return;
         }
 
         string playerName = nameInput.text;
-        string birthday = $"{month}월 {day}일";
 
-        Debug.Log($"플레이어 이름: {playerName}, 생일: {birthday}, 캐릭터 인덱스: {currentCharacterIndex}");
+        // [수정] 언어에 따른 생일 텍스트 포맷 결정
+        int savedLang = PlayerPrefs.GetInt("Saved_Language", 1);
+        string birthday;
+        if (savedLang == 0) {
+            birthday = $"{LocalizationManager.GetText($"MONTH_{month}")} {day}"; // "Jan 1"
+        } else {
+            birthday = $"{month}월 {day}일"; // "1월 1일"
+        }
 
         PlayerManager.Instance.playerName = playerName;
         PlayerManager.Instance.birthday = birthday;

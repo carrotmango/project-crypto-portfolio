@@ -175,4 +175,9 @@ public class TotalAssetPanelController : MonoBehaviour {
     public void OpenBullbitPortfolio() {
         bullbitPortfolioPanel.SetActive(true);
     }
+
+    public void CloseAllAssetPanels() {
+        if (bullbitPortfolioPanel != null) bullbitPortfolioPanel.SetActive(false);
+        if (totalAssetPanel != null) totalAssetPanel.SetActive(false);
+    }
 }

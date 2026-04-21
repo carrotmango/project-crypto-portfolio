@@ -152,7 +152,7 @@ public class CapitalDepositPanel : MonoBehaviour {
 
         // 4. 보유 현금 및 현재 납입 금액 갱신
         if (availableCashLabel != null)
-            availableCashLabel.text = string.Format(LocalizationManager.GetText("LBL_DEPOSIT_AVAILABLE"), myCash.ToString("N0"), unit);
+            availableCashLabel.text = string.Format(LocalizationManager.GetText("LBL_BANK_CASH_DISPLAY"), myCash.ToString("N0"), unit);
         if (currentCapitalLabel != null)
             currentCapitalLabel.text = string.Format(LocalizationManager.GetText("LBL_DEPOSIT_CURRENT_CAP"), currentCap.ToString("N0"));
     }

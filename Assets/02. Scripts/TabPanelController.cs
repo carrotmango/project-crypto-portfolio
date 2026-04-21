@@ -29,7 +29,7 @@ public class TabPanelController : MonoBehaviour {
 
     [Header("Detail Trading Panel")]
     public GameObject detailTradingPanel;
-
+    public BullBitDetailTradeManager detailTradeManager;
 
     [Header("Controllers")]
     public WithdrawPanelController withdrawPanelController;
@@ -39,6 +39,7 @@ public class TabPanelController : MonoBehaviour {
 
     [Header("외출 건물들")]
     public GameObject partimeJob;
+    public GameObject sortingMinigame;
     public GameObject convPanel;
 
     [Header("UI Text Lables")]
@@ -68,10 +69,22 @@ public class TabPanelController : MonoBehaviour {
             }
         }
 
-        // ★ [추가된 부분] 미니게임(도박, 알바) 진행 중일 때는 단축키 작동을 완전히 막습니다!
-        // (알바에서 A, D 누를 때 화면 넘어가는 버그 방지)
         if (gamblePanel != null && gamblePanel.activeInHierarchy) return;
-        if (partimeJob != null && partimeJob.activeInHierarchy) return;
+        if (sortingMinigame != null && sortingMinigame.activeInHierarchy) return;
+
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.W)) {
+            if (assetPanelController != null && detailTradeManager != null) {
+                if (detailTradeManager.HasLastCoin) {
+                    // 마지막 코인 정보가 있다면 디테일 패널 바로 오픈
+                    CloseSubPanelsIfOpen();
+                    detailTradeManager.ReopenLastCoin();
+                } else {
+                    // 기록된 코인이 없다면 그냥 일반 Market 리스트 오픈
+                    OpenMarketViaButton();
+                }
+            }
+            return; // Ctrl + W 처리가 끝났으므로 아래 일반 W 로직은 건너뜁니다.
+        }
 
         // 2. 단축키 매핑
         if (Input.GetKeyDown(KeyCode.Q)) {

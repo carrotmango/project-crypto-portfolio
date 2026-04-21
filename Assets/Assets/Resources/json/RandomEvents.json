@@ -50,7 +50,7 @@
     {
       "id": "early_test_airdrop",
       "title": "당첨",
-      "description": "이벤트 당첨으로 펭구코인 1만개를 에어드랍을 받았습니다.",
+      "description": "이벤트 당첨으로 펭귄코인 1만개를 에어드랍을 받았습니다.",
       "satoshiBankChange": 0,
       "bullbitChange": 0,
       "coins": [
@@ -61,11 +61,11 @@
     {
       "id": "sui_early_airdrop",
       "title": "보상",
-      "description": "초기 네트워크 참여 보상으로 SUI 에어드랍을 받았습니다.",
+      "description": "초기 네트워크 참여 보상으로 WAT 에어드랍을 받았습니다.",
       "satoshiBankChange": 0,
       "bullbitChange": 0,
       "coins": [
-        { "symbol": "SUI", "amount": 300 }
+        { "symbol": "WAT", "amount": 300 }
       ],
       "allowUnlistedAirdrop": true
     },
