@@ -1,0 +1,625 @@
+{
+  "authors": [
+    {
+      "id": "basic",
+      "defaultProfileImage": "",
+      "events": [
+        {
+          "key": "basicevent01",
+          "postYn": true,
+          "eventSystemEnabled": true,
+          "profileImage": "Xbird_01",
+          "name": "Xbird Official",
+          "date": "01/01/2016",
+          "time": "09:30",
+          "content": "Xbird에 오신걸 환영합니다.\n 유저들의 피드를 확인해 보세요.",
+          "contentImage": "",
+          "width": 550,
+          "height": 300,
+          "startDate": "01/01/2016 09:30",
+          "endDate": "01/01/2016 09:30",
+          "overrideMarketPhase": true,
+          "marketPhaseToSet": "Sideways",
+          "durationHours": 8,
+          "marketPhaseAfter": "Sideways",
+          "eventMustRequired": true,
+          "targetGroups": []
+        }
+      ]
+    },
+    {
+      "id": "elon",
+      "defaultProfileImage": "elon.jpg",
+      "events": [
+        {
+          "key": "elonevent1",
+          "postYn": true,
+          "eventSystemEnabled": true,
+          "profileImage": "elon.jpg",
+          "name": "Elon Musk",
+          "date": "01/02/2016",
+          "time": "13:00",
+          "content": "도지는 이미 달에 있다. \n페페가 조종하고 있음.\n나도 그냥 매일 웃음밖에 안 나와.",
+          "contentImage": "elon_doge_02.jpg",
+          "width": 550,
+          "height": 700,
+          "startDate": "01/02/2016 13:00",
+          "endDate": "01/02/2016 13:00",
+          "overrideMarketPhase": true,
+          "marketPhaseToSet": "Bull",
+          "durationHours": 36,
+          "marketPhaseAfter": "Sideways",
+          "eventMustRequired": true,
+          "targetGroups": [
+            {
+              "symbols": [
+                "DOGE",
+                "PEPE"
+              ],
+              "priceChangeMin": 80,
+              "priceChangeMax": 133,
+              "marketPhaseToSet": "MegaBull",
+              "durationHours": 12
+            }
+          ]
+        },
+        {
+          "key": "dogepepefix",
+          "postYn": false,
+          "eventSystemEnabled": true,
+          "profileImage": "elon.jpg",
+          "name": "Elon Musk",
+          "date": "01/02/2016",
+          "time": "13:00",
+          "content": "",
+          "contentImage": "",
+          "width": 550,
+          "height": 700,
+          "startDate": "01/02/2016 21:00",
+          "endDate": "01/02/2016 21:00",
+          "overrideMarketPhase": false,
+          "marketPhaseToSet": "Bull",
+          "durationHours": 36,
+          "marketPhaseAfter": "Sideways",
+          "eventMustRequired": true,
+          "targetGroups": [
+            {
+              "symbols": [
+                "DOGE",
+                "PEPE"
+              ],
+              "priceChangeMin": -28,
+              "priceChangeMax": -45,
+              "marketPhaseToSet": "MegaBull",
+              "durationHours": 6
+            }
+          ]
+        },
+        {
+          "key": "elonevent2",
+          "postYn": true,
+          "eventSystemEnabled": true,
+          "profileImage": "elon.jpg",
+          "name": "Elon Musk",
+          "date": "01/05/2016",
+          "time": "14:00",
+          "content": "요즘 애니메이션 볼만한 거 없나?",
+          "contentImage": "",
+          "width": 550,
+          "height": 300,
+          "startDate": "01/05/2016 14:00",
+          "endDate": "01/05/2016 14:00",
+          "overrideMarketPhase": true,
+          "marketPhaseToSet": "MildBull",
+          "durationHours": 44,
+          "marketPhaseAfter": "Sideways",
+          "eventMustRequired": true,
+          "targetGroups": [
+            {
+              "symbols": [
+                "ANIME"
+              ],
+              "priceChangeMin": 200,
+              "priceChangeMax": 300,
+              "marketPhaseToSet": "BigBull",
+              "durationHours": 44
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trump",
+      "defaultProfileImage": "trump.jpg",
+      "events": [
+        {
+          "key": "trumpevent1",
+          "postYn": true,
+          "eventSystemEnabled": true,
+          "profileImage": "trump.jpg",
+          "name": "Donald Trump",
+          "date": "01/11/2016",
+          "time": "16:00",
+          "content": "나는 비트코인을 사랑한다. 정말 사랑한다.\n암호화폐 시장? 지금 폭발하고 있어. 미래다.\n그리고 나는 이 시장을 엄청 긍정적으로 본다.\n솔직히 말해서, 내 전 재산을 전부 넣어도 아깝지 않아.\n날 믿어라. 나를 따라와라. 절대 후회하지 않을 거다.",
+          "contentImage": "trump_bitcoin_01.jpg",
+          "width": 550,
+          "height": 700,
+          "startDate": "01/11/2016 16:00",
+          "endDate": "01/11/2016 16:00",
+          "overrideMarketPhase": true,
+          "marketPhaseToSet": "BigBull",
+          "durationHours": 72,
+          "marketPhaseAfter": "MildBull",
+          "eventMustRequired": true,
+          "targetGroups": [
+            {
+              "symbols": [
+                "BTC"
+              ],
+              "priceChangeMin": 10,
+              "priceChangeMax": 30,
+              "marketPhaseToSet": "BigBull",
+              "durationHours": 72
+            },
+            {
+              "symbols": [
+                "TRUMP"
+              ],
+              "priceChangeMin": 400,
+              "priceChangeMax": 480,
+              "marketPhaseToSet": "MildBull",
+              "durationHours": 72
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "powell",
+      "defaultProfileImage": "powell.jpg",
+      "events": [
+        {
+          "key": "powellevent1",
+          "postYn": true,
+          "eventSystemEnabled": true,
+          "profileImage": "powell.jpg",
+          "name": "Jerome Hayden Powell",
+          "date": "01/08/2016",
+          "time": "09:00",
+          "content": "암호화폐는 통화가 아닙니다.\n불법 자금 세탁과 범죄 은닉에 사용되는 위험한 자산입니다.\n강력한 규제와 감독 없이는 금융 안정은 불가능합니다.\n규제 없이는 파멸뿐입니다.",
+          "contentImage": "powell_announce_01.jpg",
+          "width": 550,
+          "height": 700,
+          "startDate": "01/08/2016 09:00",
+          "endDate": "01/08/2016 09:00",
+          "overrideMarketPhase": true,
+          "marketPhaseToSet": "MegaBear",
+          "durationHours": 48,
+          "marketPhaseAfter": "Bear",
+          "eventMustRequired": true,
+          "targetGroups": [
+            {
+              "symbols": ["MOVE"],
+              "priceChangeMin": -5,
+              "priceChangeMax": -9,
+              "marketPhaseToSet": "Bear",
+              "durationHours": 48
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "shocking",
+      "defaultProfileImage": "shocking.jpg",
+      "events": [
+        {
+          "key": "shockingnews1",
+          "postYn": true,
+          "eventSystemEnabled": true,
+          "profileImage": "shocking.jpg",
+          "name": "Shocking News",
+          "date": "01/13/2016",
+          "time": "11:40",
+          "content": "우리가 아는 내용에 따르면 무브먼트(Movement) 코인의 개발자 MoveLabs의 Rushi Manche가 내부자 거래 의혹이 있는 것으로 확인되었습니다.\nRushi는 그냥 FUD에 불과하다고 언급하였고\n암호화폐 시장에서 가짜 뉴스에 속지말고 무브먼트랩스는 투명하게 일하고 있다고 밝혔습니다.",
+          "contentImage": "",
+          "width": 550,
+          "height": 400,
+          "startDate": "01/13/2016 11:30",
+          "endDate": "01/13/2016 11:30",
+          "overrideMarketPhase": true,
+          "marketPhaseToSet": "Sideways",
+          "durationHours": 24,
+          "marketPhaseAfter": "MildBull",
+          "eventMustRequired": true,
+          "targetGroups": [
+            {
+              "symbols": [
+                "MOVE"
+              ],
+              "priceChangeMin": -30,
+              "priceChangeMax": -45,
+              "marketPhaseToSet": "Bear",
+              "durationHours": 24
+            }
+          ]
+        },
+        {
+          "key": "shockingnews2",
+          "postYn": true,
+          "eventSystemEnabled": true,
+          "profileImage": "shocking.jpg",
+          "name": "Shocking News",
+          "date": "01/15/2016",
+          "time": "08:20",
+          "content": "무브먼트랩스의 코인 개발자이자 CEO Rushi Manche(루시 만체)의 내부자 거래는 사실로 밝혀졌으며,\n결국 무브먼트랩스 이사회 결정에 의해 정직 처분되었습니다. Market Maker(시장조성자)와 비밀 계약하여 무브먼트 코인이\n특정 가격에 도달할 경우 MM은 즉각 매도하고 실현한 손익을 4:6 비율로 나눠갖기로 한 것으로 드러났습니다.",
+          "contentImage": "shocking_news_01",
+          "width": 550,
+          "height": 700,
+          "startDate": "01/15/2016 08:00",
+          "endDate": "01/15/2016 08:00",
+          "overrideMarketPhase": true,
+          "marketPhaseToSet": "MildBull",
+          "durationHours": 48,
+          "marketPhaseAfter": "Sideways",
+          "eventMustRequired": true,
+          "targetGroups": [
+            {
+              "symbols": [
+                "MOVE"
+              ],
+              "priceChangeMin": -50,
+              "priceChangeMax": -70,
+              "marketPhaseToSet": "MegaBear",
+              "durationHours": 48
+            }
+          ]
+        },
+        {
+          "key": "shockingnews3",
+          "postYn": true,
+          "eventSystemEnabled": true,
+          "profileImage": "shocking.jpg",
+          "name": "Shocking News",
+          "date": "01/16/2016",
+          "time": "08:20",
+          "content": "세계 암호화폐 거래소 코인벙커가 무브먼트 코인을 유의 종목으로 지정했습니다.\n덧붙여 거래소 측은 청렴한 암호화폐 시장 유지를 위해,\n무브먼트 코인과 유사한 사례가 의심되는 알트코인들을 즉각적으로 검토할 예정이라고 밝혔습니다.",
+          "contentImage": "",
+          "width": 550,
+          "height": 400,
+          "startDate": "01/16/2016 08:00",
+          "endDate": "01/16/2016 08:00",
+          "overrideMarketPhase": true,
+          "marketPhaseToSet": "MildBear",
+          "durationHours": 12,
+          "marketPhaseAfter": "MegaBull",
+          "eventMustRequired": true,
+          "targetGroups": [
+            {
+              "symbols": [
+                "MOVE"
+              ],
+              "priceChangeMin": -20,
+              "priceChangeMax": -35,
+              "marketPhaseToSet": "Bear",
+              "durationHours": 12
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bullbit_news",
+      "defaultProfileImage": "bullbit.png",
+      "events": [
+        {
+          "key": "aptos_listing_news",
+          "postYn": true,
+          "eventSystemEnabled": true,
+          "profileImage": "bullbit.png",
+          "name": "불비트 뉴스",
+          "date": "",
+          "time": "",
+          "content": "차세대 고성능 레이어 1 블록체인으로 주목받던 '앱토스(APT)'가 오늘부로 불비트 거래소에 정식 상장되었습니다.",
+          "contentImage": "",
+          "width": 550,
+          "height": 400,
+          "startDate": "01/01/2016 13:00",
+          "endDate": "01/01/2016 13:00",
+          "eventMustRequired": true,
+          "eventType": "Listing",
+          "targetGroups": [
+            {
+              "symbols": [
+                "APT"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "aptos_pump_1",
+          "postYn": false,
+          "eventSystemEnabled": true,
+          "profileImage": "",
+          "name": "",
+          "date": "",
+          "time": "",
+          "content": "",
+          "contentImage": "",
+          "width": 0,
+          "height": 0,
+          "startDate": "01/01/2016 13:30",
+          "endDate": "01/01/2016 13:30",
+          "eventMustRequired": true,
+          "targetGroups": [
+            {
+              "symbols": [
+                "APT"
+              ],
+              "priceChangeMin": 200,
+              "priceChangeMax": 400,
+              "marketPhaseToSet": "Sideways",
+              "durationHours": 4
+            }
+          ]
+        },
+        {
+          "key": "aptos_dump_1",
+          "postYn": false,
+          "eventSystemEnabled": true,
+          "profileImage": "",
+          "name": "",
+          "date": "",
+          "time": "",
+          "content": "",
+          "contentImage": "",
+          "width": 0,
+          "height": 0,
+          "startDate": "01/01/2016 17:30",
+          "endDate": "01/01/2016 17:30",
+          "eventMustRequired": true,
+          "targetGroups": [
+            {
+              "symbols": [
+                "APT"
+              ],
+              "priceChangeMin": -35,
+              "priceChangeMax": -64,
+              "marketPhaseToSet": "Sideways",
+              "durationHours": 4
+            }
+          ]
+        },
+        {
+          "key": "aptos_pump_2",
+          "postYn": false,
+          "eventSystemEnabled": true,
+          "profileImage": "",
+          "name": "",
+          "date": "",
+          "time": "",
+          "content": "",
+          "contentImage": "",
+          "width": 0,
+          "height": 0,
+          "startDate": "01/01/2016 21:30",
+          "endDate": "01/01/2016 21:30",
+          "eventMustRequired": true,
+          "targetGroups": [
+            {
+              "symbols": [
+                "APT"
+              ],
+              "priceChangeMin": 100,
+              "priceChangeMax": 150,
+              "marketPhaseToSet": "Sideways",
+              "durationHours": 4
+            }
+          ]
+        },
+        {
+          "key": "sui_listing_soon_news",
+          "postYn": true,
+          "eventSystemEnabled": true,
+          "profileImage": "bullbit.png",
+          "name": "불비트 뉴스",
+          "date": "",
+          "time": "",
+          "content": "분산형 애플리케이션(dApp)과 디지털 자산을 지원하도록 설계된 차세대 레이어1 블록체인\n 수이가 1월 9일 15:00 에 불비트 거래소에 정식 상장됩니다. 많은 관심 바랍니다.",
+          "contentImage": "",
+          "width": 550,
+          "height": 400,
+          "startDate": "01/08/2016 15:00",
+          "endDate": "01/08/2016 15:00",
+          "eventMustRequired": true
+        },
+        {
+          "key": "sui_listing_news",
+          "postYn": true,
+          "eventSystemEnabled": true,
+          "profileImage": "bullbit.png",
+          "name": "불비트 뉴스",
+          "date": "",
+          "time": "",
+          "content": "분산형 애플리케이션(dApp)과 디지털 자산을 지원하도록 설계된 차세대 레이어1 블록체인 '수이(SUI)'가 오늘부로 불비트 거래소에 정식 상장되었습니다.",
+          "contentImage": "",
+          "width": 550,
+          "height": 400,
+          "startDate": "01/09/2016 15:00",
+          "endDate": "01/09/2016 15:00",
+          "eventMustRequired": true,
+          "eventType": "Listing",
+          "targetGroups": [
+            {
+              "symbols": [
+                "SUI"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "sui_dump_1",
+          "postYn": false,
+          "eventSystemEnabled": true,
+          "profileImage": "",
+          "name": "",
+          "date": "",
+          "time": "",
+          "content": "",
+          "contentImage": "",
+          "width": 0,
+          "height": 0,
+          "startDate": "01/09/2016 15:30",
+          "endDate": "01/09/2016 15:30",
+          "eventMustRequired": true,
+          "targetGroups": [
+            {
+              "symbols": [
+                "SUI"
+              ],
+              "priceChangeMin": -20,
+              "priceChangeMax": -25,
+              "marketPhaseToSet": "Sideways",
+              "durationHours": 4
+            }
+          ]
+        },
+        {
+          "key": "sui_dump_2",
+          "postYn": false,
+          "eventSystemEnabled": true,
+          "profileImage": "",
+          "name": "",
+          "date": "",
+          "time": "",
+          "content": "",
+          "contentImage": "",
+          "width": 0,
+          "height": 0,
+          "startDate": "01/09/2016 20:00",
+          "endDate": "01/09/2016 20:00",
+          "eventMustRequired": true,
+          "targetGroups": [
+            {
+              "symbols": [
+                "SUI"
+              ],
+              "priceChangeMin": -10,
+              "priceChangeMax": -15,
+              "marketPhaseToSet": "Sideways",
+              "durationHours": 4
+            }
+          ]
+        },
+        {
+          "key": "sui_pump_1",
+          "postYn": false,
+          "eventSystemEnabled": true,
+          "profileImage": "",
+          "name": "",
+          "date": "",
+          "time": "",
+          "content": "",
+          "contentImage": "",
+          "width": 0,
+          "height": 0,
+          "startDate": "01/10/2016 00:30",
+          "endDate": "01/10/2016 00:30",
+          "eventMustRequired": true,
+          "targetGroups": [
+            {
+              "symbols": [
+                "SUI"
+              ],
+              "priceChangeMin": 30,
+              "priceChangeMax": 40,
+              "marketPhaseToSet": "Sideways",
+              "durationHours": 1
+            }
+          ]
+        },
+        {
+          "key": "sui_pump_2",
+          "postYn": false,
+          "eventSystemEnabled": true,
+          "profileImage": "",
+          "name": "",
+          "date": "",
+          "time": "",
+          "content": "",
+          "contentImage": "",
+          "width": 0,
+          "height": 0,
+          "startDate": "01/10/2016 01:30",
+          "endDate": "01/10/2016 01:30",
+          "eventMustRequired": true,
+          "targetGroups": [
+            {
+              "symbols": [
+                "SUI"
+              ],
+              "priceChangeMin": 50,
+              "priceChangeMax": 70,
+              "marketPhaseToSet": "MildBear",
+              "durationHours": 2
+            }
+          ]
+        },
+        {
+          "key": "sui_pump_3",
+          "postYn": false,
+          "eventSystemEnabled": true,
+          "profileImage": "",
+          "name": "",
+          "date": "",
+          "time": "",
+          "content": "",
+          "contentImage": "",
+          "width": 0,
+          "height": 0,
+          "startDate": "01/10/2016 03:30",
+          "endDate": "01/10/2016 03:30",
+          "eventMustRequired": true,
+          "targetGroups": [
+            {
+              "symbols": [
+                "SUI"
+              ],
+              "priceChangeMin": 70,
+              "priceChangeMax": 100,
+              "marketPhaseToSet": "MildBear",
+              "durationHours": 2
+            }
+          ]
+        },
+        {
+          "key": "sui_pump_4",
+          "postYn": false,
+          "eventSystemEnabled": true,
+          "profileImage": "",
+          "name": "",
+          "date": "",
+          "time": "",
+          "content": "",
+          "contentImage": "",
+          "width": 0,
+          "height": 0,
+          "startDate": "01/10/2016 05:30",
+          "endDate": "01/10/2016 05:30",
+          "eventMustRequired": true,
+          "targetGroups": [
+            {
+              "symbols": [
+                "SUI"
+              ],
+              "priceChangeMin": 250,
+              "priceChangeMax": 300,
+              "marketPhaseToSet": "MildBear",
+              "durationHours": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

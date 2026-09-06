@@ -1,0 +1,181 @@
+{
+  "templates": [
+    {
+      "//": "도지/페페 떡상 전용 (단일)",
+      "content": "Yoo, what's up with this {0} pump? lol Already hit ${4}!",
+      "targetSymbols": ["DOGE", "PEPE"],
+      "minChange": 40,
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "도지 전용 (일론 언급)",
+      "content": "I believed in you, Papa Elon!!! To the moon {3} LFG!!!",
+      "targetSymbols": ["DOGE"],
+      "fixedName": "DogeFather",
+      "minChange": 40,
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "도지/페페 멀티 홀딩 독려",
+      "content": "Keep HODLing {0}... Welcome to the cyberpunk era....",
+      "targetSymbols": ["DOGE", "PEPE"],
+      "minChange": 40,
+      "minCoins": 2, "maxCoins": 2,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "범용 급등 1 (단일) - 원화 기준",
+      "content": "Is this {0} pump real? Breaking {2} Won and heading straight to ATH fr",
+      "targetSymbols": [],
+      "minChange": 14,
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "범용 급등 (멀티 전용) - 원화 기준",
+      "content": "Whoa, {0} up {1}%? Current price is {2} Won? damn...",
+      "targetSymbols": [],
+      "minChange": 14,
+      "minCoins": 2, "maxCoins": 4,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "급등 2 (전문가 컨셉) - 달러 기준",
+      "content": "Looking at the {0} chart, it's a classic cup and handle. Going all in once it holds ${4}.",
+      "targetSymbols": [],
+      "minChange": 15,
+      "minCoins": 1, "maxCoins": 2,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "급등 3",
+      "content": "#{3} is a literal money printer damn. Already up {1}%!",
+      "targetSymbols": [],
+      "minChange": 15,
+      "minCoins": 1, "maxCoins": 3,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "급락 1 (단일) - 원화 기준",
+      "content": "When is the rescue team coming for {0} at {2} Won... Am I stuck holding these bags forever?",
+      "targetSymbols": [],
+      "maxChange": -14,
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "급락 (멀티) - 달러 기준",
+      "content": "{0} is dumping hard.. Broke below ${4} too.. I'm literally crying right now..",
+      "targetSymbols": [],
+      "maxChange": -14,
+      "minCoins": 2, "maxCoins": 4,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "숏 금지 (도지/페페 저격) - 달러 기준",
+      "content": "You'll get wrecked shorting {0}. Can't you see it breaking ${4}?",
+      "targetSymbols": ["DOGE", "PEPE"],
+      "minChange": 14,
+      "minCoins": 1, "maxCoins": 2,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "싱글 1: 대기 타던 유저 (떡상) - 달러 기준",
+      "content": "Ah I sold {0} yesterday.. Is it a rule of nature that it pumps to ${4} right after I sell? sigh;",
+      "targetSymbols": [],
+      "minChange": 14,
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "싱글: 대떡락",
+      "content": "It's all over lmaoooo Is {0} getting delisted?",
+      "targetSymbols": [],
+      "maxChange": -30, 
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "오름숏 (비트코인)",
+      "content": "Short the bounce, headed to 30K",
+      "targetSymbols": ["BTC"],
+      "maxChange": -10,
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "싱글 2: 행복회로 (떡상) - 원화 기준",
+      "content": "{0} to the moon!! If it holds {2} Won today, we're reaching new digits lol",
+      "targetSymbols": [],
+      "minChange": 20,
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "싱글 3: 공포 조장 (떡락) - 원화 기준",
+      "content": "Is it an IQ test to dump {0} right now? It broke below {2} Won, why aren't you out yet? ;;",
+      "targetSymbols": [],
+      "maxChange": -14,
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "싱글 4: 비트코인 전용 - 달러 기준",
+      "content": "Look at the king {0} go.. Already broke ${4}.. Paving the way for the alts.",
+      "targetSymbols": ["BTC"],
+      "minChange": 14,
+      "minCoins": 1, "maxCoins": 1,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "멀티 1: 불장 분위기",
+      "content": "Wow {0} are all moving together damn! Averaging {1}% profit!! Market vibe is insane!!",
+      "targetSymbols": [],
+      "minChange": 15,
+      "minCoins": 2, "maxCoins": 4,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "멀티 2: 단체 익절",
+      "content": "Steak dinner tonight thanks to {0} lol! Securing the bag!",
+      "targetSymbols": [],
+      "minChange": 18,
+      "minCoins": 2, "maxCoins": 3,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "멀티 3: 단체 곡소리",
+      "content": "Anyone else holding {0}..? Down {1}% on average, might need to go check the bridge.. sigh;",
+      "targetSymbols": [],
+      "maxChange": -15,
+      "minCoins": 2, "maxCoins": 4,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "멀티 4: 물타기",
+      "content": "Kept buying the dip on {0} and now I'm drowning... Save me ㅠㅠ",
+      "targetSymbols": [],
+      "maxChange": -18,
+      "minCoins": 2, "maxCoins": 3,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "범용: 광기 (상승) - 달러 기준",
+      "content": "Let's gooo~ The {0} rocket hasn't left yet! It's gonna smash right through ${4}! Hop on now lmaoo",
+      "targetSymbols": [],
+      "minChange": 25,
+      "minCoins": 1, "maxCoins": 4,
+      "width": 550, "height": 150
+    },
+    {
+      "//": "범용: 상폐빔 걱정",
+      "content": "Wait, is this {0} dump a delisting candle? Volume is exploding, I'm scared;;",
+      "targetSymbols": [],
+      "maxChange": -25,
+      "minCoins": 1, "maxCoins": 2,
+      "width": 550, "height": 150
+    }
+  ]
+}

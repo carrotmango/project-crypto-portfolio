@@ -1,0 +1,832 @@
+﻿using UnityEngine;
+using TMPro;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.UI;
+using System.Linq;
+
+public enum TimeSpeed
+{
+    Paused,
+    Normal,
+    Double,
+    test
+}
+
+public class CoinManager : MonoBehaviour
+{
+    public static CoinManager Instance { get; private set; }
+
+    public TotalAssetPanelController assetPanelController;
+    public TextMeshProUGUI dateText;
+    public ChartPanelController chartPanelController;
+    public StatusPanelController statusPanelController;
+
+    private int tickCount = 0;
+    private DateTime currentDateTime = new DateTime(2020, 1, 1, 9, 0, 0);
+    public int survivalDays = 1;
+
+    [Header("UI 연결")]
+    public TextMeshProUGUI cashText;
+    //public TextMeshProUGUI playerTotalAssetText;
+    public TextMeshProUGUI cashTextLabel;
+    public TextMeshProUGUI bankCashText;
+    public TextMeshProUGUI mangoCashText;
+    public TextMeshProUGUI lobbySatoshiText;
+
+    public TimeSpeed currentSpeed = TimeSpeed.Normal;
+    private TimeSpeed lastSpeedBeforePause = TimeSpeed.Normal;
+    private float spacePressedTime = 0f;
+    private bool isLongPress = false;
+    private bool startedAsPaused = false;
+
+    public List<CoinData> coins = new();
+    public MarketPhase CurrentMarket = MarketPhase.Sideways;
+
+    public Button pauseBtn;
+    public Button normalBtn;
+    public Button doubleBtn;
+
+    public Color selectedColor = new Color32(50, 50, 50, 255);
+    public Color defaultColor = new Color32(255, 255, 255, 0);
+
+    public FourNanceManager fournanceManager;
+
+    public enum AppType
+    {
+        Bullbit,
+        SatoshiBank,
+        Xbird,
+        None,
+        Gamble,
+        Perp
+    }
+
+    public AppType currentApp = AppType.Bullbit;
+
+    public DateTime CurrentDateTime => currentDateTime;
+    public int TickCount => tickCount;
+
+    public double GetStashoCash() => PlayerManager.Instance.satoshiBankCash;
+    public bool IsTimePaused => UIPauseManager.IsPaused || currentSpeed == TimeSpeed.Paused;
+    public event Action<DateTime> OnTimeAdvanced;
+    //public event Action OnCoinListChanged;
+
+    public event Action<DateTime> OnCandleBoundary;
+    public System.Action OnMarketUpdated;
+    private HashSet<string> dailySurgeAlerts = new HashSet<string>();
+    private int lastRecordedDay = -1;
+    private double baseTotalMarketCap = -1;
+
+    public struct CoinChangeInfo {
+        public CoinData coin;
+        public double changeRate;
+    }
+
+    public void GetMajorDailyChanges(
+    out List<CoinChangeInfo> topGainers,
+    out List<CoinChangeInfo> topLosers) {
+        List<CoinChangeInfo> all = new();
+
+        foreach (var coin in coins) {
+            if (coin.InitialPrice <= 0) continue;
+
+            double rate =
+                (coin.CurrentPrice - coin.InitialPrice) / coin.InitialPrice * 100.0;
+
+            all.Add(new CoinChangeInfo {
+                coin = coin,
+                changeRate = rate
+            });
+        }
+
+        topGainers = all
+            .OrderByDescending(x => x.changeRate)
+            .Take(2)
+            .ToList();
+
+        topLosers = all
+            .OrderBy(x => x.changeRate)
+            .Take(2)
+            .ToList();
+    }
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            //DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    void Start()
+    {
+        StartCoroutine(InitializeRoutine());
+        StartCoroutine(RealtimeUIUpdateRoutine());
+    }
+
+    void Update() {
+        // 1. 은행 잔액 실시간 업데이트
+        //if (bankCashText != null && PlayerManager.Instance != null) {
+        //    bankCashText.text = $"은행 잔액: {PlayerManager.Instance.satoshiBankCash:N0}원";
+        //}
+
+        // 2. 스페이스바 스마트 조작
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            spacePressedTime = Time.unscaledTime;
+            isLongPress = false;
+            // 누르는 시점의 상태를 저장
+            startedAsPaused = (currentSpeed == TimeSpeed.Paused);
+        }
+
+        // 꾹 누르고 있는 동안
+        if (Input.GetKey(KeyCode.Space)) {
+            float duration = Time.unscaledTime - spacePressedTime;
+
+            // 정지 상태가 아니었을 때만 배속 활성화
+            if (duration > 0.2f && !startedAsPaused) {
+                isLongPress = true;
+                if (currentSpeed != TimeSpeed.Double) {
+                    SetTimeSpeed(TimeSpeed.Double);
+                }
+            }
+        }
+
+        // 뗐을 때
+        if (Input.GetKeyUp(KeyCode.Space)) {
+            // 시나리오 1: 흐르는 중에 꾹 눌렀다 뗀 경우 -> 일반 속도로 복귀
+            if (isLongPress && !startedAsPaused) {
+                SetTimeSpeed(TimeSpeed.Normal);
+            }
+            // 시나리오 2: 정지 상태에서 꾹 눌렀다 뗀 경우 -> 아무것도 안 함 (정지 유지)
+            else if (startedAsPaused && (Time.unscaledTime - spacePressedTime > 0.2f)) {
+                // 꾹 누른 것이 확인되면 정지 상태를 유지 (TogglePause 호출 안 함)
+                Debug.Log("[시간] 정지 중 롱프레스 감지: 정지 유지");
+            }
+            // 시나리오 3: 짧게 클릭한 경우 -> 토글 스왑
+            else {
+                TogglePause();
+            }
+
+            isLongPress = false;
+            startedAsPaused = false;
+        }
+    }
+
+    public void TogglePause() {
+        if (currentSpeed == TimeSpeed.Paused) {
+            SetTimeSpeed(TimeSpeed.Normal);
+        } else {
+            SetTimeSpeed(TimeSpeed.Paused);
+        }
+    }
+
+    IEnumerator RealtimeUIUpdateRoutine() {
+        // 게임이 꺼질 때까지 무한 반복
+        while (true) {
+            // UI 텍스트 강제 갱신
+            UpdateCashText();
+
+            yield return new WaitForSecondsRealtime(0.1f);
+        }
+    }
+
+    IEnumerator GameTickRoutine()
+    {
+        while (true)
+        {
+            if (UIPauseManager.IsPaused) {
+                yield return null;
+                continue;
+            }
+
+            float interval = GetUpdateInterval();
+            if (interval == float.MaxValue)
+            {
+                yield return null;
+                continue;
+            }
+
+            yield return new WaitForSeconds(interval);
+
+            tickCount++;
+            currentDateTime = currentDateTime.AddMinutes(30);
+            OnTimeAdvanced?.Invoke(currentDateTime);
+
+            // 매 프레임 혹은 매 틱마다 체크
+            if (currentDateTime.Hour == 9 && currentDateTime.Minute == 0) {
+                // 오늘 날짜에 아직 기록을 안 했다면 (오전 9시 정각에 최초 1회 실행)
+                if (lastRecordedDay != currentDateTime.Day) {
+                    // 1. 코인 시가 갱신 로직 (기존 유지)
+                    foreach (var c in coins) {
+                        c.RecordDailyClosePrice();
+                        c.InitialPrice = c.CurrentPrice;
+
+                        // [핵심] 일일 채굴량 반영 로직
+                        var meta = Array.Find(CoinMetaDatabase.AllCoins, m => m.Symbol == c.Symbol);
+                        if (meta != null && meta.DailyMintAmount > 0) {
+                            long nextSupply = c.CirculatingSupply + meta.DailyMintAmount;
+                            c.CirculatingSupply = Math.Min(nextSupply, c.MaxSupply);
+
+                            // 메타데이터 동기화
+                            meta.CirculatingSupply = c.CirculatingSupply;
+                        }
+                    }
+
+                    dailySurgeAlerts.Clear();
+
+                    // 2. 차트 데이터 추가 (오전 9시 환율 기준)
+                    if (ExchangeChartManager.Instance != null) {
+                        float currentRate = (float)GlobalEconomyManager.UsdToKrw;
+                        ExchangeChartManager.Instance.AddPriceData(currentRate);
+
+                        // 오늘 기록 완료 표시 (날짜를 저장해서 9시 0분 동안 중복 실행 방지)
+                        lastRecordedDay = currentDateTime.Day;
+                        Debug.Log($"[차트 업데이트] 오전 9시 정각 환율 기록 완료: {currentRate}원");
+                    }
+                }
+            }
+
+            if (CoinEventScenarioManager.Instance != null) {
+                CoinEventScenarioManager.Instance.CheckAndExecuteScenarios(currentDateTime, coins);
+            }
+
+
+
+            if (currentDateTime.Hour == 8 && currentDateTime.Minute == 0) {
+                FearIndexManager.Instance?.RecalculateDailyFear();
+            }
+
+
+            if (currentDateTime.Hour == 0 && currentDateTime.Minute == 0) {
+                survivalDays++;
+
+                // 시나리오 매니저에게 판단 위임
+
+                // 데이터가 바뀌었으니 UI를 새로 그리라고 모든 패널에 신호를 보냅니다.
+                OnMarketUpdated?.Invoke();
+
+                if (LoanManager.Instance != null) {
+                    LoanManager.Instance.CheckLoanTick();
+                }
+
+                if (ProductManager.Instance != null) {
+                    ProductManager.Instance.CheckAndProcessExpiry();
+                }
+
+                if (SatoshiBankPanel.Instance != null) {
+                    SatoshiBankPanel.Instance.RefreshDepositStatus();
+                }
+                OfficeManager.Instance?.TryPaySalary();
+                RealEstatePanelController.Instance?.ProcessDailyEstateIncome(currentDateTime);
+
+                DailyIncomeManager.Instance?.FlushAndNotify();
+            }
+
+            if (IsFourHourBoundary(currentDateTime)) {
+
+                foreach (var coin in coins) {
+
+                    // 진행 중 RuntimeCandle 확정
+                    coin.CloseRuntimeCandle();
+
+                    // 다음 캔들 시작
+                    double nextOpen =
+                        coin.CandleHistory.Count > 0
+                            ? coin.CandleHistory[^1].close
+                            : coin.CurrentPrice;
+
+                    coin.EnsureRuntimeCandle(nextOpen);
+
+                    // BaseCandle은 그대로
+                    coin.CloseBaseCandle();
+                }
+                TryAssignRandomPatterns();
+
+                OnCandleBoundary?.Invoke(currentDateTime);
+            }
+
+            GlobalEconomyManager.TickExchangeRate();
+
+            foreach (var coin in coins) {
+                // 스테이블 코인은 예외 (기존 유지)
+                if (coin.Type == CoinType.Stable) {
+                    coin.GenerateNextPrice(MarketPhase.Sideways, 1, 0, 0, currentDateTime);
+                    CheckPriceSurgeAndNotify(coin);
+                    continue;
+                }
+
+                // 1. 차트 패턴 엔진 값 가져오기 (없으면 0)
+                double patternDelta = 0;
+                if (ChartPatternEngine.Instance != null) {
+                    patternDelta = ChartPatternEngine.Instance.GetPatternDelta(coin);
+                }
+
+                // 2. 페이즈 및 변동성 가져오기
+                // (여기서 반감기 때 설정한 SuperBull을 가져옵니다!)
+                var phase = coin.GetEffectivePhase(currentDateTime, CurrentMarket);
+                var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == coin.Symbol);
+                int vol = (meta != null) ? meta.VolatilityLevel : 1;
+
+                // 3. 통합 실행 (★ 이 아래에 있던 모든 if/else/eventBias 로직은 삭제하십시오!)
+                coin.GenerateNextPrice(phase, vol, 2f, (float)(patternDelta * 100.0), currentDateTime);
+
+                CheckPriceSurgeAndNotify(coin);
+            }
+
+            OnMarketUpdated?.Invoke();
+
+            if (tickCount % 1 == 0)
+            {
+                foreach (var coin in coins)
+                {
+                    //if (chartPanelController != null &&
+                    //    chartPanelController.chartPanel.activeSelf &&
+                    //    chartPanelController.currentCoin == coin)
+                    //{
+                    //    chartPanelController.chartRenderer.SetDataAndRender(coin, coin.CandleHistory);
+                    //}
+                }
+            }
+
+            UpdateDateText();
+            UpdateCashText();
+            if (assetPanelController != null)
+            {
+                assetPanelController.UpdatePlatformAssetTexts();
+            }
+            if (statusPanelController != null)
+            {
+                statusPanelController.UpdateAssetFromStatus();
+            }
+        }
+    }
+
+    //  급등/급락 체크 및 문자 발송 함수
+    private void CheckPriceSurgeAndNotify(CoinData coin) {
+        // 1. 미보유시 패스
+        if (!PlayerManager.Instance.holdings.ContainsKey(coin.Symbol) ||
+            PlayerManager.Instance.holdings[coin.Symbol] <= 0) return;
+
+        // 2. 이미 알림 보냈으면 패스
+        if (dailySurgeAlerts.Contains(coin.Symbol)) return;
+
+        if (coin.InitialPrice <= 0) return;
+
+        // 등락률 계산
+        double changeRate = (coin.CurrentPrice - coin.InitialPrice) / coin.InitialPrice * 100.0;
+
+        // [추가] 내가 산 가격(평단가)이 시가보다 훨씬 높으면(이미 떡상 후 매수), '오늘 급등' 알림은 뒷북일 수 있음.
+        // 원하시면 이 주석을 풀어서 사용하세요. (평단가가 시가 대비 15% 이상 높으면 알림 스킵)
+        // double myAvg = PlayerManager.Instance.GetAvgPrice(coin.Symbol);
+        // if (myAvg > coin.InitialPrice * 1.15) return; 
+
+        // 3. 급등 (+15% 이상)
+        if (changeRate >= 15.0) {
+            string title = LocalizationManager.GetText("LBL_ALERT_SURGE_TITLE");
+            string msg = string.Format(LocalizationManager.GetText("LBL_ALERT_SURGE_MSG"), coin.Symbol, changeRate.ToString("F2"));
+            SendAlert(coin, "Bullbit", title, msg);
+        }
+        // 4. 급락 (-15% 이하)
+        else if (changeRate <= -15.0) {
+            string title = LocalizationManager.GetText("LBL_ALERT_PLUNGE_TITLE");
+            string msg = string.Format(LocalizationManager.GetText("LBL_ALERT_PLUNGE_MSG"), coin.Symbol, changeRate.ToString("F2"));
+            SendAlert(coin, "Bullbit", title, msg);
+        }
+    }
+    // [신규] 매수 시 호출: 이미 변동폭이 큰 코인이면 알림 스킵 처리
+    public void CheckAndSkipAlertForNewBuy(string symbol) {
+        if (dailySurgeAlerts.Contains(symbol)) return; // 이미 등록됨
+
+        var coin = coins.Find(c => c.Symbol == symbol);
+        if (coin == null || coin.InitialPrice <= 0) return;
+
+        double rate = (coin.CurrentPrice - coin.InitialPrice) / coin.InitialPrice * 100.0;
+
+        // 이미 15% 이상 올랐거나 내린 상태에서 샀다면, 오늘 알림은 안 보냄 (뒷북 방지)
+        if (Math.Abs(rate) >= 15.0) {
+            dailySurgeAlerts.Add(symbol);
+            Debug.Log($"[알림 스킵] {symbol}은 이미 {rate:F2}% 변동된 상태에서 매수함.");
+        }
+    }
+
+    // 알림 발송 헬퍼
+    private void SendAlert(CoinData coin, string type, string title, string msg) {
+        if (GlobalNotificationManager.Instance != null) {
+            GlobalNotificationManager.Instance.ShowNotification(type, title, msg);
+        }
+        // 알림 보냈음 표시
+        dailySurgeAlerts.Add(coin.Symbol);
+    }
+
+    void UpdateDateText() {
+        // 날짜/시간 포맷은 MM/dd/yyyy HH:mm 형식을 유지 (만약 이 포맷도 바꾸고 싶다면 키로 뺄 수 있습니다)
+        string dateStr = currentDateTime.ToString("MM/dd/yyyy HH:mm");
+
+        // 생존 일수 로컬라이징 적용
+        string daysFormat = LocalizationManager.GetText("LBL_SURVIVAL_DAYS");
+        string daysStr = string.Format(daysFormat, survivalDays);
+
+        // 결과: "03/15/2026 09:23 10일차" (KR) / "03/15/2026 09:23 Day 10" (EN)
+        dateText.text = $"{dateStr} {daysStr}";
+    }
+
+    public double GetBullbitAsset()
+    {
+        double total = PlayerManager.Instance.bullbitCash;
+        foreach (var coin in coins)
+        {
+            if (PlayerManager.Instance.holdings.TryGetValue(coin.Symbol, out double amount))
+            {
+                total += amount * coin.CurrentPrice;
+            }
+        }
+        return total;
+    }
+
+    public double GetCompanyCapital() => OfficeManager.Instance.companyCapital;
+
+    public double GetSatoshiBankAsset() => PlayerManager.Instance.satoshiBankCash;
+    public double GetTotalUserAsset() => GetBullbitAsset() + GetSatoshiBankAsset() + GetCompanyCapital();
+    //public double GetTotalUserAsset() => GetBullbitAsset() + GetSatoshiBankAsset() + GetGambleCashFromSatoshiBank(); // 구버전
+
+    public void UpdateCashText() {
+        double total = GetTotalUserAsset();
+        double bullbit = GetBullbitAsset();
+        double bank = GetSatoshiBankAsset();
+        double satoshiCash = GetStashoCash();
+
+        // 공통 단위 (Won)
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+
+        if (fournanceManager != null && fournanceManager.gameObject.activeInHierarchy) {
+            fournanceManager.RefreshUI();
+        }
+
+        // 1. 불비트 자산
+        if (cashText != null) {
+            string format = LocalizationManager.GetText("LBL_BULLBIT_ASSET");
+            cashText.text = string.Format(format, bullbit.ToString("N0"), unit);
+        }
+
+        // 2. 사토시 뱅크 (앱 내부 텍스트)
+        if (bankCashText != null) {
+            if (currentApp == AppType.SatoshiBank) {
+                // 이 부분은 ₩ 기호가 하드코딩 되어있어서 유지하시거나, UNIT_CURRENCY로 대체 가능합니다.
+                bankCashText.text = $"₩{bank:N0}{unit}";
+            }
+        }
+
+        // 3. 사토시 은행 잔고 (로비/메인 텍스트)
+        if (lobbySatoshiText != null) {
+            string format = LocalizationManager.GetText("LBL_BANK_BALANCE");
+            lobbySatoshiText.text = string.Format(format, bank.ToString("N0"), unit);
+        }
+
+        // 4. 망고 캐시 (카지노 등)
+        if (mangoCashText != null) {
+            string format = LocalizationManager.GetText("LBL_MANGO_BALANCE");
+            // {0}: 이름, {1}: 금액, {2}: 단위
+            mangoCashText.text = string.Format(format, PlayerManager.Instance.playerName, satoshiCash.ToString("N0"), unit);
+        }
+    }
+
+    public void SetTimeSpeed(TimeSpeed speed) {
+        currentSpeed = speed;
+        UpdateSpeedButtonVisuals();
+    }
+
+    void UpdateSpeedButtonVisuals()
+    {
+        pauseBtn.image.color = (currentSpeed == TimeSpeed.Paused) ? selectedColor : defaultColor;
+        normalBtn.image.color = (currentSpeed == TimeSpeed.Normal) ? selectedColor : defaultColor;
+        doubleBtn.image.color = (currentSpeed == TimeSpeed.Double) ? selectedColor : defaultColor;
+    }
+
+    public void OnPauseButtonClicked() => SetTimeSpeed(TimeSpeed.Paused);
+    public void OnNormalSpeedButtonClicked() => SetTimeSpeed(TimeSpeed.Normal);
+    public void OnDoubleSpeedButtonClicked() => SetTimeSpeed(TimeSpeed.Double);
+
+    public float GetUpdateInterval()
+    {
+        return currentSpeed switch
+        {
+            TimeSpeed.Paused => float.MaxValue,
+            TimeSpeed.Normal => 1f,
+            TimeSpeed.Double => 0.4f,
+            TimeSpeed.test => 0.01f,
+            _ => 2f
+        };
+    }
+
+    public void ListNewCoin(string symbol) {
+        var existingCoin = coins.Find(c => c.Symbol == symbol);
+
+        if (existingCoin != null && existingCoin.IsListed) {
+            Debug.LogWarning($"[ListNewCoin] 코인 '{symbol}'은(는) 이미 상장되어 활성화된 상태입니다.");
+            return;
+        }
+
+        if (existingCoin != null) {
+            // 1. 이미 객체가 존재하는 경우 (비상장 상태였다가 상장되는 경우)
+            existingCoin.IsListed = true;
+            existingCoin.IsDelisted = false; // 상폐/거래정지 상태 무조건 해제
+
+            var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
+            if (meta != null) meta.BullbitListed = true;
+
+            // 차트 캔들 및 가격 강제 초기화 (이게 없으면 차트가 깨집니다)
+            existingCoin.InitialPrice = existingCoin.CurrentPrice;
+            existingCoin.EnsureRuntimeCandle(existingCoin.CurrentPrice);
+
+            Debug.Log($"[ListNewCoin] 기존 데이터 '{symbol}'을(를) 상장 상태로 전환했습니다.");
+        } else {
+            // 2. 리스트에 아예 없어서 새로 생성해야 하는 경우 (이벤트 코인 등)
+            var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
+            if (meta == null) {
+                Debug.LogError($"[ListNewCoin] '{symbol}' 메타 데이터를 찾을 수 없습니다.");
+                return;
+            }
+
+            meta.BullbitListed = true;
+            existingCoin = new CoinData(meta);
+
+            // 핵심: 50% 랜덤 확률 무시하고 강제로 상장 및 거래 활성화
+            existingCoin.IsListed = true;
+            existingCoin.IsDelisted = false;
+
+            // 핵심: 첫 캔들과 히스토리 강제 생성 (가격 고장 및 차트 일자 현상 방지)
+            existingCoin.InitialPrice = existingCoin.CurrentPrice;
+            existingCoin.PriceHistory.Clear();
+            existingCoin.PriceHistory.Add(existingCoin.CurrentPrice);
+            existingCoin.EnsureRuntimeCandle(existingCoin.CurrentPrice);
+            existingCoin.RecordDailyClosePrice();
+
+            coins.Add(existingCoin);
+
+            Debug.Log($"[ListNewCoin] 신규 코인 '{symbol}'이(가) 시장에 추가되었습니다.");
+        }
+
+        // UI 갱신 로직
+        var uiManager = FindAnyObjectByType<MainUIManager>();
+        if (uiManager != null) {
+            uiManager.AddCoinRow(existingCoin);
+        }
+
+        assetPanelController?.RenderPlatformRows();
+
+        OnMarketUpdated?.Invoke();
+    }
+
+    public void DelistCoin(string symbol) {
+        var coin = coins.Find(c => c.Symbol == symbol);
+        if (coin == null)
+            return;
+
+        if (coin.IsDelisted)
+            return;
+
+        // 메타데이터 반영
+        var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
+        if (meta != null)
+            meta.BullbitListed = false;
+
+        // 코인 상태 변경
+        coin.IsDelisted = true;
+        coin.CurrentPrice = 0;
+        coin.InitialPrice = 0; 
+
+        coin.CurrentPhaseOverride = MarketPhase.MegaBear;
+        coin.PhaseOverrideEndTime = DateTime.MaxValue;
+
+        // UI 갱신
+        assetPanelController?.RenderPlatformRows();
+
+        // 메인 코인 리스트 갱신
+        var uiManager = FindAnyObjectByType<MainUIManager>();
+        uiManager?.RefreshCoinRows();
+
+        var ui = FindAnyObjectByType<MainUIManager>();
+        if (ui != null) {
+            ui.RefreshCoinRows();
+        }
+
+
+        Debug.Log($"[상폐 → 비상장] {symbol}");
+    }
+
+    public void RelistCoin(string symbol, double basePrice) {
+        var coin = coins.Find(c => c.Symbol == symbol);
+        if (coin == null) {
+            Debug.LogWarning($"[RelistCoin] 코인 없음: {symbol}");
+            return;
+        }
+
+        coin.ApplyRelist(basePrice); 
+        // 메타데이터 복구 (이거 중요)
+        var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
+        if (meta != null)
+            meta.BullbitListed = true;
+
+        Debug.Log($"[CoinManager] 재상장 처리: {symbol}");
+
+        assetPanelController?.RenderPlatformRows();
+
+        var ui = FindAnyObjectByType<MainUIManager>();
+        ui?.RefreshCoinRows();
+    }
+
+
+
+    public void SetTickCount(int value) {
+        tickCount = value;
+    }
+    public void SetDateTime(DateTime dt) {
+        currentDateTime = dt;
+    }
+    IEnumerator InitializeRoutine() {
+        foreach (var meta in CoinMetaDatabase.AllCoins) {
+            // 불비트 취급 코인이면 일단 무조건 생성 (그래야 비상장 표시 가능)
+            if (meta.BullbitListed) {
+                // [중요] 생성자 하나로 모든 확률/테마/타입 결정 끝!
+                var coin = new CoinData(meta);
+                coins.Add(coin);
+            }
+        }
+
+        // UI 및 시간 흐름 시작 (기존 로직 유지)
+        UpdateCashText();
+        UpdateDateText();
+        UpdateSpeedButtonVisuals();
+        if (assetPanelController != null) assetPanelController.RenderPlatformRows();
+
+        yield return null;
+
+        foreach (var coin in coins) {
+            coin.EnsureRuntimeCandle(coin.CurrentPrice);
+        }
+        SetBaseMarketCap();
+        UpdateCashText();
+        UpdateDateText();
+        Canvas.ForceUpdateCanvases();
+
+        StartCoroutine(GameTickRoutine());
+        GameBootState.playerReady = true;
+    }
+
+    public bool HasCoinMeta(string symbol) {
+        return Array.Exists(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
+    }
+
+    public bool IsCoinListedOnBullbit(string symbol) {
+        var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
+        if (meta == null) return false;
+
+        return meta.BullbitListed;
+    }
+    public void RenderBankCashOnce() {
+        if (bankCashText == null) return;
+
+        // [수정] "원" 하드코딩 제거 후 언어팩 단위(unit) 사용
+        double bank = PlayerManager.Instance.satoshiBankCash;
+        string unit = LocalizationManager.GetText("UNIT_CURRENCY");
+        bankCashText.text = $"₩{bank:N0}{unit}";
+    }
+
+    bool IsFourHourBoundary(DateTime time) {
+        // 기준: 게임 시작 시각 = 09:00
+        int hoursSinceStart =
+            (int)(time - new DateTime(time.Year, time.Month, time.Day, 9, 0, 0)).TotalHours;
+
+        if (hoursSinceStart < 0)
+            hoursSinceStart += 24;
+
+        return time.Minute == 0 && hoursSinceStart % 4 == 0;
+    }
+    public string GetCurrentDateString() {
+
+        return currentDateTime.ToString("yyyy/MM/dd");
+    }
+
+    // [추가] 이벤트 매니저가 호출할 신규 상장 함수
+    public void ListNewCoinFromMeta(string symbol) {
+        // 1. 중복 체크
+        if (coins.Exists(c => c.Symbol == symbol)) return;
+
+        // 2. 메타 데이터 찾기
+        var meta = Array.Find(CoinMetaDatabase.AllCoins, c => c.Symbol == symbol);
+        if (meta == null) {
+            Debug.LogError($"[CoinManager] 메타 데이터 없음: {symbol}");
+            return;
+        }
+
+        // 3. 코인 생성 (InitializeRoutine과 똑같은 방식 사용)
+        CoinType type = (meta.Theme == CoinTheme.Stable) ? CoinType.Stable : CoinType.Normal;
+        var newCoin = new CoinData(meta);
+
+        // 추가 속성 할당 (CoinData에 해당 필드가 있다면 주석 해제)
+        // newCoin.Theme = meta.Theme.ToString();
+        // newCoin.Volatility = meta.VolatilityLevel;
+        newCoin.IsListed = true;
+        newCoin.IsDelisted = false;
+
+        // 4. 리스트 추가
+        coins.Add(newCoin);
+
+        // 5. UI 갱신
+        var uiManager = FindAnyObjectByType<MainUIManager>();
+        if (uiManager != null) {
+            uiManager.AddCoinRow(newCoin);
+        }
+        assetPanelController?.RenderPlatformRows();
+
+        Debug.Log($"[이벤트 상장] {meta.Name}({meta.Symbol}) 거래 개시!");
+    }
+    public void ReleaseLockupSupply(string symbol, float percent) {
+        var coin = coins.Find(c => c.Symbol == symbol);
+        var meta = Array.Find(CoinMetaDatabase.AllCoins, m => m.Symbol == symbol);
+
+        if (coin != null && meta != null) {
+            long releaseAmount = (long)(meta.MaxSupply * percent);
+            long nextSupply = meta.CirculatingSupply + releaseAmount;
+
+            // 유통량 즉시 반영 (MaxSupply 가드)
+            meta.CirculatingSupply = Math.Min(nextSupply, meta.MaxSupply);
+
+            Debug.Log($"[이벤트] {symbol} 락업 해제 발생: {percent * 100}% ({releaseAmount}개) 추가 유통");
+
+            // 리서치 패널 등이 열려있다면 갱신 신호 발송
+            OnMarketUpdated?.Invoke();
+        }
+    }
+
+    // [추가] 반감기 도달 시 일일 발행량을 절반으로 깎는 함수
+    public void ApplyHalving(string symbol) {
+        var meta = Array.Find(CoinMetaDatabase.AllCoins, m => m.Symbol == symbol);
+
+        if (meta != null && meta.DailyMintAmount > 0) {
+            meta.DailyMintAmount /= 2; // 일일 발행량 절반 삭감
+            Debug.Log($"[반감기] {symbol} 반감기 적용 완료. 새로운 일일 발행량: {meta.DailyMintAmount}");
+
+            OnMarketUpdated?.Invoke();
+        }
+    }
+    public void SetBaseMarketCap() {
+        double totalCap = 0;
+        foreach (var coin in coins) {
+            // 조건: 상장됨 + 상폐 안됨 + 밈 코인 아님 + 가격 유효
+            if (coin.IsListed && !coin.IsDelisted && coin.CurrentPrice > 0 && coin.Theme != CoinTheme.Meme.ToString()) {
+                // 시가총액 = 가격 * 유통량
+                totalCap += coin.CurrentPrice * coin.CirculatingSupply;
+            }
+        }
+        baseTotalMarketCap = totalCap;
+        Debug.Log($"[불비트 지수] 기준 시가총액 설정 완료: {baseTotalMarketCap:N0}원 (지수 1000 시작)");
+    }
+    public float CalculateBullbitIndex() {
+        // 아직 기준값이 설정 안 됐으면 기본값 반환
+        if (baseTotalMarketCap <= 0) return 1000f;
+
+        double currentTotalCap = 0;
+
+        foreach (var coin in coins) {
+            // 조건 동일하게 적용
+            if (coin.IsListed && !coin.IsDelisted && coin.CurrentPrice > 0 && coin.Theme != CoinTheme.Meme.ToString()) {
+                // 현재 시가총액 합산
+                currentTotalCap += coin.CurrentPrice * coin.CirculatingSupply;
+            }
+        }
+
+        // 공식: (현재 시총 / 기준 시총) * 1000
+        double index = (currentTotalCap / baseTotalMarketCap) * 1000.0;
+
+        return (float)index;
+    }
+    private void TryAssignRandomPatterns() {
+        if (ChartPatternEngine.Instance == null) return;
+
+        foreach (var coin in coins) {
+            // 거래 안 되는 코인이나 스테이블은 패스
+            if (!coin.IsListed || coin.IsDelisted || coin.Type == CoinType.Stable) continue;
+
+            // [중요] "시나리오 패턴"이 이미 돌고 있으면 랜덤 패턴 부여 금지!
+            // (EffectManager가 내린 30% 상승 명령 등을 방해하지 않기 위함)
+            if (ChartPatternEngine.Instance.IsScenarioPatternActive(coin.Symbol)) {
+                continue;
+            }
+
+            // 시나리오가 없을 때만 30% 확률로 랜덤 패턴 부여 (시장 활성화용)
+            if (UnityEngine.Random.value < 0.3f) {
+                // 잡코인(변동성4 이상)은 짧게(4~8시간), 메이저는 길게(12~24시간)
+                float duration = (coin.Volatility >= 4) ? UnityEngine.Random.Range(4f, 8f) : UnityEngine.Random.Range(12f, 24f);
+                ChartPatternEngine.Instance.AssignRandomPattern(coin, CurrentMarket, duration);
+            }
+        }
+    }
+}
