@@ -30,6 +30,7 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+.gitignore_*
 
 # ==========================================
 # Portfolio Specific Rule (Whitelist Approach)
@@ -43,6 +44,13 @@ ExportedObj/
 !/Assets/Plugins/
 !/Assets/Plugins/WebGL/
 !/Assets/Plugins/WebGL/**
+
+!/Assets/Assets/
+!/Assets/Assets/Resources/
+!/Assets/Assets/Resources/json/
+!/Assets/Assets/Resources/json/**
+!/Assets/Assets/Resources/Localization/
+!/Assets/Assets/Resources/Localization/**
 
 !/Assets/Resources/
 !/Assets/Resources/json/
