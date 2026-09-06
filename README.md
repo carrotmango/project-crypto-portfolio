@@ -65,14 +65,14 @@
 
 ---
 
-## 🎨 Graphics & Art Style
+## Graphics & Art Style
 
 * **비주얼 컨셉**: 90년대 PC-98 플랫폼 특유의 8-bit / 16-bit 레트로 픽셀 아트 지향.
 * **UI/UX Design**: 레트로 아이콘과 텍스트를 유지하면서 실시간 차트 및 데이터 패널은 현대적 가독성을 확보.
 
 ---
 
-## 🗺️ Development Roadmap & Milestones (2026)
+## Development Roadmap & Milestones (2026)
 
 * **Phase 1 (2026.02)**: 핵심 루프 고도화, 선물 거래 및 부동산 시스템 최종 밸런싱
 * **Phase 2 (2026.03 ~ 2026.04)**: Steam 상점 페이지 및 홍보용 트레일러/데모 등록, WebGL 유저 피드백 수집
